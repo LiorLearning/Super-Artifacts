@@ -1,5 +1,6 @@
 'use client';
 
+import GameContainer from '@/components/GameContainer';
 import { useState } from 'react';
 
 interface Fraction {
@@ -35,7 +36,6 @@ function Bar({
   numToSelect: number;
   label: string;
 }) {
-  // For large denominators, we'll show a more compact view
   const isLargeDenominator = maxParts > 12;
   
   return (
@@ -128,39 +128,42 @@ function Bar({
   );
 }
 
-const fraction1 = { numerator: 2, denominator: 8 };
-const fraction2 = { numerator: 10, denominator: 19 };
-
-interface FractionGameProps {
-  sendAdminMessage: (role: string, content: string) => void;
-}
-
-
-export default function FractionsGame({ sendAdminMessage }: FractionGameProps) {
+export default function FractionsGame() {
   const [step, setStep] = useState(1);
   const [bar1, setBar1] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [bar2, setBar2] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [answer, setAnswer] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
 
-  // Quick cut feature for large denominators
-  // const handleQuickCut = (barNumber: number) => {
-  //   if (barNumber === 1) {
-  //     setBar1({ parts: fraction1.denominator, selectedParts: [] });
-  //     setStep(2);
-  //   } else {
-  //     setBar2({ parts: fraction2.denominator, selectedParts: [] });
-  //     setStep(4);
-  //   }
-  // };
+  const fraction1 = { numerator: 1, denominator: 3 };
+  const fraction2 = { numerator: 2, denominator: 5 };
+  const onComplete = (correct: boolean) => {
+    if (correct) {
+      setStep(1);
+      setBar1({ parts: 1, selectedParts: [] });
+      setBar2({ parts: 1, selectedParts: [] });
+      setAnswer(null);
+      setShowHint(false);
+    }
+  }
+
+
+  const handleQuickCut = (barNumber: number) => {
+    if (barNumber === 1) {
+      setBar1({ parts: fraction1.denominator, selectedParts: [] });
+      setStep(2);
+    } else {
+      setBar2({ parts: fraction2.denominator, selectedParts: [] });
+      setStep(4);
+    }
+  };
 
   const handleCut = (barNumber: number) => {
-    // For large denominators, use quick cut
-    // if ((barNumber === 1 && fraction1.denominator > 12) || 
-    //     (barNumber === 2 && fraction2.denominator > 12)) {
-    //   handleQuickCut(barNumber);
-    //   return;
-    // }
+    if ((barNumber === 1 && fraction1.denominator > 12) || 
+        (barNumber === 2 && fraction2.denominator > 12)) {
+      handleQuickCut(barNumber);
+      return;
+    }
 
     if (barNumber === 1 && bar1.parts < fraction1.denominator) {
       setBar1(prev => ({ ...prev, parts: prev.parts + 1 }));
@@ -211,7 +214,7 @@ export default function FractionsGame({ sendAdminMessage }: FractionGameProps) {
     if (!isCorrect) {
       setShowHint(true);
     }
-    // onComplete?.(isCorrect);
+    onComplete?.(isCorrect);
   };
 
   const getHint = () => {
@@ -230,15 +233,11 @@ export default function FractionsGame({ sendAdminMessage }: FractionGameProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 overflow-y-auto">
-      <div className="min-h-screen py-8 px-4">
-        <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 
-              text-transparent bg-clip-text mb-6 animate-pulse-slow">
-              Fraction Master
-            </h1>
+    <GameContainer
+    title="Fraction Master"
+    score={0}
+    instructions={''}
+  >
             <div className="flex justify-center gap-3 md:gap-6 flex-wrap">
               {[1, 2, 3, 4, 5].map(stepNum => (
                 <div
@@ -256,7 +255,6 @@ export default function FractionsGame({ sendAdminMessage }: FractionGameProps) {
                 </div>
               ))}
             </div>
-          </div>
 
           {/* Instructions */}
           <div className="text-xl md:text-3xl font-bold text-center mb-12 text-gray-700
@@ -380,12 +378,9 @@ export default function FractionsGame({ sendAdminMessage }: FractionGameProps) {
               </div>
             )}
           </div>
-        </div>
-      </div>
-    </div>
+  </GameContainer>
   );
 }
-
 
 
 

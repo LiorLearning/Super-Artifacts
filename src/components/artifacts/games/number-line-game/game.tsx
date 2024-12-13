@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight, Trash2, Star, Lightbulb } from 'lucide-react'
 import NumberLine  from "./NumberLine"
-import GameContainer from "./GameContainer"
+import GameContainer from '@/components/GameContainer'
 
 interface Hop {
   direction: 'forward' | 'backward'

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import GameContainer from '@/components/GameContainer';
 
 interface Step {
   dividend: number;
@@ -14,11 +15,7 @@ interface Step {
   remainder: number | null;
 }
 
-interface InteractiveLongDivisionGameProps {
-  sendAdminMessage: (role: string, content: string) => void;
-}
-
-export default function InteractiveLongDivisionGame({ sendAdminMessage }: InteractiveLongDivisionGameProps) {
+const InteractiveLongDivisionGame: React.FC = () => {
   const [dividend, setDividend] = useState(0);
   const [divisor, setDivisor] = useState(0);
   const [steps, setSteps] = useState<Step[]>([]);
@@ -28,6 +25,7 @@ export default function InteractiveLongDivisionGame({ sendAdminMessage }: Intera
   const [isComplete, setIsComplete] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [quotient, setQuotient] = useState('');
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     generateNewProblem();
@@ -126,6 +124,11 @@ export default function InteractiveLongDivisionGame({ sendAdminMessage }: Intera
   };
 
   return (
+  <GameContainer
+    title="Visual Long Division"
+    score={score}
+    instructions='Divide the given number by the divisor and enter the next digit of the quotient.'
+  >
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-200 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardContent className="p-6">
@@ -217,5 +220,8 @@ export default function InteractiveLongDivisionGame({ sendAdminMessage }: Intera
         </CardContent>
       </Card>
     </div>
+  </GameContainer>
   );
-}
+};
+
+export default InteractiveLongDivisionGame;
