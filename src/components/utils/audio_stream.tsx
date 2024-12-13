@@ -157,7 +157,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, clientId
       webSocketRef.current.close();
     }
 
-    webSocketRef.current = new WebSocket(`${process.env.NEXT_PUBLIC_WS_BASE_URL}api/v1/eleven_labs/${clientId}/ws`);
+    webSocketRef.current = new WebSocket(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/eleven_labs/${clientId}/ws`);
     webSocketRef.current.binaryType = 'arraybuffer';
 
     webSocketRef.current.onopen = () => {

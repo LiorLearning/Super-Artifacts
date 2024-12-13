@@ -12,7 +12,7 @@ export default function Main() {
 
   return (
     <MessageProvider>
-      <WebSocketProvider url={`${process.env.NEXT_PUBLIC_WS_BASE_URL}api/v1/superartifacts/ws`}>
+      <WebSocketProvider url={`${process.env.NEXT_PUBLIC_WS_BASE_URL}/superartifacts/ws`}>
         <div className="flex h-screen">
           <div className="w-[75%] border-r-border flex flex-col">
             <MathGamesContainer setHtml={setHtmlOutput}  />
