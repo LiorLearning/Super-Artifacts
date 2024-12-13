@@ -15,7 +15,11 @@ interface Hop {
   length: number
 }
 
-const NumberLineGame: React.FC = () => {
+interface NumberLineGameProps {
+  sendAdminMessage: (role: string, content: string) => void;
+}
+
+export default function NumberLineGame({ sendAdminMessage }: NumberLineGameProps) {
   const [question, setQuestion] = useState<string>('')
   const [answer, setAnswer] = useState<number | null>(null)
   // const [start, setStart] = useState<number>(0)
@@ -232,5 +236,3 @@ const NumberLineGame: React.FC = () => {
     </GameContainer>
   )
 }
-
-export default NumberLineGame

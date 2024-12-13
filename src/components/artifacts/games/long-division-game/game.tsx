@@ -14,7 +14,11 @@ interface Step {
   remainder: number | null;
 }
 
-const InteractiveLongDivisionGame: React.FC = () => {
+interface InteractiveLongDivisionGameProps {
+  sendAdminMessage: (role: string, content: string) => void;
+}
+
+export default function InteractiveLongDivisionGame({ sendAdminMessage }: InteractiveLongDivisionGameProps) {
   const [dividend, setDividend] = useState(0);
   const [divisor, setDivisor] = useState(0);
   const [steps, setSteps] = useState<Step[]>([]);
@@ -214,6 +218,4 @@ const InteractiveLongDivisionGame: React.FC = () => {
       </Card>
     </div>
   );
-};
-
-export default InteractiveLongDivisionGame;
+}

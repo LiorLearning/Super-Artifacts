@@ -12,7 +12,6 @@ const MAX_CRABS = 12
 const MIN_CRABS = 1
 
 interface CrabGameProps {
-  changeGame: (gameKey: string) => void;
   sendAdminMessage: (role: string, content: string) => void;
 }
 
@@ -109,7 +108,7 @@ const AnimatedFishtank = ({ color = '#4FB8E3', crabs = 4 }) => {
   )
 }
 
-export default function CrabGame({ changeGame, sendAdminMessage }: CrabGameProps) {
+export default function CrabGame({ sendAdminMessage }: CrabGameProps) {
   const [step, setStep] = useState(0)
   const [userAnswer, setUserAnswer] = useState<number>(0)
   const [showHint, setShowHint] = useState(false)
@@ -206,7 +205,6 @@ export default function CrabGame({ changeGame, sendAdminMessage }: CrabGameProps
           `Repeat exactly this: Great, let’s practice this concept a bit more before diving into word problems. What do you think?`
           // `Correct Answer! User has ${totalCrabs} crabs (${fishtanks} fishtanks * ${crabsPerFishtank[0]} crabs per fishtank). Reply with: Great, let’s practice this concept a bit more before diving into word problems. What do you think?`
         );
-        setTimeout(() => changeGame('shark-multiplication-game'), 5000);
       } else {
         setHintMessage(
           `Incorrect. You have ${totalCrabs} crabs, but you should have ${correctAnswer} crabs.`
@@ -229,7 +227,6 @@ export default function CrabGame({ changeGame, sendAdminMessage }: CrabGameProps
         `Repeat exactly this: Great, let’s practice this concept a bit more before diving into word problems. What do you think?`
         // `Correct Answer! User has ${correctAnswer} crabs. Congratulate user and move to the next game to teach how to write the groups as addition and multiplication.`
       );
-      setTimeout(() => changeGame('shark-multiplication-game'), 5000);
     } else {
       setHintMessage(`Incorrect. Try again.`);
       sendAdminMessage(

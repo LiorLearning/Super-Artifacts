@@ -128,9 +128,15 @@ function Bar({
   );
 }
 
+const fraction1 = { numerator: 2, denominator: 8 };
+const fraction2 = { numerator: 10, denominator: 19 };
+
+interface FractionGameProps {
+  sendAdminMessage: (role: string, content: string) => void;
+}
 
 
-export default function FractionsGame({ fraction1, fraction2, onComplete }: FractionsGameProps) {
+export default function FractionsGame({ sendAdminMessage }: FractionGameProps) {
   const [step, setStep] = useState(1);
   const [bar1, setBar1] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [bar2, setBar2] = useState<BarState>({ parts: 1, selectedParts: [] });
@@ -205,7 +211,7 @@ export default function FractionsGame({ fraction1, fraction2, onComplete }: Frac
     if (!isCorrect) {
       setShowHint(true);
     }
-    onComplete?.(isCorrect);
+    // onComplete?.(isCorrect);
   };
 
   const getHint = () => {

@@ -139,10 +139,7 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
               <div className="relative h-full w-full flex justify-center items-center">
                 {gameStarted ? (
                   GameComponent && (
-                    <GameComponent 
-                      changeGame={handleGameChange as (gameKey: string) => void} 
-                      sendAdminMessage={sendAdminMessage}
-                    />
+                    <GameComponent sendAdminMessage={sendAdminMessage} />
                   )
                 ) : (
                   <div className="flex justify-center items-center h-full">

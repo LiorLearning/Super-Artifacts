@@ -15,11 +15,10 @@ const MAX_ITEMS_PER_GROUP = 4;
 const MIN_ITEMS_PER_GROUP = 2;
 
 interface SharkGameProps {
-  changeGame: (gameKey: string) => void;
   sendAdminMessage: (role: string, content: string) => void;
 }
 
-export default function SharkGame({ changeGame, sendAdminMessage }: SharkGameProps) {
+export default function SharkGame({ sendAdminMessage }: SharkGameProps) {
   const [groups, setGroups] = useState<Group[]>([{ id: 1, items: 2 }])
   const [target, setTarget] = useState({ groups: MAX_GROUPS, itemsPerGroup: MAX_ITEMS_PER_GROUP })
   const [message, setMessage] = useState("")
