@@ -1,7 +1,8 @@
 'use client';
 
-import GameContainer from '@/components/GameContainer';
 import { useState } from 'react';
+import { Card } from "@/components/ui/card";
+import './animations.css';
 
 interface Fraction {
   numerator: number;
@@ -129,258 +130,218 @@ function Bar({
 }
 
 export default function FractionsGame() {
-  const [step, setStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [bar1, setBar1] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [bar2, setBar2] = useState<BarState>({ parts: 1, selectedParts: [] });
-  const [answer, setAnswer] = useState<string | null>(null);
-  const [showHint, setShowHint] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [userAnswer, setUserAnswer] = useState<string | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
 
-  const fraction1 = { numerator: 1, denominator: 3 };
-  const fraction2 = { numerator: 2, denominator: 5 };
-  const onComplete = (correct: boolean) => {
-    if (correct) {
-      setStep(1);
-      setBar1({ parts: 1, selectedParts: [] });
-      setBar2({ parts: 1, selectedParts: [] });
-      setAnswer(null);
-      setShowHint(false);
+  // Game content structure
+  const gameSteps = [
+    {
+      id: 'intro',
+      message: "Hi! Today we're going to learn about fractions with the same numerator but different denominators! ",
+      animation: 'slide-in-right',
+      showNext: true
+    },
+    {
+      id: 'explain-concept',
+      message: "Numbers can be split into different parts. Let's see how this works! ",
+      animation: 'bounce',
+      showNext: true
+    },
+    {
+      id: 'first-bar',
+      message: "Here's our first bar. Let's break it into 4 equal pieces! Click the 'Cut' button to divide it.",
+      animation: '',
+      showBar1: true,
+      requireAction: true
+    },
+    {
+      id: 'select-first',
+      message: "Great job! Now, click to select ONE piece. This will be our first fraction!",
+      animation: 'pulse',
+      requireAction: true
+    },
+    {
+      id: 'explain-first',
+      message: "Perfect! You've just created ONE-FOURTH (1/4) of the whole bar! See how one piece relates to the whole?",
+      animation: 'highlight',
+      showNext: true
+    },
+    {
+      id: 'second-bar',
+      message: "Now, let's try another example! Here's a new bar. This time, let's cut it into 6 equal pieces!",
+      animation: 'slide-in-left',
+      showBar2: true,
+      requireAction: true
+    },
+    {
+      id: 'select-second',
+      message: "Excellent cutting! Just like before, select ONE piece.",
+      animation: 'pulse',
+      requireAction: true
+    },
+    {
+      id: 'explain-second',
+      message: "Amazing! This is ONE-SIXTH (1/6) of the whole bar. Notice how this piece is different from our first one?",
+      animation: 'highlight',
+      showNext: true
+    },
+    {
+      id: 'compare-question',
+      message: "Now for the big question: Which fraction is BIGGER - 1/4 or 1/6? Think carefully! ",
+      animation: 'bounce',
+      showComparison: true,
+      requireAction: true
     }
-  }
+  ];
 
+  const explanations = {
+    correct: {
+      '1/4': "That's right! 1/4 is bigger than 1/6! When we split something into MORE parts (like 6), each piece gets SMALLER. So 1/4 (splitting into 4) gives us bigger pieces than 1/6 (splitting into 6)! ",
+      '1/6': "Actually, 1/4 is bigger than 1/6! Look at our bars - when we split into 6 pieces (1/6), each piece is smaller than when we split into 4 pieces (1/4). The more pieces we split into, the smaller each piece becomes! Let's try again! "
+    }
+  };
 
-  const handleQuickCut = (barNumber: number) => {
-    if (barNumber === 1) {
-      setBar1({ parts: fraction1.denominator, selectedParts: [] });
-      setStep(2);
-    } else {
-      setBar2({ parts: fraction2.denominator, selectedParts: [] });
-      setStep(4);
+  const handleNext = () => {
+    if (currentStep < gameSteps.length - 1) {
+      setCurrentStep(prev => prev + 1);
+      setShowExplanation(false);
     }
   };
 
   const handleCut = (barNumber: number) => {
-    if ((barNumber === 1 && fraction1.denominator > 12) || 
-        (barNumber === 2 && fraction2.denominator > 12)) {
-      handleQuickCut(barNumber);
-      return;
-    }
-
-    if (barNumber === 1 && bar1.parts < fraction1.denominator) {
+    const targetParts = barNumber === 1 ? 4 : 6;
+    
+    // if (barNumber === 1) {
+    //   setBar1({ parts: targetParts, selectedParts: [] });
+    //   handleNext();
+    // } else {
+    //   setBar2({ parts: targetParts, selectedParts: [] });
+    //   handleNext();
+    // }
+    if (barNumber === 1 && bar1.parts < 4) {
       setBar1(prev => ({ ...prev, parts: prev.parts + 1 }));
-      if (bar1.parts + 1 === fraction1.denominator) {
-        setStep(2);
+      if (bar1.parts === targetParts) {
+        handleNext();
       }
-    } else if (barNumber === 2 && bar2.parts < fraction2.denominator) {
+    } else if (barNumber === 2 && bar2.parts < 6) {
       setBar2(prev => ({ ...prev, parts: prev.parts + 1 }));
-      if (bar2.parts + 1 === fraction2.denominator) {
-        setStep(4);
+      if (bar2.parts === targetParts) {
+        handleNext();
       }
     }
   };
 
   const handleSelect = (barNumber: number, part: number) => {
-    if (barNumber === 1 && step === 2) {
-      setBar1(prev => {
-        const newParts = [...prev.selectedParts, part];
-        if (newParts.length === fraction1.numerator) {
-          setStep(3);
-        }
-        return { ...prev, selectedParts: newParts };
-      });
-    } else if (barNumber === 2 && step === 4) {
-      setBar2(prev => {
-        const newParts = [...prev.selectedParts, part];
-        if (newParts.length === fraction2.numerator) {
-          setStep(5);
-        }
-        return { ...prev, selectedParts: newParts };
-      });
+    if (barNumber === 1) {
+      setBar1(prev => ({
+        ...prev,
+        selectedParts: [part]
+      }));
+    } else {
+      setBar2(prev => ({
+        ...prev,
+        selectedParts: [part]
+      }));
     }
+    handleNext();
   };
 
-  const handleCompare = (comparison: string) => {
-    if (step !== 5) return;
-
-    const value1 = fraction1.numerator / fraction1.denominator;
-    const value2 = fraction2.numerator / fraction2.denominator;
-    
-    const isCorrect = (
-      (comparison === 'greater' && value1 > value2) ||
-      (comparison === 'less' && value1 < value2) ||
-      (comparison === 'equal' && value1 === value2)
-    );
-
-    setAnswer(isCorrect ? 'correct' : 'incorrect');
-    if (!isCorrect) {
-      setShowHint(true);
-    }
-    onComplete?.(isCorrect);
+  const handleAnswer = (answer: string) => {
+    setUserAnswer(answer);
+    setShowAnswer(true);
+    setShowExplanation(true);
   };
 
-  const getHint = () => {
-    const value1 = fraction1.numerator / fraction1.denominator;
-    const value2 = fraction2.numerator / fraction2.denominator;
-    
-    return (
-      <div className="text-gray-600 text-lg">
-        Think about it: {fraction1.numerator}/{fraction1.denominator} {value1 > value2 ? 'is bigger than' : 'is smaller than'} {fraction2.numerator}/{fraction2.denominator}
-        {' because '} 
-        {value1 > value2 
-          ? `${fraction1.numerator}/${fraction1.denominator} represents a larger portion of the whole`
-          : `${fraction2.numerator}/${fraction2.denominator} represents a larger portion of the whole`}
-      </div>
-    );
-  };
+  const currentStepData = gameSteps[currentStep];
 
   return (
-    <GameContainer
-    title="Fraction Master"
-    score={0}
-    instructions={''}
-  >
-            <div className="flex justify-center gap-3 md:gap-6 flex-wrap">
-              {[1, 2, 3, 4, 5].map(stepNum => (
-                <div
-                  key={stepNum}
-                  className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center
-                    transform transition-all duration-300 ${
-                      step === stepNum 
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white scale-110 rotate-3' 
-                        : step > stepNum 
-                          ? 'bg-gradient-to-r from-green-400 to-green-500 text-white rotate-0' 
-                          : 'bg-gray-100 rotate-0'
-                    }`}
-                >
-                  <span className="text-xl md:text-2xl font-bold">{stepNum}</span>
-                </div>
-              ))}
-            </div>
+    <Card className="p-6 w-full max-w-4xl mx-auto mt-4 bg-white rounded-2xl shadow-lg">
+      {/* Message Display */}
+      <div className={`text-2xl font-bold text-center mb-8 text-gray-700 
+        animate-${currentStepData.animation}`}>
+        {currentStepData.message}
+      </div>
 
-          {/* Instructions */}
-          <div className="text-xl md:text-3xl font-bold text-center mb-12 text-gray-700
-            transform transition-all duration-500 animate-fade-in px-4">
-            {step === 1 && (
-              <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
-                <span>Cut the first bar into</span>
-                <span className="text-2xl md:text-4xl text-purple-500">{fraction1.denominator}</span>
-                <span>equal parts!</span>
-              </div>
-            )}
-            {step === 2 && (
-              <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
-                <span>Select</span>
-                <span className="text-2xl md:text-4xl text-purple-500">{fraction1.numerator}</span>
-                <span>{fraction1.numerator === 1 ? 'piece' : 'pieces'}!</span>
-              </div>
-            )}
-            {step === 3 && (
-              <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
-                <span>Now cut the second bar into</span>
-                <span className="text-2xl md:text-4xl text-purple-500">{fraction2.denominator}</span>
-                <span>parts!</span>
-              </div>
-            )}
-            {step === 4 && (
-              <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
-                <span>Select</span>
-                <span className="text-2xl md:text-4xl text-purple-500">{fraction2.numerator}</span>
-                <span>{fraction2.numerator === 1 ? 'piece' : 'pieces'}!</span>
-              </div>
-            )}
-            {step === 5 && (
-              <div>
-                <div>Compare the fractions:</div>
-                <div className="flex justify-center items-center gap-4 mt-2">
-                  <span className="text-2xl text-purple-500">{fraction1.numerator}/{fraction1.denominator}</span>
-                  <span>vs</span>
-                  <span className="text-2xl text-purple-500">{fraction2.numerator}/{fraction2.denominator}</span>
-                </div>
-              </div>
-            )}
+      {/* Interactive Area */}
+      <div className="space-y-12">
+        {/* First Bar */}
+        {currentStep >= 2 && (
+          <div className={`transition-all duration-500 animate-fade-in`}>
+            <Bar
+              parts={bar1.parts}
+              selectedParts={bar1.selectedParts}
+              onCut={currentStep === 2 ? () => handleCut(1) : undefined}
+              onSelect={currentStep === 3 ? (part) => handleSelect(1, part) : undefined}
+              maxParts={4}
+              numToSelect={1}
+              label="First Bar (1/4)"
+            />
           </div>
+        )}
 
-          {/* Main Content */}
-          <div className="flex flex-col gap-12 max-w-4xl mx-auto">
-            <div className={`transition-all duration-500 ${step === 3 ? 'opacity-50 scale-95' : 'scale-100'}`}>
-              <Bar
-                parts={bar1.parts}
-                selectedParts={bar1.selectedParts}
-                onCut={step === 1 ? () => handleCut(1) : undefined}
-                onSelect={step === 2 ? (part) => handleSelect(1, part) : undefined}
-                maxParts={fraction1.denominator}
-                numToSelect={fraction1.numerator}
-                label="First Bar"
-              />
-            </div>
-
-            <div>
-              <Bar
-                parts={bar2.parts}
-                selectedParts={bar2.selectedParts}
-                onCut={step === 3 ? () => handleCut(2) : undefined}
-                onSelect={step === 4 ? (part) => handleSelect(2, part) : undefined}
-                maxParts={fraction2.denominator}
-                numToSelect={fraction2.numerator}
-                label="Second Bar"
-              />
-            </div>
-
-            {/* Comparison Buttons */}
-            {step === 5 && (
-              <div className="flex justify-center gap-4 md:gap-8 flex-wrap">
-                <button
-                  className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-blue-400 to-blue-500 
-                    text-white rounded-xl text-lg md:text-xl font-bold shadow-lg hover:shadow-xl 
-                    hover:scale-105 transition-all duration-300 transform hover:-rotate-2"
-                  onClick={() => handleCompare('less')}
-                >
-                  First is Smaller! 📉
-                </button>
-                <button
-                  className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-purple-400 to-purple-500 
-                    text-white rounded-xl text-lg md:text-xl font-bold shadow-lg hover:shadow-xl 
-                    hover:scale-105 transition-all duration-300"
-                  onClick={() => handleCompare('equal')}
-                >
-                  They&apos;re Equal! 🤝
-                </button>
-                <button
-                  className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-pink-400 to-pink-500 
-                    text-white rounded-xl text-lg md:text-xl font-bold shadow-lg hover:shadow-xl 
-                    hover:scale-105 transition-all duration-300 transform hover:rotate-2"
-                  onClick={() => handleCompare('greater')}
-                >
-                  First is Bigger! 📈
-                </button>
-              </div>
-            )}
-
-            {/* Answer Feedback */}
-            {answer && (
-              <div className="space-y-4 text-center">
-                <div 
-                  className={`text-2xl md:text-4xl font-bold transform scale-110 
-                    transition-all duration-500 ${
-                      answer === 'correct' 
-                        ? 'text-green-500 animate-bounce-slow' 
-                        : 'text-red-500 animate-shake'
-                    }`}
-                >
-                  {answer === 'correct' 
-                    ? '🎉 Awesome job! You got it right! 🌟' 
-                    : '❌ Oops! Try again! You can do it! 💪'}
-                </div>
-                {showHint && answer === 'incorrect' && (
-                  <div className="mt-4 p-4 bg-blue-50 rounded-xl">
-                    {getHint()}
-                  </div>
-                )}
-              </div>
-            )}
+        {/* Second Bar */}
+        {currentStep >= 5 && (
+          <div className={`transition-all duration-500 animate-fade-in`}>
+            <Bar
+              parts={bar2.parts}
+              selectedParts={bar2.selectedParts}
+              onCut={currentStep === 5 ? () => handleCut(2) : undefined}
+              onSelect={currentStep === 6 ? (part) => handleSelect(2, part) : undefined}
+              maxParts={6}
+              numToSelect={1}
+              label="Second Bar (1/6)"
+            />
           </div>
-  </GameContainer>
+        )}
+
+        {/* Comparison Section */}
+        {currentStep === 8 && !showAnswer && (
+          <div className="flex justify-center gap-6 animate-bounce-slow">
+            <button
+              onClick={() => handleAnswer('1/4')}
+              className="px-8 py-4 bg-gradient-to-r from-purple-400 to-pink-500 
+                text-white rounded-xl text-xl font-bold shadow-lg hover:shadow-xl 
+                hover:scale-105 transition-all duration-300"
+            >
+              1/4 is Bigger! 
+            </button>
+            <button
+              onClick={() => handleAnswer('1/6')}
+              className="px-8 py-4 bg-gradient-to-r from-blue-400 to-green-500 
+                text-white rounded-xl text-xl font-bold shadow-lg hover:shadow-xl 
+                hover:scale-105 transition-all duration-300"
+            >
+              1/6 is Bigger! 
+            </button>
+          </div>
+        )}
+
+        {/* Explanation */}
+        {showExplanation && (
+          <div className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl 
+            animate-fade-in text-lg text-gray-700">
+            {explanations.correct[userAnswer as keyof typeof explanations.correct]}
+          </div>
+        )}
+
+        {/* Next Button */}
+        {currentStepData.showNext && !currentStepData.requireAction && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={handleNext}
+              className="px-8 py-4 bg-gradient-to-r from-indigo-400 to-purple-500 
+                text-white rounded-xl text-xl font-bold shadow-lg hover:shadow-xl 
+                hover:scale-105 transition-all duration-300 animate-pulse"
+            >
+              Next ➡️
+            </button>
+          </div>
+        )}
+      </div>
+    </Card>
   );
 }
-
-
-

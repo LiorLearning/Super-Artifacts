@@ -48,7 +48,7 @@ const GameContainer: React.FC<GameContainerProps> = ({
   }, [title, componentId]);
 
   return (
-    <Card id="game-container" className="p-6 max-w-7xl mx-auto mt-4 bg-white rounded-2xl shadow-lg">
+    <Card id="game-container" className="p-6 w-full mx-auto mt-4 bg-white rounded-2xl shadow-lg">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold text-blue-600">{title}</h1>
