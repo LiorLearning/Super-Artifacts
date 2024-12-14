@@ -89,20 +89,6 @@ function Bar({
               </div>
             </div>
           )}
-
-          {/* Progress indicators */}
-          <div className="absolute -bottom-6 left-0 right-0 flex justify-center gap-4">
-            {onCut && (
-              <div className="bg-gray-100 rounded-full px-3 py-1 text-sm font-medium text-gray-600">
-                {parts} / {maxParts} parts
-              </div>
-            )}
-            {onSelect && (
-              <div className="bg-gray-100 rounded-full px-3 py-1 text-sm font-medium text-gray-600">
-                Selected: {selectedParts.length} / {numToSelect}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Cut Button */}
@@ -112,7 +98,7 @@ function Bar({
               onClick={onCut}
               disabled={parts >= maxParts}
               className={`px-6 py-4 rounded-xl shadow-lg transition-all duration-300
-                flex items-center gap-3 whitespace-nowrap
+                flex items-center gap-3 whitespace-nowrap animate-pulse
                 ${parts >= maxParts 
                   ? 'bg-gray-300 cursor-not-allowed' 
                   : 'bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:shadow-xl hover:scale-105'}`}
@@ -122,6 +108,20 @@ function Bar({
               </span>
               <span className="text-lg font-bold">Cut!</span>
             </button>
+          </div>
+        )}
+      </div>
+
+      {/* Progress indicators */}
+      <div className="absolute -bottom-6 left-0 right-0 flex justify-center gap-4">
+        {onCut && (
+          <div className="bg-gray-100 rounded-full px-3 py-1 text-sm font-medium text-gray-600">
+            {parts} / {maxParts} parts
+          </div>
+        )}
+        {onSelect && (
+          <div className="bg-gray-100 rounded-full px-3 py-1 text-sm font-medium text-gray-600">
+            Selected: {selectedParts.length} / {numToSelect}
           </div>
         )}
       </div>
@@ -137,64 +137,69 @@ export default function FractionsGame() {
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
 
-  // Game content structure
   const gameSteps = [
     {
       id: 'intro',
-      message: "Hi! Today we're going to learn about fractions with the same numerator but different denominators! ",
-      animation: 'slide-in-right',
+      message: "Welcome to Fractions! ",
+      subMessage: "Today we'll learn about fractions with the same numerator but different denominators.",
       showNext: true
     },
     {
       id: 'explain-concept',
-      message: "Numbers can be split into different parts. Let's see how this works! ",
-      animation: 'bounce',
+      message: "Let's understand how numbers split into parts! ",
+      // subMessage: "We'll use bars to visualize fractions and compare their sizes.",
       showNext: true
     },
     {
       id: 'first-bar',
-      message: "Here's our first bar. Let's break it into 4 equal pieces! Click the 'Cut' button to divide it.",
-      animation: '',
+      message: "Divide the bar into 4 equal pieces!",
+      subMessage: "Click the 'Cut' button",
       showBar1: true,
       requireAction: true
     },
     {
       id: 'select-first',
-      message: "Great job! Now, click to select ONE piece. This will be our first fraction!",
-      animation: 'pulse',
+      message: "Now select ONE piece",
+      subMessage: "Click any piece to highlight it. This will represent 1/4 of the whole bar.",
       requireAction: true
     },
     {
       id: 'explain-first',
-      message: "Perfect! You've just created ONE-FOURTH (1/4) of the whole bar! See how one piece relates to the whole?",
-      animation: 'highlight',
+      message: "Great job with 1/4!",
+      subMessage: "You've selected one piece out of four equal parts. This is what we call ONE-FOURTH.",
       showNext: true
     },
     {
       id: 'second-bar',
-      message: "Now, let's try another example! Here's a new bar. This time, let's cut it into 6 equal pieces!",
-      animation: 'slide-in-left',
+      message: "Now we have a another bar, let's divide it into 6 equal pieces!",
+      subMessage: "Click the 'Cut' button 5 times to divide the bar into 6 equal pieces.",
       showBar2: true,
       requireAction: true
     },
     {
       id: 'select-second',
-      message: "Excellent cutting! Just like before, select ONE piece.",
-      animation: 'pulse',
+      message: "Fabulous! Now select ONE piece, again. This will represent 1/6 of the whole bar.",
+      subMessage: "Click any piece to highlight it",
       requireAction: true
     },
     {
       id: 'explain-second',
-      message: "Amazing! This is ONE-SIXTH (1/6) of the whole bar. Notice how this piece is different from our first one?",
-      animation: 'highlight',
+      message: "Perfect! Now we have 1/4 and 1/6",
+      subMessage: "Notice how the size of one piece changes when we divide the bar into more parts?",
       showNext: true
     },
     {
       id: 'compare-question',
-      message: "Now for the big question: Which fraction is BIGGER - 1/4 or 1/6? Think carefully! ",
-      animation: 'bounce',
+      message: "Time to compare! ",
+      subMessage: "Which fraction is BIGGER - 1/4 or 1/6? Look carefully at the size of each piece!",
       showComparison: true,
       requireAction: true
+    },
+    {
+      id: 'explain-comparison',
+      message: "Great job!",
+      subMessage: "1/4 is bigger than 1/6! When we split something into MORE parts (like 6), each piece gets SMALLER. So 1/4 (splitting into 4) gives us bigger pieces than 1/6 (splitting into 6)! ",
+      showNext: true
     }
   ];
 
@@ -213,23 +218,18 @@ export default function FractionsGame() {
   };
 
   const handleCut = (barNumber: number) => {
-    const targetParts = barNumber === 1 ? 4 : 6;
-    
-    // if (barNumber === 1) {
-    //   setBar1({ parts: targetParts, selectedParts: [] });
-    //   handleNext();
-    // } else {
-    //   setBar2({ parts: targetParts, selectedParts: [] });
-    //   handleNext();
-    // }
-    if (barNumber === 1 && bar1.parts < 4) {
-      setBar1(prev => ({ ...prev, parts: prev.parts + 1 }));
-      if (bar1.parts === targetParts) {
+    if (barNumber === 1) {
+      if (bar1.parts < 4) {
+        setBar1(prev => ({ ...prev, parts: prev.parts + 1 }));
+      }
+      if (bar1.parts === 3) {
         handleNext();
       }
-    } else if (barNumber === 2 && bar2.parts < 6) {
-      setBar2(prev => ({ ...prev, parts: prev.parts + 1 }));
-      if (bar2.parts === targetParts) {
+    } else {
+      if (bar2.parts < 6) {
+        setBar2(prev => ({ ...prev, parts: prev.parts + 1 }));
+      }
+      if (bar2.parts === 5) {
         handleNext();
       }
     }
@@ -259,18 +259,25 @@ export default function FractionsGame() {
   const currentStepData = gameSteps[currentStep];
 
   return (
-    <Card className="p-6 w-full max-w-4xl mx-auto mt-4 bg-white rounded-2xl shadow-lg">
+    <Card className="p-8 w-full px-12 mx-auto  bg-white rounded-2xl shadow-lg">
       {/* Message Display */}
-      <div className={`text-2xl font-bold text-center mb-8 text-gray-700 
-        animate-${currentStepData.animation}`}>
-        {currentStepData.message}
+      <div className="mb-8 text-center space-y-2">
+        <h2 className="text-3xl font-bold text-gray-800">
+          {gameSteps[currentStep].message}
+        </h2>
+        <p className="text-xl text-gray-600">
+          {gameSteps[currentStep].subMessage}
+        </p>
       </div>
 
       {/* Interactive Area */}
       <div className="space-y-12">
         {/* First Bar */}
         {currentStep >= 2 && (
-          <div className={`transition-all duration-500 animate-fade-in`}>
+          <div className="transition-all duration-300">
+            {/* <div className="text-lg text-gray-600 mb-2 text-center font-medium">
+              {currentStep === 2 && `Cuts needed: ${Math.max(0, 3 - (bar1.parts - 1))} more`}
+            </div> */}
             <Bar
               parts={bar1.parts}
               selectedParts={bar1.selectedParts}
@@ -278,14 +285,17 @@ export default function FractionsGame() {
               onSelect={currentStep === 3 ? (part) => handleSelect(1, part) : undefined}
               maxParts={4}
               numToSelect={1}
-              label="First Bar (1/4)"
+              // label="First Bar (1/4)"
             />
           </div>
         )}
 
         {/* Second Bar */}
         {currentStep >= 5 && (
-          <div className={`transition-all duration-500 animate-fade-in`}>
+          <div className="transition-all duration-300">
+            {/* <div className="text-lg text-gray-600 mb-2 text-center font-medium">
+              {currentStep === 5 && `Cuts needed: ${Math.max(0, 5 - (bar2.parts - 1))} more`}
+            </div> */}
             <Bar
               parts={bar2.parts}
               selectedParts={bar2.selectedParts}
@@ -293,14 +303,22 @@ export default function FractionsGame() {
               onSelect={currentStep === 6 ? (part) => handleSelect(2, part) : undefined}
               maxParts={6}
               numToSelect={1}
-              label="Second Bar (1/6)"
+              // label="Second Bar (1/6)"
             />
+          </div>
+        )}
+
+        {/* Answer */}
+        {showAnswer && (
+          <div className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl 
+            text-lg text-gray-700 border-2 border-purple-100">
+            {explanations.correct[userAnswer as keyof typeof explanations.correct]}
           </div>
         )}
 
         {/* Comparison Section */}
         {currentStep === 8 && !showAnswer && (
-          <div className="flex justify-center gap-6 animate-bounce-slow">
+          <div className="flex justify-center gap-6">
             <button
               onClick={() => handleAnswer('1/4')}
               className="px-8 py-4 bg-gradient-to-r from-purple-400 to-pink-500 
@@ -320,24 +338,17 @@ export default function FractionsGame() {
           </div>
         )}
 
-        {/* Explanation */}
-        {showExplanation && (
-          <div className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl 
-            animate-fade-in text-lg text-gray-700">
-            {explanations.correct[userAnswer as keyof typeof explanations.correct]}
-          </div>
-        )}
 
         {/* Next Button */}
-        {currentStepData.showNext && !currentStepData.requireAction && (
+        {gameSteps[currentStep].showNext && !gameSteps[currentStep].requireAction && (
           <div className="flex justify-center mt-8">
             <button
               onClick={handleNext}
               className="px-8 py-4 bg-gradient-to-r from-indigo-400 to-purple-500 
                 text-white rounded-xl text-xl font-bold shadow-lg hover:shadow-xl 
-                hover:scale-105 transition-all duration-300 animate-pulse"
+                hover:scale-105 transition-all duration-300"
             >
-              Next ➡️
+              Continue 
             </button>
           </div>
         )}
