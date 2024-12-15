@@ -213,18 +213,18 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
 
       switch(currentStep + 1) {
         case 1:
-          sendAdminMessage("Can you make 2/7 using this chocolate bar?");
+          sendAdminMessage('admin', "Can you make 2/7 using this chocolate bar?");
           break;
         case 2:
-          sendAdminMessage("Now try making 2/8 with the second bar.");
+          sendAdminMessage('admin', "Now try making 2/8 with the second bar.");
           break;
         case 3:
           if (bar2.parts < 8) {
-            sendAdminMessage("How would you split this bar into eighths?");
+            sendAdminMessage('admin', "How would you split this bar into eighths?");
           }
           break;
         case 4:
-          sendAdminMessage("Which fraction gives you more chocolate?");
+          sendAdminMessage('admin', "Which fraction gives you more chocolate?");
           break;
       }
     }
@@ -276,9 +276,9 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
     setShowExplanation(true);
 
     if (answer === '2/7') {
-      sendAdminMessage("Correct! When we have fewer pieces, each piece is bigger. So 2/7 gives us more chocolate than 2/8.");
+      sendAdminMessage('admin', "Correct! When we have fewer pieces, each piece is bigger. So 2/7 gives us more chocolate than 2/8.");
     } else {
-      sendAdminMessage("Look carefully at the size of each piece. When we split into more pieces, does each piece get bigger or smaller?");
+      sendAdminMessage('admin', "Look carefully at the size of each piece. When we split into more pieces, does each piece get bigger or smaller?");
     }
   };
 
