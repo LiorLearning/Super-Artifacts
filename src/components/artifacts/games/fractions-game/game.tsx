@@ -5,17 +5,6 @@ import { Card } from "@/components/ui/card";
 import './chocolate.css';
 import useSound from 'use-sound';
 
-interface Fraction {
-  numerator: number;
-  denominator: number;
-}
-
-interface FractionsGameProps {
-  fraction1: Fraction;
-  fraction2: Fraction;
-  onComplete?: (correct: boolean) => void;
-}
-
 interface BarState {
   parts: number;
   selectedParts: number[];
@@ -161,7 +150,11 @@ function Bar({
   );
 }
 
-export default function FractionsGame({sendAdminMessage}: {sendAdminMessage: (message: string) => void}) {
+interface FractionsGameProps {
+  sendAdminMessage: (role: string, content: string) => void;
+}
+
+export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [bar1, setBar1] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [bar2, setBar2] = useState<BarState>({ parts: 1, selectedParts: [] });
