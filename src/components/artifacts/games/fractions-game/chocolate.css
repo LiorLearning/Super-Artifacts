@@ -94,6 +94,37 @@
   animation: pulse 2s infinite;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes hammerSwing {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-20deg); }
+  50% { transform: rotate(20deg); }
+  75% { transform: rotate(-10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.hammer-swing {
+  animation: hammerSwing 0.3s ease-in-out;
+}
+
 .chocolate-piece::before {
   content: '';
   position: absolute;

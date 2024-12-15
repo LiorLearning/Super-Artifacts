@@ -32,11 +32,14 @@ function Bar({
     volume: 0.5,
     interrupt: true
   });
+  const [isHammerSwinging, setIsHammerSwinging] = useState(false);
 
   // Handle break with sound
   const handleBreak = () => {
+    setIsHammerSwinging(true);
     playBreakSound();
     if (onCut) onCut();
+    setTimeout(() => setIsHammerSwinging(false), 300); // Match animation duration
   };
 
   return (
@@ -118,22 +121,21 @@ function Bar({
         {/* Break Button */}
         <div className="w-24 mr-10">
         {onCut && (
-
           <button
             onClick={handleBreak}
             disabled={parts >= maxParts}
             className={`px-6 py-4 rounded-xl shadow-lg transition-all duration-300
-              flex items-center gap-3 whitespace-nowrap animate-pulse
+              flex items-center gap-3 whitespace-nowrap
               ${parts >= maxParts 
                 ? 'bg-gray-300 cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-[#8B4513] to-[#654321] text-white hover:shadow-xl hover:scale-105'}`}
-            >
-              <span className="text-2xl transform group-hover:rotate-12 transition-transform duration-300">
-                🍫
-              </span>
-              <span className="text-lg font-bold">Break!</span>
-            </button>
-          )}
+                : 'bg-gradient-to-r from-[#8B4513] to-[#654321] text-white hover:shadow-xl hover:scale-105 active:scale-95'}`}
+          >
+            <span className={`text-2xl transform transition-transform duration-300 ${isHammerSwinging ? 'hammer-swing' : ''}`}>
+              🔨
+            </span>
+            <span className="text-lg font-bold">Break!</span>
+          </button>
+        )}
         </div>
       </div>  
 
@@ -332,7 +334,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
               onClick={() => handleAnswer('2/7')}
               className="px-8 py-4 bg-gradient-to-r from-[#8B4513] to-[#654321] text-white rounded-xl 
                 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300
-                font-bold text-lg"
+                font-bold text-lg active:scale-95"
             >
               2/7 is bigger 🍫
             </button>
@@ -340,19 +342,27 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
               onClick={() => handleAnswer('2/8')}
               className="px-8 py-4 bg-gradient-to-r from-[#8B4513] to-[#654321] text-white rounded-xl 
                 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300
-                font-bold text-lg"
+                font-bold text-lg active:scale-95"
             >
               2/8 is bigger 🍫
             </button>
           </div>
         )}
 
-        {/* Explanation */}
+        {/* Result Animation */}
         {showExplanation && (
-          <div className="mt-8 p-6 bg-white/80 rounded-xl shadow-lg">
-            <p className="text-lg text-[#2c1810] whitespace-pre-line">
-              {explanations.correct[userAnswer as keyof typeof explanations.correct]}
-            </p>
+          <div className={`mt-8 flex justify-center items-center transition-all duration-500 ${
+            showAnswer ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+          }`}>
+            {userAnswer === '2/7' ? (
+              <div className="text-4xl animate-bounce">
+                ✅ Correct!
+              </div>
+            ) : (
+              <div className="text-4xl animate-shake">
+                ❌ Try Again
+              </div>
+            )}
           </div>
         )}
       </div>
