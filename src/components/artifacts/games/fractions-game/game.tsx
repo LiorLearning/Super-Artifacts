@@ -210,6 +210,23 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
     if (currentStep < gameSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
       setShowExplanation(false);
+
+      switch(currentStep + 1) {
+        case 1:
+          sendAdminMessage('admin', "Can you make 2/7 using this chocolate bar?");
+          break;
+        case 2:
+          sendAdminMessage('admin', "Now try making 2/8 with the second bar.");
+          break;
+        case 3:
+          if (bar2.parts < 8) {
+            sendAdminMessage('admin', "How would you split this bar into eighths?");
+          }
+          break;
+        case 4:
+          sendAdminMessage('admin', "Which fraction gives you more chocolate?");
+          break;
+      }
     }
   };
 
@@ -219,14 +236,14 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
         setBar1(prev => ({ ...prev, parts: prev.parts + 1 }));
       }
       if (bar1.parts === 6) {
-        setTimeout(() => handleNext(), 500); // Add delay for animation
+        setTimeout(() => handleNext(), 500);
       }
     } else {
       if (bar2.parts < 8) {
         setBar2(prev => ({ ...prev, parts: prev.parts + 1 }));
       }
       if (bar2.parts === 7) {
-        setTimeout(() => handleNext(), 500); // Add delay for animation
+        setTimeout(() => handleNext(), 500);
       }
     }
   };
@@ -239,7 +256,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
         selectedParts: newSelectedParts
       }));
       if (newSelectedParts.length === 2) {
-        handleNext();
+        setTimeout(() => handleNext(), 500);
       }
     } else {
       const newSelectedParts = [...bar2.selectedParts, part];
@@ -248,7 +265,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
         selectedParts: newSelectedParts
       }));
       if (newSelectedParts.length === 2) {
-        handleNext();
+        setTimeout(() => handleNext(), 500);
       }
     }
   };
@@ -257,6 +274,12 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
     setUserAnswer(answer);
     setShowAnswer(true);
     setShowExplanation(true);
+
+    if (answer === '2/7') {
+      sendAdminMessage('admin', "Correct! When we have fewer pieces, each piece is bigger. So 2/7 gives us more chocolate than 2/8.");
+    } else {
+      sendAdminMessage('admin', "Look carefully at the size of each piece. When we split into more pieces, does each piece get bigger or smaller?");
+    }
   };
 
   const currentStepData = gameSteps[currentStep];
@@ -267,7 +290,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
         {/* Game Message */}
         <div className="text-center">
           <h2 className="text-2xl font-bold text-[#2c1810] mb-4 animate-fade-in">
-            {gameSteps[currentStep].message}
+            Which Fraction is bigger? 2/7 or 2/8?
           </h2>
         </div>
 
