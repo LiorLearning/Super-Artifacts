@@ -30,6 +30,9 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.1.2",
     "react-live": "^4.1.7",
+    "react-markdown": "^9.0.1",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "use-sound": "^4.0.3"
