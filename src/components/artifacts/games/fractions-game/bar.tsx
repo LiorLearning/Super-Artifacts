@@ -129,10 +129,10 @@ export function Bar({
                 ? 'bg-gray-300 cursor-not-allowed' 
                 : 'bg-gradient-to-r from-[#8B4513] to-[#654321] text-white hover:shadow-xl hover:scale-105 active:scale-95'}`}
           >
-            <span className={`text-2xl transform transition-transform duration-300 ${isHammerSwinging ? 'hammer-swing' : ''}`}>
-              🔨
-            </span>
-            <span className="text-lg font-bold">Break!</span>
+            {/* <span className={`text-2xl transform transition-transform duration-300 ${isHammerSwinging ? 'hammer-swing' : ''}`}>
+              🔪
+            </span> */}
+            <span className="text-lg font-bold">Split!</span>
           </button>
         )}
         </div>

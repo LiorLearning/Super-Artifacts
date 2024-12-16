@@ -152,7 +152,6 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
   return (
     <Card className="w-full max-w-4xl mx-auto p-8 bg-gradient-to-br from-[#f5e6d3] to-[#e6d5c3] shadow-2xl rounded-2xl">
       <div className="space-y-8">
-        {currentStep}
         {/* Game Message */}
         <div className="text-center">
           <h2 className="text-2xl font-bold text-[#2c1810] mb-4 animate-fade-in">
