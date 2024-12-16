@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '../ui/select';
 import { useWebSocketLogger } from '../websocket';
-import { AdminRequestMessage } from '../MessageContext';
+import { AdminRequestMessage, AssistanceResponseMessage } from '../MessageContext';
 import GameLoader from '../utils/gameLoader';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -32,26 +32,36 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
   const [currentGame, setCurrentGame] = useState<GameKey | null>(gameParam);
   const [loading, setLoading] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
-  const { sendLog } = useWebSocketLogger()
+  const { sendLog, addToChat } = useWebSocketLogger()
 
   const sendAdminMessage = async (role: string, content: string) => {
-    sendLog({
-      type: 'admin',
-      timestamp: new Date().toISOString(),
-      content: content,
-      role: role,
-      html: componentRef.current?.outerHTML,
-    } as AdminRequestMessage)
+    if (role == 'admin') {
+      sendLog({
+        type: 'admin',
+        timestamp: new Date().toISOString(),
+        content: content,
+        role: role,
+        html: componentRef.current?.outerHTML,
+      } as AdminRequestMessage)
+    } else if (role == 'agent') {
+      console.log("Here2");
+      addToChat({
+        type: 'agent',
+        timestamp: new Date().toISOString(),
+        content: content,
+        role: 'agent',
+      } as AssistanceResponseMessage)
+    }
   };
 
   const startGame = () => {
     setGameStarted(true);
-    if (currentGame) {
-      const gameDescription = currentGame.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      setTimeout(() => {
-        sendAdminMessage('admin', `Welcome the user and describe the game: ${gameDescription}`);
-      }, 500);
-    }
+    // if (currentGame) {
+    //   const gameDescription = currentGame.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    //   setTimeout(() => {
+    //     sendAdminMessage('admin', `Welcome the user and describe the game: ${gameDescription}`);
+    //   }, 500);
+    // }
   };
 
   useEffect(() => {
