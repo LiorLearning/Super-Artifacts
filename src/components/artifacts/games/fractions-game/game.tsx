@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/custom_ui/card";
+import { Button } from '@/components/custom_ui/button';
 import './chocolate.css';
 import { Bar, BarState } from './bar';
 
@@ -26,6 +27,12 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
   const [showExplanation, setShowExplanation] = useState(false);
 
   const gameSteps = [
+    {
+      id: 'start',
+      message: `Which Fraction is bigger? ${fraction1.num}/${fraction1.denom} or ${fraction2.num}/${fraction2.denom}?`,
+      visualise: true,
+      requireAction: true
+    },
     {
       id: 'intro',
       message: `Which Fraction is bigger? ${fraction1.num}/${fraction1.denom} or ${fraction2.num}/${fraction2.denom}?`,
@@ -75,13 +82,13 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
       setShowExplanation(false);
 
       switch(currentStep + 1) {
-        case 0:
+        case 1:
           sendAdminMessage('agent', `We'll compare these fractions visually. First, try breaking the first chocolate to give yourself ${fraction1.num}/${fraction1.denom}ths`);
           break
-        case 2:
+        case 3:
           sendAdminMessage('agent', `Awesome! Now try breaking the second chocolate to give yourself ${fraction2.num}/${fraction2.denom}ths`);
           break;
-        case 4:
+        case 5:
           sendAdminMessage('agent', `Can you try comparing them visually - which one do you think is bigger?`);
           break;
       }
@@ -145,6 +152,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
   return (
     <Card className="w-full max-w-4xl mx-auto p-8 bg-gradient-to-br from-[#f5e6d3] to-[#e6d5c3] shadow-2xl rounded-2xl">
       <div className="space-y-8">
+        {currentStep}
         {/* Game Message */}
         <div className="text-center">
           <h2 className="text-2xl font-bold text-[#2c1810] mb-4 animate-fade-in">
@@ -154,13 +162,30 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
 
         {/* Chocolate Bars Container */}
         <div className="space-y-12 relative">
+          {gameSteps[currentStep].visualise && (
+            <div className={`transition-all duration-500 ${showAnswer ? 'opacity-50' : ''}`}>
+              <div className="flex justify-center mt-4">
+                <Button
+                  onClick={() => {
+                    setTimeout(() => handleNext(), 500);
+                  }}
+                  className="px-6 py-3 bg-gradient-to-r from-[#8B4513] to-[#654321] text-white rounded-lg 
+                    shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300
+                    font-semibold text-md active:scale-95"
+                >
+                  Visualise
+                </Button>
+              </div>
+            </div>
+          )}
+
           {gameSteps[currentStep].showBar1 && (
             <div className={`transition-all duration-500 ${showAnswer ? 'opacity-50' : ''}`}>
               <Bar
                 parts={bar1.parts}
                 selectedParts={bar1.selectedParts}
                 onCut={currentStep === 1 || currentStep === 0 ? () => handleCut(1) : undefined}
-                onSelect={currentStep === 1 ? (part) => handleSelect(1, part) : undefined}
+                onSelect={currentStep === 2 ? (part) => handleSelect(1, part) : undefined}
                 maxParts={fraction1.denom}
                 numToSelect={fraction1.num}
                 label="First Bar"
@@ -173,8 +198,8 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
               <Bar
                 parts={bar2.parts}
                 selectedParts={bar2.selectedParts}
-                onCut={currentStep === 2 || currentStep === 3 ? () => handleCut(2) : undefined}
-                onSelect={currentStep === 3 ? (part) => handleSelect(2, part) : undefined}
+                onCut={currentStep === 3 || currentStep === 2 ? () => handleCut(2) : undefined}
+                onSelect={currentStep === 4 ? (part) => handleSelect(2, part) : undefined}
                 maxParts={fraction2.denom}
                 numToSelect={fraction2.num}
                 label="Second Bar"
