@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Card } from "@/components/ui/card";
+import { useEffect, useState } from 'react';
+import { Card } from "@/components/custom_ui/card";
+import { Button } from '@/components/custom_ui/button';
 import './chocolate.css';
 import useSound from 'use-sound';
 
@@ -17,6 +18,7 @@ function Bar({
   onJoin,
   onSelect,
   numToSelect,
+  maxParts,
   label 
 }: { 
   parts: number;
@@ -25,6 +27,7 @@ function Bar({
   onJoin?: () => void;
   onSelect?: (part: number) => void;
   numToSelect: number;
+  maxParts: number;
   label: string;
 }) {
   const isLargeDenominator = parts > 12;
@@ -167,17 +170,24 @@ interface FractionsGameProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
 
+interface Fraction {
+  num: number;
+  denom: number;
+}
+
+const fraction1: Fraction = { num: 2, denom: 7 };
+const fraction2: Fraction = { num: 2, denom: 8 };
+
 export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
   const [bar1, setBar1] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [bar2, setBar2] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [showAnswer, setShowAnswer] = useState(false);
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
-  const [hint, setHint] = useState<string | null>(null);
   const [isFirstFractionCorrect, setIsFirstFractionCorrect] = useState(false);
   const [isSecondFractionCorrect, setIsSecondFractionCorrect] = useState(false);
 
-  const checkFraction = (bar: BarState, targetNumerator: number, targetDenominator: number) => {
-    return bar.parts === targetDenominator && bar.selectedParts.length === targetNumerator;
+  const checkFraction = (bar: BarState, targetFraction: Fraction) => {
+    return bar.parts === targetFraction.denom && bar.selectedParts.length === targetFraction.num;
   };
 
   const handleCut = (barNumber: number) => {
@@ -205,7 +215,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
             ? prev.selectedParts.filter(p => p !== part)
             : [...prev.selectedParts, part]
         };
-        setIsFirstFractionCorrect(checkFraction(newState, 2, 7));
+        setIsFirstFractionCorrect(checkFraction(newState, fraction1));
         return newState;
       });
     } else {
@@ -216,7 +226,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
             ? prev.selectedParts.filter(p => p !== part)
             : [...prev.selectedParts, part]
         };
-        setIsSecondFractionCorrect(checkFraction(newState, 2, 8));
+        setIsSecondFractionCorrect(checkFraction(newState, fraction2));
         return newState;
       });
     }
@@ -224,14 +234,14 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
 
   const handleAnswer = (answer: string) => {
     if (!isFirstFractionCorrect || !isSecondFractionCorrect) {
-      sendAdminMessage('assistant', "Make sure you've correctly created both fractions (2/7 and 2/8) before comparing!");
+      sendAdminMessage('assistant', `Make sure you've correctly created both fractions (${fraction1.num}/${fraction1.denom} and ${fraction2.num}/${fraction2.denom}) before comparing!`);
       return;
     }
     
     setUserAnswer(answer);
     setShowAnswer(true);
-    if (answer !== '2/7') {
-      sendAdminMessage('assistant', "Look closely! When we break into 7 pieces, each piece is bigger than when we break into 8. 🤔");
+    if (answer !== `${fraction1.num}/${fraction1.denom}`) {
+      sendAdminMessage('assistant', `Look closely! When we break into ${fraction1.denom} pieces, each piece is bigger than when we break into ${fraction2.denom}. 🤔`);
     }
   };
 
@@ -245,7 +255,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
             Chocolate Bar Fractions
           </h2>
           <p className="text-xl text-[#5d4037] font-medium">
-            Which is bigger: <span className="font-bold text-[#8B4513]">2/7</span> or <span className="font-bold text-[#8B4513]">2/8</span>?
+            Which is bigger: <span className="font-bold text-[#8B4513]">{fraction1.num}/{fraction1.denom}</span> or <span className="font-bold text-[#8B4513]">{fraction2.num}/{fraction2.denom}</span>?
           </p>
           <p className="text-sm text-[#8d6e63] italic">
             Split the bars and select pieces to explore! 🍫
@@ -257,7 +267,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
           <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
             <div className="flex items-center mb-4">
               <div className="flex-1">
-                <span className="text-lg font-semibold text-[#5d4037]">First Bar: Make 2/7</span>
+                <span className="text-lg font-semibold text-[#5d4037]">First Bar: Make {fraction1.num}/{fraction1.denom}</span>
                 {isFirstFractionCorrect && (
                   <span className="ml-2 text-green-600 animate-bounce">✓</span>
                 )}
@@ -269,7 +279,8 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
               onCut={() => handleCut(1)}
               onJoin={() => handleJoin(1)}
               onSelect={(part) => handleSelect(1, part)}
-              numToSelect={2}
+              numToSelect={fraction1.num}
+              maxParts={12}
               label="First Bar"
             />
           </div>
@@ -277,7 +288,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
           <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
             <div className="flex items-center mb-4">
               <div className="flex-1">
-                <span className="text-lg font-semibold text-[#5d4037]">Second Bar: Make 2/8</span>
+                <span className="text-lg font-semibold text-[#5d4037]">Second Bar: Make {fraction2.num}/{fraction2.denom}</span>
                 {isSecondFractionCorrect && (
                   <span className="ml-2 text-green-600 animate-bounce">✓</span>
                 )}
@@ -289,7 +300,8 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
               onCut={() => handleCut(2)}
               onJoin={() => handleJoin(2)}
               onSelect={(part) => handleSelect(2, part)}
-              numToSelect={2}
+              numToSelect={fraction2.num}
+              maxParts={12}
               label="Second Bar"
             />
           </div>
@@ -300,7 +312,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
           <div className="flex flex-col items-center gap-4 mt-12">
             <div className="flex justify-center gap-6">
               <button
-                onClick={() => handleAnswer('2/7')}
+                onClick={() => handleAnswer(`${fraction1.num}/${fraction1.denom}`)}
                 className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   ${isFirstFractionCorrect && isSecondFractionCorrect
@@ -309,10 +321,10 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
                   }`}
                 disabled={!isFirstFractionCorrect || !isSecondFractionCorrect}
               >
-                2/7 is bigger
+                {fraction1.num}/{fraction1.denom} is bigger
               </button>
               <button
-                onClick={() => handleAnswer('2/8')}
+                onClick={() => handleAnswer(`${fraction2.num}/${fraction2.denom}`)}
                 className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   ${isFirstFractionCorrect && isSecondFractionCorrect
@@ -321,7 +333,7 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
                   }`}
                 disabled={!isFirstFractionCorrect || !isSecondFractionCorrect}
               >
-                2/8 is bigger
+                {fraction2.num}/{fraction2.denom} is bigger
               </button>
             </div>
           </div>
@@ -331,19 +343,19 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
         {showAnswer && (
           <div className="mt-8">
             <div className={`bg-white/80 rounded-xl p-8 shadow-lg backdrop-blur-sm
-              ${userAnswer === '2/7' ? 'bg-gradient-to-br from-white/90 to-yellow-50/90' : ''}`}>
+              ${userAnswer === `${fraction1.num}/${fraction1.denom}` ? 'bg-gradient-to-br from-white/90 to-yellow-50/90' : ''}`}>
               <div className="text-center space-y-6">
-                {userAnswer === '2/7' ? (
+                {userAnswer === `${fraction1.num}/${fraction1.denom}` ? (
                   <>
                     <div className="space-y-4">
                       <div className="text-4xl font-bold text-green-600 animate-bounce">
-                        🎉 Fantastic! You are Right, 2/7 is bigger
+                        🎉 Fantastic! You are Right, {fraction1.num}/{fraction1.denom} is bigger
                       </div>
                     </div>
                   </>
                 ) : (
                   <div className="text-2xl font-bold text-[#5d4037] flex items-center justify-center gap-3">
-                    <span>Not quite right! Actually 2/7 is bigger</span>
+                    <span>Not quite right! Actually {fraction1.num}/{fraction1.denom} is bigger</span>
                   </div>
                 )}
               </div>

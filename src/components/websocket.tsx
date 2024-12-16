@@ -7,6 +7,7 @@ const SPEAKOUT = false;
 
 type WebSocketContextType = {
   sendLog: (message: Message | Blob) => void;
+  addToChat: (message: Message ) => void;
   isConnected: boolean;
 };
 
@@ -149,14 +150,21 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ url, child
     };
   }, [url]);
 
-  const sendLog = useCallback((message: Message | Blob) => {
+  const sendLog = (message: Message | Blob) => {
     wsRef.current?.sendMessage(message);
-  }, []);
+  };
+
+  const addToChat = (message: Message) => {
+    if (messageContext) {
+      messageContext.setMessages(prev => [...prev, message]);
+    }
+  };
 
   const contextValue = React.useMemo(() => ({
     sendLog,
+    addToChat,
     isConnected
-  }), [sendLog, isConnected]);
+  }), [sendLog, addToChat, isConnected]);
 
   return (
     <WebSocketContext.Provider value={contextValue}>
