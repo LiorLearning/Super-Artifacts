@@ -13,6 +13,7 @@ import SharkGame, { desc as SharkGameDesc } from './games/shark-game/game';
 import FractionsGame, { desc as FractionsGameDesc } from './games/fractions-game/game';
 import NumberLineGame, { desc as NumberLineGameDesc } from './games/number-line-game/game';
 import InteractiveLongDivisionGame, { desc as InteractiveLongDivisionGameDesc } from './games/long-division-game/game';
+import EquivalentFractionsGame, { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game';
 
 type GameKey = keyof typeof gameComponents;
 const gameComponents = {
@@ -21,6 +22,7 @@ const gameComponents = {
   'fractions-game': FractionsGame,
   'number-line-game': NumberLineGame,
   'interactive-long-division-game': InteractiveLongDivisionGame,
+  'equivalent-fractions-game': EquivalentFractionsGame,
 };
 
 const gameDescriptions = {
@@ -29,6 +31,7 @@ const gameDescriptions = {
   'fractions-game': FractionsGameDesc,
   'number-line-game': NumberLineGameDesc,
   'interactive-long-division-game': InteractiveLongDivisionGameDesc,
+  'equivalent-fractions-game': EquivalentFractionsGameDesc,
 };
 
 const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) => {
