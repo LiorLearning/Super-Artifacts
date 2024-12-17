@@ -2,169 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Card } from "@/components/custom_ui/card";
-import { Button } from '@/components/custom_ui/button';
 import './chocolate.css';
-import useSound from 'use-sound';
-
-interface BarState {
-  parts: number;
-  selectedParts: number[];
-}
-
-function Bar({ 
-  parts, 
-  selectedParts,
-  onCut, 
-  onJoin,
-  onSelect,
-  numToSelect,
-  maxParts,
-  label 
-}: { 
-  parts: number;
-  selectedParts: number[];
-  onCut?: () => void;
-  onJoin?: () => void;
-  onSelect?: (part: number) => void;
-  numToSelect: number;
-  maxParts: number;
-  label: string;
-}) {
-  const isLargeDenominator = parts > 12;
-  const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', {
-    volume: 0.5,
-    interrupt: true
-  });
-  const [playJoinSound] = useSound('/sounds/join.mp3', {
-    volume: 0.5,
-    interrupt: true
-  });
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const handleBreak = () => {
-    setIsAnimating(true);
-    playBreakSound();
-    if (onCut) onCut();
-    setTimeout(() => setIsAnimating(false), 300);
-  };
-
-  const handleJoin = () => {
-    if (parts <= 1) return;
-    playJoinSound();
-    if (onJoin) onJoin();
-  };
-
-  return (
-    <div className="relative">
-      <div className="flex items-center gap-6">
-        <div className="w-40 flex flex-col gap-2">
-            <button
-              onClick={handleBreak}
-              className="flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
-                flex items-center justify-center p-2
-                bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white 
-                hover:shadow-xl hover:scale-105 active:scale-95
-                font-semibold tracking-wide text-lg
-                border-2 border-[#7a5729] border-opacity-20"
-            >
-              <span className={`transform transition-transform duration-300 ${isAnimating ? 'animate-split' : ''}`}>
-                Split 
-              </span> 🍫
-            </button>
-            <button
-              onClick={parts > 1 ? handleJoin : undefined}
-              className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
-                flex items-center justify-center p-2
-                bg-gradient-to-r from-[#FFB347] to-[#FFD700] text-[#5d4037]
-                font-semibold tracking-wide text-lg
-                border-2 border-[#fcbe4d] border-opacity-40
-                ${parts <= 1 
-                  ? 'cursor-not-allowed opacity-50' 
-                  : 'hover:shadow-xl hover:scale-105 active:scale-95 cursor-pointer'}`}
-              disabled={parts <= 1}
-            >
-              <p>Join</p>🍯
-            </button>
-        </div>
-
-        {/* Chocolate Bar */}
-        <div className="flex-1 relative">
-          {/* Wrapper with perspective for 3D effect */}
-          <div className="w-full perspective-1000">
-            {/* Main chocolate bar container */}
-            <div className="relative h-32 bg-[#5c3624] rounded-lg shadow-xl transform-style-3d rotate-x-10">
-              {/* Chocolate pieces */}
-              <div className="absolute inset-0 flex gap-1 p-1">
-                {Array.from({ length: parts }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => onSelect?.(index)}
-                    className={`flex-1 relative bg-gradient-to-b from-[#8a5a42] via-[#734939] to-[#5c3624] 
-                      transition-all duration-300 ease-out transform-gpu rounded-sm
-                      hover:from-[#9a6a52] hover:via-[#835949] hover:to-[#6c4634]
-                      ${selectedParts.includes(index) 
-                        ? 'ring-2 ring-yellow-400 from-[#7a4a32] via-[#633929] to-[#4c2614]' 
-                        : ''}`}
-                  >
-                    {/* Embossed logo effect */}
-                    <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 h-4 
-                      border border-[#4a2c1c] rounded-sm opacity-30" />
-                    
-                    {/* Horizontal grooves */}
-                    <div className="absolute inset-0 flex flex-col justify-around py-2">
-                      {[0, 1].map((groove) => (
-                        <div key={groove} className="relative w-full h-2">
-                          {/* Groove base */}
-                          <div className="absolute inset-0 bg-gradient-to-b from-[#3a2218] via-[#4a2c1c] to-[#3a2218]" />
-                          
-                          {/* Top edge highlight */}
-                          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#8a5a42] to-transparent opacity-50" />
-                          
-                          {/* Bottom edge shadow */}
-                          <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#2a1a12] to-transparent opacity-50" />
-                          
-                          {/* Inner groove shadow */}
-                          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20" />
-                          
-                          {/* Shine effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Overall shine effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                    
-                    {/* Top edge highlight */}
-                    <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#8a5a42] to-transparent" />
-                    
-                    {/* Bottom edge shadow */}
-                    <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#2a1a12] to-transparent" />
-                  </button>
-                ))}
-              </div>
-
-              {/* Bottom shadow */}
-              <div className="absolute -bottom-4 inset-x-0 h-4 bg-black/20 blur-md rounded-full" />
-            </div>
-          </div>
-        </div>
-
-        {/* Fraction Display */}
-        <div className="w-32 ml-10">
-          <div className="text-center bg-[#654321] text-white rounded-xl px-4 py-3
-            shadow-lg transform transition-all duration-300 hover:scale-105">
-            <div className="text-2xl font-bold">
-              {selectedParts.length}
-              <hr className="border-t-2 border-white my-1" />
-              {parts}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { Bar, BarState } from './bar';
 
 interface FractionsGameProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -177,16 +16,19 @@ interface Fraction {
 
 const fraction1: Fraction = { num: 2, denom: 7 };
 const fraction2: Fraction = { num: 2, denom: 8 };
+const maxParts = 12;
 
-export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
+const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
   const [bar1, setBar1] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [bar2, setBar2] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [showAnswer, setShowAnswer] = useState(false);
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
   const [isFirstFractionCorrect, setIsFirstFractionCorrect] = useState(false);
   const [isSecondFractionCorrect, setIsSecondFractionCorrect] = useState(false);
+  const [compareMode, setCompareMode] = useState(false);
 
   const checkFraction = (bar: BarState, targetFraction: Fraction) => {
+    // console.log(bar.parts, targetFraction.denom, bar.selectedParts.length, targetFraction.num);
     return bar.parts === targetFraction.denom && bar.selectedParts.length === targetFraction.num;
   };
 
@@ -206,6 +48,11 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
     }
   };
 
+  useEffect(() => {
+    setIsFirstFractionCorrect(checkFraction(bar1, fraction1));
+    setIsSecondFractionCorrect(checkFraction(bar2, fraction2));
+  }, [bar1, bar2]);
+
   const handleSelect = (barNumber: number, part: number) => {
     if (barNumber === 1) {
       setBar1(prev => {
@@ -215,7 +62,6 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
             ? prev.selectedParts.filter(p => p !== part)
             : [...prev.selectedParts, part]
         };
-        setIsFirstFractionCorrect(checkFraction(newState, fraction1));
         return newState;
       });
     } else {
@@ -226,7 +72,6 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
             ? prev.selectedParts.filter(p => p !== part)
             : [...prev.selectedParts, part]
         };
-        setIsSecondFractionCorrect(checkFraction(newState, fraction2));
         return newState;
       });
     }
@@ -243,6 +88,14 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
     if (answer !== `${fraction1.num}/${fraction1.denom}`) {
       sendAdminMessage('assistant', `Look closely! When we break into ${fraction1.denom} pieces, each piece is bigger than when we break into ${fraction2.denom}. 🤔`);
     }
+  };
+
+  const handleCompare = () => {
+    if (!isFirstFractionCorrect || !isSecondFractionCorrect) {
+      sendAdminMessage('assistant', `Make sure you've correctly created both fractions (${fraction1.num}/${fraction1.denom} and ${fraction2.num}/${fraction2.denom}) before comparing!`);
+      return;
+    }
+    setCompareMode(true);
   };
 
   return (
@@ -280,8 +133,8 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
               onJoin={() => handleJoin(1)}
               onSelect={(part) => handleSelect(1, part)}
               numToSelect={fraction1.num}
-              maxParts={12}
-              label="First Bar"
+              maxParts={maxParts}
+              compare={compareMode}
             />
           </div>
 
@@ -301,18 +154,18 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
               onJoin={() => handleJoin(2)}
               onSelect={(part) => handleSelect(2, part)}
               numToSelect={fraction2.num}
-              maxParts={12}
-              label="Second Bar"
+              maxParts={maxParts}
+              compare={compareMode}
             />
           </div>
         </div>
 
         {/* Comparison Buttons */}
-        {!showAnswer && (
+        {!showAnswer && !compareMode && (
           <div className="flex flex-col items-center gap-4 mt-12">
             <div className="flex justify-center gap-6">
               <button
-                onClick={() => handleAnswer(`${fraction1.num}/${fraction1.denom}`)}
+                onClick={handleCompare}
                 className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   ${isFirstFractionCorrect && isSecondFractionCorrect
@@ -320,6 +173,21 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
                 disabled={!isFirstFractionCorrect || !isSecondFractionCorrect}
+              >
+                Compare Bars
+              </button>
+            </div>
+          </div>
+        )}
+
+        {compareMode && !showAnswer && (
+          <div className="flex flex-col items-center gap-4 mt-12">
+            <div className="flex justify-center gap-6">
+              <button
+                onClick={() => handleAnswer(`${fraction1.num}/${fraction1.denom}`)}
+                className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
+                  transition-all duration-300 transform hover:scale-105 active:scale-95
+                  bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl`}
               >
                 {fraction1.num}/{fraction1.denom} is bigger
               </button>
@@ -365,4 +233,6 @@ export default function FractionsGame({sendAdminMessage}: FractionsGameProps) {
       </div>
     </Card>
   );
-}
+};
+
+export default FractionsGame;

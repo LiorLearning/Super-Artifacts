@@ -1,0 +1,192 @@
+import { useState } from 'react';
+import './chocolate.css';
+import useSound from 'use-sound';
+import { Button } from '@/components/custom_ui/button';
+
+
+export interface BarState {
+    parts: number;
+    selectedParts: number[];
+  }
+  
+export function Bar({ 
+  parts, 
+  selectedParts,
+  onCut, 
+  onJoin,
+  onSelect,
+  numToSelect,
+  maxParts,
+  compare = false, // New optional prop with default false
+}: { 
+  parts: number;
+  selectedParts: number[];
+  onCut?: () => void;
+  onJoin?: () => void;
+  onSelect?: (part: number) => void;
+  numToSelect: number;
+  maxParts: number;
+  compare?: boolean; // Added to type definition
+}) {
+  const isLargeDenominator = parts > 12;
+  const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', {
+    volume: 0.5,
+    interrupt: true
+  });
+  const [playJoinSound] = useSound('/sounds/join.mp3', {
+    volume: 0.5,
+    interrupt: true
+  });
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleBreak = () => {
+    if (parts >= maxParts) return; // Prevent breaking beyond max parts
+    setIsAnimating(true);
+    playBreakSound();
+    if (onCut) onCut();
+    setTimeout(() => setIsAnimating(false), 300);
+  };
+
+  const handleJoin = () => {
+    if (parts <= 1) return;
+    playJoinSound();
+    if (onJoin) onJoin();
+  };
+
+  const handleSelect = (part: number) => {
+    onSelect?.(part);
+  };
+
+  // If in compare mode and no parts are selected, return null
+  if (compare && selectedParts.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="relative">
+      <div className="flex items-center gap-6">
+        <div className="w-40 flex flex-col gap-2">
+            <Button
+              onClick={handleBreak}
+              className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
+                flex items-center justify-center p-2
+                bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white 
+                hover:shadow-xl hover:scale-105 active:scale-95
+                font-semibold tracking-wide text-lg
+                border-2 border-[#7a5729] border-opacity-20
+                ${compare 
+                  ? 'cursor-not-allowed opacity-50' 
+                  : parts >= maxParts 
+                    ? 'cursor-not-allowed opacity-50' 
+                    : 'hover:shadow-xl hover:scale-105 active:scale-95'}`}
+              disabled={compare || parts >= maxParts}
+            >
+              <span className={`transform transition-transform duration-300 ${isAnimating ? 'animate-split' : ''}`}>
+                Split 
+              </span> 🍫
+            </Button>
+            <Button
+              onClick={!compare && parts > 1 ? handleJoin : undefined}
+              className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
+                flex items-center justify-center p-2
+                bg-gradient-to-r from-[#FFB347] to-[#FFD700] text-[#5d4037]
+                font-semibold tracking-wide text-lg
+                border-2 border-[#fcbe4d] border-opacity-40
+                ${compare 
+                  ? 'cursor-not-allowed opacity-50' 
+                  : parts <= 1 
+                    ? 'cursor-not-allowed opacity-50' 
+                    : 'hover:shadow-xl hover:scale-105 active:scale-95 cursor-pointer'}`}
+              disabled={compare || parts <= 1}
+            >
+              <p>Join</p>🍯
+            </Button>
+        </div>
+
+        {/* Chocolate Bar */}
+        <div className="flex-1 relative">
+          {/* Wrapper with perspective for 3D effect */}
+          <div className="w-full perspective-1000">
+            {/* Main chocolate bar container */}
+            <div className={`relative h-32 rounded-lg shadow-xl transform-style-3d rotate-x-10 
+              ${compare && selectedParts.length === 0 ? 'bg-gray-400 opacity-50' : 'bg-[#5c3624]'}`}>
+              {/* Chocolate pieces */}
+              <div className="absolute inset-0 flex gap-1 p-1">
+                {Array.from({ length: parts }).map((_, index) => (
+                  <Button
+                    key={index}
+                    onClick={!compare ? () => handleSelect(index) : undefined}
+                    className={`flex-1 relative bg-gradient-to-b from-[#8a5a42] via-[#734939] to-[#5c3624] 
+                      transition-all duration-300 ease-out transform-gpu rounded-sm
+                      hover:from-[#9a6a52] hover:via-[#835949] hover:to-[#6c4634]
+                      h-full
+                      ${compare && !selectedParts.includes(index) 
+                        ? 'opacity-30 cursor-not-allowed relative' 
+                        : selectedParts.includes(index) 
+                          ? 'ring-2 ring-yellow-400 from-[#7a4a32] via-[#633929] to-[#4c2614] transform translate-y-[-10px] z-10 mx-1' 
+                          : ''}`}
+                  >
+                    {/* Gray overlay for non-selected pieces in compare mode */}
+                    {compare && !selectedParts.includes(index) && (
+                      <div className="absolute inset-0 bg-gray-500 opacity-70 z-20 pointer-events-none"></div>
+                    )}
+
+                    {/* Embossed logo effect */}
+                    <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 h-4 
+                      border border-[#4a2c1c] rounded-sm opacity-30" />
+                    
+                    {/* Horizontal grooves */}
+                    <div className="absolute inset-0 flex flex-col justify-around py-2">
+                      {[0, 1].map((groove) => (
+                        <div key={groove} className="relative w-full h-2">
+                          {/* Groove base */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-[#3a2218] via-[#4a2c1c] to-[#3a2218]" />
+                          
+                          {/* Top edge highlight */}
+                          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#8a5a42] to-transparent opacity-50" />
+                          
+                          {/* Bottom edge shadow */}
+                          <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#2a1a12] to-transparent opacity-50" />
+                          
+                          {/* Inner groove shadow */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20" />
+                          
+                          {/* Shine effect */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Overall shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+                    
+                    {/* Top edge highlight */}
+                    <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#8a5a42] to-transparent" />
+                    
+                    {/* Bottom edge shadow */}
+                    <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#2a1a12] to-transparent" />
+                  </Button>
+                ))}
+              </div>
+
+              {/* Bottom shadow */}
+              <div className="absolute -bottom-4 inset-x-0 h-4 bg-black/20 blur-md rounded-full" />
+            </div>
+          </div>
+        </div>
+
+        {/* Fraction Display */}
+        <div className="w-32 ml-10">
+          <div className="text-center bg-[#654321] text-white rounded-xl px-4 py-3
+            shadow-lg transform transition-all duration-300 hover:scale-105">
+            <div className="text-2xl font-bold">
+              {selectedParts.length}
+              <hr className="border-t-2 border-white my-1" />
+              {parts}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
