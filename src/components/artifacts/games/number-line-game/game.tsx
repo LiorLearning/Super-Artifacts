@@ -10,6 +10,8 @@ import { ArrowLeft, ArrowRight, Trash2, Star, Lightbulb } from 'lucide-react'
 import NumberLine  from "./NumberLine"
 import GameContainer from '@/components/GameContainer'
 
+export const desc = `Steps to Play the Game:`
+
 interface Hop {
   direction: 'forward' | 'backward'
   length: number

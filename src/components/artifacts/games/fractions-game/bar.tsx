@@ -112,6 +112,7 @@ export function Bar({
             <div className={`relative h-32 rounded-lg shadow-xl transform-style-3d rotate-x-10 
               ${compare && selectedParts.length === 0 ? 'bg-gray-400 opacity-50' : 'bg-[#5c3624]'}`}>
               <div className="absolute inset-0 flex gap-1 p-1">
+                {/* Select chocolate pieces */}
                 {Array.from({ length: parts }).map((_, index) => (
                   <Button
                     key={index}

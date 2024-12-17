@@ -4,6 +4,8 @@ import { Button } from "@/components/custom_ui/button"
 import { Input } from "@/components/custom_ui/input"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 
+export const desc = `Steps to Play the Game:`
+
 interface Group {
   id: number
   items: number

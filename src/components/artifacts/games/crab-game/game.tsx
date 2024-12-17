@@ -6,6 +6,8 @@ import { Input } from "@/components/custom_ui/input"
 import { Card } from "@/components/custom_ui/card"
 import { Plus, Minus } from "lucide-react"
 
+export const desc = `Steps to Play the Game:`
+
 const MAX_FISHTANK = 12
 const MIN_FISHTANK = 1
 const MAX_CRABS = 12

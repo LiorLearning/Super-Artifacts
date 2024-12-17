@@ -15,6 +15,13 @@ interface Fraction {
   denom: number;
 }
 
+export const desc = `Steps to Play the Game:
+1. Break the first chocolate bar by clicking the "Break" button.
+2. Select the pieces of the first bar that you want to keep.
+3. Break the second chocolate bar by clicking the "Break" button for the second bar.
+4. Select the pieces of the second bar that you want to keep.
+5. Compare the selected pieces from both bars to determine which fraction is larger.`;
+
 const fraction1: Fraction = { num: 1, denom: 2 };
 const fraction2: Fraction = { num: 1, denom: 3 };
 const maxParts = 12;

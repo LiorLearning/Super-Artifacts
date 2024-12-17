@@ -8,20 +8,27 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 
-import CrabGame from './games/crab-game/game';
-import SharkGame from './games/shark-game/game';
-import FractionsGame from './games/fractions-game/game';
-import NumberLineGame from './games/number-line-game/game';
-import InteractiveLongDivisionGame from './games/long-division-game/game';
+import CrabGame, { desc as CrabGameDesc } from './games/crab-game/game';
+import SharkGame, { desc as SharkGameDesc } from './games/shark-game/game';
+import FractionsGame, { desc as FractionsGameDesc } from './games/fractions-game/game';
+import NumberLineGame, { desc as NumberLineGameDesc } from './games/number-line-game/game';
+import InteractiveLongDivisionGame, { desc as InteractiveLongDivisionGameDesc } from './games/long-division-game/game';
 
 type GameKey = keyof typeof gameComponents;
-
 const gameComponents = {
   'crab-game': CrabGame,
   'shark-multiplication-game': SharkGame,
   'fractions-game': FractionsGame,
   'number-line-game': NumberLineGame,
   'interactive-long-division-game': InteractiveLongDivisionGame,
+};
+
+const gameDescriptions = {
+  'crab-game': CrabGameDesc,
+  'shark-multiplication-game': SharkGameDesc,
+  'fractions-game': FractionsGameDesc,
+  'number-line-game': NumberLineGameDesc,
+  'interactive-long-division-game': InteractiveLongDivisionGameDesc,
 };
 
 const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) => {
@@ -55,18 +62,13 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
 
   const startGame = () => {
     setGameStarted(true);
-    // if (currentGame) {
-      // const gameDescription = currentGame.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      // setTimeout(() => {
-      //   sendAdminMessage('admin', `Welcome the user and just ask the question in the game: ${gameDescription}, along with a small UI desc like: We'll ..., try doing ...`);
-      // }, 500);
-    // }
   };
 
   useEffect(() => {
     const updateHtmlOutput = () => {
       if (componentRef.current) {
-        setHtml(componentRef.current.outerHTML);
+        const desc = currentGame ? gameDescriptions[currentGame] || '' : '';
+        setHtml(desc + '\n' + componentRef.current.outerHTML);
       }
     };
 
@@ -84,7 +86,7 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
     updateHtmlOutput();
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentGame]);
 
   useEffect(() => {
     setCurrentGame(gameParam);

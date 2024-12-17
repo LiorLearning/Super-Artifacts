@@ -9,6 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import GameContainer from '@/components/GameContainer';
 
+export const desc = `Steps to Play the Game:`
+
 interface Step {
   dividend: number;
   subtrahend: number | null;
