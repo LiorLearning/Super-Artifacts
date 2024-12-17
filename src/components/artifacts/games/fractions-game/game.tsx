@@ -38,6 +38,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
 
 
   const checkFraction = (bar: BarState, targetFraction: Fraction) => {
+    // console.log(bar.parts, targetFraction.denom, bar.selectedParts.length, targetFraction.num);
     return bar.parts === targetFraction.denom && bar.selectedParts.length === targetFraction.num;
   };
 
