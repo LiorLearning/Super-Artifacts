@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card } from "@/components/custom_ui/card";
 import './chocolate.css';
 import { Bar, BarState } from './bar';
+import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 interface FractionsGameProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -14,8 +15,8 @@ interface Fraction {
   denom: number;
 }
 
-const fraction1: Fraction = { num: 2, denom: 7 };
-const fraction2: Fraction = { num: 2, denom: 8 };
+const fraction1: Fraction = { num: 1, denom: 2 };
+const fraction2: Fraction = { num: 1, denom: 3 };
 const maxParts = 12;
 
 const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
@@ -209,15 +210,17 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
 
         {/* Results */}
         {showAnswer && (
+          <>
+          {userAnswer === `${fraction1.num}/${fraction1.denom}` && <SuccessAnimation />}
           <div className="mt-8">
-            <div className={`bg-white/80 rounded-xl p-8 shadow-lg backdrop-blur-sm
-              ${userAnswer === `${fraction1.num}/${fraction1.denom}` ? 'bg-gradient-to-br from-white/90 to-yellow-50/90' : ''}`}>
+            <div className={`rounded-xl p-8 shadow-lg backdrop-blur-sm
+              ${userAnswer === `${fraction1.num}/${fraction1.denom}` ? 'bg-green-200' : 'bg-red-200'}`}>
               <div className="text-center space-y-6">
                 {userAnswer === `${fraction1.num}/${fraction1.denom}` ? (
                   <>
                     <div className="space-y-4">
-                      <div className="text-4xl font-bold text-green-600 animate-bounce">
-                        🎉 Fantastic! You are Right, {fraction1.num}/{fraction1.denom} is bigger
+                      <div className="text-4xl font-bold text-green-600">
+                        🎉 Great job!
                       </div>
                     </div>
                   </>
@@ -229,6 +232,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
               </div>
             </div>
           </div>
+          </>
         )}
       </div>
     </Card>
