@@ -55,12 +55,12 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
 
   const startGame = () => {
     setGameStarted(true);
-    if (currentGame) {
-      const gameDescription = currentGame.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      setTimeout(() => {
-        sendAdminMessage('admin', `Welcome the user and just ask the question in the game: ${gameDescription}, along with a small UI desc like: We'll ..., try doing ...`);
-      }, 500);
-    }
+    // if (currentGame) {
+      // const gameDescription = currentGame.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      // setTimeout(() => {
+      //   sendAdminMessage('admin', `Welcome the user and just ask the question in the game: ${gameDescription}, along with a small UI desc like: We'll ..., try doing ...`);
+      // }, 500);
+    // }
   };
 
   useEffect(() => {

@@ -27,9 +27,9 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
   const [isFirstFractionCorrect, setIsFirstFractionCorrect] = useState(false);
   const [isSecondFractionCorrect, setIsSecondFractionCorrect] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false); // New state to track game start
 
   const checkFraction = (bar: BarState, targetFraction: Fraction) => {
-    // console.log(bar.parts, targetFraction.denom, bar.selectedParts.length, targetFraction.num);
     return bar.parts === targetFraction.denom && bar.selectedParts.length === targetFraction.num;
   };
 
@@ -50,9 +50,20 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
   };
 
   useEffect(() => {
-    setIsFirstFractionCorrect(checkFraction(bar1, fraction1));
-    setIsSecondFractionCorrect(checkFraction(bar2, fraction2));
-  }, [bar1, bar2]);
+    const isFirstFractionCorrect = checkFraction(bar1, fraction1);
+    setIsFirstFractionCorrect(isFirstFractionCorrect);
+    if (isFirstFractionCorrect) {
+      sendAdminMessage('agent', `Awesome! Now try breaking the second chocolate to give yourself ${fraction2.num}/${fraction2.denom}`);
+    }
+  }, [bar1]);
+
+  useEffect(() => {
+    const isSecondFractionCorrect = checkFraction(bar2, fraction2);
+    setIsSecondFractionCorrect(isSecondFractionCorrect);
+    if (isFirstFractionCorrect && isSecondFractionCorrect) {
+      sendAdminMessage('agent', `Can you try comparing them visually - which one do you think is bigger?`);
+    }
+  }, [bar2]);
 
   const handleSelect = (barNumber: number, part: number) => {
     if (barNumber === 1) {
@@ -80,27 +91,32 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
 
   const handleAnswer = (answer: string) => {
     if (!isFirstFractionCorrect || !isSecondFractionCorrect) {
-      sendAdminMessage('assistant', `Make sure you've correctly created both fractions (${fraction1.num}/${fraction1.denom} and ${fraction2.num}/${fraction2.denom}) before comparing!`);
       return;
     }
     
     setUserAnswer(answer);
     setShowAnswer(true);
     if (answer !== `${fraction1.num}/${fraction1.denom}`) {
-      sendAdminMessage('assistant', `Look closely! When we break into ${fraction1.denom} pieces, each piece is bigger than when we break into ${fraction2.denom}. 🤔`);
+      sendAdminMessage('agent', `Oops, try comparing them visually. Which one looks bigger?`);
+    } else {
+      sendAdminMessage('agent', `Great, let's move on to the next question`);
     }
   };
 
   const handleCompare = () => {
     if (!isFirstFractionCorrect || !isSecondFractionCorrect) {
-      sendAdminMessage('assistant', `Make sure you've correctly created both fractions (${fraction1.num}/${fraction1.denom} and ${fraction2.num}/${fraction2.denom}) before comparing!`);
       return;
     }
     setCompareMode(true);
   };
 
+  const startGame = () => {
+    setGameStarted(true);
+    sendAdminMessage('agent', "We'll compare these fractions visually. First, try breaking the first chocolate to give yourself " + fraction1.num + "/" + fraction1.denom);
+  };
+
   return (
-    <Card className="w-full max-w-7xl mx-auto p-8 bg-gradient-to-br from-[#faf4eb] to-[#f5e6d3] shadow-2xl rounded-2xl">
+    <Card className="w-full max-h-4xl max-w-6xl p-4 bg-gradient-to-br from-[#faf4eb] to-[#f5e6d3] shadow-2xl rounded-2xl mx-4 overflow-auto">
       <div className="space-y-8">
         {/* Game Message */}
         <div className="text-center space-y-4">
@@ -116,53 +132,67 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
           </p>
         </div>
 
-        {/* Chocolate Bars Container */}
-        <div className="space-y-12 relative">
-          <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
-            <div className="flex items-center mb-4">
-              <div className="flex-1">
-                <span className="text-lg font-semibold text-[#5d4037]">First Bar: Make {fraction1.num}/{fraction1.denom}</span>
-                {isFirstFractionCorrect && (
-                  <span className="ml-2 text-green-600 animate-bounce">✓</span>
-                )}
-              </div>
-            </div>
-            <Bar
-              parts={bar1.parts}
-              selectedParts={bar1.selectedParts}
-              onCut={() => handleCut(1)}
-              onJoin={() => handleJoin(1)}
-              onSelect={(part) => handleSelect(1, part)}
-              numToSelect={fraction1.num}
-              maxParts={maxParts}
-              compare={compareMode}
-            />
+        {/* Visualise Button */}
+        {!gameStarted && (
+          <div className="flex justify-center">
+            <button
+              onClick={startGame}
+              className="px-8 py-4 text-lg font-bold rounded-xl shadow-lg bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
+            >
+              Visualise
+            </button>
           </div>
+        )}
 
-          <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
-            <div className="flex items-center mb-4">
-              <div className="flex-1">
-                <span className="text-lg font-semibold text-[#5d4037]">Second Bar: Make {fraction2.num}/{fraction2.denom}</span>
-                {isSecondFractionCorrect && (
-                  <span className="ml-2 text-green-600 animate-bounce">✓</span>
-                )}
+        {/* Chocolate Bars Container */}
+        {gameStarted && (
+          <div className="space-y-12 relative">
+            <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
+              <div className="flex items-center mb-4">
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-[#5d4037]">First Bar: Make {fraction1.num}/{fraction1.denom}</span>
+                  {isFirstFractionCorrect && (
+                    <span className="ml-2 text-green-600 animate-bounce">✓</span>
+                  )}
+                </div>
               </div>
+              <Bar
+                parts={bar1.parts}
+                selectedParts={bar1.selectedParts}
+                onCut={() => handleCut(1)}
+                onJoin={() => handleJoin(1)}
+                onSelect={(part) => handleSelect(1, part)}
+                numToSelect={fraction1.num}
+                maxParts={maxParts}
+                compare={compareMode}
+              />
             </div>
-            <Bar
-              parts={bar2.parts}
-              selectedParts={bar2.selectedParts}
-              onCut={() => handleCut(2)}
-              onJoin={() => handleJoin(2)}
-              onSelect={(part) => handleSelect(2, part)}
-              numToSelect={fraction2.num}
-              maxParts={maxParts}
-              compare={compareMode}
-            />
+
+            <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
+              <div className="flex items-center mb-4">
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-[#5d4037]">Second Bar: Make {fraction2.num}/{fraction2.denom}</span>
+                  {isSecondFractionCorrect && (
+                    <span className="ml-2 text-green-600 animate-bounce">✓</span>
+                  )}
+                </div>
+              </div>
+              <Bar
+                parts={bar2.parts}
+                selectedParts={bar2.selectedParts}
+                onCut={() => handleCut(2)}
+                onJoin={() => handleJoin(2)}
+                onSelect={(part) => handleSelect(2, part)}
+                numToSelect={fraction2.num}
+                maxParts={maxParts}
+                compare={compareMode}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Comparison Buttons */}
-        {!showAnswer && !compareMode && (
+        {!showAnswer && !compareMode && gameStarted && (
           <div className="flex flex-col items-center gap-4 mt-12">
             <div className="flex justify-center gap-6">
               <button

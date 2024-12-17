@@ -3,7 +3,7 @@ import { MessageContext, Message } from './MessageContext';
 import { WifiOff, Wifi } from 'lucide-react';
 import { AudioContext } from './utils/audio_stream';
 
-const SPEAKOUT = false;
+const SPEAKOUT = true;
 
 type WebSocketContextType = {
   sendLog: (message: Message | Blob) => void;
@@ -155,6 +155,9 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ url, child
   };
 
   const addToChat = (message: Message) => {
+    if (audioContext && SPEAKOUT) {
+      audioContext.playAudio(message.messageId, message.content!);
+    }
     if (messageContext) {
       messageContext.setMessages(prev => [...prev, message]);
     }

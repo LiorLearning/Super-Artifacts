@@ -20,6 +20,8 @@ interface ChatProps {
   html: string
 }
 
+const MAX_MESSAGES = 10;
+
 const Chat: React.FC<ChatProps> = ({ html }) => {
   const audioContext = useContext(AudioContext);
   if (!audioContext) {
@@ -171,7 +173,7 @@ const Chat: React.FC<ChatProps> = ({ html }) => {
       
       <ScrollArea className="flex-1 p-4 overflow-y-auto" ref={scrollRef}>
         <div className="space-y-4">
-          {messageContext?.messages.slice(-3).map((message, index) => (
+          {messageContext?.messages.slice(-MAX_MESSAGES).map((message, index) => (
             <React.Fragment key={index}>
               {renderMessage(message)}
             </React.Fragment>
