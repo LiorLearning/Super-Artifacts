@@ -138,6 +138,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
           <div className="flex justify-center">
             <button
               onClick={startGame}
+              id="visualise-button"
               className="px-8 py-4 text-lg font-bold rounded-xl shadow-lg bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
             >
               Visualise
@@ -200,6 +201,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
             <div className="flex justify-center gap-6">
               <button
                 onClick={handleCompare}
+                id="compare-button"
                 className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   ${isFirstFractionCorrect && isSecondFractionCorrect
@@ -219,6 +221,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
             <div className="flex justify-center gap-6">
               <button
                 onClick={() => handleAnswer(`${fraction1.num}/${fraction1.denom}`)}
+                id="fraction1-button"
                 className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl`}
@@ -227,6 +230,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
               </button>
               <button
                 onClick={() => handleAnswer(`${fraction2.num}/${fraction2.denom}`)}
+                id="fraction2-button"
                 className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   ${isFirstFractionCorrect && isSecondFractionCorrect

@@ -3,12 +3,11 @@ import './chocolate.css';
 import useSound from 'use-sound';
 import { Button } from '@/components/custom_ui/button';
 
-
 export interface BarState {
     parts: number;
     selectedParts: number[];
-  }
-  
+}
+
 export function Bar({ 
   parts, 
   selectedParts,
@@ -17,8 +16,8 @@ export function Bar({
   onSelect,
   numToSelect,
   maxParts,
-  compare = false, // New optional prop with default false
-  disabled = false, // New prop to disable the bar
+  compare = false,
+  disabled = false,
 }: { 
   parts: number;
   selectedParts: number[];
@@ -27,8 +26,8 @@ export function Bar({
   onSelect?: (part: number) => void;
   numToSelect: number;
   maxParts: number;
-  compare?: boolean; // Added to type definition
-  disabled?: boolean; // Added to type definition
+  compare?: boolean;
+  disabled?: boolean;
 }) {
   const isLargeDenominator = parts > 12;
   const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', {
@@ -42,7 +41,7 @@ export function Bar({
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleBreak = () => {
-    if (parts >= maxParts || disabled) return; // Prevent breaking beyond max parts or if disabled
+    if (parts >= maxParts || disabled) return;
     setIsAnimating(true);
     playBreakSound();
     if (onCut) onCut();
@@ -61,7 +60,6 @@ export function Bar({
     }
   };
 
-  // If in compare mode and no parts are selected, return null
   if (compare && selectedParts.length === 0) {
     return null;
   }
@@ -72,6 +70,7 @@ export function Bar({
         <div className="w-40 flex flex-col gap-2">
             <Button
               onClick={handleBreak}
+              id="break-button"
               className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
                 flex items-center justify-center p-2
                 bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white 
@@ -91,6 +90,7 @@ export function Bar({
             </Button>
             <Button
               onClick={!compare && parts > 1 ? handleJoin : undefined}
+              id="join-button"
               className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
                 flex items-center justify-center p-2
                 bg-gradient-to-r from-[#FFB347] to-[#FFD700] text-[#5d4037]
@@ -107,19 +107,16 @@ export function Bar({
             </Button>
         </div>
 
-        {/* Chocolate Bar */}
         <div className="flex-1 relative">
-          {/* Wrapper with perspective for 3D effect */}
           <div className="w-full perspective-1000">
-            {/* Main chocolate bar container */}
             <div className={`relative h-32 rounded-lg shadow-xl transform-style-3d rotate-x-10 
               ${compare && selectedParts.length === 0 ? 'bg-gray-400 opacity-50' : 'bg-[#5c3624]'}`}>
-              {/* Chocolate pieces */}
               <div className="absolute inset-0 flex gap-1 p-1">
                 {Array.from({ length: parts }).map((_, index) => (
                   <Button
                     key={index}
                     onClick={!compare ? () => handleSelect(index) : undefined}
+                    id={`chocolate-piece-${index}`}
                     className={`flex-1 relative bg-gradient-to-b from-[#8a5a42] via-[#734939] to-[#5c3624] 
                       transition-all duration-300 ease-out transform-gpu rounded-sm
                       hover:from-[#9a6a52] hover:via-[#835949] hover:to-[#6c4634]
@@ -130,56 +127,33 @@ export function Bar({
                           ? 'ring-2 ring-yellow-400 from-[#7a4a32] via-[#633929] to-[#4c2614] transform translate-y-[-10px] z-10 mx-1' 
                           : ''}`}
                   >
-                    {/* Gray overlay for non-selected pieces in compare mode */}
                     {compare && !selectedParts.includes(index) && (
                       <div className="absolute inset-0 bg-gray-500 opacity-70 z-20 pointer-events-none"></div>
                     )}
-
-                    {/* Embossed logo effect */}
                     <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 h-4 
                       border border-[#4a2c1c] rounded-sm opacity-30" />
-                    
-                    {/* Horizontal grooves */}
                     <div className="absolute inset-0 flex flex-col justify-around py-2">
                       {[0, 1].map((groove) => (
                         <div key={groove} className="relative w-full h-2">
-                          {/* Groove base */}
                           <div className="absolute inset-0 bg-gradient-to-b from-[#3a2218] via-[#4a2c1c] to-[#3a2218]" />
-                          
-                          {/* Top edge highlight */}
                           <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#8a5a42] to-transparent opacity-50" />
-                          
-                          {/* Bottom edge shadow */}
                           <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#2a1a12] to-transparent opacity-50" />
-                          
-                          {/* Inner groove shadow */}
                           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20" />
-                          
-                          {/* Shine effect */}
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                         </div>
                       ))}
                     </div>
-
-                    {/* Overall shine effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                    
-                    {/* Top edge highlight */}
                     <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#8a5a42] to-transparent" />
-                    
-                    {/* Bottom edge shadow */}
                     <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#2a1a12] to-transparent" />
                   </Button>
                 ))}
               </div>
-
-              {/* Bottom shadow */}
               <div className="absolute -bottom-4 inset-x-0 h-4 bg-black/20 blur-md rounded-full" />
             </div>
           </div>
         </div>
 
-        {/* Fraction Display */}
         <div className="w-32 ml-10">
           <div className="text-center bg-[#654321] text-white rounded-xl px-4 py-3
             shadow-lg transform transition-all duration-300 hover:scale-105">
