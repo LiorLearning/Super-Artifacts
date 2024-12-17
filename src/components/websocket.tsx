@@ -66,7 +66,7 @@ class WebSocketManager {
     };
 
     this.ws.onerror = (error) => {
-      console.error('WebSocket Error:', error);
+      console.log('WebSocket Error:', error);
       this.ws?.close();
     };
   }

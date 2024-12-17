@@ -18,6 +18,7 @@ export function Bar({
   numToSelect,
   maxParts,
   compare = false, // New optional prop with default false
+  disabled = false, // New prop to disable the bar
 }: { 
   parts: number;
   selectedParts: number[];
@@ -27,6 +28,7 @@ export function Bar({
   numToSelect: number;
   maxParts: number;
   compare?: boolean; // Added to type definition
+  disabled?: boolean; // Added to type definition
 }) {
   const isLargeDenominator = parts > 12;
   const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', {
@@ -40,7 +42,7 @@ export function Bar({
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleBreak = () => {
-    if (parts >= maxParts) return; // Prevent breaking beyond max parts
+    if (parts >= maxParts || disabled) return; // Prevent breaking beyond max parts or if disabled
     setIsAnimating(true);
     playBreakSound();
     if (onCut) onCut();
@@ -48,13 +50,15 @@ export function Bar({
   };
 
   const handleJoin = () => {
-    if (parts <= 1) return;
+    if (parts <= 1 || disabled) return;
     playJoinSound();
     if (onJoin) onJoin();
   };
 
   const handleSelect = (part: number) => {
-    onSelect?.(part);
+    if (!disabled) {
+      onSelect?.(part);
+    }
   };
 
   // If in compare mode and no parts are selected, return null

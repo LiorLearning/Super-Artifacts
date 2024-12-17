@@ -29,6 +29,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
   const [compareMode, setCompareMode] = useState(false);
   const [gameStarted, setGameStarted] = useState(false); // New state to track game start
 
+
   const checkFraction = (bar: BarState, targetFraction: Fraction) => {
     return bar.parts === targetFraction.denom && bar.selectedParts.length === targetFraction.num;
   };
@@ -53,7 +54,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
     const isFirstFractionCorrect = checkFraction(bar1, fraction1);
     setIsFirstFractionCorrect(isFirstFractionCorrect);
     if (isFirstFractionCorrect) {
-      sendAdminMessage('agent', `Awesome! Now try breaking the second chocolate to give yourself ${fraction2.num}/${fraction2.denom}`);
+      sendAdminMessage('agent', `Awesome! Now try breaking and selecting from the second chocolate to give yourself ${fraction2.num}/${fraction2.denom}`);
     }
   }, [bar1]);
 
@@ -112,7 +113,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
 
   const startGame = () => {
     setGameStarted(true);
-    sendAdminMessage('agent', "We'll compare these fractions visually. First, try breaking the first chocolate to give yourself " + fraction1.num + "/" + fraction1.denom);
+    sendAdminMessage('agent', "We'll compare these fractions visually. First, try breaking the first chocolate and selecting pieces to give yourself " + fraction1.num + "/" + fraction1.denom);
   };
 
   return (
@@ -122,10 +123,10 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-[#8B4513] to-[#D2691E] 
             text-transparent bg-clip-text animate-fade-in">
-            Chocolate Bar Fractions
+            Which is bigger: <span className="font-bold text-[#8B4513]">{fraction1.num}/{fraction1.denom}</span> or <span className="font-bold text-[#8B4513]">{fraction2.num}/{fraction2.denom}</span>?
           </h2>
           <p className="text-xl text-[#5d4037] font-medium">
-            Which is bigger: <span className="font-bold text-[#8B4513]">{fraction1.num}/{fraction1.denom}</span> or <span className="font-bold text-[#8B4513]">{fraction2.num}/{fraction2.denom}</span>?
+            
           </p>
           <p className="text-sm text-[#8d6e63] italic">
             Split the bars and select pieces to explore! 🍫
@@ -165,6 +166,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
                 numToSelect={fraction1.num}
                 maxParts={maxParts}
                 compare={compareMode}
+                disabled={isFirstFractionCorrect}
               />
             </div>
 
@@ -186,6 +188,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
                 numToSelect={fraction2.num}
                 maxParts={maxParts}
                 compare={compareMode}
+                disabled={isSecondFractionCorrect}
               />
             </div>
           </div>
@@ -256,7 +259,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
                   </>
                 ) : (
                   <div className="text-2xl font-bold text-[#5d4037] flex items-center justify-center gap-3">
-                    <span>Not quite right! Actually {fraction1.num}/{fraction1.denom} is bigger</span>
+                    <span>Not quite! Retry</span>
                   </div>
                 )}
               </div>
