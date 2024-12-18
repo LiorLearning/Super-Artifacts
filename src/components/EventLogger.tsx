@@ -9,16 +9,13 @@ const withEventLogging = <P extends object>(WrappedComponent: ComponentType<P>) 
     
     // Create a stable log message creator
     const createLogMessage = useCallback((event: string, target: HTMLElement, value?: string) => {
-      console.log('target', target)
-      const id = target.getAttribute('id');
-      console.log('id', id);
       return {
         messageId: crypto.randomUUID(),
         isPlaying: false,
         timestamp: new Date().toISOString(),
         componentName: WrappedComponent.displayName || WrappedComponent.name || 'UnnamedComponent',
         event,
-        id,
+        id: target.getAttribute('id'),
         ...(value && { value })
       };
     }, []);

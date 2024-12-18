@@ -21,6 +21,11 @@ interface BarState {
     selectedParts: number[];
 }
 
+interface Fraction {
+  num: number;
+  denom: number;
+}
+
 function Bar({ 
   parts, 
   selectedParts,
@@ -31,6 +36,7 @@ function Bar({
   compare = false,
   disabled = false,
   label,
+  expectedFraction,
 }: { 
   parts: number;
   selectedParts: number[];
@@ -41,6 +47,7 @@ function Bar({
   compare?: boolean;
   disabled?: boolean;
   label: string;
+  expectedFraction: Fraction;
 }) {
   const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', {
     volume: 0.5,
@@ -79,7 +86,7 @@ function Bar({
   return (
     <div className="relative">
       <div className="flex items-center gap-6">
-        <div className="w-40 flex flex-col gap-2">
+        <div className="w-40 flex flex-col gap-4">
             <Button
               onClick={handleBreak}
               id={`split-button-${label}`}
@@ -89,6 +96,7 @@ function Bar({
                 hover:shadow-xl hover:scale-105 active:scale-95
                 font-semibold tracking-wide text-lg
                 border-2 border-[#7a5729] border-opacity-20
+                ${(!disabled && parts < expectedFraction.denom ? 'animate-bounce' : '')}
                 ${compare 
                   ? 'cursor-not-allowed opacity-50' 
                   : parts >= maxParts 
@@ -100,9 +108,10 @@ function Bar({
                 Split 
               </span> 🍫
             </Button>
-            <Button
-              onClick={!compare && parts > 1 ? handleJoin : undefined}
-              id={`join-button-${label}`}
+            {parts > 1 && (
+              <Button
+                onClick={!compare && parts > 1 ? handleJoin : undefined}
+                id={`join-button-${label}`}
               className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
                 flex items-center justify-center p-2
                 bg-gradient-to-r from-[#FFB347] to-[#FFD700] text-[#5d4037]
@@ -112,11 +121,12 @@ function Bar({
                   ? 'cursor-not-allowed opacity-50' 
                   : parts <= 1 
                     ? 'cursor-not-allowed opacity-50' 
-                    : 'hover:shadow-xl hover:scale-105 active:scale-95 cursor-pointer'}`}
+                    : (!disabled && parts > expectedFraction.denom ? 'animate-bounce' : 'hover:shadow-xl hover:scale-105 active:scale-95 cursor-pointer')}`}
               disabled={compare || parts <= 1}
             >
-              <p>Join</p>🍯
-            </Button>
+                <p>Join</p>🍯
+              </Button>
+            )}
         </div>
 
         <div className="flex-1 relative">
@@ -134,6 +144,9 @@ function Bar({
                       transition-all duration-300 ease-out transform-gpu rounded-sm
                       hover:from-[#9a6a52] hover:via-[#835949] hover:to-[#6c4634]
                       h-full
+                      ${parts === expectedFraction.denom && index < expectedFraction.num && !selectedParts.includes(index) 
+                        ? 'animate-bounce' 
+                        : ''}
                       ${compare && !selectedParts.includes(index) 
                         ? 'opacity-30 cursor-not-allowed relative' 
                         : selectedParts.includes(index) 
@@ -167,12 +180,11 @@ function Bar({
           </div>
         </div>
 
-        <div className="w-32 ml-10">
-          <div className="text-center bg-[#654321] text-white rounded-xl px-4 py-3
-            shadow-lg transform transition-all duration-300 hover:scale-105">
-            <div className="text-2xl font-bold">
+        <div className="w-12">
+          <div className="text-center text-[#5d4037] rounded-xl transform transition-all duration-300">
+            <div className="text-3xl font-bold">
               {selectedParts.length}
-              <hr className="border-t-2 border-white my-1" />
+              <hr className="border-t-2 border-[#5d4037] my-1" />
               {parts}
             </div>
           </div>
@@ -184,11 +196,6 @@ function Bar({
 
 interface FractionsGameProps {
   sendAdminMessage: (role: string, content: string) => void;
-}
-
-interface Fraction {
-  num: number;
-  denom: number;
 }
 
 const maxParts = 12;
@@ -300,7 +307,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
   };
 
   return (
-    <Card className="w-full max-h-4xl max-w-6xl p-4 bg-gradient-to-br from-[#faf4eb] to-[#f5e6d3] shadow-2xl rounded-2xl mx-4 overflow-auto">
+    <Card className="w-full max-h-4xl max-w-6xl p-16 bg-gradient-to-br from-[#faf4eb] to-[#f5e6d3] shadow-2xl rounded-2xl mx-4 overflow-auto">
       <div className="space-y-8">
         {/* Game Message */}
         <div className="text-center space-y-4">
@@ -311,7 +318,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
           <p className="text-xl text-[#5d4037] font-medium">
             
           </p>
-          <p className="text-sm text-[#8d6e63] italic">
+          <p className="text-lg text-[#8d6e63] italic">
             Split the bars and select pieces to explore! 🍫
           </p>
         </div>
@@ -322,7 +329,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
             <Button
               onClick={startGame}
               id="visualise-button"
-              className="p-6 font-bold text-lg bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl transition-all duration-300 transform hover:scale-110 active:scale-95"
+              className="p-6 font-bold text-lg bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl transition-all duration-300 transform hover:scale-110 active:scale-95 animate-bounce"
             >
               Visualise
             </Button>
@@ -351,12 +358,14 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
                 compare={compareMode}
                 disabled={isFirstFractionCorrect}
                 label="first"
+                expectedFraction={fraction1}
               />
             </div>
-
-            <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
-              <div className="flex items-center mb-4">
-                <div className="flex-1">
+            
+            {isFirstFractionCorrect && (
+              <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
+                <div className="flex items-center mb-4">
+                  <div className="flex-1">
                   <span className="text-lg font-semibold text-[#5d4037]">Second Bar: Make {fraction2.num}/{fraction2.denom}</span>
                   {isSecondFractionCorrect && (
                     <span className="ml-2 text-green-600 animate-bounce">✓</span>
@@ -373,8 +382,10 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
                 compare={compareMode}
                 disabled={isSecondFractionCorrect}
                 label="second"
+                expectedFraction={fraction2}
               />
-            </div>
+              </div>
+            )}
           </div>
         )}
 
