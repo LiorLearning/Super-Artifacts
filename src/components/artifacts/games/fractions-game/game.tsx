@@ -86,47 +86,14 @@ function Bar({
   return (
     <div className="relative">
       <div className="flex items-center gap-6">
-        <div className="w-40 flex flex-col gap-4">
-            <Button
-              onClick={handleBreak}
-              id={`split-button-${label}`}
-              className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
-                flex items-center justify-center p-2
-                bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white 
-                hover:shadow-xl hover:scale-105 active:scale-95
-                font-semibold tracking-wide text-lg
-                border-2 border-[#7a5729] border-opacity-20
-                ${(!disabled && parts < expectedFraction.denom ? 'animate-bounce' : '')}
-                ${compare 
-                  ? 'cursor-not-allowed opacity-50' 
-                  : parts >= maxParts 
-                    ? 'cursor-not-allowed opacity-50' 
-                    : 'hover:shadow-xl hover:scale-105 active:scale-95'}`}
-              disabled={compare || parts >= maxParts}
-            >
-              <span className={`transform transition-transform duration-300 ${isAnimating ? 'animate-split' : ''}`}>
-                Split 
-              </span> 🍫
-            </Button>
-            {parts > 1 && (
-              <Button
-                onClick={!compare && parts > 1 ? handleJoin : undefined}
-                id={`join-button-${label}`}
-              className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
-                flex items-center justify-center p-2
-                bg-gradient-to-r from-[#FFB347] to-[#FFD700] text-[#5d4037]
-                font-semibold tracking-wide text-lg
-                border-2 border-[#fcbe4d] border-opacity-40
-                ${compare 
-                  ? 'cursor-not-allowed opacity-50' 
-                  : parts <= 1 
-                    ? 'cursor-not-allowed opacity-50' 
-                    : (!disabled && parts > expectedFraction.denom ? 'animate-bounce' : 'hover:shadow-xl hover:scale-105 active:scale-95 cursor-pointer')}`}
-              disabled={compare || parts <= 1}
-            >
-                <p>Join</p>🍯
-              </Button>
-            )}
+        <div className="w-12">
+          <div className="text-center text-[#5d4037] rounded-xl transform transition-all duration-300">
+            <div className="text-3xl font-bold">
+              {selectedParts.length}
+              <hr className="border-t-2 border-[#5d4037] my-1" />
+              {parts}
+            </div>
+          </div>
         </div>
 
         <div className="flex-1 relative">
@@ -180,14 +147,47 @@ function Bar({
           </div>
         </div>
 
-        <div className="w-12">
-          <div className="text-center text-[#5d4037] rounded-xl transform transition-all duration-300">
-            <div className="text-3xl font-bold">
-              {selectedParts.length}
-              <hr className="border-t-2 border-[#5d4037] my-1" />
-              {parts}
-            </div>
-          </div>
+        <div className="w-40 flex flex-col gap-4">
+            <Button
+              onClick={handleBreak}
+              id={`split-button-${label}`}
+              className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
+                flex items-center justify-center p-2
+                bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white 
+                hover:shadow-xl hover:scale-105 active:scale-95
+                font-semibold tracking-wide text-lg
+                border-2 border-[#7a5729] border-opacity-20
+                ${(!disabled && parts < expectedFraction.denom ? 'animate-bounce' : '')}
+                ${compare 
+                  ? 'cursor-not-allowed opacity-50' 
+                  : parts >= maxParts 
+                    ? 'cursor-not-allowed opacity-50' 
+                    : 'hover:shadow-xl hover:scale-105 active:scale-95'}`}
+              disabled={compare || parts >= maxParts}
+            >
+              <span className={`transform transition-transform duration-300 ${isAnimating ? 'animate-split' : ''}`}>
+                Split 
+              </span> 🍫
+            </Button>
+            {parts > 1 && (
+              <Button
+                onClick={!compare && parts > 1 ? handleJoin : undefined}
+                id={`join-button-${label}`}
+              className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
+                flex items-center justify-center p-2
+                bg-gradient-to-r from-[#FFB347] to-[#FFD700] text-[#5d4037]
+                font-semibold tracking-wide text-lg
+                border-2 border-[#fcbe4d] border-opacity-40
+                ${compare 
+                  ? 'cursor-not-allowed opacity-50' 
+                  : parts <= 1 
+                    ? 'cursor-not-allowed opacity-50' 
+                    : (!disabled && parts > expectedFraction.denom ? 'animate-bounce' : 'hover:shadow-xl hover:scale-105 active:scale-95 cursor-pointer')}`}
+              disabled={compare || parts <= 1}
+            >
+                <p>Join</p>🍯
+              </Button>
+            )}
         </div>
       </div>
     </div>
@@ -209,6 +209,9 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
 
   const fraction1: Fraction = { num: num1, denom: denom1 };
   const fraction2: Fraction = { num: num2, denom: denom2 };
+  const correctAnswer: Fraction = (fraction1.num * fraction2.denom) > (fraction2.num * fraction1.denom) 
+    ? fraction1 
+    : fraction2;
   const [bar1, setBar1] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [bar2, setBar2] = useState<BarState>({ parts: 1, selectedParts: [] });
   const [showAnswer, setShowAnswer] = useState(false);
@@ -393,10 +396,10 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
         {!showAnswer && !compareMode && gameStarted && (
           <div className="flex flex-col items-center gap-4 mt-12">
             <div className="flex justify-center gap-6">
-              <button
+              <Button
                 onClick={handleCompare}
                 id="compare-button"
-                className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
+                className={`px-8 py-6 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   ${isFirstFractionCorrect && isSecondFractionCorrect
                     ? 'bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl'
@@ -405,7 +408,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
                 disabled={!isFirstFractionCorrect || !isSecondFractionCorrect}
               >
                 Compare Bars
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -413,19 +416,19 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
         {compareMode && !showAnswer && (
           <div className="flex flex-col items-center gap-4 mt-12">
             <div className="flex justify-center gap-6">
-              <button
+              <Button
                 onClick={() => handleAnswer(`${fraction1.num}/${fraction1.denom}`)}
                 id="fraction1-button"
-                className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
+                className={`px-8 py-6 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl`}
               >
                 {fraction1.num}/{fraction1.denom} is bigger
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => handleAnswer(`${fraction2.num}/${fraction2.denom}`)}
                 id="fraction2-button"
-                className={`px-8 py-4 text-lg font-bold rounded-xl shadow-lg
+                className={`px-8 py-6 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   ${isFirstFractionCorrect && isSecondFractionCorrect
                     ? 'bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl'
@@ -434,7 +437,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
                 disabled={!isFirstFractionCorrect || !isSecondFractionCorrect}
               >
                 {fraction2.num}/{fraction2.denom} is bigger
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -442,12 +445,12 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
         {/* Results */}
         {showAnswer && (
           <>
-          {userAnswer === `${fraction1.num}/${fraction1.denom}` && <SuccessAnimation />}
+          {userAnswer === `${correctAnswer.num}/${correctAnswer.denom}` && <SuccessAnimation />}
           <div className="mt-8">
             <div className={`rounded-xl p-8 shadow-lg backdrop-blur-sm
-              ${userAnswer === `${fraction1.num}/${fraction1.denom}` ? 'bg-green-200' : 'bg-red-200'}`}>
+              ${userAnswer === `${correctAnswer.num}/${correctAnswer.denom}` ? 'bg-green-200' : 'bg-red-200'}`}>
               <div className="text-center space-y-6">
-                {userAnswer === `${fraction1.num}/${fraction1.denom}` ? (
+                {userAnswer === `${correctAnswer.num}/${correctAnswer.denom}` ? (
                   <>
                     <div className="space-y-4">
                       <div className="text-4xl font-bold text-green-600">
