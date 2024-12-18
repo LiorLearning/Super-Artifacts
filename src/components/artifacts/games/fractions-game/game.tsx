@@ -314,13 +314,9 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
       <div className="space-y-8">
         {/* Game Message */}
         <div className="text-center space-y-4">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-[#8B4513] to-[#D2691E] 
-            text-transparent bg-clip-text animate-fade-in">
-            Which is bigger: <span className="font-bold text-[#8B4513]">{fraction1.num}/{fraction1.denom}</span> or <span className="font-bold text-[#8B4513]">{fraction2.num}/{fraction2.denom}</span>?
+          <h2 className="text-3xl font-bold text-[#8B4513]">
+            Which is bigger: {fraction1.num}/{fraction1.denom} or {fraction2.num}/{fraction2.denom}?
           </h2>
-          <p className="text-xl text-[#5d4037] font-medium">
-            
-          </p>
           <p className="text-lg text-[#8d6e63] italic">
             Split the bars and select pieces to explore! 🍫
           </p>
