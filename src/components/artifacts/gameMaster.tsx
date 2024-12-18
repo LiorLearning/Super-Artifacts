@@ -7,13 +7,13 @@ import GameLoader from '../utils/gameLoader';
 import { Button } from '../custom_ui/button';
 import { RefreshCw } from 'lucide-react';
 
-
 import CrabGame, { desc as CrabGameDesc } from './games/crab-game/game';
 import SharkGame, { desc as SharkGameDesc } from './games/shark-game/game';
 import FractionsGame, { desc as FractionsGameDesc } from './games/fractions-game/game';
 import NumberLineGame, { desc as NumberLineGameDesc } from './games/number-line-game/game';
 import InteractiveLongDivisionGame, { desc as InteractiveLongDivisionGameDesc } from './games/long-division-game/game';
 import EquivalentFractionsGame, { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game';
+import { handleScreenshot } from './utils/utils';
 
 type GameKey = keyof typeof gameComponents;
 const gameComponents = {
@@ -34,7 +34,12 @@ const gameDescriptions = {
   'equivalent-fractions-game': EquivalentFractionsGameDesc,
 };
 
-const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) => {
+interface MathGamesContainerProps { 
+  setComponentRef: (componentRef: React.RefObject<HTMLDivElement>) => void;
+  setDesc: (desc: string) => void;
+}
+
+const MathGamesContainer = ({ setComponentRef, setDesc }: MathGamesContainerProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -50,7 +55,8 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
         timestamp: new Date().toISOString(),
         content: content,
         role: role,
-        html: componentRef.current?.outerHTML,
+        image: await handleScreenshot(componentRef),
+        desc: gameDescriptions[currentGame!],
       } as AdminRequestMessage)
     } else if (role == 'agent') {
       addToChat({
@@ -63,14 +69,15 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
   };
 
   useEffect(() => {
-    const updateHtmlOutput = () => {
+    const updatePageContent = async () => {
       if (componentRef.current) {
         const desc = currentGame ? gameDescriptions[currentGame] || '' : '';
-        setHtml(desc + '\n' + componentRef.current.outerHTML);
+        setDesc(desc);
+        setComponentRef(componentRef);
       }
     };
 
-    const observer = new MutationObserver(updateHtmlOutput);
+    const observer = new MutationObserver(updatePageContent);
     
     if (componentRef.current) {
       observer.observe(componentRef.current, {
@@ -81,7 +88,7 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
       });
     }
 
-    updateHtmlOutput();
+    updatePageContent();
 
     return () => observer.disconnect();
   }, [currentGame]);

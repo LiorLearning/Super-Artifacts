@@ -19,7 +19,8 @@ export interface LogMessage extends BaseMessage {
 
 export interface AssistanceRequestMessage extends BaseMessage {
   type: 'assistance';
-  html: string;
+  image: string | null;
+  desc: string;
 }
 
 export interface AssistanceResponseMessage extends BaseMessage {
@@ -30,7 +31,8 @@ export interface AssistanceResponseMessage extends BaseMessage {
 export interface AdminRequestMessage extends BaseMessage {
   type: 'admin';
   role: string;
-  html: string;
+  image: string | null;
+  desc: string;
 }
 
 export type Message = LogMessage | AssistanceRequestMessage | AssistanceResponseMessage | AdminRequestMessage;
