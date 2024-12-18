@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useEffect, useRef, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { MessageContext, Message } from './MessageContext';
 import { WifiOff, Wifi } from 'lucide-react';
 import { AudioContext } from './utils/audio_stream';
 
-const SPEAKOUT = true;
+const SPEAKOUT = false;
 
 type WebSocketContextType = {
   sendLog: (message: Message | Blob) => void;
