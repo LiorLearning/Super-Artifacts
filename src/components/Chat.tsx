@@ -15,14 +15,16 @@ import { Input } from '@/components/ui/input'
 import SpeechToText from './utils/speech_to_text'
 import { Pause, Volume2, Send } from 'lucide-react'
 import { AudioContext } from './utils/audio_stream'
+import { handleScreenshot } from './artifacts/utils/utils'
 
 interface ChatProps {
-  html: string
+  desc: string;
+  componentRef: React.RefObject<HTMLDivElement>;
 }
 
 const MAX_MESSAGES = 10;
 
-const Chat: React.FC<ChatProps> = ({ html }) => {
+const Chat: React.FC<ChatProps> = ({ desc, componentRef }) => {
   const audioContext = useContext(AudioContext);
   if (!audioContext) {
     throw new Error('MessageCard must be used within an AudioProvider');
@@ -79,24 +81,27 @@ const Chat: React.FC<ChatProps> = ({ html }) => {
     handleSendAudio(blob);
   };
 
-  const handleSendAudio = (blob: Blob) => {
+  const handleSendAudio = async (blob: Blob) => {
     console.log("Blob: ", blob);
     sendLog(blob);
     sendLog({
       type: 'assistance',
       timestamp: new Date().toISOString(),
       content: '',
-      html: html,
+      image: await handleScreenshot(componentRef),
+      desc: desc,
     } as AssistanceRequestMessage)
   };
 
   const onSendTextMessage = async () => {
     if (messageContext && inputMessage.trim()) {
+      const image = await handleScreenshot(componentRef);
       const newMessage: AssistanceRequestMessage = {
         type: 'assistance',
         timestamp: new Date().toISOString(),
         content: inputMessage,
-        html: '',
+        image: image,
+        desc: desc,
         isPlaying: false,
         messageId: crypto.randomUUID()
       }
@@ -105,7 +110,8 @@ const Chat: React.FC<ChatProps> = ({ html }) => {
         type: 'assistance',
         timestamp: new Date().toISOString(),
         content: inputMessage,
-        html: html,
+        image: image,
+        desc: desc,
       } as AssistanceRequestMessage)
       setInputMessage('')
     }

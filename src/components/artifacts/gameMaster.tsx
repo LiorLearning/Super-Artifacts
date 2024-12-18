@@ -4,9 +4,8 @@ import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '.
 import { useWebSocketLogger } from '../websocket';
 import { AdminRequestMessage, AssistanceResponseMessage } from '../MessageContext';
 import GameLoader from '../utils/gameLoader';
-import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
-
+import { Button } from '../custom_ui/button';
+import { RefreshCw } from 'lucide-react';
 
 import CrabGame, { desc as CrabGameDesc } from './games/crab-game/game';
 import SharkGame, { desc as SharkGameDesc } from './games/shark-game/game';
@@ -14,6 +13,7 @@ import FractionsGame, { desc as FractionsGameDesc } from './games/fractions-game
 import NumberLineGame, { desc as NumberLineGameDesc } from './games/number-line-game/game';
 import InteractiveLongDivisionGame, { desc as InteractiveLongDivisionGameDesc } from './games/long-division-game/game';
 import EquivalentFractionsGame, { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game';
+import { handleScreenshot } from './utils/utils';
 
 type GameKey = keyof typeof gameComponents;
 const gameComponents = {
@@ -34,14 +34,18 @@ const gameDescriptions = {
   'equivalent-fractions-game': EquivalentFractionsGameDesc,
 };
 
-const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) => {
+interface MathGamesContainerProps { 
+  setComponentRef: (componentRef: React.RefObject<HTMLDivElement>) => void;
+  setDesc: (desc: string) => void;
+}
+
+const MathGamesContainer = ({ setComponentRef, setDesc }: MathGamesContainerProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
   const gameParam = searchParams.get('game') as GameKey;
   const [currentGame, setCurrentGame] = useState<GameKey | null>(gameParam);
   const [loading, setLoading] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
   const { sendLog, addToChat } = useWebSocketLogger()
 
   const sendAdminMessage = async (role: string, content: string) => {
@@ -51,7 +55,8 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
         timestamp: new Date().toISOString(),
         content: content,
         role: role,
-        html: componentRef.current?.outerHTML,
+        image: await handleScreenshot(componentRef),
+        desc: gameDescriptions[currentGame!],
       } as AdminRequestMessage)
     } else if (role == 'agent') {
       addToChat({
@@ -63,19 +68,16 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
     }
   };
 
-  const startGame = () => {
-    setGameStarted(true);
-  };
-
   useEffect(() => {
-    const updateHtmlOutput = () => {
+    const updatePageContent = async () => {
       if (componentRef.current) {
         const desc = currentGame ? gameDescriptions[currentGame] || '' : '';
-        setHtml(desc + '\n' + componentRef.current.outerHTML);
+        setDesc(desc);
+        setComponentRef(componentRef);
       }
     };
 
-    const observer = new MutationObserver(updateHtmlOutput);
+    const observer = new MutationObserver(updatePageContent);
     
     if (componentRef.current) {
       observer.observe(componentRef.current, {
@@ -86,7 +88,7 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
       });
     }
 
-    updateHtmlOutput();
+    updatePageContent();
 
     return () => observer.disconnect();
   }, [currentGame]);
@@ -96,14 +98,22 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
   }, [gameParam]);
 
   // Get the current game component
-  const GameComponent = currentGame ? gameComponents[currentGame] : null;
+  const GameComponent = currentGame ? gameComponents[currentGame] : FractionsGame;
 
   const handleGameChange = (value: GameKey) => {
     setLoading(true);
-    setGameStarted(false);
     router.push(`?game=${value}`);
     setTimeout(() => {
       setCurrentGame(value);
+      setLoading(false);
+    }, 1000);
+  };
+
+  const handleReloadGame = () => {
+    setLoading(true);
+    setCurrentGame(null);
+    setTimeout(() => {
+      setCurrentGame(gameParam);
       setLoading(false);
     }, 1000);
   };
@@ -122,10 +132,10 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
 
   return (
     <div className="flex h-screen">
-      <div className="flex-1 flex flex-col p-6 bg-background border-border rounded-lg m-4 max-h-full max-w-full overflow-hidden">
-        <div className="mb-4">
+      <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 max-h-full max-w-full overflow-hidden">
+        <div className="mb-4 flex items-center gap-2">
           <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
-            <SelectTrigger className="p-2 border-border rounded-md">
+            <SelectTrigger className="p-2 border-border rounded-md flex-1">
               <SelectValue placeholder="Select a game" />
             </SelectTrigger>
             <SelectContent>
@@ -138,6 +148,15 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
               ))}
             </SelectContent>
           </Select>
+          <Button 
+            variant="outline" 
+            onClick={handleReloadGame}
+            className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
+            title="Reload Game"
+          >
+            <RefreshCw className="h-4 w-4" />
+            <span>Retry</span>
+          </Button>
         </div>
         
         {/* Game container */}
@@ -151,25 +170,7 @@ const MathGamesContainer = ({ setHtml }: { setHtml: (html: string) => void }) =>
                 <div className="absolute inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm"></div>
               </div>
               <div className="relative h-full w-full flex justify-center items-center">
-                {gameStarted ? (
-                  GameComponent && (
-                    <GameComponent sendAdminMessage={sendAdminMessage} />
-                  )
-                ) : (
-                  <div className="flex justify-center items-center h-full">
-                    <motion.div
-                      initial={{ scale: 1 }}
-                      animate={{ scale: [1, 1.05, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Button onClick={startGame} size="lg">
-                        Start Game
-                      </Button>
-                    </motion.div>
-                  </div>
-                )}
+                <GameComponent sendAdminMessage={sendAdminMessage} />
               </div>
             </div>
           )}
