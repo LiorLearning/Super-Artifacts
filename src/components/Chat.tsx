@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useContext, useRef, useCallback, useState, useLayoutEffect } from 'react'
+import React, { useContext, useRef, useState, useLayoutEffect } from 'react'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { 
   LogMessage, 
@@ -32,48 +32,8 @@ const Chat: React.FC<ChatProps> = ({ desc, componentRef }) => {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const messageContext = useContext(MessageContext);
-  const { sendLog } = useWebSocketLogger();
+  const { sendLog, toggleAudio } = useWebSocketLogger();
   const [inputMessage, setInputMessage] = useState('');
-
-  const handleStopAudio = (message: MessageType) => {
-    audioContext.stopAudio(message.messageId);
-  };
-
-  const handlePlayAudio = (messageId: string, messageText: string) => {
-    if (!messageText.trim()) {
-      return;
-    }
-
-    // Update messages state immediately
-    messageContext?.setMessages(prevMessages => 
-      prevMessages.map(msg => 
-        msg.messageId === messageId
-          ? { ...msg, isPlaying: true }
-          : { ...msg, isPlaying: false }
-      )
-    );
-
-    audioContext.playAudio(messageId, messageText);
-  };
-
-  const toggleAudio = useCallback(async (message: MessageType) => {
-    const isPlaying = message.isPlaying;
-    console.log(`${isPlaying ? 'Pausing' : 'Playing'} audio for message ID:`, message.messageId);
-
-    messageContext?.setMessages(prevMessages => 
-      prevMessages.map(msg => 
-        msg.messageId === message.messageId 
-          ? { ...msg, isPlaying: !isPlaying }
-          : msg
-      )
-    );
-
-    if (isPlaying) {
-      handleStopAudio(message);
-    } else {
-      handlePlayAudio(message.messageId, message.content!);
-    }
-  }, []);
 
   const handleRecordingStart = () => {}
 
@@ -156,14 +116,16 @@ const Chat: React.FC<ChatProps> = ({ desc, componentRef }) => {
         <div className="flex justify-start mb-4">
           <div className="max-w-[70%] p-3 rounded-2xl bg-secondary text-secondary-foreground shadow-sm">
             {agentMessage.content}
-            <Button 
-              size="sm"
-              variant="outline"
-              className="rounded-xl px-2 py-1"
-              onClick={() => toggleAudio(message)}
-            >
-              {message.isPlaying ? <Pause className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-            </Button>
+            <div className="mt-2 flex justify-end">
+              <Button 
+                size="sm"
+                variant="outline"
+                className="rounded-xl px-2 py-1"
+                onClick={() => toggleAudio(message)}
+              >
+                {message.isPlaying ? <Pause className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
         </div>
       )

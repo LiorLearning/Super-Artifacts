@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useCallback } from 'react';
 import { MessageContext, Message } from './MessageContext';
 import { WifiOff, Wifi } from 'lucide-react';
 import { AudioContext } from './utils/audio_stream';
@@ -8,6 +8,7 @@ const SPEAKOUT = true;
 type WebSocketContextType = {
   sendLog: (message: Message | Blob) => void;
   addToChat: (message: Message ) => void;
+  toggleAudio: (message: Message) => void;
   isConnected: boolean;
 };
 
@@ -18,6 +19,7 @@ interface WebSocketManagerProps {
   url: string;
   onConnectionChange: (isConnected: boolean) => void;
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  handlePlayAudio: (messageId: string, messageText: string) => void;
 }
 
 // WebSocket manager class to handle the connection and reconnection logic
@@ -31,12 +33,16 @@ class WebSocketManager {
   private onConnectionChange: (isConnected: boolean) => void;
   private setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   private audioContext: any = null;
+  private handlePlayAudio: (messageId: string, messageText: string) => void;
 
-  constructor({ url, onConnectionChange, setMessages }: WebSocketManagerProps) {
+  constructor({ url, onConnectionChange, setMessages, handlePlayAudio }: WebSocketManagerProps) {
     this.url = url;
     this.onConnectionChange = onConnectionChange;
     this.setMessages = setMessages;
+    this.handlePlayAudio = handlePlayAudio;
   }
+
+
 
   connect() {
     if (this.ws?.readyState === WebSocket.OPEN) return;
@@ -55,7 +61,7 @@ class WebSocketManager {
       console.log('WebSocket Message Received:', message.content);
       this.setMessages(prev => [...prev, message]);
       if (this.audioContext && SPEAKOUT && message.role == 'agent') {
-        this.audioContext.playAudio(message.messageId, message.content!);
+        this.handlePlayAudio(message.messageId, message.content!);
       }
     };
 
@@ -136,9 +142,54 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ url, child
     throw new Error('MessageCard must be used within an AudioProvider');
   }
 
+  const handleStopAudio = (message: Message) => {
+    audioContext.stopAudio(message.messageId);
+  };
+
+  const handlePlayAudio = (messageId: string, messageText: string) => {
+    if (!messageText.trim()) {
+      return;
+    }
+
+    // Update messages state immediately
+    messageContext?.setMessages(prevMessages => 
+      prevMessages.map(msg => 
+        msg.messageId === messageId
+          ? { ...msg, isPlaying: true }
+          : { ...msg, isPlaying: false }
+      )
+    );
+
+    audioContext.playAudio(messageId, messageText);
+  };
+
+  const toggleAudio = useCallback(async (message: Message) => {
+    const isPlaying = message.isPlaying;
+    console.log(`${isPlaying ? 'Pausing' : 'Playing'} audio for message ID:`, message.messageId);
+
+    messageContext?.setMessages(prevMessages => 
+      prevMessages.map(msg => 
+        msg.messageId === message.messageId 
+          ? { ...msg, isPlaying: !isPlaying }
+          : msg
+      )
+    );
+
+    if (isPlaying) {
+      handleStopAudio(message);
+    } else {
+      handlePlayAudio(message.messageId, message.content!);
+    }
+  }, []);
+
   useEffect(() => {
     if (messageContext) {
-      wsRef.current = new WebSocketManager({ url, onConnectionChange: setIsConnected, setMessages: messageContext.setMessages });
+      wsRef.current = new WebSocketManager({ 
+        url, 
+        onConnectionChange: setIsConnected, 
+        setMessages: messageContext.setMessages,
+        handlePlayAudio: handlePlayAudio
+      });
       if (audioContext) {
         wsRef.current.setAudioContext(audioContext);
       }
@@ -155,8 +206,8 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ url, child
   };
 
   const addToChat = (message: Message) => {
-    if (audioContext && SPEAKOUT) {
-      audioContext.playAudio(message.messageId, message.content!);
+    if (SPEAKOUT) {
+      handlePlayAudio(message.messageId, message.content!);
     }
     if (messageContext) {
       messageContext.setMessages(prev => [...prev, message]);
@@ -166,8 +217,9 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ url, child
   const contextValue = React.useMemo(() => ({
     sendLog,
     addToChat,
+    toggleAudio,
     isConnected
-  }), [sendLog, addToChat, isConnected]);
+  }), [sendLog, addToChat, toggleAudio, isConnected]);
 
   return (
     <WebSocketContext.Provider value={contextValue}>
