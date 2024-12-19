@@ -7,7 +7,7 @@ import { useWebSocketLogger } from '@/components/websocket';
 import { handleScreenshot } from '@/components/artifacts/utils/utils';
 import { AdminRequestMessage, AssistanceResponseMessage } from '@/components/MessageContext';
 import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 
 export default function SandboxPage() {
     const [desc, setDesc] = useState<string>('');
@@ -15,7 +15,7 @@ export default function SandboxPage() {
     const setComponentRef = (ref: React.RefObject<HTMLDivElement>) => {
       componentRef.current = ref.current;
     };
-    const { sendLog, addToChat } = useWebSocketLogger()
+    const { sendLog, addToChat, isConnected } = useWebSocketLogger()
 
     const getBackgroundImage = () => {
       return 'https://mathtutor-images.s3.us-east-1.amazonaws.com/generated-images/generated_image_20241203_010231.png';
@@ -90,7 +90,16 @@ export default function SandboxPage() {
                 </Button>
               </div>
               <div className="flex-1 flex justify-center items-center">
-                <FractionsGame sendAdminMessage={sendAdminMessage} />
+                {isConnected ? (
+                  <FractionsGame sendAdminMessage={sendAdminMessage} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b p-4">
+                    <h1 className="text-2xl font-bold mb-4 text-center">
+                      Loading Game
+                    </h1>
+                    <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+                  </div>
+                )}
               </div>
             </div>
           </div>

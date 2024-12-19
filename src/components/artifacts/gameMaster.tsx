@@ -46,7 +46,7 @@ const MathGamesContainer = ({ setComponentRef, setDesc }: MathGamesContainerProp
   const gameParam = searchParams.get('game') as GameKey;
   const [currentGame, setCurrentGame] = useState<GameKey | null>(gameParam);
   const [loading, setLoading] = useState(false);
-  const { sendLog, addToChat } = useWebSocketLogger()
+  const { sendLog, addToChat, isConnected } = useWebSocketLogger()
 
   const sendAdminMessage = async (role: string, content: string) => {
     if (role == 'admin') {
@@ -161,7 +161,7 @@ const MathGamesContainer = ({ setComponentRef, setDesc }: MathGamesContainerProp
         
         {/* Game container */}
         <div className="flex-1 h-full w-full overflow-auto border-2 border-gray-300 rounded-lg" ref={componentRef}>
-          {loading ? (
+          {!isConnected || loading ? (
             <GameLoader />
           ) : (
             <div className="relative h-full w-full">
