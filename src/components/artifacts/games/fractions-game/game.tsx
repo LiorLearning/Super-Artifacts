@@ -8,12 +8,14 @@ import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 import useSound from 'use-sound';
 import { useSearchParams } from 'next/navigation';
 
-export const desc = `Steps to Play the Game:
-1. Break the first chocolate bar by clicking the "Split" button.
-2. Select the pieces of the first bar that you want to keep.
-3. Break the second chocolate bar by clicking the "Split" button for the second bar.
-4. Select the pieces of the second bar that you want to keep.
-5. Compare the selected pieces from both bars to determine which fraction is larger.`;
+export const desc = `Steps to Play the Fraction Comparison Game:
+1. You'll start with two chocolate bars representing fraction1 and fration2.
+2. Break the first chocolate bar into equal parts by clicking the "Split" button.
+3. Select the pieces of the first bar that represent the fraction fraction1.
+4. Break the second chocolate bar into equal parts by clicking the "Split" button.
+5. Select the pieces of the second bar that represent the fraction fraction2.
+6. Compare the selected pieces from both bars to determine which fraction is larger.
+7. Your goal is to correctly identify which fraction has a greater value.`;
 
 // Create a context for the game state
 const GameStateContext = createContext<{

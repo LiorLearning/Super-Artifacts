@@ -7,14 +7,15 @@ import GameLoader from '../utils/gameLoader';
 import { Button } from '../custom_ui/button';
 import { RefreshCw } from 'lucide-react';
 import Chat from '../Chat'
+import { handleScreenshot } from './utils/utils';
+import { useGameState } from '../utils/game-state';
 
 import CrabGame, { desc as CrabGameDesc } from './games/crab-game/game';
 import SharkGame, { desc as SharkGameDesc } from './games/shark-game/game';
-import FractionsGame, { desc as FractionsGameDesc, useGameState as useFractionsGameState } from './games/fractions-game/game';
+import FractionsGame, { desc as FractionsGameDesc } from './games/fractions-game/game';
 import NumberLineGame, { desc as NumberLineGameDesc } from './games/number-line-game/game';
 import InteractiveLongDivisionGame, { desc as InteractiveLongDivisionGameDesc } from './games/long-division-game/game';
 import EquivalentFractionsGame, { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game';
-import { handleScreenshot } from './utils/utils';
 
 type GameKey = keyof typeof gameComponents;
 const gameComponents = {
@@ -35,15 +36,6 @@ const gameDescriptions = {
   'equivalent-fractions-game': EquivalentFractionsGameDesc,
 };
 
-const gameStates = {
-  'crab-game': undefined,
-  'shark-multiplication-game': undefined,
-  'fractions-game': useFractionsGameState,
-  'number-line-game': undefined,
-  'interactive-long-division-game': undefined,
-  'equivalent-fractions-game': undefined,
-} as const;
-
 
 interface MathGamesContainerProps { 
   setComponentRef: (componentRef: React.RefObject<HTMLDivElement>) => void;
@@ -58,6 +50,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected } = useWebSocketLogger()
 
+  const gameState = useGameState()
 
   const sendAdminMessage = async (role: string, content: string) => {
     if (role == 'admin') {
@@ -68,7 +61,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         role: role,
         image: await handleScreenshot(componentRef),
         desc: gameDescriptions[currentGame!],
-        gameState: gameStates[currentGame!],
+        gameState: JSON.stringify(gameState, null, 0),
       } as AdminRequestMessage)
     } else if (role == 'agent') {
       addToChat({
@@ -190,7 +183,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         </div>
       </div>
       <div className="w-[25%] min-w-[250px] flex flex-col">
-        <Chat desc={gameDescriptions[currentGame!]} componentRef={componentRef} gameState={gameStates[currentGame!]} />
+        <Chat desc={gameDescriptions[currentGame!]} componentRef={componentRef} gameState={gameState} />
       </div>
     </div>
   );
