@@ -54,6 +54,7 @@ class WebSocketManager {
       this.reconnectAttempts = 0;
       this.onConnectionChange(true);
       this.flushQueue();
+      this.setMessages([]);
     };
 
     this.ws.onmessage = (event) => {
