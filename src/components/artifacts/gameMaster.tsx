@@ -6,10 +6,11 @@ import { AdminRequestMessage, AssistanceResponseMessage } from '../MessageContex
 import GameLoader from '../utils/gameLoader';
 import { Button } from '../custom_ui/button';
 import { RefreshCw } from 'lucide-react';
+import Chat from '../Chat'
 
 import CrabGame, { desc as CrabGameDesc } from './games/crab-game/game';
 import SharkGame, { desc as SharkGameDesc } from './games/shark-game/game';
-import FractionsGame, { desc as FractionsGameDesc } from './games/fractions-game/game';
+import FractionsGame, { desc as FractionsGameDesc, useGameState as useFractionsGameState } from './games/fractions-game/game';
 import NumberLineGame, { desc as NumberLineGameDesc } from './games/number-line-game/game';
 import InteractiveLongDivisionGame, { desc as InteractiveLongDivisionGameDesc } from './games/long-division-game/game';
 import EquivalentFractionsGame, { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game';
@@ -34,12 +35,21 @@ const gameDescriptions = {
   'equivalent-fractions-game': EquivalentFractionsGameDesc,
 };
 
+const gameStates = {
+  'crab-game': undefined,
+  'shark-multiplication-game': undefined,
+  'fractions-game': useFractionsGameState,
+  'number-line-game': undefined,
+  'interactive-long-division-game': undefined,
+  'equivalent-fractions-game': undefined,
+} as const;
+
+
 interface MathGamesContainerProps { 
   setComponentRef: (componentRef: React.RefObject<HTMLDivElement>) => void;
-  setDesc: (desc: string) => void;
 }
 
-const MathGamesContainer = ({ setComponentRef, setDesc }: MathGamesContainerProps) => {
+const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -47,6 +57,7 @@ const MathGamesContainer = ({ setComponentRef, setDesc }: MathGamesContainerProp
   const [currentGame, setCurrentGame] = useState<GameKey | null>(gameParam);
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected } = useWebSocketLogger()
+
 
   const sendAdminMessage = async (role: string, content: string) => {
     if (role == 'admin') {
@@ -57,6 +68,7 @@ const MathGamesContainer = ({ setComponentRef, setDesc }: MathGamesContainerProp
         role: role,
         image: await handleScreenshot(componentRef),
         desc: gameDescriptions[currentGame!],
+        gameState: gameStates[currentGame!],
       } as AdminRequestMessage)
     } else if (role == 'agent') {
       addToChat({
@@ -72,7 +84,6 @@ const MathGamesContainer = ({ setComponentRef, setDesc }: MathGamesContainerProp
     const updatePageContent = async () => {
       if (componentRef.current) {
         const desc = currentGame ? gameDescriptions[currentGame] || '' : '';
-        setDesc(desc);
         setComponentRef(componentRef);
       }
     };
@@ -132,49 +143,54 @@ const MathGamesContainer = ({ setComponentRef, setDesc }: MathGamesContainerProp
 
   return (
     <div className="flex h-screen">
-      <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 max-h-full max-w-full overflow-hidden">
-        <div className="mb-4 flex items-center gap-2">
-          <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
-            <SelectTrigger className="p-2 border-border rounded-md flex-1">
-              <SelectValue placeholder="Select a game" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.keys(gameComponents).map((gameKey) => (
-                <SelectItem key={gameKey} value={gameKey}>
-                  {gameKey.split('-').map(word => 
-                    word.charAt(0).toUpperCase() + word.slice(1)
-                  ).join(' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button 
-            variant="outline" 
-            onClick={handleReloadGame}
-            className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
-            title="Reload Game"
-          >
-            <RefreshCw className="h-4 w-4" />
-            <span>Retry</span>
-          </Button>
-        </div>
-        
-        {/* Game container */}
-        <div className="flex-1 h-full w-full overflow-auto border-2 border-gray-300 rounded-lg" ref={componentRef}>
-          {!isConnected || loading ? (
-            <GameLoader />
-          ) : (
-            <div className="relative h-full w-full">
-              <div className="absolute inset-0 w-full h-full">
-                <img src={getBackgroundImage()} alt="Background" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm"></div>
+      <div className="w-[75%] border-r-border flex flex-col">
+        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 max-h-full max-w-full overflow-hidden">
+          <div className="mb-4 flex items-center gap-2">
+            <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
+              <SelectTrigger className="p-2 border-border rounded-md flex-1">
+                <SelectValue placeholder="Select a game" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(gameComponents).map((gameKey) => (
+                  <SelectItem key={gameKey} value={gameKey}>
+                    {gameKey.split('-').map(word => 
+                      word.charAt(0).toUpperCase() + word.slice(1)
+                    ).join(' ')}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button 
+              variant="outline" 
+              onClick={handleReloadGame}
+              className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
+              title="Reload Game"
+            >
+              <RefreshCw className="h-4 w-4" />
+              <span>Retry</span>
+            </Button>
+          </div>
+          
+          {/* Game container */}
+          <div className="flex-1 h-full w-full overflow-auto border-2 border-gray-300 rounded-lg" ref={componentRef}>
+            {!isConnected || loading ? (
+              <GameLoader />
+            ) : (
+              <div className="relative h-full w-full">
+                <div className="absolute inset-0 w-full h-full">
+                  <img src={getBackgroundImage()} alt="Background" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm"></div>
+                </div>
+                <div className="relative h-full w-full flex justify-center items-center">
+                  <GameComponent sendAdminMessage={sendAdminMessage} />
+                </div>
               </div>
-              <div className="relative h-full w-full flex justify-center items-center">
-                <GameComponent sendAdminMessage={sendAdminMessage} />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
+      </div>
+      <div className="w-[25%] min-w-[250px] flex flex-col">
+        <Chat desc={gameDescriptions[currentGame!]} componentRef={componentRef} gameState={gameStates[currentGame!]} />
       </div>
     </div>
   );

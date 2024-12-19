@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { createContext, useContext, ReactNode, useEffect, useState } from 'react';
 import { Card } from "@/components/custom_ui/card";
 import { Button } from '@/components/custom_ui/button';
 import './chocolate.css';
@@ -15,15 +15,79 @@ export const desc = `Steps to Play the Game:
 4. Select the pieces of the second bar that you want to keep.
 5. Compare the selected pieces from both bars to determine which fraction is larger.`;
 
+// Create a context for the game state
+const GameStateContext = createContext<{
+  gameState: GameState;
+  setGameState: React.Dispatch<React.SetStateAction<GameState>>;
+} | undefined>(undefined);
 
-interface BarState {
-    parts: number;
-    selectedParts: number[];
-}
+// Create a provider component for the game state
+export const GameStateProvider: React.FC<{ 
+  children: ReactNode 
+}> = ({ children }) => {
+  
+  const searchParams = useSearchParams();
+  const num1 = parseInt(searchParams.get('n1') || '1');
+  const denom1 = parseInt(searchParams.get('d1') || '2');
+  const num2 = parseInt(searchParams.get('n2') || '1'); 
+  const denom2 = parseInt(searchParams.get('d2') || '3');
+
+  const initialGameState: GameState = {
+    fraction1: { num: num1, denom: denom1 },
+    fraction2: { num: num2, denom: denom2 },
+    bar1: { parts: 1, selectedParts: [] },
+    bar2: { parts: 1, selectedParts: [] },
+    showAnswer: false,
+    userAnswer: null,
+    isFirstFractionCorrect: false,
+    isSecondFractionCorrect: false,
+    compareMode: false,
+    gameStarted: false,
+    correctAnswer: (num1 * denom2) > (num2 * denom1) 
+      ? { num: num1, denom: denom1 } 
+      : { num: num2, denom: denom2 }
+  };
+
+  const [gameState, setGameState] = useState<GameState>(initialGameState);
+
+  return (
+    <GameStateContext.Provider value={{ gameState, setGameState }}>
+      {children}
+    </GameStateContext.Provider>
+  );
+};
+
+// Custom hook to use the game state context
+export const useGameState = () => {
+  const context = useContext(GameStateContext);
+  if (context === undefined) {
+    throw new Error('useGameState must be used within a GameStateProvider');
+  }
+  return context;
+};
 
 interface Fraction {
   num: number;
   denom: number;
+}
+
+interface BarState {
+  parts: number;
+  selectedParts: number[];
+}
+
+interface GameState {
+  fraction1: Fraction;
+  fraction2: Fraction;
+  bar1: BarState;
+  bar2: BarState;
+  showAnswer: boolean;
+  userAnswer: string | null;
+  isFirstFractionCorrect: boolean;
+  isSecondFractionCorrect: boolean;
+  compareMode: boolean;
+  gameStarted: boolean;
+  correctAnswer: Fraction;
 }
 
 function Bar({ 
@@ -200,97 +264,74 @@ interface FractionsGameProps {
 
 const maxParts = 12;
 
-const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
-  const searchParams = useSearchParams();
-  const num1 = parseInt(searchParams.get('n1') || '1');
-  const denom1 = parseInt(searchParams.get('d1') || '2');
-  const num2 = parseInt(searchParams.get('n2') || '1'); 
-  const denom2 = parseInt(searchParams.get('d2') || '3');
-
-  const fraction1: Fraction = { num: num1, denom: denom1 };
-  const fraction2: Fraction = { num: num2, denom: denom2 };
-  const correctAnswer: Fraction = (fraction1.num * fraction2.denom) > (fraction2.num * fraction1.denom) 
-    ? fraction1 
-    : fraction2;
-  const [bar1, setBar1] = useState<BarState>({ parts: 1, selectedParts: [] });
-  const [bar2, setBar2] = useState<BarState>({ parts: 1, selectedParts: [] });
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [userAnswer, setUserAnswer] = useState<string | null>(null);
-  const [isFirstFractionCorrect, setIsFirstFractionCorrect] = useState(false);
-  const [isSecondFractionCorrect, setIsSecondFractionCorrect] = useState(false);
-  const [compareMode, setCompareMode] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false); // New state to track game start
+const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {  
+  const { gameState, setGameState } = useGameState();
 
 
   const checkFraction = (bar: BarState, targetFraction: Fraction) => {
-    // console.log(bar.parts, targetFraction.denom, bar.selectedParts.length, targetFraction.num);
     return bar.parts === targetFraction.denom && bar.selectedParts.length === targetFraction.num;
   };
 
   const handleCut = (barNumber: number) => {
-    if (barNumber === 1) {
-      setBar1(prev => ({ ...prev, parts: prev.parts + 1 }));
-    } else {
-      setBar2(prev => ({ ...prev, parts: prev.parts + 1 }));
-    }
+    setGameState(prev => ({
+      ...prev,
+      [barNumber === 1 ? 'bar1' : 'bar2']: {
+        ...prev[barNumber === 1 ? 'bar1' : 'bar2'],
+        parts: prev[barNumber === 1 ? 'bar1' : 'bar2'].parts + 1
+      }
+    }));
   };
 
   const handleJoin = (barNumber: number) => {
-    if (barNumber === 1) {
-      setBar1(prev => ({ ...prev, parts: Math.max(prev.parts - 1, 1) }));
-    } else {
-      setBar2(prev => ({ ...prev, parts: Math.max(prev.parts - 1, 1) }));
-    }
+    setGameState(prev => ({
+      ...prev,
+      [barNumber === 1 ? 'bar1' : 'bar2']: {
+        ...prev[barNumber === 1 ? 'bar1' : 'bar2'],
+        parts: Math.max(prev[barNumber === 1 ? 'bar1' : 'bar2'].parts - 1, 1)
+      }
+    }));
   };
 
   useEffect(() => {
-    const isFirstFractionCorrect = checkFraction(bar1, fraction1);
-    setIsFirstFractionCorrect(isFirstFractionCorrect);
+    const isFirstFractionCorrect = checkFraction(gameState.bar1, gameState.fraction1);
+    setGameState(prev => ({ ...prev, isFirstFractionCorrect }));
     if (isFirstFractionCorrect) {
-      sendAdminMessage('agent', `Awesome! Now try breaking and selecting from the second chocolate to give yourself ${fraction2.num}/${fraction2.denom}`);
+      sendAdminMessage('agent', `Awesome! Now try breaking and selecting from the second chocolate to give yourself ${gameState.fraction2.num}/${gameState.fraction2.denom}`);
     }
-  }, [bar1]);
+  }, [gameState.bar1]);
 
   useEffect(() => {
-    const isSecondFractionCorrect = checkFraction(bar2, fraction2);
-    setIsSecondFractionCorrect(isSecondFractionCorrect);
-    if (isFirstFractionCorrect && isSecondFractionCorrect) {
+    const isSecondFractionCorrect = checkFraction(gameState.bar2, gameState.fraction2);
+    setGameState(prev => ({ ...prev, isSecondFractionCorrect }));
+    if (gameState.isFirstFractionCorrect && isSecondFractionCorrect) {
       sendAdminMessage('agent', `Can you try comparing them visually - which one do you think is bigger?`);
     }
-  }, [bar2]);
+  }, [gameState.bar2]);
 
   const handleSelect = (barNumber: number, part: number) => {
-    if (barNumber === 1) {
-      setBar1(prev => {
-        const newState = {
-          ...prev,
-          selectedParts: prev.selectedParts.includes(part)
-            ? prev.selectedParts.filter(p => p !== part)
-            : [...prev.selectedParts, part]
-        };
-        return newState;
-      });
-    } else {
-      setBar2(prev => {
-        const newState = {
-          ...prev,
-          selectedParts: prev.selectedParts.includes(part)
-            ? prev.selectedParts.filter(p => p !== part)
-            : [...prev.selectedParts, part]
-        };
-        return newState;
-      });
-    }
+    setGameState(prev => ({
+      ...prev,
+      [barNumber === 1 ? 'bar1' : 'bar2']: {
+        ...prev[barNumber === 1 ? 'bar1' : 'bar2'],
+        selectedParts: prev[barNumber === 1 ? 'bar1' : 'bar2'].selectedParts.includes(part)
+          ? prev[barNumber === 1 ? 'bar1' : 'bar2'].selectedParts.filter(p => p !== part)
+          : [...prev[barNumber === 1 ? 'bar1' : 'bar2'].selectedParts, part]
+      }
+    }));
   };
 
   const handleAnswer = (answer: string) => {
-    if (!isFirstFractionCorrect || !isSecondFractionCorrect) {
+    if (!gameState.isFirstFractionCorrect || !gameState.isSecondFractionCorrect) {
       return;
     }
     
-    setUserAnswer(answer);
-    setShowAnswer(true);
-    if (answer !== `${fraction1.num}/${fraction1.denom}`) {
+    setGameState(prev => ({
+      ...prev,
+      userAnswer: answer,
+      showAnswer: true
+    }));
+
+    if (answer !== `${gameState.fraction1.num}/${gameState.fraction1.denom}`) {
       sendAdminMessage('agent', `Oops, try comparing them visually. Which one looks bigger?`);
     } else {
       sendAdminMessage('agent', `Great, let's move on to the next question`);
@@ -298,15 +339,18 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
   };
 
   const handleCompare = () => {
-    if (!isFirstFractionCorrect || !isSecondFractionCorrect) {
+    if (!gameState.isFirstFractionCorrect || !gameState.isSecondFractionCorrect) {
       return;
     }
-    setCompareMode(true);
+    setGameState(prev => ({ ...prev, compareMode: true }));
   };
 
   const startGame = () => {
-    setGameStarted(true);
-    sendAdminMessage('agent', "We'll compare these fractions visually. First, try breaking the first chocolate and selecting pieces to give yourself " + fraction1.num + "/" + fraction1.denom);
+    setGameState(prev => ({ 
+      ...prev, 
+      gameStarted: true 
+    }));
+    sendAdminMessage('agent', "We'll compare these fractions visually. First, try breaking the first chocolate and selecting pieces to give yourself " + gameState.fraction1.num + "/" + gameState.fraction1.denom);
   };
 
   return (
@@ -315,7 +359,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
         {/* Game Message */}
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-bold text-[#8B4513]">
-            Which is bigger: {fraction1.num}/{fraction1.denom} or {fraction2.num}/{fraction2.denom}?
+            Which is bigger: {gameState.fraction1.num}/{gameState.fraction1.denom} or {gameState.fraction2.num}/{gameState.fraction2.denom}?
           </h2>
           <p className="text-lg text-[#8d6e63] italic">
             Split the bars and select pieces to explore! 🍫
@@ -323,7 +367,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
         </div>
 
         {/* Visualise Button */}
-        {!gameStarted && (
+        {!gameState.gameStarted && (
           <div className="flex justify-center">
             <Button
               onClick={startGame}
@@ -336,52 +380,52 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
         )}
 
         {/* Chocolate Bars Container */}
-        {gameStarted && (
+        {gameState.gameStarted && (
           <div className="space-y-12 relative">
-            <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
+            <div className={`transition-all duration-500 ${gameState.showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
               <div className="flex items-center mb-4">
                 <div className="flex-1">
-                  <span className="text-lg font-semibold text-[#5d4037]">First Bar: Make {fraction1.num}/{fraction1.denom}</span>
-                  {isFirstFractionCorrect && (
+                  <span className="text-lg font-semibold text-[#5d4037]">First Bar: Make {gameState.fraction1.num}/{gameState.fraction1.denom}</span>
+                  {gameState.isFirstFractionCorrect && (
                     <span className="ml-2 text-green-600 animate-bounce">✓</span>
                   )}
                 </div>
               </div>
               <Bar
-                parts={bar1.parts}
-                selectedParts={bar1.selectedParts}
+                parts={gameState.bar1.parts}
+                selectedParts={gameState.bar1.selectedParts}
                 onCut={() => handleCut(1)}
                 onJoin={() => handleJoin(1)}
                 onSelect={(part) => handleSelect(1, part)}
                 maxParts={maxParts}
-                compare={compareMode}
-                disabled={isFirstFractionCorrect}
+                compare={gameState.compareMode}
+                disabled={gameState.isFirstFractionCorrect}
                 label="first"
-                expectedFraction={fraction1}
+                expectedFraction={gameState.fraction1}
               />
             </div>
             
-            {isFirstFractionCorrect && (
-              <div className={`transition-all duration-500 ${showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
+            {gameState.isFirstFractionCorrect && (
+              <div className={`transition-all duration-500 ${gameState.showAnswer ? 'opacity-90 filter contrast-75' : ''}`}>
                 <div className="flex items-center mb-4">
                   <div className="flex-1">
-                  <span className="text-lg font-semibold text-[#5d4037]">Second Bar: Make {fraction2.num}/{fraction2.denom}</span>
-                  {isSecondFractionCorrect && (
+                  <span className="text-lg font-semibold text-[#5d4037]">Second Bar: Make {gameState.fraction2.num}/{gameState.fraction2.denom}</span>
+                  {gameState.isSecondFractionCorrect && (
                     <span className="ml-2 text-green-600 animate-bounce">✓</span>
                   )}
                 </div>
               </div>
               <Bar
-                parts={bar2.parts}
-                selectedParts={bar2.selectedParts}
+                parts={gameState.bar2.parts}
+                selectedParts={gameState.bar2.selectedParts}
                 onCut={() => handleCut(2)}
                 onJoin={() => handleJoin(2)}
                 onSelect={(part) => handleSelect(2, part)}
                 maxParts={maxParts}
-                compare={compareMode}
-                disabled={isSecondFractionCorrect}
+                compare={gameState.compareMode}
+                disabled={gameState.isSecondFractionCorrect}
                 label="second"
-                expectedFraction={fraction2}
+                expectedFraction={gameState.fraction2}
               />
               </div>
             )}
@@ -389,7 +433,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
         )}
 
         {/* Comparison Buttons */}
-        {!showAnswer && !compareMode && gameStarted && (
+        {!gameState.showAnswer && !gameState.compareMode && gameState.gameStarted && (
           <div className="flex flex-col items-center gap-4 mt-12">
             <div className="flex justify-center gap-6">
               <Button
@@ -397,11 +441,11 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
                 id="compare-button"
                 className={`px-8 py-6 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
-                  ${isFirstFractionCorrect && isSecondFractionCorrect
+                  ${gameState.isFirstFractionCorrect && gameState.isSecondFractionCorrect
                     ? 'bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
-                disabled={!isFirstFractionCorrect || !isSecondFractionCorrect}
+                disabled={!gameState.isFirstFractionCorrect || !gameState.isSecondFractionCorrect}
               >
                 Compare Bars
               </Button>
@@ -409,44 +453,44 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
           </div>
         )}
 
-        {compareMode && !showAnswer && (
+        {gameState.compareMode && !gameState.showAnswer && (
           <div className="flex flex-col items-center gap-4 mt-12">
             <div className="flex justify-center gap-6">
               <Button
-                onClick={() => handleAnswer(`${fraction1.num}/${fraction1.denom}`)}
+                onClick={() => handleAnswer(`${gameState.fraction1.num}/${gameState.fraction1.denom}`)}
                 id="fraction1-button"
                 className={`px-8 py-6 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl`}
               >
-                {fraction1.num}/{fraction1.denom} is bigger
+                {gameState.fraction1.num}/{gameState.fraction1.denom} is bigger
               </Button>
               <Button
-                onClick={() => handleAnswer(`${fraction2.num}/${fraction2.denom}`)}
+                onClick={() => handleAnswer(`${gameState.fraction2.num}/${gameState.fraction2.denom}`)}
                 id="fraction2-button"
                 className={`px-8 py-6 text-lg font-bold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
-                  ${isFirstFractionCorrect && isSecondFractionCorrect
+                  ${gameState.isFirstFractionCorrect && gameState.isSecondFractionCorrect
                     ? 'bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
-                disabled={!isFirstFractionCorrect || !isSecondFractionCorrect}
+                disabled={!gameState.isFirstFractionCorrect || !gameState.isSecondFractionCorrect}
               >
-                {fraction2.num}/{fraction2.denom} is bigger
+                {gameState.fraction2.num}/{gameState.fraction2.denom} is bigger
               </Button>
             </div>
           </div>
         )}
 
         {/* Results */}
-        {showAnswer && (
+        {gameState.showAnswer && (
           <>
-          {userAnswer === `${correctAnswer.num}/${correctAnswer.denom}` && <SuccessAnimation />}
+          {gameState.userAnswer === `${gameState.correctAnswer.num}/${gameState.correctAnswer.denom}` && <SuccessAnimation />}
           <div className="mt-8">
             <div className={`rounded-xl p-8 shadow-lg backdrop-blur-sm
-              ${userAnswer === `${correctAnswer.num}/${correctAnswer.denom}` ? 'bg-green-200' : 'bg-red-200'}`}>
+              ${gameState.userAnswer === `${gameState.correctAnswer.num}/${gameState.correctAnswer.denom}` ? 'bg-green-200' : 'bg-red-200'}`}>
               <div className="text-center space-y-6">
-                {userAnswer === `${correctAnswer.num}/${correctAnswer.denom}` ? (
+                {gameState.userAnswer === `${gameState.correctAnswer.num}/${gameState.correctAnswer.denom}` ? (
                   <>
                     <div className="space-y-4">
                       <div className="text-4xl font-bold text-green-600">

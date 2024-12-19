@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useRef, useEffect, useState } from 'react';
-import FractionsGame, { desc } from './game/game';
+import React, { useRef, useEffect } from 'react';
+import FractionsGame, { desc, useGameState } from './game/game';
 import Chat from "@/components/Chat";
 import { useWebSocketLogger } from '@/components/websocket';
 import { handleScreenshot } from '@/components/artifacts/utils/utils';
@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw } from 'lucide-react';
 
 export default function SandboxPage() {
-    const [desc, setDesc] = useState<string>('');
     const componentRef = useRef<HTMLDivElement | null>(null);
     const setComponentRef = (ref: React.RefObject<HTMLDivElement>) => {
       componentRef.current = ref.current;
     };
     const { sendLog, addToChat, isConnected } = useWebSocketLogger()
+    const { gameState } = useGameState();
 
     const getBackgroundImage = () => {
       return 'https://mathtutor-images.s3.us-east-1.amazonaws.com/generated-images/generated_image_20241203_010231.png';
@@ -29,6 +29,7 @@ export default function SandboxPage() {
           content: content,
           role: role,
           image: await handleScreenshot(componentRef),
+          gameState: JSON.stringify(gameState, null, 0),
           desc: desc,
         } as AdminRequestMessage)
       } else if (role == 'agent') {
@@ -48,7 +49,6 @@ export default function SandboxPage() {
     useEffect(() => {
       const updatePageContent = async () => {
         if (componentRef.current) {
-          setDesc(desc);
           setComponentRef(componentRef);
         }
       };
@@ -105,7 +105,7 @@ export default function SandboxPage() {
           </div>
         </div>
         <div className="w-[25%] min-w-[250px] flex flex-col">
-          <Chat desc={desc} componentRef={componentRef} />
+          <Chat desc={desc} componentRef={componentRef} gameState={gameState}/>
         </div>
       </div>
     )
