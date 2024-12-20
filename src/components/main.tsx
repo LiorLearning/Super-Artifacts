@@ -15,7 +15,7 @@ export default function Main() {
   };
 
   const searchParams = useSearchParams();
-  const gameParam = searchParams.get('game') as string;
+  const gameParam = searchParams.get('game') as string || 'fractions-game';
   
 
   return (
