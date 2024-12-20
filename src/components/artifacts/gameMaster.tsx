@@ -114,12 +114,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   };
 
   const handleReloadGame = () => {
-    setLoading(true);
-    setCurrentGame(null);
-    setTimeout(() => {
-      setCurrentGame(gameParam);
-      setLoading(false);
-    }, 1000);
+    window.location.reload();
   };
 
   // Determine background image based on the current game
