@@ -102,10 +102,7 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
     
     if (type === 'denominator') {
       if (numValue === equation.output.denominator/ equation.input.denominator) {
-        setTimeout(() => {
-          setShowCorrect(false);
-          setCurrentStep(4); // Move to numerator input
-        }, 1500);
+        setCurrentStep(4);
       }
       setEquation(prev => ({
         ...prev,
