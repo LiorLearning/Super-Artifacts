@@ -45,6 +45,7 @@ export const GameStateProvider: React.FC<{
     isSecondFractionCorrect: false,
     compareMode: false,
     gameStarted: false,
+    
     correctAnswer: (num1 * denom2) > (num2 * denom1) 
       ? { num: num1, denom: denom1 } 
       : { num: num2, denom: denom2 }
@@ -153,8 +154,8 @@ function Bar({
     <div className="relative">
       <div className="flex items-center gap-6">
         <div className="w-12">
-          <div className="text-center text-[#5d4037] rounded-xl transform transition-all duration-300">
-            <div className="text-3xl font-bold">
+          <div className="text-center text-[#3d2723] rounded-xl transform transition-all duration-300">
+            <div className="text-4xl font-extrabold font-inter tracking-tight">
               {selectedParts.length}
               <hr className="border-t-2 border-[#5d4037] my-1" />
               {parts}
@@ -221,7 +222,7 @@ function Bar({
                 flex items-center justify-center p-2
                 bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white 
                 hover:shadow-xl hover:scale-105 active:scale-95
-                font-semibold tracking-wide text-lg
+                font-inter font-semibold tracking-wide text-lg
                 border-2 border-[#7a5729] border-opacity-20
                 ${(!disabled && parts < expectedFraction.denom ? 'animate-bounce' : '')}
                 ${compare 
@@ -242,7 +243,7 @@ function Bar({
               className={`flex-1 h-14 rounded-xl shadow-lg transition-all duration-300
                 flex items-center justify-center p-2
                 bg-gradient-to-r from-[#FFB347] to-[#FFD700] text-[#5d4037]
-                font-semibold tracking-wide text-lg
+                font-inter font-semibold tracking-wide text-lg
                 border-2 border-[#fcbe4d] border-opacity-40
                 ${compare 
                   ? 'cursor-not-allowed opacity-50' 
@@ -441,7 +442,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
               <Button
                 onClick={handleCompare}
                 id="compare-button"
-                className={`px-8 py-6 text-lg font-bold rounded-xl shadow-lg
+                className={`px-8 py-6 text-xl font-inter font-extrabold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   ${gameState.isFirstFractionCorrect && gameState.isSecondFractionCorrect
                     ? 'bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl'
@@ -461,7 +462,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
               <Button
                 onClick={() => handleAnswer(`${gameState.fraction1.num}/${gameState.fraction1.denom}`)}
                 id="fraction1-button"
-                className={`px-8 py-6 text-lg font-bold rounded-xl shadow-lg
+                className={`px-8 py-6 text-xl font-inter font-extrabold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl`}
               >
@@ -470,7 +471,7 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
               <Button
                 onClick={() => handleAnswer(`${gameState.fraction2.num}/${gameState.fraction2.denom}`)}
                 id="fraction2-button"
-                className={`px-8 py-6 text-lg font-bold rounded-xl shadow-lg
+                className={`px-8 py-6 text-xl font-inter font-extrabold rounded-xl shadow-lg
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   ${gameState.isFirstFractionCorrect && gameState.isSecondFractionCorrect
                     ? 'bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white hover:shadow-xl'
@@ -509,6 +510,28 @@ const FractionsGame = ({sendAdminMessage}: FractionsGameProps) => {
             </div>
           </div>
           </>
+        )}
+        {gameState.showAnswer && gameState.userAnswer !== `${gameState.correctAnswer.num}/${gameState.correctAnswer.denom}` && (
+          <div className="mt-4 flex justify-center">
+            <Button
+              onClick={() => {
+                setGameState(prev => ({
+                  ...prev,
+                  showAnswer: false,
+                  bar1: { parts: 1, selectedParts: [] },
+                  bar2: { parts: 1, selectedParts: [] },
+                  isFirstFractionCorrect: false,
+                  isSecondFractionCorrect: false,
+                  compareMode: false,
+                  userAnswer: null
+                }));
+                sendAdminMessage('agent', "Let's try again! Break and select pieces from the first chocolate bar to represent " + gameState.fraction1.num + "/" + gameState.fraction1.denom);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-inter font-bold text-lg px-8 py-3 rounded-xl shadow-lg transition-all duration-300 hover:scale-105"
+            >
+              Try Again
+            </Button>
+          </div>
         )}
       </div>
     </Card>

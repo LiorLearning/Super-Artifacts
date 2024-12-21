@@ -160,11 +160,11 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
           </div>
           
           {/* Game container */}
-          <div className="flex-1 h-full w-full overflow-auto border-2 border-gray-300 rounded-lg" ref={componentRef}>
+          <div className="flex-1 h-full w-full overflow-y-auto border-2 border-gray-300 rounded-lg" ref={componentRef}>
             {!isConnected || loading ? (
               <GameLoader />
             ) : (
-              <div className="relative h-full w-full">
+              <div className="relative h-screen w-full">
                 <div className="absolute inset-0 w-full h-full">
                   <img src={getBackgroundImage()} alt="Background" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm"></div>
