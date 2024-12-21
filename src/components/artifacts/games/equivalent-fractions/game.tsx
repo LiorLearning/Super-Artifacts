@@ -16,6 +16,8 @@ export const desc = `Steps to Play the Game:
 interface EquationProps {
   input: { numerator: number; denominator: number };
   output: { denominator: number };
+  nextEvent: string;
+  buttonText: string;
 }
 
 interface EquivalentFractionsGameProps {
@@ -27,20 +29,28 @@ export default function EquivalentFractionsGame({ sendAdminMessage }: Equivalent
 
   const screens: Record<string, EquationProps> = {
     first: {
-      input: { numerator: 2, denominator: 3 },
-      output: { denominator: 9 }
+      input: { numerator: 3, denominator: 4 },
+      output: { denominator: 12 },
+      nextEvent: 'moveToSecondScreen1',
+      buttonText: 'Next Equation →'
     },
     second1: {
-      input: { numerator: 3, denominator: 5 },
-      output: { denominator: 10 }
+      input: { numerator: 3, denominator: 4 },
+      output: { denominator: 8 },
+      nextEvent: 'moveToSecondScreen2',
+      buttonText: 'Next Equation →'
     },
     second2: {
-      input: { numerator: 3, denominator: 4 },
-      output: { denominator: 12 }
+      input: { numerator: 2, denominator: 3 },
+      output: { denominator: 9 },
+      nextEvent: 'moveToThirdScreen',
+      buttonText: 'Next Equation →'
     },
     third: {
-      input: { numerator: 5, denominator: 7 },
-      output: { denominator: 28 }
+      input: { numerator: 2, denominator: 3 },
+      output: { denominator: 12 },
+      nextEvent: 'moveToFirstScreen',
+      buttonText: 'Try Again'
     }
   };
 
@@ -67,12 +77,12 @@ export default function EquivalentFractionsGame({ sendAdminMessage }: Equivalent
   }, []);
 
   return (
-    <Card className="p-8 bg-gradient-to-br from-[#faf4eb] to-[#f5e6d3] shadow-2xl rounded-2xl">
+    <Card className="h-full w-full p-8 bg-gradient-to-br bg-[#FFF8EE] shadow-2xl">
       <div className="w-full max-w-7xl mx-auto">
-        {currentScreen === 'first' && <FirstScreen {...screens.first} />}
-        {currentScreen === 'second1' && <SecondScreen {...screens.second1} nextEvent="moveToSecondScreen2" buttonText="Next Equation →" />}
-        {currentScreen === 'second2' && <SecondScreen {...screens.second2} nextEvent="moveToThirdScreen" buttonText="Next Equation →" />}
-        {currentScreen === 'third' && <ThirdScreen {...screens.third} />}
+        {currentScreen === 'first' && <FirstScreen {...screens.first} sendAdminMessage={sendAdminMessage} />}
+        {currentScreen === 'second1' && <SecondScreen {...screens.second1} sendAdminMessage={sendAdminMessage} />}
+        {currentScreen === 'second2' && <SecondScreen {...screens.second2} sendAdminMessage={sendAdminMessage} />}
+        {currentScreen === 'third' && <ThirdScreen {...screens.third} sendAdminMessage={sendAdminMessage} />}
       </div>
     </Card>
   );

@@ -1,53 +1,61 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from "@/components/custom_ui/button";
+import { useState, useRef, useEffect } from 'react';
 
-interface Equation {
-  input: { numerator: number; denominator: number };
-  multiplier: { numerator: number; denominator: number };
-  output: { numerator: number; denominator: number };
-}
-
-interface EquationProps {
+interface ThirdScreenProps {
   input: { numerator: number; denominator: number };
   output: { denominator: number };
+  nextEvent: string;
+  buttonText: string;
 }
 
-export function ThirdScreen({ input, output }: EquationProps) {
-  const [equation, setEquation] = useState<Equation>({
-    input: { numerator: input.numerator, denominator: input.denominator },
-    multiplier: { numerator: 0, denominator: 0 },
-    output: { numerator: 0, denominator: output.denominator }
-  });
-  
-  const [currentStep, setCurrentStep] = useState<'multiplier_denominator' | 'multiplier_numerator' | 'output_numerator' | 'complete'>('multiplier_denominator');
+export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEvent }) => {
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [isCorrect, setIsCorrect] = useState(false);
 
-  const handleInputChange = (value: string, type: 'numerator' | 'denominator' | 'output_numerator') => {
+  const [equation, setEquation] = useState({
+    input: { numerator: input.numerator, denominator: input.denominator },
+    output: { numerator: 0, denominator: output.denominator },
+    multiplier: { numerator: 0, denominator: 0 }
+  });
+
+  const denominatorInput = useRef<HTMLInputElement | null>(null);
+  const numeratorInput = useRef<HTMLInputElement | null>(null);
+  const outputInput = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (currentStep === 1 && denominatorInput.current) {
+      denominatorInput.current.focus();
+    } else if (currentStep === 2 && numeratorInput.current) {
+      numeratorInput.current.focus();
+    } else if (currentStep === 3 && outputInput.current) {
+      outputInput.current.focus();
+    }
+  }, [currentStep]);
+
+  const handleMultiplierChange = (value: string, type: 'numerator' | 'denominator' | 'output_numerator') => {
     const numValue = parseInt(value) || 0;
     
     if (type === 'denominator') {
-      if (numValue === 3) {  // 21/7 = 3
-        setCurrentStep('multiplier_numerator');
+      if (numValue === equation.output.denominator / equation.input.denominator) {
+        setCurrentStep(2);
       }
       setEquation(prev => ({
         ...prev,
         multiplier: { ...prev.multiplier, denominator: numValue }
       }));
-    } 
-    else if (type === 'numerator') {
-      if (numValue === 3) {  // Same as denominator for equivalent fraction
-        setCurrentStep('output_numerator');
+    } else if (type === 'numerator') {
+      if (numValue === equation.output.denominator / equation.input.denominator) {
+        setCurrentStep(3);
       }
       setEquation(prev => ({
         ...prev,
         multiplier: { ...prev.multiplier, numerator: numValue }
       }));
-    }
-    else if (type === 'output_numerator') {
-      const expectedNumerator = equation.input.numerator * 3;  // 5 * 3 = 15
+    } else if (type === 'output_numerator') {
+      const expectedNumerator = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
       if (numValue === expectedNumerator) {
-        setCurrentStep('complete');
+        setIsCorrect(true);
       }
       setEquation(prev => ({
         ...prev,
@@ -56,88 +64,134 @@ export function ThirdScreen({ input, output }: EquationProps) {
     }
   };
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#FDF5E6]">
-      <div className="text-center space-y-4 mb-8">
-        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#8B4513] to-[#D2691E]">
-          One Last Equation!
-        </h2>
-        <p className="text-xl text-[#5d4037] font-medium">
-          Fill in the blanks to complete the equivalent fraction equation
-        </p>
-      </div>
+  const renderTopContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-4">
+            <p className="text-left">
+              <span className="font-bold">Step 1:</span> To go from {equation.input.denominator} to {equation.output.denominator} total pieces, how many pieces should you split each piece into?
+            </p>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="space-y-4">
+            <p className="text-left">
+              <span className="font-bold">Step 2:</span> So for every 1 piece you got earlier, how many pieces do you get now?
+            </p>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="space-y-4">
+            <p className="text-left">
+              <span className="font-bold">Step 3:</span> So for every {equation.input.numerator} piece you got earlier, how many pieces do you get now?
+            </p>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
-      {/* Equation input */}
-      <div className="flex items-center justify-center gap-4 text-4xl">
+  const renderEquation = () => {
+    const baseInputClass = "w-12 h-12 text-xl text-center rounded outline-none transition-all duration-200 border-2 border-black";
+    const enabledInputClass = "bg-gray-200 hover:bg-gray-300 focus:ring-2 focus:ring-blue-500 focus:bg-white";
+    const disabledInputClass = "bg-gray-100 text-gray-500 border-gray-300";
+    
+    return (
+      <div className="flex items-center justify-center gap-4">
         <div className="flex flex-col items-center">
-          <div>{equation.input.numerator}</div>
-          <div className="w-8 h-[2px] bg-[#5d4037] my-2"></div>
-          <div>{equation.input.denominator}</div>
+          <span className="text-3xl font-bold">{equation.input.numerator}</span>
+          <div className="w-12 h-[2px] bg-black my-1"/>
+          <span className="text-3xl font-bold">{equation.input.denominator}</span>
         </div>
-        <div className="mx-4">×</div>
+        <span className="text-xl">×</span>
         <div className="flex flex-col items-center">
-          {currentStep === 'multiplier_numerator' || currentStep === 'output_numerator' || currentStep === 'complete' ? (
+          {currentStep >= 2 ? (
             <input
               type="text"
               value={equation.multiplier.numerator || ''}
-              onChange={(e) => handleInputChange(e.target.value, 'numerator')}
-              disabled={currentStep !== 'multiplier_numerator'}
-              className="w-16 h-16 text-4xl text-center border-2 border-[#8B4513] rounded-lg disabled:bg-gray-100"
-              placeholder="?"
+              onChange={(e) => handleMultiplierChange(e.target.value, 'numerator')}
+              className={`${baseInputClass} mb-1 ${currentStep === 2 ? enabledInputClass : disabledInputClass}`}
+              disabled={currentStep !== 2}
+              ref={numeratorInput}
+              maxLength={2}
+              placeholder={currentStep === 2 ? "?" : ""}
             />
           ) : (
-            <div className="w-16 h-16 flex items-center justify-center">?</div>
+            <span className="text-3xl font-bold h-12"></span>
           )}
-          <div className="w-16 h-[2px] bg-[#5d4037] my-2"></div>
+          <div className="w-12 h-[2px] bg-black my-1"/>
           <input
             type="text"
             value={equation.multiplier.denominator || ''}
-            onChange={(e) => handleInputChange(e.target.value, 'denominator')}
-            disabled={currentStep !== 'multiplier_denominator'}
-            className="w-16 h-16 text-4xl text-center border-2 border-[#8B4513] rounded-lg disabled:bg-gray-100"
-            placeholder="?"
+            onChange={(e) => handleMultiplierChange(e.target.value, 'denominator')}
+            className={`${baseInputClass} mt-1 ${currentStep === 1 ? enabledInputClass : disabledInputClass}`}
+            disabled={currentStep !== 1}
+            ref={denominatorInput}
+            maxLength={2}
+            placeholder={currentStep === 1 ? "?" : ""}
           />
         </div>
-        <div className="mx-4">=</div>
+        <span className="text-xl">=</span>
         <div className="flex flex-col items-center">
-          {currentStep === 'output_numerator' || currentStep === 'complete' ? (
+          {currentStep >= 3 ? (
             <input
               type="text"
               value={equation.output.numerator || ''}
-              onChange={(e) => handleInputChange(e.target.value, 'output_numerator')}
-              disabled={currentStep !== 'output_numerator'}
-              className="w-16 h-16 text-4xl text-center border-2 border-[#8B4513] rounded-lg disabled:bg-gray-100"
-              placeholder="?"
+              onChange={(e) => handleMultiplierChange(e.target.value, 'output_numerator')}
+              className={`${baseInputClass} mb-1 ${currentStep === 3 ? enabledInputClass : disabledInputClass}`}
+              disabled={currentStep !== 3 || isCorrect}
+              ref={outputInput}
+              maxLength={2}
+              placeholder={currentStep === 3 ? "?" : ""}
             />
           ) : (
-            <div className="w-16 h-16 flex items-center justify-center">?</div>
+            <span className="text-3xl font-bold h-12"></span>
           )}
-          <div className="w-16 h-[2px] bg-[#5d4037] my-2"></div>
-          <div className="w-16 h-16 flex items-center justify-center">
-            {equation.output.denominator}
-          </div>
+          <div className="w-12 h-[2px] bg-black my-1"/>
+          <span className="text-3xl font-bold">{equation.output.denominator}</span>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="max-w-3xl h-full mx-auto text-center p-8 bg-[#FFF5EE]">
+      <h1 className="text-3xl font-bold mb-8">Equivalent fractions</h1>
+      
+      <div className="flex items-center justify-center space-x-6 mb-12">
+        <div className="flex flex-col items-center">
+          <span className="text-3xl font-bold">{equation.input.numerator}</span>
+          <div className="w-8 h-[2px] bg-black my-1"/>
+          <span className="text-3xl font-bold">{equation.input.denominator}</span>
+        </div>
+        <span className="text-5xl font-extralight">=</span>
+        <div className="flex flex-col items-center">
+          <span className="text-3xl font-bold">?</span>
+          <div className="w-8 h-[2px] bg-black my-1"/>
+          <span className="text-3xl font-bold">{equation.output.denominator}</span>
         </div>
       </div>
 
-      <div className="mt-8 text-center">
-        <p className="text-lg text-[#5d4037] mb-4">
-          {currentStep === 'multiplier_denominator' && "First, enter the denominator of the multiplier"}
-          {currentStep === 'multiplier_numerator' && "Great! Now enter the numerator of the multiplier"}
-          {currentStep === 'output_numerator' && "Finally, calculate and enter the numerator of the result"}
-          {currentStep === 'complete' && "✨ Perfect! You've completed the equation! ✨"}
-        </p>
-
-        {currentStep === 'complete' && (
-          <Button
-            onClick={() => window.dispatchEvent(new CustomEvent('gameComplete'))}
-            className="px-6 py-3 bg-gradient-to-r from-[#8B4513] to-[#A0522D] text-white
-              rounded-lg shadow-md hover:shadow-lg transition-all duration-300
-              transform hover:scale-105 active:scale-95"
-          >
-            Complete Game 🎉
-          </Button>
-        )}
+      {renderTopContent()}
+      
+      <div className="mt-8 space-y-8">
+        {renderEquation()}
       </div>
+
+      {isCorrect && (
+        <div className="mt-4">
+          <div className="bg-[#2E7D32] text-white p-4 flex justify-between items-center">
+            <div className="w-full flex justify-center gap-2">
+              <span>Well done!</span>
+              <span className="text-xl">🎉</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};

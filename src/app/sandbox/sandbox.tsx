@@ -1,21 +1,21 @@
 'use client'
 
-import React, { useRef, useEffect, useState } from 'react';
-import FractionsGame, { desc } from './game/game';
+import React, { useRef, useEffect } from 'react';
+import FractionsGame, { desc, useGameState } from './game/game';
 import Chat from "@/components/Chat";
 import { useWebSocketLogger } from '@/components/websocket';
 import { handleScreenshot } from '@/components/artifacts/utils/utils';
 import { AdminRequestMessage, AssistanceResponseMessage } from '@/components/MessageContext';
 import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 
 export default function SandboxPage() {
-    const [desc, setDesc] = useState<string>('');
     const componentRef = useRef<HTMLDivElement | null>(null);
     const setComponentRef = (ref: React.RefObject<HTMLDivElement>) => {
       componentRef.current = ref.current;
     };
-    const { sendLog, addToChat } = useWebSocketLogger()
+    const { sendLog, addToChat, isConnected } = useWebSocketLogger()
+    const { gameState } = useGameState();
 
     const getBackgroundImage = () => {
       return 'https://mathtutor-images.s3.us-east-1.amazonaws.com/generated-images/generated_image_20241203_010231.png';
@@ -29,6 +29,7 @@ export default function SandboxPage() {
           content: content,
           role: role,
           image: await handleScreenshot(componentRef),
+          gameState: JSON.stringify(gameState, null, 0),
           desc: desc,
         } as AdminRequestMessage)
       } else if (role == 'agent') {
@@ -48,7 +49,6 @@ export default function SandboxPage() {
     useEffect(() => {
       const updatePageContent = async () => {
         if (componentRef.current) {
-          setDesc(desc);
           setComponentRef(componentRef);
         }
       };
@@ -90,13 +90,22 @@ export default function SandboxPage() {
                 </Button>
               </div>
               <div className="flex-1 flex justify-center items-center">
-                <FractionsGame sendAdminMessage={sendAdminMessage} />
+                {isConnected ? (
+                  <FractionsGame sendAdminMessage={sendAdminMessage} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b p-4">
+                    <h1 className="text-2xl font-bold mb-4 text-center">
+                      Loading Game
+                    </h1>
+                    <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
         <div className="w-[25%] min-w-[250px] flex flex-col">
-          <Chat desc={desc} componentRef={componentRef} />
+          <Chat desc={desc} componentRef={componentRef} gameState={gameState}/>
         </div>
       </div>
     )

@@ -19,12 +19,13 @@ import { handleScreenshot } from './artifacts/utils/utils'
 
 interface ChatProps {
   desc: string;
+  gameState: any;
   componentRef: React.RefObject<HTMLDivElement>;
 }
 
 const MAX_MESSAGES = 10;
 
-const Chat: React.FC<ChatProps> = ({ desc, componentRef }) => {
+const Chat: React.FC<ChatProps> = ({ desc, gameState, componentRef }) => {
   const audioContext = useContext(AudioContext);
   if (!audioContext) {
     throw new Error('MessageCard must be used within an AudioProvider');
@@ -50,6 +51,7 @@ const Chat: React.FC<ChatProps> = ({ desc, componentRef }) => {
       content: '',
       image: await handleScreenshot(componentRef),
       desc: desc,
+      gameState: JSON.stringify(gameState, null, 0),
     } as AssistanceRequestMessage)
   };
 
@@ -60,10 +62,9 @@ const Chat: React.FC<ChatProps> = ({ desc, componentRef }) => {
         type: 'assistance',
         timestamp: new Date().toISOString(),
         content: inputMessage,
-        image: image,
-        desc: desc,
         isPlaying: false,
-        messageId: crypto.randomUUID()
+        messageId: crypto.randomUUID(),
+        gameState: JSON.stringify(gameState, null, 0),
       }
       messageContext.setMessages((prevMessages) => [...prevMessages, newMessage])
       sendLog({
@@ -72,6 +73,7 @@ const Chat: React.FC<ChatProps> = ({ desc, componentRef }) => {
         content: inputMessage,
         image: image,
         desc: desc,
+        gameState: JSON.stringify(gameState, null, 0),
       } as AssistanceRequestMessage)
       setInputMessage('')
     }
