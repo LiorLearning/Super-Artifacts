@@ -399,7 +399,7 @@ export function FirstScreen({ input, output }: EquationProps) {
                       className="w-8 h-8 text-xl text-center rounded outline-none transition-all duration-200
                         bg-gray-200 hover:bg-gray-300 focus:ring-2 focus:ring-blue-500 focus:bg-white
                         disabled:bg-gray-100 disabled:text-gray-500"
-                      disabled={currentStep !== 2}
+                      disabled={currentStep !== 2 || showCorrect}
                       ref={fractionNumerator}
                       maxLength={2}
                       placeholder="?"

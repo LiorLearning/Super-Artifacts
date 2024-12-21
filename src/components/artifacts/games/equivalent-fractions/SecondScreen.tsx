@@ -197,8 +197,12 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
           subParts={1}
           handleClick={() => {}}
         />
-        <div className="text-2xl font-bold">
-          {equation.input.numerator}/{equation.input.denominator}
+        <div className="w-[50px]">
+          <div className="flex flex-col items-center">
+            <span className="text-2xl">{equation.input.numerator}</span>
+            <div className="w-6 h-[2px] bg-black my-1"/>
+            <span className="text-2xl">{equation.input.denominator}</span>
+          </div>
         </div>
       </div>
 
@@ -207,7 +211,7 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
       <div className="mt-8 space-y-8">
         {renderEquation()}
 
-        <div className="w-full flex items-start">
+        <div className="w-[calc(100%-80px)] flex items-start">
           <Bar 
             parts={equation.input.denominator}
             subParts={equation.multiplier.denominator || 1}
