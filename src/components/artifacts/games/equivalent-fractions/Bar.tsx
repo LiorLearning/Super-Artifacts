@@ -7,6 +7,11 @@ interface BarProps {
   handleClick?: (partIndex: number, subPartIndex: number) => void;
 }
 
+interface VisualizationBarProps {
+  totalPieces: number;
+  selectedPieces: number[];
+}
+
 export function Bar({ 
   parts, 
   subParts = 1, 
@@ -46,3 +51,18 @@ export function Bar({
     </div>
   );
 }
+
+export const VisualizationBar: React.FC<VisualizationBarProps> = ({ totalPieces, selectedPieces }) => {
+  return (
+    <div className="w-full h-20 flex">
+      {Array.from({ length: totalPieces }).map((_, index) => (
+        <div
+          key={index}
+          className={`flex-1 border border-black ${
+            selectedPieces.includes(index) ? 'bg-[#8B4513] bg-opacity-50' : 'bg-white'
+          }`}
+        />
+      ))}
+    </div>
+  );
+};

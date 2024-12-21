@@ -15,9 +15,10 @@ interface Equation {
 interface EquationProps {
   input: { numerator: number; denominator: number };
   output: { denominator: number };
+  sendAdminMessage: (role: string, content: string) => void;
 }
 
-export function FirstScreen({ input, output }: EquationProps) {
+export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) {
   const [equation, setEquation] = useState<Equation>({
     input: { numerator: input.numerator, denominator: input.denominator },
     multiplier: { numerator: 0, denominator: 0 },
@@ -122,6 +123,7 @@ export function FirstScreen({ input, output }: EquationProps) {
       const expectedNumerator = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
       if (numValue === expectedNumerator) {
         setIsCorrect(true);
+        sendAdminMessage('user', 'Completed first equation successfully!');
       }
       setEquation(prev => ({
         ...prev,

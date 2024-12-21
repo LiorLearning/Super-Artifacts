@@ -7,9 +7,10 @@ interface ThirdScreenProps {
   output: { denominator: number };
   nextEvent: string;
   buttonText: string;
+  sendAdminMessage: (role: string, content: string) => void;
 }
 
-export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEvent }) => {
+export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEvent, buttonText, sendAdminMessage }) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isCorrect, setIsCorrect] = useState(false);
 
@@ -56,6 +57,7 @@ export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEve
       const expectedNumerator = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
       if (numValue === expectedNumerator) {
         setIsCorrect(true);
+        sendAdminMessage('user', 'Completed final equation successfully!');
       }
       setEquation(prev => ({
         ...prev,
@@ -185,10 +187,18 @@ export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEve
       {isCorrect && (
         <div className="mt-4">
           <div className="bg-[#2E7D32] text-white p-4 flex justify-between items-center">
-            <div className="w-full flex justify-center gap-2">
+            <div className="flex items-center gap-2">
               <span>Well done!</span>
               <span className="text-xl">🎉</span>
             </div>
+            <button 
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent(nextEvent));
+              }}
+              className="bg-white text-black px-4 py-2 rounded"
+            >
+              {buttonText}
+            </button>
           </div>
         </div>
       )}

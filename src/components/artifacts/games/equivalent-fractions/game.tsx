@@ -18,6 +18,7 @@ interface EquationProps {
   output: { denominator: number };
   nextEvent: string;
   buttonText: string;
+  sendAdminMessage: (role: string, content: string) => void;
 }
 
 interface EquivalentFractionsGameProps {
@@ -32,25 +33,29 @@ export default function EquivalentFractionsGame({ sendAdminMessage }: Equivalent
       input: { numerator: 3, denominator: 4 },
       output: { denominator: 12 },
       nextEvent: 'moveToSecondScreen1',
-      buttonText: 'Next Equation →'
+      buttonText: 'Next Equation →',
+      sendAdminMessage
     },
     second1: {
       input: { numerator: 3, denominator: 4 },
       output: { denominator: 8 },
       nextEvent: 'moveToSecondScreen2',
-      buttonText: 'Next Equation →'
+      buttonText: 'Next Equation →',
+      sendAdminMessage
     },
     second2: {
       input: { numerator: 2, denominator: 3 },
       output: { denominator: 9 },
       nextEvent: 'moveToThirdScreen',
-      buttonText: 'Next Equation →'
+      buttonText: 'Next Equation →',
+      sendAdminMessage
     },
     third: {
       input: { numerator: 2, denominator: 3 },
       output: { denominator: 12 },
       nextEvent: 'moveToFirstScreen',
-      buttonText: 'Try Again'
+      buttonText: 'Try Again',
+      sendAdminMessage
     }
   };
 
@@ -79,10 +84,10 @@ export default function EquivalentFractionsGame({ sendAdminMessage }: Equivalent
   return (
     <Card className="h-full w-full p-8 bg-gradient-to-br bg-[#FFF8EE] shadow-2xl">
       <div className="w-full max-w-7xl mx-auto">
-        {currentScreen === 'first' && <FirstScreen {...screens.first} sendAdminMessage={sendAdminMessage} />}
-        {currentScreen === 'second1' && <SecondScreen {...screens.second1} sendAdminMessage={sendAdminMessage} />}
-        {currentScreen === 'second2' && <SecondScreen {...screens.second2} sendAdminMessage={sendAdminMessage} />}
-        {currentScreen === 'third' && <ThirdScreen {...screens.third} sendAdminMessage={sendAdminMessage} />}
+        {currentScreen === 'first' && <FirstScreen {...screens.first} />}
+        {currentScreen === 'second1' && <SecondScreen {...screens.second1} />}
+        {currentScreen === 'second2' && <SecondScreen {...screens.second2} />}
+        {currentScreen === 'third' && <ThirdScreen {...screens.third} />}
       </div>
     </Card>
   );
