@@ -8,7 +8,7 @@ import { Cross } from 'lucide-react';
 
 interface Equation {
   input: { numerator: number; denominator: number };
-  multiplier: { numerator: number; denominator: number };t
+  multiplier: { numerator: number; denominator: number };
   output: { numerator: number; denominator: number };
 }
 
