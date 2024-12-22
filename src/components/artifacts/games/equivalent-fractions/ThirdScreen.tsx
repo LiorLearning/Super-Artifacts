@@ -1,6 +1,13 @@
+/**
+ * ThirdScreen Component
+ * 
+ * Handles the third and final interactive screen of the equivalent fractions game.
+ * Users complete their understanding of equivalent fractions through final exercises.
+ */
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useSound } from 'use-sound';
 
 interface ThirdScreenProps {
   input: { numerator: number; denominator: number };
@@ -11,15 +18,25 @@ interface ThirdScreenProps {
 }
 
 export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEvent, buttonText, sendAdminMessage }) => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [isCorrect, setIsCorrect] = useState(false);
-
   const [equation, setEquation] = useState({
     input: { numerator: input.numerator, denominator: input.denominator },
     output: { numerator: 0, denominator: output.denominator },
     multiplier: { numerator: 0, denominator: 0 }
   });
 
+  const [firstBar, setFirstBar] = useState<number[][]>(
+    Array(equation.input.denominator).fill(null).map((_, i) => 
+      i < equation.input.numerator ? [1] : [0]
+    )
+  );
+  const [secondBar, setSecondBar] = useState<number[][]>(
+    Array(equation.input.denominator).fill(null).map(() => [0])
+  );
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', { volume: 0.5 });
+  const [playSelectSound] = useSound('/sounds/join.mp3', { volume: 0.5 });
+  const fractionNumerator = useRef<HTMLInputElement>(null);
   const denominatorInput = useRef<HTMLInputElement | null>(null);
   const numeratorInput = useRef<HTMLInputElement | null>(null);
   const outputInput = useRef<HTMLInputElement | null>(null);
@@ -88,7 +105,7 @@ export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEve
         return (
           <div className="space-y-4">
             <p className="text-left">
-              <span className="font-bold">Step 3:</span> So for every {equation.input.numerator} piece you got earlier, how many pieces do you get now?
+              <span className="font-bold">Step 3:</span> So how many pieces do you now get in total?
             </p>
           </div>
         );

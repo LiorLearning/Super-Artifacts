@@ -1,10 +1,15 @@
+/**
+ * FirstScreen Component
+ * 
+ * Handles the first interactive screen of the equivalent fractions game.
+ * Users can select parts of bars and use knives to split them into equal pieces.
+ */
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Button } from "@/components/custom_ui/button";
 import { Bar } from "./Bar";
 import { useSound } from 'use-sound';
-import { Cross } from 'lucide-react';
+import { ArrowBigDown, Cross } from 'lucide-react';
 
 interface Equation {
   input: { numerator: number; denominator: number };
@@ -12,28 +17,33 @@ interface Equation {
   output: { numerator: number; denominator: number };
 }
 
-interface EquationProps {
+interface FirstScreenProps {
   input: { numerator: number; denominator: number };
   output: { denominator: number };
   sendAdminMessage: (role: string, content: string) => void;
 }
 
-export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) {
+export const FirstScreen = ({ input, output, sendAdminMessage }: FirstScreenProps) => {
   const [equation, setEquation] = useState<Equation>({
     input: { numerator: input.numerator, denominator: input.denominator },
     multiplier: { numerator: 0, denominator: 0 },
     output: { numerator: 0, denominator: output.denominator }
   });
   
-  // Initialize first bar with the equation's numerator pieces selected
-  const [firstBarPieces] = useState<number[]>(
-    Array.from({ length: equation.input.numerator }, (_, i) => i)
+  // Initialize bars with proper structure
+  const [firstBar, setFirstBar] = useState<number[][]>(
+    Array(equation.input.denominator).fill(null).map((_, i) => 
+      i < equation.input.numerator ? [1] : [0]
+    )
   );
-  const [secondBarPieces, setSecondBarPieces] = useState<number[]>([]);
+  const [secondBar, setSecondBar] = useState<number[][]>(
+    Array(equation.input.denominator).fill([0])
+  );
+
   const [selectedKnife, setSelectedKnife] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [barNumerator, setBarNumerator] = useState<string>('?');
+  const [barNumerator, setBarNumerator] = useState<string>('');
   const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', { volume: 0.5 });
   const [playSelectSound] = useSound('/sounds/join.mp3', { volume: 0.5 });
   const fractionNumerator = useRef<HTMLInputElement>(null);
@@ -41,61 +51,81 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
   const numeratorInput = useRef<HTMLInputElement | null>(null);
   const outputInput = useRef<HTMLInputElement | null>(null);
   const [showCorrect, setShowCorrect] = useState(false);
+  const [canProceed, setCanProceed] = useState(false);
 
-  const handleSecondBarClick = (partIndex: number, subPartIndex: number) => {
-    if (!selectedKnife || currentStep !== 1) return;
+  // Update first bar selection
+  const handleFirstBarClick = (partIndex: number) => {
+    if (currentStep !== 1) return;
     
-    const pieceIndex = partIndex * selectedKnife + subPartIndex;
-    
-    setSecondBarPieces(prev => {
-      const newSelection = prev.includes(pieceIndex)
-        ? prev.filter(i => i !== pieceIndex)
-        : [...prev, pieceIndex].sort((a, b) => a - b);
-
-      // Play sound on selection
-      playSelectSound();
-
-      // Calculate expected number of pieces
-      const expectedPieceCount = Math.floor(equation.input.numerator / equation.input.denominator * equation.output.denominator);
-      
-      // Check if the number of selected pieces matches expected count
-      if (newSelection.length === expectedPieceCount) {
-        setBarNumerator("")
-        fractionNumerator.current?.focus();
-        setCurrentStep(2);
-      }
-      
-      return newSelection;
+    setFirstBar(prev => {
+      const newBar = [...prev];
+      newBar[partIndex] = [newBar[partIndex][0] === 1 ? 0 : 1];  // Toggle selection
+      return newBar;
     });
   };
 
-  const handleSecondBarFractionChange = (value: string) => {
-      setBarNumerator(value);
-      if (parseInt(value) === equation.input.numerator / equation.input.denominator * (equation.output.denominator) && currentStep === 2) {
-        setShowCorrect(true);
-      }
-
-    }
+  // Handle knife selection
   const handleKnifeSelect = (parts: number) => {
     setSelectedKnife(parts);
-    playBreakSound();
-    setSecondBarPieces([]);
-    setIsCorrect(false);
-    
-    // If selected knife matches the required ratio, move to step 1
-    if (parts === equation.output.denominator / equation.input.denominator) {
-      setCurrentStep(1);
-    }
-    
-    setEquation(prev => ({
-      ...prev,
-      multiplier: { numerator: 0, denominator: 0 },
-      output: { 
-        numerator: 0,
-        denominator: prev.input.denominator * parts
-      }
-    }));
+    setSecondBar(
+      Array(equation.input.denominator).fill(null).map(() => [0])
+    );
   };
+
+  // Handle second bar click
+  const handleSecondBarClick = (partIndex: number, subPartIndex: number) => {
+    if (currentStep > 1 || canProceed) return;
+
+    if (selectedKnife) {
+      // Break the clicked part into subparts
+      setSecondBar(prev => {
+        const newBar = prev.map(row => [...row]);
+        newBar[partIndex] = Array(selectedKnife).fill(0);
+        
+        const total = newBar.reduce((sum, part) => sum + part.length, 0);
+        console.log('Total parts:', total);
+
+        const breakedPart = newBar.filter(part => part.length > 1).length;
+        console.log('Breaked parts:', breakedPart);
+        
+        if (total === equation.output.denominator && breakedPart === equation.input.denominator) {
+          setCanProceed(true);
+          setSelectedKnife(null);
+        }
+        
+        return newBar;
+      });
+      playBreakSound();
+    } else {
+      // Toggle selection of subparts
+      setSecondBar(prev => {
+        const newBar = prev.map(row => [...row]);
+        newBar[partIndex][subPartIndex] = newBar[partIndex][subPartIndex] === 1 ? 0 : 1;
+
+        const totalSelected = newBar.reduce((sum, part) => 
+          sum + part.filter(subpart => subpart === 1).length, 0
+        );
+        
+        if (totalSelected === equation.input.numerator * (equation.output.denominator / equation.input.denominator)) {
+          setCanProceed(true);
+        } else {
+          setCanProceed(false);
+        }
+
+        return newBar;
+      });
+      playSelectSound();
+    }
+  };
+
+  const handleSecondBarFractionChange = (value: string) => {
+    setBarNumerator(value);
+    const numValue = parseInt(value);
+    
+    if (numValue === equation.input.numerator * (equation.output.denominator / equation.input.denominator)) {
+      setShowCorrect(true);
+    }
+  }
 
   const handleMultiplierChange = (value: string, type: 'numerator' | 'denominator' | 'output_numerator') => {
     const numValue = parseInt(value) || 0;
@@ -103,19 +133,32 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
     if (type === 'denominator') {
       if (numValue === equation.output.denominator/ equation.input.denominator) {
         setCurrentStep(4);
+        setFirstBar(Array(equation.input.denominator).fill(0).map((_, i) => i === 0 ? [1] : [0]));
+        setSecondBar(Array(equation.input.denominator).fill(null).map((_, i) =>
+          Array(equation.output.denominator/ equation.input.denominator).fill(i === 0 ? 1 : 0)
+        ))
+        playSelectSound();
       }
       setEquation(prev => ({
         ...prev,
         multiplier: { ...prev.multiplier, denominator: numValue }
       }));
+      
     } else if (type === 'numerator') {
       if (numValue === equation.output.denominator/ equation.input.denominator) {
-        setCurrentStep(5); // Move to output numerator input
+        setCurrentStep(5); 
+        setFirstBar(Array(equation.input.denominator).fill(0).map((_, i) => i < equation.input.numerator ? [1] : [0]));
+        setSecondBar(Array(equation.input.denominator).fill(null).map((_, i) =>
+          Array(equation.output.denominator/ equation.input.denominator).fill(i < equation.input.numerator ? 1 : 0)
+        ))
+        playSelectSound();
       }
       setEquation(prev => ({
         ...prev,
         multiplier: { ...prev.multiplier, numerator: numValue }
       }));
+
+      
     } else if (type === 'output_numerator') {
       const expectedNumerator = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
       if (numValue === expectedNumerator) {
@@ -130,7 +173,9 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
   };
 
   useEffect(() => {
-    if (currentStep === 3 && denominatorInput.current) {
+    if (currentStep === 2 && fractionNumerator.current) {
+      fractionNumerator.current.focus();
+    }else  if (currentStep === 3 && denominatorInput.current) {
       denominatorInput.current.focus();
     } else if (currentStep === 4 && numeratorInput.current) {
       numeratorInput.current.focus();
@@ -139,14 +184,27 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
     }
   }, [currentStep]);
 
+  const handleProceed = () => {
+    if (currentStep === 0) {
+      setCurrentStep(1);
+      setCanProceed(false);
+    } else if (currentStep === 1) {
+      setCurrentStep(2);
+      setCanProceed(false);
+    } else if (currentStep === 2) {
+      setCurrentStep(3);
+      setCanProceed(false);
+    }
+  };
+
   const renderTopContent = () => {
     switch (currentStep) {
       case 0:
         return (
-          <>
-            <p className="text-left mb-6">
-              How many pieces would you get if this chocolate were broken into {equation.output.denominator} pieces?
-            </p>
+          <>          
+          <p className="text-left mb-6">
+            How many pieces would you get if this chocolate were broken into {equation.output.denominator} pieces?
+          </p>
             <div className="text-left">
               <p className="mb-6">
                 <span className="font-bold">Step 1:</span> Let's try breaking the chocolate into {equation.output.denominator} pieces first.
@@ -157,7 +215,7 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
         );
       case 1:
         return (
-          <div className="text-left">
+          <div className="text-left"> 
             <p className="font-bold">Awesome!</p>
             <p className="mb-6">
               <span className="font-bold">Step 2:</span> Select pieces to get the same amount of chocolate as above!
@@ -166,50 +224,47 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
         );
       case 2:
         return (
-          <div className="space-y-4">
+          <div className="space-y-4"> 
             <p className="text-left">
-              <span className="font-bold">Step 3:</span> So how many pieces do you get?
+              <span className="font-bold">Step 3:</span> So how many pieces do you get in total?
             </p>
           </div>
         );
       case 3:
-        return (
-          <div className="w-[calc(100%-50px)] space-y-4">
-            <div className="w-full flex items-center justify-evenly gap-4">
-              {Array(equation.input.denominator).fill(equation.output.denominator / equation.input.denominator).map((num, idx) => (
-                <>
-                  {idx > 0 && <span className="text-3xl font-bold">+</span>}
-                  <span className="text-3xl font-bold">{num}</span>
-                </>
-              ))}
-            </div>
+        return(
+          <div className="space-y-4">
+            <p className="text-left">
+              <span className="font-bold">Step 4:</span> To go from {equation.input.denominator} to {equation.output.denominator} total pieces, how many pieces did your knife split each piece into?
+            </p>
           </div>
         );
       case 4:
+        return (
+          <div className="space-y-4">
+            <p className="text-left">
+              <span className="font-bold">Step 5:</span> So for every 1 piece you got earlier, how many pieces do you get now?
+            </p>
+          </div>
+        );
       case 5:
         return (
-          <div className="w-[calc(100%-50px)] space-y-4">
-            <div className="w-full flex items-center justify-evenly gap-4">
-              {Array(equation.input.denominator).fill(null).map((_, idx) => (
-                <>
-                  {idx > 0 && 
-                    <span className="text-3xl font-bold">
-                      {idx < equation.input.numerator ? '+' : '\u00A0'}
-                    </span>
-                  }
-                  <span className="text-3xl font-bold">
-                    {idx < equation.input.numerator 
-                      ? equation.output.denominator / equation.input.denominator 
-                      : '\u00A0'}
-                  </span>
-                </>
-              ))}
-            </div>
+          <div className="space-y-4">
+            <p className="text-left">
+              <span className="font-bold">Step 6:</span> Great, so how many pieces do you get in total?
+            </p>
           </div>
-        ); 
+        );
       default:
         return null;
     }
+  };
+
+  const rendermiddleContent = () => {
+return (
+  <div className="flex justify-center">
+    <ArrowBigDown className="w-20 h-20 text-black fill-black object-contai" />
+  </div>
+);
   };
 
   const renderEquation = () => {
@@ -277,37 +332,6 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
     );
   };
 
-  const renderBottomContent = () => {
-    switch (currentStep) {
-      case 3:
-        return(
-          <div className="space-y-4">
-            <p className="text-left">
-              <span className="font-bold">Step 3:</span> To go from {equation.input.denominator} to {equation.output.denominator} total pieces, how many pieces did your knife split each piece into?
-            </p>
-          </div>
-        );
-        case 4:
-          return (
-            <div className="space-y-4">
-              <p className="text-left">
-                <span className="font-bold">Step 4:</span> So for every 1 piece you got earlier, how many pieces do you get now?
-              </p>
-            </div>
-          );
-        case 5:
-          return (
-            <div className="space-y-4">
-              <p className="text-left">
-                <span className="font-bold">Step 5:</span> So for every {equation.input.numerator} piece you got earlier, how many pieces do you get now?
-              </p>
-            </div>
-          );
-        default:
-          return null;
-    }
-  };
-
   return (
     <div className="max-w-3xl h-full mx-auto text-center p-8 bg-[#FFF5EE]">
       <h1 className="text-3xl font-bold mb-8">Equivalent fractions</h1>
@@ -327,42 +351,47 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
       </div>
 
       <div className="space-y-8">
+
+        {/* Step content */}
+        <div className="">
+          {renderTopContent()}
+          {renderEquation()}
+
+        </div>
         {/* First bar */}
         <div className="w-full flex items-center">
           <Bar 
-            parts={equation.input.denominator} 
-            selectedParts={firstBarPieces}
-            handleClick={() => {}}
+            parts={firstBar}
+            handleClick={handleFirstBarClick}
           />
           <div className="ml-4 w-[50px]">
             <div className="flex flex-col items-center">
-              <span className="text-2xl">{equation.input.numerator}</span>
+              <span className="text-2xl">{firstBar.flat().filter(x => x === 1).length}</span>
               <div className="w-6 h-[2px] bg-black my-1"/>
               <span className="text-2xl">{equation.input.denominator}</span>
             </div>
           </div>
         </div>
 
-        {/* Step content */}
-        <div className="">
-          {renderTopContent()}
+        {/* Middle content */}
+        <div className="space-y-4">
+          {rendermiddleContent()}
         </div>
+
 
         {/* Second bar */}
         <div className="w-full flex items-start">
           <Bar 
-            parts={equation.input.denominator} 
-            subParts={selectedKnife || 1}
-            selectedParts={secondBarPieces}
+            parts={secondBar}
             handleClick={handleSecondBarClick}
           />
-          <div className="ml-4 w-[50px] h-full flex flex-col space-y-2">
+          <div className={`ml-4 w-[50px] h-full flex flex-col space-y-2 ${canProceed && 'opacity-50 pointer-events-none'}`}>
             {currentStep === 0 ? (
               <>
                 <button 
                   onClick={() => {
                     setSelectedKnife(null);
-                    setSecondBarPieces([]);
+                    setSecondBar(Array(equation.input.denominator).fill([0]));
                     setIsCorrect(false);
                     setCurrentStep(0);
                   }}
@@ -412,13 +441,18 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
           </div>
         </div>
 
-        <div className=''>
-          {renderBottomContent()}
-        </div>
-        {renderEquation()}
-
-
       </div>
+
+      {currentStep <= 2 && canProceed && (
+        <div className="mt-4">
+          <button
+            onClick={handleProceed}
+            className="bg-[#2E7D32] text-white px-6 py-2 rounded hover:bg-[#1B5E20] transition-colors"
+          >
+            Proceed →
+          </button>
+        </div>
+      )}
       {showCorrect && (
         <div className="mt-4">
           <div className="bg-[#2E7D32] text-white p-4 flex justify-between items-center">
@@ -430,6 +464,10 @@ export function FirstScreen({ input, output, sendAdminMessage }: EquationProps) 
               onClick={() => {
                 setShowCorrect(false)
                 setCurrentStep(3)
+                setFirstBar(Array(equation.input.denominator).fill(null).map((_, i) => [0]))
+                setSecondBar(Array(equation.input.denominator).fill(null).map(() => 
+                  Array(equation.output.denominator/ equation.input.denominator).fill(0)
+                ))
               }}
               className="bg-white text-black px-4 py-2 rounded"
             >

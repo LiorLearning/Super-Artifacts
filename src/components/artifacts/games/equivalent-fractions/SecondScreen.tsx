@@ -1,8 +1,15 @@
+/**
+ * SecondScreen Component
+ * 
+ * Handles the second interactive screen of the equivalent fractions game.
+ * Users continue working with equivalent fractions through bar manipulation.
+ */
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { Bar } from "./Bar";
 import { useSound } from 'use-sound';
+import { ArrowBigDown } from 'lucide-react';
 
 interface SecondScreenProps {
   input: { numerator: number; denominator: number };
@@ -45,36 +52,78 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
     if (type === 'denominator') {
       if (numValue === equation.output.denominator / equation.input.denominator) {
         playBreakSound();
+
+        const subPartsPerPiece = equation.output.denominator / equation.input.denominator;
+        setSecondBar(
+          Array(equation.input.denominator).fill(null).map(() => 
+            Array(subPartsPerPiece).fill(0)
+          )
+        );
         setCurrentStep(2);
       }
       setEquation(prev => ({
         ...prev,
         multiplier: { ...prev.multiplier, denominator: numValue }
       }));
+
     } else if (type === 'numerator') {
       if (numValue === equation.output.denominator / equation.input.denominator) {
-        // Calculate number of pieces to select
-        const piecesToSelect = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
-        // Create array of indices for selected pieces
-        const selectedIndices = Array.from({ length: piecesToSelect }, (_, i) => i);
+
+        const subPartsPerPiece = equation.output.denominator / equation.input.denominator;
+        setSecondBar(
+          Array(equation.input.denominator).fill(null).map((_, i) => 
+            Array(subPartsPerPiece).fill(i === 0 ? 1 : 0)
+          )
+        );
         playSelectSound();
-        setSelectedPieces(selectedIndices);
         setCurrentStep(3);
       }
       setEquation(prev => ({
         ...prev,
         multiplier: { ...prev.multiplier, numerator: numValue }
       }));
+      
     } else if (type === 'output_numerator') {
       const expectedNumerator = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
       if (numValue === expectedNumerator) {
+        // Select all required subparts
+        const subPartsPerPiece = equation.output.denominator / equation.input.denominator;
+        setSecondBar(
+          Array(equation.input.denominator).fill(null).map((_, i) => 
+            Array(subPartsPerPiece).fill(i < equation.input.numerator ? 1 : 0)
+          )
+        );
+        playSelectSound();
         setIsCorrect(true);
+        // sendAdminMessage('user', 'Completed second equation successfully!');
       }
       setEquation(prev => ({
         ...prev,
         output: { ...prev.output, numerator: numValue }
       }));
     }
+  };
+
+  const [firstBar, setFirstBar] = useState<number[][]>(
+    Array(equation.input.denominator).fill(null).map((_, i) => 
+      i < equation.input.numerator ? [1] : [0]
+    )
+  );
+
+  const [secondBar, setSecondBar] = useState<number[][]>(
+    Array(equation.input.denominator).fill(null).map(() => [0])
+  );
+
+  const handleBarClick = (partIndex: number, subPartIndex: number) => {
+    if (!equation.multiplier.denominator) return;
+    
+    setSecondBar(prev => {
+      const newBar = prev.map(row => [...row]);  // Deep copy
+      newBar[partIndex][subPartIndex] = newBar[partIndex][subPartIndex] === 1 ? 0 : 1;
+      return newBar;
+    });
+
+    playSelectSound();
   };
 
   const renderTopContent = () => {
@@ -99,7 +148,7 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
         return (
           <div className="space-y-4">
             <p className="text-left">
-              <span className="font-bold">Step 3:</span> So for every {equation.input.numerator} piece you got earlier, how many pieces do you get now?
+              <span className="font-bold">Step 3:</span> So how many pieces do you now get in total?
             </p>
           </div>
         );
@@ -175,7 +224,7 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
   return (
     <div className="max-w-3xl h-full mx-auto text-center p-8 bg-[#FFF5EE]">
       <h1 className="text-3xl font-bold mb-8">Equivalent fractions</h1>
-      
+
       <div className="flex items-center justify-center space-x-6 mb-12">
         <div className="flex flex-col items-center">
           <span className="text-3xl font-bold">{equation.input.numerator}</span>
@@ -189,33 +238,33 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
           <span className="text-3xl font-bold">{equation.output.denominator}</span>
         </div>
       </div>
+
+      {renderTopContent()}
+
+      {renderEquation()}
       
-      <div className="flex items-center justify-center space-x-6 mb-12">
+      <div className="flex items-center justify-center space-x-6 my-12">
         <Bar 
-          parts={equation.input.denominator}
-          selectedParts={Array.from({ length: equation.input.numerator }, (_, i) => i)}
-          subParts={1}
+          parts={firstBar}
           handleClick={() => {}}
         />
-        <div className="w-[50px]">
-          <div className="flex flex-col items-center">
-            <span className="text-2xl">{equation.input.numerator}</span>
-            <div className="w-6 h-[2px] bg-black my-1"/>
-            <span className="text-2xl">{equation.input.denominator}</span>
-          </div>
+        <div className="flex flex-col items-center">
+          <span className="text-2xl">{firstBar.flat().filter(x => x === 1).length}</span>
+          <div className="w-6 h-[2px] bg-black my-1"/>
+          <span className="text-2xl">{equation.input.denominator}</span>
         </div>
       </div>
 
-      {renderTopContent()}
       
       <div className="mt-8 space-y-8">
-        {renderEquation()}
+        <div className="flex justify-center">
+          <ArrowBigDown className="w-20 h-20 text-black fill-black object-contai" />
+        </div>
 
         <div className="w-[calc(100%-80px)] flex items-start">
           <Bar 
-            parts={equation.input.denominator}
-            subParts={equation.multiplier.denominator || 1}
-            selectedParts={selectedPieces}
+            parts={secondBar}
+            handleClick={handleBarClick}
           />
         </div>
       </div>

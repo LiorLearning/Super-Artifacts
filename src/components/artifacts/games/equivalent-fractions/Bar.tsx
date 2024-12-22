@@ -1,10 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
+
 interface BarProps {
-  parts: number;
-  subParts?: number;
-  selectedParts: number[];
-  handleClick?: (partIndex: number, subPartIndex: number) => void;
+  parts: number[][];  // Each part is an array of subparts, where number represents selection state (0 = unselected, 1 = selected)
+  handleClick?: (partIndex: number, subPartIndex: number) => void;  // Click handler for both part and subpart
 }
 
 interface VisualizationBarProps {
@@ -14,31 +14,36 @@ interface VisualizationBarProps {
 
 export function Bar({ 
   parts, 
-  subParts = 1, 
-  selectedParts, 
   handleClick
 }: BarProps) {
+
+  useEffect(() => {
+    console.log('parts', parts);
+  }, [parts]);
+
   return (
     <div className="w-full relative flex items-center">
       <div className="w-full flex gap-1">
-        {Array.from({ length: parts }).map((_, partIndex) => (
-          <div key={partIndex} className="w-full relative">
+        {parts.map((subParts, partIndex) => (
+          <div 
+            key={partIndex} 
+            className="w-full relative"
+          >
             <div className={`
               relative w-full h-24
-              rounded-2xl
               border-4 border-[#3A2218]
+              rounded-2xl
               overflow-hidden
             `}>
               <div className="w-full h-full flex gap-1">
-                {Array.from({ length: subParts || 1 }).map((_, subPartIndex) => (
+                {subParts.map((selectionState, subPartIndex) => (
                   <div
                     key={subPartIndex}
                     onClick={() => handleClick?.(partIndex, subPartIndex)}
                     className={`
                       relative flex-1 h-full
-                      ${selectedParts.includes(partIndex * (subParts || 1) + subPartIndex) ? 'bg-[#5B361B]' : 'bg-[#5B361B] bg-opacity-50'}
-                      cursor-pointer
-                      hover:brightness-95
+                      ${selectionState === 1 ? 'bg-[#5B361B]' : 'bg-[#5B361B] bg-opacity-50'}
+                      ${handleClick ? 'cursor-pointer hover:brightness-95' : ''}
                       rounded-md
                     `}
                   />
