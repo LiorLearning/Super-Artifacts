@@ -16,6 +16,7 @@ import FractionsGame, { desc as FractionsGameDesc } from './games/fractions-game
 import NumberLineGame, { desc as NumberLineGameDesc } from './games/number-line-game/game';
 import InteractiveLongDivisionGame, { desc as InteractiveLongDivisionGameDesc } from './games/long-division-game/game';
 import EquivalentFractionsGame, { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game';
+import BallGame from './games/addition/game';
 
 type GameKey = keyof typeof gameComponents;
 const gameComponents = {
@@ -25,6 +26,7 @@ const gameComponents = {
   'number-line-game': NumberLineGame,
   'interactive-long-division-game': InteractiveLongDivisionGame,
   'equivalent-fractions-game': EquivalentFractionsGame,
+  'addition-game': BallGame,
 };
 
 const gameDescriptions = {
@@ -34,6 +36,7 @@ const gameDescriptions = {
   'number-line-game': NumberLineGameDesc,
   'interactive-long-division-game': InteractiveLongDivisionGameDesc,
   'equivalent-fractions-game': EquivalentFractionsGameDesc,
+  'addition-game': 'Addition Game',
 };
 
 
