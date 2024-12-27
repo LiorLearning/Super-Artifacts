@@ -8,10 +8,12 @@ import { Button } from '../custom_ui/button';
 import { RefreshCw } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
-import { useGameState } from '../utils/game-state';
 
 import AdditionGame from './games/addition/game';
+import FractionsGame from './games/fractions-game/game';
+
 import { desc as AdditionGameDesc, useGameState as AdditionGameState, GameStateProvider as AdditionGameStateProvider  } from './games/addition/game-state';
+import { desc as FractionsGameDesc, useGameState as FractionsGameState, GameStateProvider as FractionsGameStateProvider  } from './games/fractions-game/game-state';
 
 
 interface GameInfo {
@@ -29,6 +31,12 @@ const gameInfo: Record<string, GameInfo> = {
     desc: AdditionGameDesc,
     state: AdditionGameState,
     provider: AdditionGameStateProvider
+  },
+  'fractions-game': {
+    game: FractionsGame,
+    desc: FractionsGameDesc,
+    state: FractionsGameState,
+    provider: FractionsGameStateProvider
   },
   // Add other games here as they are implemented
 };
@@ -63,7 +71,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected } = useWebSocketLogger()
 
-  const gameState = useGameState()
+  const gameState = gameInfo[currentGame!].state
 
   const sendAdminMessage = async (role: string, content: string) => {
     if (role == 'admin') {

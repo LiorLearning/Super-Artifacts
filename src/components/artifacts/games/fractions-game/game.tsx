@@ -12,15 +12,15 @@ interface GameProps {
 const maxParts = 12;
 
 const Game = ({sendAdminMessage}: GameProps) => {  
-  const { gameState, setGameState } = useGameState();
-
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const gameState = gameStateRef.current;
 
   const checkFraction = (bar: BarState, targetFraction: Fraction) => {
     return bar.parts === targetFraction.denom && bar.selectedParts.length === targetFraction.num;
   };
 
   const handleCut = (barNumber: number) => {
-    setGameState(prev => ({
+    setGameStateRef(prev => ({
       ...prev,
       [barNumber === 1 ? 'bar1' : 'bar2']: {
         ...prev[barNumber === 1 ? 'bar1' : 'bar2'],
@@ -30,7 +30,7 @@ const Game = ({sendAdminMessage}: GameProps) => {
   };
 
   const handleJoin = (barNumber: number) => {
-    setGameState(prev => ({
+    setGameStateRef(prev => ({
       ...prev,
       [barNumber === 1 ? 'bar1' : 'bar2']: {
         ...prev[barNumber === 1 ? 'bar1' : 'bar2'],
@@ -41,7 +41,7 @@ const Game = ({sendAdminMessage}: GameProps) => {
 
   useEffect(() => {
     const isFirstFractionCorrect = checkFraction(gameState.bar1, gameState.fraction1);
-    setGameState(prev => ({ ...prev, isFirstFractionCorrect }));
+    setGameStateRef(prev => ({ ...prev, isFirstFractionCorrect }));
     if (isFirstFractionCorrect) {
       sendAdminMessage('agent', `Awesome! Now try breaking and selecting from the second chocolate to give yourself ${gameState.fraction2.num}/${gameState.fraction2.denom}`);
     }
@@ -49,14 +49,14 @@ const Game = ({sendAdminMessage}: GameProps) => {
 
   useEffect(() => {
     const isSecondFractionCorrect = checkFraction(gameState.bar2, gameState.fraction2);
-    setGameState(prev => ({ ...prev, isSecondFractionCorrect }));
+    setGameStateRef(prev => ({ ...prev, isSecondFractionCorrect }));
     if (gameState.isFirstFractionCorrect && isSecondFractionCorrect) {
       sendAdminMessage('agent', `Can you try comparing them visually - which one do you think is bigger?`);
     }
   }, [gameState.bar2]);
 
   const handleSelect = (barNumber: number, part: number) => {
-    setGameState(prev => ({
+    setGameStateRef(prev => ({
       ...prev,
       [barNumber === 1 ? 'bar1' : 'bar2']: {
         ...prev[barNumber === 1 ? 'bar1' : 'bar2'],
@@ -72,7 +72,7 @@ const Game = ({sendAdminMessage}: GameProps) => {
       return;
     }
     
-    setGameState(prev => ({
+    setGameStateRef(prev => ({
       ...prev,
       userAnswer: answer,
       showAnswer: true
@@ -89,11 +89,11 @@ const Game = ({sendAdminMessage}: GameProps) => {
     if (!gameState.isFirstFractionCorrect || !gameState.isSecondFractionCorrect) {
       return;
     }
-    setGameState(prev => ({ ...prev, compareMode: true }));
+    setGameStateRef(prev => ({ ...prev, compareMode: true }));
   };
 
   const startGame = () => {
-    setGameState(prev => ({ 
+    setGameStateRef(prev => ({ 
       ...prev, 
       gameStarted: true 
     }));

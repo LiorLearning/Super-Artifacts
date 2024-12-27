@@ -1,9 +1,8 @@
-import React, { createContext, useContext, ReactNode, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { createContext, useContext, ReactNode, useRef, useReducer } from 'react';
 import { Fraction, BarState } from './bar';
 
 export const desc = `Steps to Play the Fraction Comparison Game:
-1. You'll start with two chocolate bars representing fraction1 and fration2.
+1. You'll start with two chocolate bars representing fraction1 and fraction2.
 2. Break the first chocolate bar into equal parts by clicking the "Split" button.
 3. Select the pieces of the first bar that represent the fraction fraction1.
 4. Break the second chocolate bar into equal parts by clicking the "Split" button.
@@ -11,13 +10,18 @@ export const desc = `Steps to Play the Fraction Comparison Game:
 6. Compare the selected pieces from both bars to determine which fraction is larger.
 7. Your goal is to correctly identify which fraction has a greater value.`;
 
-// Create a context for the game state
 export const GameStateContext = createContext<{
-  gameState: GameState;
-  setGameState: React.Dispatch<React.SetStateAction<GameState>>;
+  gameStateRef: React.MutableRefObject<GameState>;
+  setGameStateRef: (newState: ((prevState: GameState) => GameState) | Partial<GameState>) => void;
 } | undefined>(undefined);
 
-// Create a provider component for the game state
+export const gameStateReducer = (state: GameState, action: Partial<GameState> | ((prevState: GameState) => GameState)): GameState => {
+  if (typeof action === 'function') {
+    return action(state);
+  }
+  return { ...state, ...action };
+};
+
 export const GameStateProvider: React.FC<{ 
   children: ReactNode 
 }> = ({ children }) => {
@@ -42,24 +46,38 @@ export const GameStateProvider: React.FC<{
       : { num: num2, denom: denom2 }
   };
 
-  const [gameState, setGameState] = useState<GameState>(initialGameState);
+  const gameStateRef = useRef<GameState>(initialGameState);
+  const [, dispatch] = useReducer(gameStateReducer, initialGameState);
+  
+  const setGameStateRef = (newState: ((prevState: GameState) => GameState) | Partial<GameState>) => {
+    // Update the ref
+    if (typeof newState === 'function') {
+      gameStateRef.current = newState(gameStateRef.current);
+    } else {
+      gameStateRef.current = { ...gameStateRef.current, ...newState };
+    }
+    
+    // Trigger a re-render
+    dispatch(newState);
+  };
 
   return (
-    <GameStateContext.Provider value={{ gameState, setGameState }}>
+    <GameStateContext.Provider value={{ 
+      gameStateRef,
+      setGameStateRef,
+    }}>
       {children}
     </GameStateContext.Provider>
   );
 };
 
-// Custom hook to use the game state context
 export const useGameState = () => {
   const context = useContext(GameStateContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useGameState must be used within a GameStateProvider');
   }
   return context;
 };
-
 
 export interface GameState {
   fraction1: Fraction;
