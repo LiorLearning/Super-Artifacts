@@ -11,9 +11,11 @@ import { handleScreenshot } from './utils/utils';
 
 import AdditionGame from './games/addition/game';
 import FractionsGame from './games/fractions-game/game';
+import EquivalentFractionsGame from './games/equivalent-fractions/game';
 
 import { desc as AdditionGameDesc, useGameState as AdditionGameState, GameStateProvider as AdditionGameStateProvider  } from './games/addition/game-state';
 import { desc as FractionsGameDesc, useGameState as FractionsGameState, GameStateProvider as FractionsGameStateProvider  } from './games/fractions-game/game-state';
+import { desc as EquivalentFractionsGameDesc, useGameState as EquivalentFractionsGameState, GameStateProvider as EquivalentFractionsGameStateProvider  } from './games/equivalent-fractions/game-state';
 
 
 interface GameInfo {
@@ -37,6 +39,12 @@ const gameInfo: Record<string, GameInfo> = {
     desc: FractionsGameDesc,
     state: FractionsGameState,
     provider: FractionsGameStateProvider
+  },
+  'equivalent-fractions-game': {
+    game: EquivalentFractionsGame,
+    desc: EquivalentFractionsGameDesc,
+    state: EquivalentFractionsGameState,
+    provider: EquivalentFractionsGameStateProvider
   },
   // Add other games here as they are implemented
 };

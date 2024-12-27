@@ -6,7 +6,7 @@ interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
 
-const Game: React.FC<GameProps> = ({ sendAdminMessage }) => {
+export default function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -441,5 +441,3 @@ const Game: React.FC<GameProps> = ({ sendAdminMessage }) => {
     </>
   );
 };
-
-export default Game;
