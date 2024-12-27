@@ -1,23 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import * as Matter from "matter-js";
+import { useGameState } from "./game-state";
 
-const BallGame: React.FC = () => {
-  const [greenScore, setGreenScore] = useState(8); // Start with 8 balls
-  const [blueScore, setBlueScore] = useState(7);  // Start with 7 balls
-  const [containerScore, setContainerScore] = useState(0);
-  const [activePhase, setActivePhase] = useState<'left' | 'right'>('left');
-  const [leftContainerBalls, setLeftContainerBalls] = useState<Matter.Body[]>([]);
-  const [rightContainerBalls, setRightContainerBalls] = useState<Matter.Body[]>([]);
-  const [platformsVisible, setPlatformsVisible] = useState(true);
-  const [activeBallLeft, setActiveBallLeft] = useState<Matter.Body | null>(null);
-  const [activeBallRight, setActiveBallRight] = useState<Matter.Body | null>(null);
+interface GameProps {
+  sendAdminMessage: (role: string, content: string) => void;
+}
+
+const Game: React.FC<GameProps> = ({ sendAdminMessage }) => {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  
   const sceneRef = useRef<HTMLDivElement>(null);
-  const engineRef = useRef<Matter.Engine>();
-  const worldRef = useRef<Matter.World>();
-  const containerRef = useRef<Matter.Composite>();
-  const rightPlatformRef = useRef<Matter.Composite>();
+  const engineRef = useRef<Matter.Engine | null>(null);
+  const worldRef = useRef<Matter.World | null>(null);
+  const containerRef = useRef<Matter.Composite | null>(null);
+  const rightPlatformRef = useRef<Matter.Composite | null>(null);
   const rightContainerRef = useRef<Matter.Composite | null>(null);
-  const [clickDisabled, setClickDisabled] = useState(false);
 
   const createBallContainer = (x: number, y: number, width: number) => {
     const height = 60;
@@ -117,7 +114,7 @@ const BallGame: React.FC = () => {
     if (!containerRef.current || !worldRef.current || !rightPlatformRef.current || !rightContainerRef.current) return;
 
     // Hide left platform
-    setPlatformsVisible(false);
+    setGameStateRef(prevState => ({ ...prevState, platformsVisible: false }));
     if (worldRef.current) {
       const bodies = Matter.Composite.allBodies(worldRef.current);
       bodies.forEach(body => {
@@ -273,28 +270,34 @@ const BallGame: React.FC = () => {
     // Create active balls on platforms
     const leftActiveBall = createBall(leftPlatformX, 150, "#4CAF50");
     const rightActiveBall = createBall(rightPlatformX, 150, "#3498db");
-    setActiveBallLeft(leftActiveBall);
-    setActiveBallRight(rightActiveBall);
-    Matter.Composite.add(world, [leftActiveBall, rightActiveBall]);
+    
+    setGameStateRef(prevState => ({
+      ...prevState,
+      activeBallLeft: leftActiveBall,
+      activeBallRight: rightActiveBall,
+      leftContainerBalls: createContainerBalls(leftContainerX, "#4CAF50", 8),
+      rightContainerBalls: createContainerBalls(rightContainerX, "#3498db", 7)
+    }));
 
-    const leftBalls = createContainerBalls(leftContainerX, "#4CAF50", 8);
-    const rightBalls = createContainerBalls(rightContainerX, "#3498db", 7);
-
-    setLeftContainerBalls(leftBalls);
-    setRightContainerBalls(rightBalls);
-    Matter.Composite.add(world, [...leftBalls, ...rightBalls]);
+    Matter.Composite.add(world, [
+      leftActiveBall, 
+      rightActiveBall, 
+      ...gameStateRef.current.leftContainerBalls, 
+      ...gameStateRef.current.rightContainerBalls
+    ]);
 
     return { render, runner, engine };
   };
 
   const launchBall = (color: 'green' | 'blue') => {
-    if (!worldRef.current || containerScore >= 10) return;
-    if ((color === 'green' && activePhase !== 'left') || (color === 'blue' && activePhase !== 'right')) return;
-    setClickDisabled(true);
+    if (!worldRef.current || gameStateRef.current.containerScore >= 10) return;
+    if ((color === 'green' && gameStateRef.current.activePhase !== 'left') || (color === 'blue' && gameStateRef.current.activePhase !== 'right')) return;
+    
+    setGameStateRef(prevState => ({ ...prevState, clickDisabled: true }));
     
     const isGreen = color === 'green';
     const platformX = isGreen ? 200 : 600;
-    const activeBall = isGreen ? activeBallLeft : activeBallRight;
+    const activeBall = isGreen ? gameStateRef.current.activeBallLeft : gameStateRef.current.activeBallRight;
     const velocity = isGreen ? { x: 6.5, y: -5 } : { x: -6.01, y: -5 };
 
     if (!activeBall) return;
@@ -303,42 +306,43 @@ const BallGame: React.FC = () => {
     Matter.Body.setStatic(activeBall, false);
     Matter.Body.setVelocity(activeBall, velocity);
     
-    // Remove a ball from container and make it the new active ball
-    const containerBalls = isGreen ? leftContainerBalls : rightContainerBalls;
-    
-    isGreen ? setGreenScore(prev => prev - 1) : setBlueScore(prev => prev - 1);
+    // Reduce score and manage ball movement
+    setGameStateRef(prevState => ({
+      ...prevState,
+      [isGreen ? 'greenScore' : 'blueScore']: prevState[isGreen ? 'greenScore' : 'blueScore'] - 1,
+      containerScore: prevState.containerScore + 1
+    }));
 
     setTimeout(() => {
       if (!worldRef.current) return;
       setTimeout(() => {
+        const containerBalls = isGreen ? gameStateRef.current.leftContainerBalls : gameStateRef.current.rightContainerBalls;
+        
         if (containerBalls.length > 0) {
           const ballToMove = containerBalls[containerBalls.length - 1];
           Matter.Body.setPosition(ballToMove, { x: platformX, y: 150 });
           
-          if (isGreen) {
-            setActiveBallLeft(ballToMove);
-            setLeftContainerBalls(prev => prev.slice(0, -1));
-          } else {
-            setActiveBallRight(ballToMove);
-            setRightContainerBalls(prev => prev.slice(0, -1));
-          }
+          setGameStateRef(prevState => ({
+            ...prevState,
+            [isGreen ? 'activeBallLeft' : 'activeBallRight']: ballToMove,
+            [isGreen ? 'leftContainerBalls' : 'rightContainerBalls']: containerBalls.slice(0, -1),
+            clickDisabled: false
+          }));
         } else {
-          if (isGreen) {
-            setActiveBallLeft(null);
-          } else {
-            setActiveBallRight(null);
-          }
+          setGameStateRef(prevState => ({
+            ...prevState,
+            [isGreen ? 'activeBallLeft' : 'activeBallRight']: null,
+            clickDisabled: false
+          }));
         }
-        setClickDisabled(false);
       }, 300);
-      setContainerScore(prev => prev + 1);
     }, 1000);
   };
 
   const launchGreen = () => launchBall('green');
   const launchBlue = () => launchBall('blue');
 
-  const isGameComplete = containerScore >= 10;
+  const isGameComplete = gameStateRef.current.containerScore >= 10;
 
   useEffect(() => {
     const { render, runner, engine } = initializeScene();
@@ -356,16 +360,19 @@ const BallGame: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (containerScore === 10) {
+    if (gameStateRef.current.containerScore === 10) {
       flipContainerAndPlatform();
     }
-  }, [containerScore]);
+  }, [gameStateRef.current.containerScore]);
 
   useEffect(() => {
-    if (greenScore === 0 && activePhase === 'left') {
-      setActivePhase('right');
+    if (gameStateRef.current.greenScore === 0 && gameStateRef.current.activePhase === 'left') {
+      setGameStateRef(prevState => ({ 
+        ...prevState, 
+        activePhase: 'right' 
+      }));
     }
-  }, [greenScore]);
+  }, [gameStateRef.current.greenScore]);
 
   return (
     <>
@@ -379,7 +386,7 @@ const BallGame: React.FC = () => {
             <p className="text-3xl font-bold text-center text-purple-600">
               {isGameComplete 
                 ? "Great job! Now watch the balls combine to make 15!" 
-                : activePhase === 'left' 
+                : gameStateRef.current.activePhase === 'left' 
                   ? "Shoot the green marbles first!" 
                   : "Now shoot the blue marbles!"}
             </p>
@@ -387,10 +394,10 @@ const BallGame: React.FC = () => {
           
           <div className="relative">
             <div className="absolute top-5 left-5 text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500">
-              {greenScore}
+              {gameStateRef.current.greenScore}
             </div>
             <div className="absolute top-5 right-5 text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500">
-              {blueScore}
+              {gameStateRef.current.blueScore}
             </div>
             
             <div
@@ -399,23 +406,23 @@ const BallGame: React.FC = () => {
             />
 
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500">
-              {containerScore}
+              {gameStateRef.current.containerScore}
             </div>
             
             <div className="flex justify-between w-full px-[50px] -mt-[60px] relative z-10">
               <button 
                 onClick={launchGreen}
-                disabled={clickDisabled || isGameComplete || activePhase !== 'left'}
+                disabled={gameStateRef.current.clickDisabled || isGameComplete || gameStateRef.current.activePhase !== 'left'}
                 className={`text-2xl px-5 py-2 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                  ${(clickDisabled || isGameComplete || activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  ${(gameStateRef.current.clickDisabled || isGameComplete || gameStateRef.current.activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 Shoot
               </button>
               <button 
                 onClick={launchBlue}
-                disabled={clickDisabled || isGameComplete || activePhase !== 'right'}
+                disabled={gameStateRef.current.clickDisabled || isGameComplete || gameStateRef.current.activePhase !== 'right'}
                 className={`text-2xl px-5 py-2 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                  ${(clickDisabled || isGameComplete || activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  ${(gameStateRef.current.clickDisabled || isGameComplete || gameStateRef.current.activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 Shoot
               </button>
@@ -435,4 +442,4 @@ const BallGame: React.FC = () => {
   );
 };
 
-export default BallGame;
+export default Game;
