@@ -12,10 +12,12 @@ import { handleScreenshot } from './utils/utils';
 import AdditionGame from './games/addition/game';
 import FractionsGame from './games/fractions-game/game';
 import EquivalentFractionsGame from './games/equivalent-fractions/game';
+import FractionAdditionGame from './games/fraction-addition/game';
 
 import { desc as AdditionGameDesc, useGameState as AdditionGameState, GameStateProvider as AdditionGameStateProvider  } from './games/addition/game-state';
 import { desc as FractionsGameDesc, useGameState as FractionsGameState, GameStateProvider as FractionsGameStateProvider  } from './games/fractions-game/game-state';
 import { desc as EquivalentFractionsGameDesc, useGameState as EquivalentFractionsGameState, GameStateProvider as EquivalentFractionsGameStateProvider  } from './games/equivalent-fractions/game-state';
+import { desc as FractionAdditionGameDesc, useGameState as FractionAdditionGameState, GameStateProvider as FractionAdditionGameStateProvider  } from './games/fraction-addition/game-state';
 
 
 interface GameInfo {
@@ -45,6 +47,12 @@ const gameInfo: Record<string, GameInfo> = {
     desc: EquivalentFractionsGameDesc,
     state: EquivalentFractionsGameState,
     provider: EquivalentFractionsGameStateProvider
+  },
+  'fraction-addition-game': {
+    game: FractionAdditionGame,
+    desc: FractionAdditionGameDesc,
+    state: FractionAdditionGameState,
+    provider: FractionAdditionGameStateProvider
   },
   // Add other games here as they are implemented
 };
@@ -79,7 +87,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected } = useWebSocketLogger()
 
-  const gameState = gameInfo[currentGame!].state
+  const gameState = gameInfo[currentGame!]?.state
 
   const sendAdminMessage = async (role: string, content: string) => {
     if (role == 'admin') {
@@ -89,7 +97,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         content: content,
         role: role,
         image: await handleScreenshot(componentRef),
-        desc: gameInfo[currentGame!].desc,
+        desc: gameInfo[currentGame!]?.desc,
         gameState: JSON.stringify(gameState, null, 0),
       } as AdminRequestMessage)
     } else if (role == 'agent') {
@@ -191,7 +199,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         </div>
       </div>
       <div className="w-[25%] min-w-[250px] flex flex-col">
-        <Chat desc={gameInfo[currentGame!].desc} componentRef={componentRef} gameState={gameState} />
+        <Chat desc={gameInfo[currentGame!]?.desc} componentRef={componentRef} gameState={gameState} />
       </div>
     </div>
   );
