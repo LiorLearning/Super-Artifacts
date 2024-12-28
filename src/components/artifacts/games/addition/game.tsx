@@ -13,7 +13,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
   const engineRef = useRef<Matter.Engine | null>(null);
   const worldRef = useRef<Matter.World | null>(null);
   const containerRef = useRef<Matter.Composite | null>(null);
-  const rightPlatformRef = useRef<Matter.Composite | null>(null);
+  const rightPlatformRef = useRef<Matter.Body | null>(null);
   const rightContainerRef = useRef<Matter.Composite | null>(null);
 
   const createBallContainer = (x: number, y: number, width: number) => {
