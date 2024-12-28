@@ -1,5 +1,15 @@
 import React, { createContext, useContext, ReactNode, useRef, useReducer } from 'react';
 
+export const desc = `
+  This is the game state for the fraction addition game.
+  It is a context that provides a ref to the game state and a function to update the game state.
+  The game state is an object that contains the current state of the game.
+  The game state is updated by the setGameStateRef function.
+  The setGameStateRef function is a function that takes a new state and updates the game state.
+  The new state can be a function that returns a new state or a partial state.
+  The partial state is a new state that is merged with the current state.
+`
+
 export interface Fraction {
   numerator: number;
   denominator: number;
