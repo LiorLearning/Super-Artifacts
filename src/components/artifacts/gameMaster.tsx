@@ -53,7 +53,7 @@ const gameInfo: Record<string, GameInfo> = {
     state: EquivalentFractionsGameState,
     provider: EquivalentFractionsGameStateProvider
   },
-  'fraction-addition': {
+  'fraction-addition-game': {
     game: FractionAdditionGame,
     desc: FractionAdditionGameDesc,
     state: FractionAdditionGameState,
