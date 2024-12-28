@@ -1,19 +1,19 @@
 'use client'
 
-import { useState } from 'react'
 import { ChocolateBarScreen } from './chocolate-bar-screen'
 import { DenominatorScreen } from './denominator-screen'
+import { useGameState } from './game-state'
 
 export default function FractionAddition() {
-  const [currentScreen, setCurrentScreen] = useState<'chocolate' | 'denominator'>('chocolate')
+  const { gameStateRef, setGameStateRef } = useGameState()
 
   const handleProceed = () => {
-    setCurrentScreen('denominator')
+    setGameStateRef({ currentScreen: 'denominator' })
   }
 
   return (
     <div className="bg-white p-16 rounded-lg">
-      {currentScreen === 'chocolate' ? (
+      {gameStateRef.current.currentScreen === 'chocolate' ? (
         <ChocolateBarScreen onProceed={handleProceed} />
       ) : (
         <DenominatorScreen />
@@ -21,4 +21,3 @@ export default function FractionAddition() {
     </div>
   )
 }
-

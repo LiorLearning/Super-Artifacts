@@ -1,54 +1,115 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
+import { useGameState } from './game-state'
 
 interface ChocolateBarScreenProps {
-  onProceed: () => void
+  onProceed: () => void;
 }
 
 export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
-  const [selectedPieces, setSelectedPieces] = useState<number[]>([])
-  const [step2Pieces, setStep2Pieces] = useState<number[]>([])
-  const [numerator, setNumerator] = useState('')
-  const [denominator, setDenominator] = useState('')
-  const [selectedOption, setSelectedOption] = useState<number | null>(null)
-  
-  const [showStep2, setShowStep2] = useState(false);
-  const [showStep3, setShowStep3] = useState(false);
-  const [showFooter, setShowFooter] = useState(false);
+  const { gameStateRef, setGameStateRef } = useGameState()
+  const gameState = gameStateRef.current
+  const { fractionProblem, chocolateBarPieces, correctAnswer, chocolateBarScreen } = gameState
+  const { fraction1, fraction2 } = fractionProblem
+  const {
+    selectedPieces,
+    step2Pieces,
+    numerator,
+    denominator,
+    selectedOption,
+    showStep2,
+    showStep3,
+    showFooter,
+  } = chocolateBarScreen
 
   useEffect(() => {
-    setShowStep2(selectedPieces.length === 3);
-  }, [selectedPieces]);
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      chocolateBarScreen: {
+        ...prevState.chocolateBarScreen,
+        showStep2: selectedPieces.length === fraction1.numerator,
+      },
+    }))
+  }, [selectedPieces, fraction1.numerator])
 
   useEffect(() => {
-    setShowStep3(step2Pieces.length === 7 && numerator === '7' && denominator === '8');
-  }, [step2Pieces, numerator, denominator]);
+    const correct = step2Pieces.length === correctAnswer.numerator && numerator === correctAnswer.numerator.toString() && denominator === correctAnswer.denominator.toString()
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      chocolateBarScreen: {
+        ...prevState.chocolateBarScreen,
+        showStep3: correct,
+      },
+    }))
+  }, [step2Pieces, numerator, denominator])
 
   useEffect(() => {
-    setShowFooter(selectedOption === 0 && numerator === '7' && denominator === '8');
-  }, [selectedOption, numerator, denominator]);
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      chocolateBarScreen: {
+        ...prevState.chocolateBarScreen,
+        showFooter: selectedOption === 0 && numerator === correctAnswer.numerator.toString() && denominator === correctAnswer.denominator.toString(),
+      },
+    }))
+  }, [selectedOption, numerator, denominator])
 
   const handlePieceClick = (index: number) => {
-    if (selectedPieces.length === 3 && !selectedPieces.includes(index)) return
-    if (selectedPieces.includes(index)) {
-      setSelectedPieces(selectedPieces.filter(i => i !== index))
-    } else if (selectedPieces.length < 3) {
-      setSelectedPieces([...selectedPieces, index])
-    }
+    if (selectedPieces.length === fraction1.numerator && !selectedPieces.includes(index)) return
+    const newSelectedPieces = selectedPieces.includes(index)
+      ? selectedPieces.filter((i: number) => i !== index)
+      : [...selectedPieces, index]
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      chocolateBarScreen: {
+        ...prevState.chocolateBarScreen,
+        selectedPieces: newSelectedPieces,
+      },
+    }))
   }
 
   const handleStep2PieceClick = (index: number) => {
-    if (step2Pieces.includes(index)) {
-      setStep2Pieces(step2Pieces.filter(i => i !== index))
-    } else {
-      setStep2Pieces([...step2Pieces, index])
-    }
+    const newStep2Pieces = step2Pieces.includes(index)
+      ? step2Pieces.filter((i: number) => i !== index)
+      : [...step2Pieces, index]
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      chocolateBarScreen: {
+        ...prevState.chocolateBarScreen,
+        step2Pieces: newStep2Pieces,
+      },
+    }))
   }
 
   const handleOptionClick = (optionIndex: number) => {
-    setSelectedOption(optionIndex)
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      chocolateBarScreen: {
+        ...prevState.chocolateBarScreen,
+        selectedOption: optionIndex,
+      },
+    }))
+  }
+
+  const handleNumeratorChange = (value: string) => {
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      chocolateBarScreen: {
+        ...prevState.chocolateBarScreen,
+        numerator: value,
+      },
+    }))
+  }
+
+  const handleDenominatorChange = (value: string) => {
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      chocolateBarScreen: {
+        ...prevState.chocolateBarScreen,
+        denominator: value,
+      },
+    }))
   }
 
   return (
@@ -60,27 +121,27 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
         {/* Fraction Problem */}
         <div className="flex items-center justify-center gap-2 text-2xl">
           <div className="flex flex-col items-center">
-            <span>3</span>
+            <span>{fraction1.numerator}</span>
             <div className="border-t border-black w-4"></div>
-            <span>8</span>
+            <span>{fraction1.denominator}</span>
           </div>
           <span className="mx-2">+</span>
           <div className="flex flex-col items-center">
-            <span>4</span>
+            <span>{fraction2.numerator}</span>
             <div className="border-t border-black w-4"></div>
-            <span>8</span>
+            <span>{fraction2.denominator}</span>
           </div>
         </div>
 
         {/* Step 1 */}
         <div className="space-y-4">
           <p>
-            <span className="font-bold">Step 1:</span> Select pieces to get 3/8ths of the chocolate bar.
+            <span className="font-bold">Step 1:</span> Select pieces to get {fraction1.numerator}/{fraction1.denominator}ths of the chocolate bar.
           </p>
 
           <div className="flex gap-4 items-center">
             <div className="flex border-2 border-blue-400">
-              {[...Array(8)].map((_, index) => (
+              {[...Array(chocolateBarPieces)].map((_, index) => (
                 <button
                   key={index}
                   onClick={() => handlePieceClick(index)}
@@ -95,9 +156,9 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
             </div>
 
             <div className="flex flex-col items-center text-2xl">
-              <span>3</span>
+              <span>{fraction1.numerator}</span>
               <div className="border-t border-black w-4"></div>
-              <span>8</span>
+              <span>{fraction1.denominator}</span>
             </div>
           </div>
         </div>
@@ -109,7 +170,7 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
               <div className="flex items-center gap-4 mb-2">
                 <span className="text-5xl font-medium">+</span>
                 <div className="space-y-1">
-                  <p className="italic text-lg">4 more pieces</p>
+                  <p className="italic text-lg">{fraction2.numerator} more pieces</p>
                   <p className="italic text-lg">from a friend</p>
                 </div>
               </div>
@@ -117,21 +178,21 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
 
             <div className="flex gap-4 items-center">
               <div className="flex">
-                {[...Array(8)].map((_, index) => (
+                {[...Array(chocolateBarPieces)].map((_, index) => (
                   <div
                     key={index}
                     className={`
                       w-12 h-12 border border-black
-                      ${index >= 3 && index <= 6 ? 'bg-[#5B361B]' : 'bg-[#AD9889]'}
+                      ${index >= fraction1.numerator && index < fraction1.numerator + fraction2.numerator ? 'bg-[#5B361B]' : 'bg-[#AD9889]'}
                     `}
                   />
                 ))}
               </div>
 
               <div className="flex flex-col items-center text-2xl">
-                <span>4</span>
+                <span>{fraction2.numerator}</span>
                 <div className="border-t border-black w-4"></div>
-                <span>8</span>
+                <span>{fraction2.denominator}</span>
               </div>
             </div>
 
@@ -143,7 +204,7 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
 
               <div className="flex gap-4 items-center">
                 <div className="flex">
-                  {[...Array(8)].map((_, index) => (
+                  {[...Array(chocolateBarPieces)].map((_, index) => (
                     <button
                       key={index}
                       onClick={() => handleStep2PieceClick(index)}
@@ -161,25 +222,25 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
                   <input
                     type="text"
                     value={numerator}
-                    onChange={(e) => setNumerator(e.target.value)}
+                    onChange={(e) => handleNumeratorChange(e.target.value)}
                     className={`w-8 h-8 border-2 text-center rounded-md transition-colors duration-300
-                      ${numerator === '7' ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
-                      ${step2Pieces.length === 7 && numerator === '' ? 'animate-pulse' : ''}
+                      ${numerator === correctAnswer.numerator.toString() ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
+                      ${step2Pieces.length === correctAnswer.numerator && numerator === '' ? 'animate-pulse' : ''}
                     `}
-                    placeholder={step2Pieces.length === 7 ? '?' : ''}
-                    maxLength={1}
+                    placeholder={step2Pieces.length === correctAnswer.numerator ? '?' : ''}
+                    maxLength={2}
                   />
                   <div className="border-t border-black w-4"></div>
                   <input
                     type="text"
                     value={denominator}
-                    onChange={(e) => setDenominator(e.target.value)}
+                    onChange={(e) => handleDenominatorChange(e.target.value)}
                     className={`w-8 h-8 border-2 text-center rounded-md transition-colors duration-300
-                      ${denominator === '8' ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
-                      ${step2Pieces.length === 7 && denominator === '' ? 'animate-pulse' : ''}
+                      ${denominator === correctAnswer.denominator.toString() ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
+                      ${step2Pieces.length === correctAnswer.numerator && denominator === '' ? 'animate-pulse' : ''}
                     `}
-                    placeholder={step2Pieces.length === 7 ? '?' : ''}
-                    maxLength={1}
+                    placeholder={step2Pieces.length === correctAnswer.numerator ? '?' : ''}
+                    maxLength={2}
                   />
                 </div>
               </div>
@@ -216,6 +277,7 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
             )}
           </>
         )}
+        <p>{showFooter}</p>
       </div>
 
       {/* Footer */}
@@ -236,4 +298,3 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
     </div>
   )
 }
-

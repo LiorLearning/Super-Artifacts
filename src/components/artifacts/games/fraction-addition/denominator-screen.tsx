@@ -1,49 +1,105 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import SuccessAnimation from '../../utils/success-animate'
+import { useEffect } from 'react'
+import { useGameState } from './game-state'
 
 export function DenominatorScreen() {
-  const [denominatorOption, setDenominatorOption] = useState<number | null>(null)
-  const [numeratorOption, setNumeratorOption] = useState<number | null>(null)
-  const [answerNumerator, setAnswerNumerator] = useState('')
-  const [answerDenominator, setAnswerDenominator] = useState('')
-  
-  const [showStep2, setShowStep2] = useState(false)
-  const [showStep3, setShowStep3] = useState(false)
-  const [isAnswerCorrect, setIsAnswerCorrect] = useState(false)
+  const { gameStateRef, setGameStateRef } = useGameState()
+  const gameState = gameStateRef.current
+  const { fractionProblem, correctAnswer, denominatorScreen } = gameState
+  const { fraction1, fraction2 } = fractionProblem
+  const {
+    denominatorOption,
+    numeratorOption,
+    answerNumerator,
+    answerDenominator,
+    showStep2,
+    showStep3,
+    isAnswerCorrect,
+  } = denominatorScreen
 
   useEffect(() => {
-    setShowStep2(denominatorOption === 0)
+    setGameStateRef({
+      denominatorScreen: {
+        ...denominatorScreen,
+        showStep2: denominatorOption === 0,
+      },
+    })
   }, [denominatorOption])
 
   useEffect(() => {
-    setShowStep3(showStep2 && numeratorOption === 0)
+    setGameStateRef({
+      denominatorScreen: {
+        ...denominatorScreen,
+        showStep3: showStep2 && numeratorOption === 0,
+      },
+    })
   }, [showStep2, numeratorOption])
 
   useEffect(() => {
-    const correct = answerNumerator === '4' && answerDenominator === '5'
-    setIsAnswerCorrect(correct)
-  }, [answerNumerator, answerDenominator])
+    const correct = answerNumerator === correctAnswer.numerator.toString() && answerDenominator === correctAnswer.denominator.toString()
+    setGameStateRef({
+      denominatorScreen: {
+        ...denominatorScreen,
+        isAnswerCorrect: correct,
+      },
+    })
+  }, [answerNumerator, answerDenominator, correctAnswer])
+
+  const handleDenominatorOptionClick = (option: number) => {
+    setGameStateRef({
+      denominatorScreen: {
+        ...denominatorScreen,
+        denominatorOption: option,
+      },
+    })
+  }
+
+  const handleNumeratorOptionClick = (option: number) => {
+    setGameStateRef({
+      denominatorScreen: {
+        ...denominatorScreen,
+        numeratorOption: option,
+      },
+    })
+  }
+
+  const handleAnswerNumeratorChange = (value: string) => {
+    setGameStateRef({
+      denominatorScreen: {
+        ...denominatorScreen,
+        answerNumerator: value,
+      },
+    })
+  }
+
+  const handleAnswerDenominatorChange = (value: string) => {
+    setGameStateRef({
+      denominatorScreen: {
+        ...denominatorScreen,
+        answerDenominator: value,
+      },
+    })
+  }
 
   return (
     <div className="p-8">
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Title */}
         <h2 className="text-xl font-medium text-center">Add fractions</h2>
-        
+
         {/* Fraction Problem */}
         <div className="flex items-center justify-center gap-2 text-2xl">
           <div className="flex flex-col items-center">
-            <span>1</span>
+            <span>{fraction1.numerator}</span>
             <div className="border-t border-black w-4"></div>
-            <span>5</span>
+            <span>{fraction1.denominator}</span>
           </div>
           <span className="mx-2">+</span>
           <div className="flex flex-col items-center">
-            <span>3</span>
+            <span>{fraction2.numerator}</span>
             <div className="border-t border-black w-4"></div>
-            <span>5</span>
+            <span>{fraction2.denominator}</span>
           </div>
         </div>
 
@@ -55,7 +111,7 @@ export function DenominatorScreen() {
 
           <div className="space-y-4">
             <button
-              onClick={() => setDenominatorOption(0)}
+              onClick={() => handleDenominatorOptionClick(0)}
               className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
                 ${denominatorOption === 0 ? 'bg-[#66CDAA] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
                 ${denominatorOption === null ? 'border-2 border-blue-400' : ''}
@@ -64,7 +120,7 @@ export function DenominatorScreen() {
               <p>The denominator (bottom number) will remain the same.</p>
             </button>
             <button
-              onClick={() => setDenominatorOption(1)}
+              onClick={() => handleDenominatorOptionClick(1)}
               className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
                 ${denominatorOption === 1 ? 'bg-[#F08080] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
                 ${denominatorOption === null ? 'border border-gray-300' : ''}
@@ -85,7 +141,7 @@ export function DenominatorScreen() {
 
           <div className="space-y-4">
             <button
-              onClick={() => setNumeratorOption(0)}
+              onClick={() => handleNumeratorOptionClick(0)}
               className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
                 ${numeratorOption === 0 ? 'bg-[#66CDAA] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
                 ${numeratorOption === null ? 'border-2 border-blue-400' : ''}
@@ -94,7 +150,7 @@ export function DenominatorScreen() {
               <p>The numerators (top numbers) will be added together.</p>
             </button>
             <button
-              onClick={() => setNumeratorOption(1)}
+              onClick={() => handleNumeratorOptionClick(1)}
               className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
                 ${numeratorOption === 1 ? 'bg-[#F08080] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
                 ${numeratorOption === null ? 'border border-gray-300' : ''}
@@ -110,39 +166,39 @@ export function DenominatorScreen() {
           ${showStep3 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 hidden'}
         `}>
           <p className="font-bold">Step 3</p>
-          
+
           <div className="flex items-center justify-center gap-2 text-2xl">
             <div className="flex flex-col items-center">
-              <span>1</span>
+              <span>{fraction1.numerator}</span>
               <div className="border-t border-black w-4"></div>
-              <span>5</span>
+              <span>{fraction1.denominator}</span>
             </div>
             <span className="mx-2">+</span>
             <div className="flex flex-col items-center">
-              <span>3</span>
+              <span>{fraction2.numerator}</span>
               <div className="border-t border-black w-4"></div>
-              <span>5</span>
+              <span>{fraction2.denominator}</span>
             </div>
             <span className="mx-2">=</span>
             <div className="flex flex-col items-center">
               <input
                 type="text"
                 value={answerNumerator}
-                onChange={(e) => setAnswerNumerator(e.target.value)}
+                onChange={(e) => handleAnswerNumeratorChange(e.target.value)}
                 className={`w-8 h-8 border-2 text-center rounded-md transition-colors duration-300
-                  ${answerNumerator === '4' ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
+                  ${answerNumerator === correctAnswer.numerator.toString() ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
                 `}
-                maxLength={1}
+                maxLength={2}
               />
               <div className="border-t border-black w-4 my-1"></div>
               <input
                 type="text"
                 value={answerDenominator}
-                onChange={(e) => setAnswerDenominator(e.target.value)}
+                onChange={(e) => handleAnswerDenominatorChange(e.target.value)}
                 className={`w-8 h-8 border-2 text-center rounded-md transition-colors duration-300
-                  ${answerDenominator === '5' ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
+                  ${answerDenominator === correctAnswer.denominator.toString() ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
                 `}
-                maxLength={1}
+                maxLength={2}
               />
             </div>
             <div className="w-12 h-12 rounded-full ml-2 flex items-center justify-center">
@@ -160,10 +216,6 @@ export function DenominatorScreen() {
           </div>
         </div>
       )}
-      {isAnswerCorrect && (
-        <SuccessAnimation />
-      )}
     </div>
   )
 }
-
