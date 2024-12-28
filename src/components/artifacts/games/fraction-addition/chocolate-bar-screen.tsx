@@ -286,6 +286,7 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
             )}
           </>
         )}
+        <p>{showFooter}</p>
       </div>
 
       {/* Footer */}
