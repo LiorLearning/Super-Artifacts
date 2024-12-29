@@ -1,4 +1,3 @@
-
 import * as Matter from "matter-js";
 import { useGameState } from "./state-utils";
 import { getSoundManager } from './sounds';
@@ -570,6 +569,12 @@ export default function Game({ sendAdminMessage }: GameProps) {
       activeBallRight: rightActiveBall,
       leftContainerBalls: createContainerBalls(leftContainerX, "#4CAF50", 8),
       rightContainerBalls: createContainerBalls(rightContainerX, "#3498db", 7),
+      showAdditionStep: true
+    }));
+
+    // Don't set showEmptyButton
+    setGameStateRef(prevState => ({
+      ...prevState,
       showAdditionStep: true
     }));
 
