@@ -20,8 +20,8 @@ export const gameStateReducer = (state: GameState, action: Partial<GameState> | 
   return { ...state, ...action };
 };
 
-export const GameStateProvider: React.FC<{ 
-  children: ReactNode 
+export const GameStateProvider: React.FC<{
+  children: ReactNode
 }> = ({ children }) => {
   const initialGameState: GameState = {
     greenScore: 8,
@@ -35,12 +35,15 @@ export const GameStateProvider: React.FC<{
     activeBallRight: null,
     clickDisabled: false,
     isGameComplete: false,
-    sceneRef: null
+    sceneRef: null,
+    showEmptyButton: false,
+    gameComplete: false,
+    showAddButton: false,
   };
 
   const gameStateRef = useRef<GameState>(initialGameState);
   const [, dispatch] = useReducer(gameStateReducer, initialGameState);
-  
+
   const setGameStateRef = (newState: ((prevState: GameState) => GameState) | Partial<GameState>) => {
     // Update the ref
     if (typeof newState === 'function') {
@@ -48,13 +51,13 @@ export const GameStateProvider: React.FC<{
     } else {
       gameStateRef.current = { ...gameStateRef.current, ...newState };
     }
-    
+
     // Trigger a re-render
     dispatch(newState);
   };
 
   return (
-    <GameStateContext.Provider value={{ 
+    <GameStateContext.Provider value={{
       gameStateRef,
       setGameStateRef,
     }}>
@@ -84,4 +87,7 @@ export interface GameState {
   clickDisabled: boolean;
   isGameComplete: boolean;
   sceneRef: React.RefObject<HTMLDivElement> | null;
+  showEmptyButton: boolean;
+  gameComplete: boolean;
+  showAddButton: boolean;
 }
