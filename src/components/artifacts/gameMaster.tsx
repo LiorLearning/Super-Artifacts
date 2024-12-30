@@ -9,15 +9,15 @@ import { RefreshCw } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 
-import AdditionGame from './games/addition/game';
-import FractionsGame from './games/fractions-game/game';
-import EquivalentFractionsGame from './games/equivalent-fractions/game';
 import FractionAdditionGame from './games/fraction-addition/game';
+import AdditionGame from './games/addition/game';
 
-import { desc as AdditionGameDesc, useGameState as AdditionGameState, GameStateProvider as AdditionGameStateProvider  } from './games/addition/game-state';
-import { desc as FractionsGameDesc, useGameState as FractionsGameState, GameStateProvider as FractionsGameStateProvider  } from './games/fractions-game/game-state';
-import { desc as EquivalentFractionsGameDesc, useGameState as EquivalentFractionsGameState, GameStateProvider as EquivalentFractionsGameStateProvider  } from './games/equivalent-fractions/game-state';
-import { desc as FractionAdditionGameDesc, useGameState as FractionAdditionGameState, GameStateProvider as FractionAdditionGameStateProvider  } from './games/fraction-addition/game-state';
+import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
+import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition/state-utils'
+
+import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
+import { desc as AdditionGameDesc } from './games/addition/game-state';
+
 
 
 interface GameInfo {
@@ -36,19 +36,19 @@ const gameInfo: Record<string, GameInfo> = {
     state: AdditionGameState,
     provider: AdditionGameStateProvider
   },
-  'fractions-game': {
-    game: FractionsGame,
-    desc: FractionsGameDesc,
-    state: FractionsGameState,
-    provider: FractionsGameStateProvider
-  },
-  'equivalent-fractions-game': {
-    game: EquivalentFractionsGame,
-    desc: EquivalentFractionsGameDesc,
-    state: EquivalentFractionsGameState,
-    provider: EquivalentFractionsGameStateProvider
-  },
-  'fraction-addition-game': {
+  // 'fractions-game': {
+  //   game: FractionsGame,
+  //   desc: FractionsGameDesc,
+  //   state: FractionsGameState,
+  //   provider: FractionsGameStateProvider
+  // },
+  // 'equivalent-fractions-game': {
+  //   game: EquivalentFractionsGame,
+  //   desc: EquivalentFractionsGameDesc,
+  //   state: EquivalentFractionsGameState,
+  //   provider: EquivalentFractionsGameStateProvider
+  // },
+  'fraction-addition': {
     game: FractionAdditionGame,
     desc: FractionAdditionGameDesc,
     state: FractionAdditionGameState,
