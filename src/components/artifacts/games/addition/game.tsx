@@ -1,10 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+
 import * as Matter from "matter-js";
 import { useGameState } from "./state-utils";
+import { getSoundManager } from './sounds';
+import { useEffect, useRef, useState } from "react";
+import { Minus, Plus } from "lucide-react";
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
+
+interface Vector {
+  x: number;
+  y: number;
+}
+
 
 export default function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -13,11 +22,19 @@ export default function Game({ sendAdminMessage }: GameProps) {
   const engineRef = useRef<Matter.Engine | null>(null);
   const worldRef = useRef<Matter.World | null>(null);
   const containerRef = useRef<Matter.Composite | null>(null);
+  const leftPlatformRef = useRef<Matter.Body | null>(null);
   const rightPlatformRef = useRef<Matter.Body | null>(null);
   const rightContainerRef = useRef<Matter.Composite | null>(null);
   const finalContainerRef = useRef<Matter.Composite | null>(null);
+  const [slings, setSlings] = useState(true);
+  const [finalAnswer, setFinalAnswer] = useState<number>(0);
 
-  const [currentStep, setCurrentStep] = useState(0);
+  const COLLISION_CATEGORIES = {
+    BALL: 0x0001,
+    CONTAINER_VISUAL: 0x0002,
+    CONTAINER_COLLISION: 0x0004,
+    FINAL_CONTAINER: 0x0008
+  };
 
   const createBallContainer = (x: number, y: number, width: number) => {
     const height = 60;
@@ -67,6 +84,21 @@ export default function Game({ sendAdminMessage }: GameProps) {
       },
     });
   };
+
+  function createVisualString(bodyA: Matter.Body, pointB: Matter.Vector) {
+    return Matter.Constraint.create({
+      bodyA,
+      pointB,
+      // no length here, so the distance is free to change
+      stiffness: 0,
+      damping: 0,
+      render: {
+        visible: true,
+        strokeStyle: "#000",
+        lineWidth: 2,
+      },
+    });
+  }
 
   const createPlatform = (x: number, y: number, width: number) => {
     return Matter.Bodies.rectangle(x, y, width, 4, {
@@ -174,7 +206,28 @@ export default function Game({ sendAdminMessage }: GameProps) {
       bottom: "#6FA8C3",   // Darker blue for bottom
     };
 
-    const parts = [
+    const leftFaceVertices: Vector[][] = [[
+      { x: 0, y: 20 },
+      { x: 20, y: 0 },
+      { x: 20, y: containerHeight },
+      { x: 0, y: containerHeight + 20 }
+    ]];
+  
+    const bottomFaceVertices: Vector[][] = [[
+      { x: -containerWidth / 2, y: 0 },
+      { x: containerWidth / 2, y: 0 },
+      { x: containerWidth / 2 - 20, y: 20 },
+      { x: -containerWidth / 2 - 20, y: 20 }
+    ]];
+  
+    const rightFaceVertices: Vector[][] = [[
+      { x: 0, y: 20 },
+      { x: 20, y: 0 },
+      { x: 20, y: containerHeight },
+      { x: 0, y: containerHeight + 20 }
+    ]];
+
+    const visualparts = [
       // Back face
       Matter.Bodies.rectangle(
         containerPosition.x,
@@ -183,72 +236,73 @@ export default function Game({ sendAdminMessage }: GameProps) {
         containerHeight,
         {
           isStatic: true,
+          isSensor: true,
           render: {
             fillStyle: colors.back,
             strokeStyle: "#000",
             lineWidth: 1
           },
-          collisionFilter: { category: 0x0002 }
+          collisionFilter: { 
+            category: 0x0002,
+            mask: 0x0000
+          }
         }
       ),
       // Left face
       Matter.Bodies.fromVertices(
         containerPosition.x - containerWidth / 2 - 10,
         containerPosition.y + 10,
-        [
-          { x: 0, y: 20 },
-          { x: 20, y: 0 },
-          { x: 20, y: containerHeight },
-          { x: 0, y: containerHeight+20 }
-        ],
+        leftFaceVertices,
         {
           isStatic: true,
+          isSensor: true,
           render: {
             fillStyle: colors.left,
             strokeStyle: "#000",
             lineWidth: 1
           },
-          collisionFilter: { category: 0x0002 }
+          collisionFilter: { 
+            category: 0x0002,
+            mask: 0x0000
+          }
         }
       ),
       // Bottom face
       Matter.Bodies.fromVertices(
         containerPosition.x - 10,
         containerPosition.y + containerHeight / 2 + 10,
-        [
-          { x: -containerWidth / 2, y: 0 },
-          { x: containerWidth / 2, y: 0 },
-          { x: containerWidth / 2 - 20, y: 20 },
-          { x: -containerWidth / 2 - 20, y: 20 }
-        ],  
+        bottomFaceVertices,
         {
           isStatic: true,
+          isSensor: true,
           render: {
             fillStyle: colors.bottom,
             strokeStyle: "#000",
             lineWidth: 1
           },
-          collisionFilter: { category: 0x0002 }
+          collisionFilter: { 
+            category: 0x0002,
+            mask: 0x0000
+          }
         }
       ),
        // Right face
        Matter.Bodies.fromVertices(
         containerPosition.x + containerWidth / 2 - 10,
         containerPosition.y + 10,
-        [
-          { x: 0, y: 20 },
-          { x: 20, y: 0 },
-          { x: 20, y: containerHeight },
-          { x: 0, y: containerHeight + 20 }
-        ],
+        rightFaceVertices,
         {
           isStatic: true,
+          isSensor: true,
           render: {
             fillStyle: colors.right,
             strokeStyle: "#000",
             lineWidth: 1
           },
-          collisionFilter: { category: 0x0002 }
+          collisionFilter: { 
+            category: 0x0002 ,
+            mask: 0x0000
+          }
         }
       ),
       // Front face (semi-transparent)
@@ -259,17 +313,45 @@ export default function Game({ sendAdminMessage }: GameProps) {
         containerHeight,
         {
           isStatic: true,
+          isSensor: true,
           render: {
             fillStyle: "rgba(232, 248, 255, 0.3)", // Semi-transparent front
             strokeStyle: "#000",
-            lineWidth: 1
+            lineWidth: 1,
           },
-          collisionFilter: { category: 0x0008 }
+          collisionFilter: { 
+            category: 0x0008 ,
+            mask: 0x0000
+          }
         }
       ),
     ];
 
-    Matter.Composite.add(containerComposite, parts);
+    const parts = [
+      // Left invisible border
+      Matter.Bodies.rectangle(containerPosition.x - 10, containerPosition.y + 10, containerWidth, 1, {
+        isStatic: true,
+        render: { visible: false },
+        collisionFilter: { category: 0x0004 }
+      }),
+
+      // Right invisible border
+      Matter.Bodies.rectangle(containerPosition.x + containerWidth / 2 - 10, containerPosition.y + 10, 1, containerHeight, {
+        isStatic: true,
+        render: { visible: false },
+        collisionFilter: { category: 0x0004 }
+      }),
+
+      // Bottom invisible border
+      Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y + 10, containerWidth, 1, {
+        isStatic: true,
+        render: { visible: false },
+        collisionFilter: { category: 0x0004 }
+      }),
+    ]
+
+
+    Matter.Composite.add(containerComposite, [...parts, ...visualparts]);
     finalContainerRef.current = containerComposite;
     return containerComposite;
   };
@@ -310,7 +392,10 @@ export default function Game({ sendAdminMessage }: GameProps) {
      let flip_currentStep = 0;
  
      const animate = () => {
-       if (flip_currentStep >= flip_steps) return;
+       if (flip_currentStep >= flip_steps) {
+         getSoundManager().play('complete');
+         return;
+       }
  
        // Rotate center container
        const containerBodies = Matter.Composite.allBodies(containerRef.current!);
@@ -369,6 +454,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
     const reduceScoreAndUpdateColor = () => {
       if (gameStateRef.current.containerScore > 0) {
         setGameStateRef(prevState => ({ ...prevState, containerScore: prevState.containerScore - 1 }));
+        getSoundManager().play('pop');
         updateContainerColors();
         setTimeout(reduceScoreAndUpdateColor, 200);
       }
@@ -386,6 +472,17 @@ export default function Game({ sendAdminMessage }: GameProps) {
       },
     });
   };
+
+  function attachStringsToBall(
+    body: Matter.Body,
+    anchor1: Matter.Vector,
+    anchor2: Matter.Vector,
+    world: Matter.World
+  ) {
+    const stringA = createVisualString(body, anchor1);
+    const stringB = createVisualString(body, anchor2);
+    Matter.World.add(world, [stringA, stringB]);
+  }
 
   const initializeScene = () => {
     const engine = Matter.Engine.create();
@@ -418,6 +515,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
     const leftContainer = createBallContainer(leftContainerX, 180, containerWidth);
     const leftPlatform = createPlatform(leftPlatformX, 180, platformWidth);
+    leftPlatformRef.current = leftPlatform;
 
     // Right side setup (container on right of platform)
     const rightPlatformX = 700 - containerWidth / 2 - platformWidth / 2;  // Start with platform
@@ -455,18 +553,23 @@ export default function Game({ sendAdminMessage }: GameProps) {
     // Create active balls on platforms
     const leftActiveBall = createBall(leftPlatformX, 150, "#4CAF50");
     const rightActiveBall = createBall(rightPlatformX, 150, "#3498db");
+    
+    // Anchor points for the strings
+    const leftAnchor1 = { x: 224, y: 127 };
+    const leftAnchor2 = { x: 213, y: 130 };
+    const rightAnchor1 = { x: 570, y: 127 };
+    const rightAnchor2 = { x: 578, y: 127 };
+
+    // Attach strings to each active ball
+    attachStringsToBall(leftActiveBall, leftAnchor1, leftAnchor2, world)
+    attachStringsToBall(rightActiveBall, rightAnchor1, rightAnchor2, world)
 
     setGameStateRef(prevState => ({
       ...prevState,
       activeBallLeft: leftActiveBall,
       activeBallRight: rightActiveBall,
       leftContainerBalls: createContainerBalls(leftContainerX, "#4CAF50", 8),
-      rightContainerBalls: createContainerBalls(rightContainerX, "#3498db", 7)
-    }));
-
-    // Don't set showEmptyButton
-    setGameStateRef(prevState => ({
-      ...prevState,
+      rightContainerBalls: createContainerBalls(rightContainerX, "#3498db", 7),
       showAdditionStep: true
     }));
 
@@ -481,19 +584,43 @@ export default function Game({ sendAdminMessage }: GameProps) {
   };
 
   const launchBall = (color: 'green' | 'blue') => {
-    if (!worldRef.current || gameStateRef.current.containerScore >= 10) return;
+    if (gameStateRef.current.clickDisabled) return;
+    
+    getSoundManager().play('shoot');
     if ((color === 'green' && gameStateRef.current.activePhase !== 'left') || (color === 'blue' && gameStateRef.current.activePhase !== 'right')) return;
 
     setGameStateRef(prevState => ({ ...prevState, clickDisabled: true }));
 
     const isGreen = color === 'green';
-    const platformX = isGreen ? 200 : 600;
+    const platformX = isGreen ? 190 : 610;
     const activeBall = isGreen ? gameStateRef.current.activeBallLeft : gameStateRef.current.activeBallRight;
-    const velocity = isGreen ? { x: 6.5, y: -5 } : { x: -6.01, y: -5 };
+    const velocity = isGreen ? { x: 6.5, y: -5 } : { x: -5.8, y: -5 };
+
+    // anchor points
+    const leftAnchor1 = { x: 224, y: 127 };
+    const leftAnchor2 = { x: 213, y: 130 };
+    const rightAnchor1 = { x: 570, y: 127 };
+    const rightAnchor2 = { x: 578, y: 127 };
+
+    let anchor1: Matter.Vector, anchor2: Matter.Vector;
+    if (color === 'green') {
+      anchor1 = leftAnchor1;
+      anchor2 = leftAnchor2;
+    } else {
+      anchor1 = rightAnchor1;
+      anchor2 = rightAnchor2;
+    }
+
 
     if (!activeBall) return;
 
-    // Launch the active ball
+    // Remove strings attached to the active ball
+    const allConstraints = Matter.Composite.allConstraints(worldRef.current!).filter(constraint => 
+      constraint.bodyA === activeBall
+    );
+    allConstraints.forEach(constraint => {
+      Matter.World.remove(worldRef.current!, constraint);
+    });
     Matter.Body.setStatic(activeBall, false);
     Matter.Body.setVelocity(activeBall, velocity);
 
@@ -504,6 +631,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
         [isGreen ? 'greenScore' : 'blueScore']: prevState[isGreen ? 'greenScore' : 'blueScore'] - 1,
         containerScore: prevState.containerScore + 1
       }));
+      getSoundManager().play('collect');
     }, 1000);
 
     setTimeout(() => {
@@ -512,8 +640,12 @@ export default function Game({ sendAdminMessage }: GameProps) {
         const containerBalls = isGreen ? gameStateRef.current.leftContainerBalls : gameStateRef.current.rightContainerBalls;
 
         if (containerBalls.length > 0 && gameStateRef.current.containerScore < 10) {
-          const ballToMove = containerBalls[containerBalls.length - 1];
+          const ballToMove = containerBalls[containerBalls.length - 1]; 
+
           Matter.Body.setPosition(ballToMove, { x: platformX, y: 150 });
+          const stringA = createVisualString(ballToMove, isGreen ? anchor1 : anchor2);
+          const stringB = createVisualString(ballToMove, isGreen ? anchor2 : anchor1);
+          Matter.World.add(worldRef.current!, [stringA, stringB]);
 
           setGameStateRef(prevState => ({
             ...prevState,
@@ -542,21 +674,22 @@ export default function Game({ sendAdminMessage }: GameProps) {
       showAddButton: false
     }));
 
-    // Hide left platform and prepare for animation
+    getSoundManager().play('rotate');
+    setSlings(false)
+
+    // Hide left and right platforms and prepare for animation
     if (worldRef.current) {
-      const bodies = Matter.Composite.allBodies(worldRef.current);
-      bodies.forEach(body => {
-        if (body.position.x < 400) {
-          Matter.Composite.remove(worldRef.current!, body);
-        }
-      });
-    }
+      const left = leftPlatformRef.current;
+      const right = rightPlatformRef.current;
+
+      Matter.Composite.remove(worldRef.current, left!);
+      Matter.Composite.remove(worldRef.current, right!);
 
     // Start the flip animation after a short delay
     setTimeout(() => {
       flipContainerAndPlatform();
     }, 500);
-  };
+  }; }
 
   useEffect(() => {
     const { render, runner, engine } = initializeScene();
@@ -598,86 +731,115 @@ export default function Game({ sendAdminMessage }: GameProps) {
   }, [gameStateRef.current.greenScore]);
 
   return (
-    <>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap"
-        rel="stylesheet"
-      />
-      <div className="flex flex-col w-[800px] items-center font-gaegu rounded-xl bg-white">
-        <div className="relative w-full mx-auto p-5 bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_1px),linear-gradient(rgba(0,0,0,.1)_1px,transparent_1px)] bg-[length:20px_20px]">
-          <div className="w-2/3 mx-auto bg-purple-100 border-2 shadow-[-3px_3px_0_0] border-black p-2 mb-5 rounded">
-            <p className="text-3xl font-bold text-center text-purple-600">
-              {gameStateRef.current.showAddButton
-                ? "Let's add the remaining marbles!"
-                : gameStateRef.current.activePhase === 'left'
-                  ? "Shoot the green marbles first!"
-                  : "Now shoot the blue marbles!"}
-            </p>
-          </div>
-
-          <div className="relative w-full">
-            {currentStep < 2 && (
-              <>
-                <div className="absolute top-5 left-5 text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500">
-                  {gameStateRef.current.greenScore}
-                </div>
-                <div className="absolute top-5 right-5 text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500">
-                  {gameStateRef.current.blueScore}
-                </div>
-              </>
-            )}
-
-            <div
-              ref={sceneRef}
-              className="w-[800px] h-[600px] mx-auto rounded-lg bg-transparent"
-            >
-              {/* {renderProceedButton()} */}
-            </div>
-
-            <div className="absolute left-1/3 transform -translate-x-1/3 -translate-y-1/4 bottom-1/4 text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500">
-              {gameStateRef.current.containerScore}
-            </div>
-
-            {gameStateRef.current.showAddButton ? (
-              <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
-                <button
-                  onClick={handleAddition}
-                  className="text-2xl px-8 py-3 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90"
-                >
-                  Add Remaining Marbles
-                </button>
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={launchGreen}
-                  disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left'}
-                  className={`absolute left-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                    ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  Shoot
-                </button>
-                <button
-                  onClick={launchBlue}
-                  disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right'}
-                  className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                    ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  Shoot
-                </button>
-              </>
-            )}
-          </div>
+    <div className="h-full w-full bg-white">
+    <div className="flex flex-col h-full w-full justify-center items-center font-gaegu bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_1px),linear-gradient(rgba(0,0,0,.1)_1px,transparent_1px)] bg-[length:20px_20px]">
+      <div className="relative w-[800px] mx-auto p-5 ">
+        <div className="w-2/3 mx-auto bg-purple-100 border-2 shadow-[-3px_3px_0_0] border-black p-2 mb-5 rounded">
+          <p className="text-3xl font-bold text-center text-purple-600">
+            {gameStateRef.current.showAddButton
+              ? "Let's add the remaining marbles!"
+              : gameStateRef.current.activePhase === 'left'
+                ? "Shoot the green marbles first!"
+                : "Now shoot the blue marbles!"}
+          </p>
         </div>
 
-        <style jsx global>{`
-          @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap');
-
-          .font-gaegu {
-            font-family: 'Gaegu', cursive;
+        <div className="relative w-full">
+          {slings && <>
+              <div className="absolute top-5 left-5 text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500">
+                {gameStateRef.current.greenScore}
+              </div>
+              <div className="absolute top-5 right-5 text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500">
+                {gameStateRef.current.blueScore}
+              </div>
+              <div className="absolute left-1/3 transform -translate-x-1/3 -translate-y-1/4 bottom-1/4 text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500">
+                {gameStateRef.current.containerScore}
+              </div>
+              
+              <img src="./1.png" alt="Arrow" className="absolute top-[7.7rem] z-10 left-52 w-16 h-14" />
+              <img src="./2.png" alt="Arrow" className="absolute top-[7.7rem] z-10 left-52 w-16 h-14" />
+              <img src="./3.png" alt="Arrow" className="absolute top-[7.7rem] z-10 right-44 w-16 h-14" />
+              <img src="./4.png" alt="Arrow" className="absolute top-[7.7rem] z-10 right-44 w-16 h-14" />
+            </>
           }
-        `}</style>
+
+          <div
+            ref={sceneRef}
+            className="w-[800px] h-[600px] z-30 mx-auto rounded-lg bg-transparent"
+          >
+            {/* {renderProceedButton()} */}
+          </div>
+
+          {gameStateRef.current.showAddButton ? (
+            <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+              <button
+                onClick={handleAddition}
+                className="text-xl px-8 py-3 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90"
+              >
+                Add Remaining Marbles
+              </button>
+            </div>
+          ) : (slings ? (
+            <>
+              <button
+                onClick={launchGreen}
+                disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left'}
+                className={`absolute left-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+                  ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                Shoot
+              </button>
+              <button
+                onClick={launchBlue}
+                disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right'}
+                className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+                  ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                Shoot
+              </button>
+            </>
+            ) : (
+            <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
+              <p className="text-4xl font-bold text-purple-500">
+                Count the marbles in the container
+              </p>
+              <p className="flex">
+                  <button 
+                    onClick={() => {
+                      setFinalAnswer(prev => prev === null ? 1 : prev + 1)
+                      getSoundManager().play('pop');
+                    }}
+                    className="text-md px-2 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90"
+                  >
+                    <Plus size={16} />
+                  </button>
+                  <p className="text-4xl mx-8 font-bold text-purple-500">
+                    {finalAnswer}
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setFinalAnswer(prev => prev === null ? 0 : prev - 1)
+                      getSoundManager().play('pop');
+                    }}
+                    className="text-md px-2 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90"
+                  >
+                    <Minus size={16} />
+                  </button>
+
+              </p>
+            </div>
+          ))}
+          </div>
       </div>
-    </>
+
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap');
+
+        .font-gaegu {
+          font-family: 'Gaegu', cursive;
+        }
+      `}</style>
+    </div>
+    </div>
   );
 };
