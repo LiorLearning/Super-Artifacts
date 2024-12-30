@@ -1,181 +1,233 @@
-/**
- * FirstScreen Component
- * 
- * Handles the first interactive screen of the equivalent fractions game.
- * Users can select parts of bars and use knives to split them into equal pieces.
- */
+// FirstScreen.tsx
+
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Bar } from "./Bar";
 import { useSound } from 'use-sound';
-import { ArrowBigDown, Cross } from 'lucide-react';
-
-interface Equation {
-  input: { numerator: number; denominator: number };
-  multiplier: { numerator: number; denominator: number };
-  output: { numerator: number; denominator: number };
-}
+import { ArrowBigDown } from 'lucide-react';
+import { useGameState } from './state-utils';
 
 interface FirstScreenProps {
-  input: { numerator: number; denominator: number };
-  output: { denominator: number };
   sendAdminMessage: (role: string, content: string) => void;
 }
 
-export const FirstScreen = ({ input, output, sendAdminMessage }: FirstScreenProps) => {
-  const [equation, setEquation] = useState<Equation>({
-    input: { numerator: input.numerator, denominator: input.denominator },
-    multiplier: { numerator: 0, denominator: 0 },
-    output: { numerator: 0, denominator: output.denominator }
-  });
-  
-  // Initialize bars with proper structure
-  const [firstBar, setFirstBar] = useState<number[][]>(
-    Array(equation.input.denominator).fill(null).map((_, i) => 
-      i < equation.input.numerator ? [1] : [0]
-    )
-  );
-  const [secondBar, setSecondBar] = useState<number[][]>(
-    Array(equation.input.denominator).fill([0])
-  );
+export const FirstScreen = ({ sendAdminMessage }: FirstScreenProps) => {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const firstScreenState = gameStateRef.current.firstScreenState;
 
-  const [selectedKnife, setSelectedKnife] = useState<number | null>(null);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [currentStep, setCurrentStep] = useState<number>(0);
-  const [barNumerator, setBarNumerator] = useState<string>('');
+  const {
+    equation,
+    firstBar,
+    secondBar,
+    selectedKnife,
+    isCorrect,
+    currentStep,
+    barNumerator,
+    showCorrect,
+    canProceed,
+  } = firstScreenState;
+
   const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', { volume: 0.5 });
   const [playSelectSound] = useSound('/sounds/join.mp3', { volume: 0.5 });
+
   const fractionNumerator = useRef<HTMLInputElement>(null);
   const denominatorInput = useRef<HTMLInputElement | null>(null);
   const numeratorInput = useRef<HTMLInputElement | null>(null);
   const outputInput = useRef<HTMLInputElement | null>(null);
-  const [showCorrect, setShowCorrect] = useState(false);
-  const [canProceed, setCanProceed] = useState(false);
 
-  // Update first bar selection
+  // Handler to toggle selection in the first bar
   const handleFirstBarClick = (partIndex: number) => {
     if (currentStep !== 1) return;
-    
-    setFirstBar(prev => {
-      const newBar = [...prev];
-      newBar[partIndex] = [newBar[partIndex][0] === 1 ? 0 : 1];  // Toggle selection
-      return newBar;
-    });
+
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      firstScreenState: {
+        ...prevState.firstScreenState,
+        firstBar: prevState.firstScreenState.firstBar.map((part, index) =>
+          index === partIndex ? [(part[0] === 1 ? 0 : 1)] : part
+        ),
+      },
+    }));
   };
 
-  // Handle knife selection
+  // Handler to select a knife
   const handleKnifeSelect = (parts: number) => {
-    setSelectedKnife(parts);
-    setSecondBar(
-      Array(equation.input.denominator).fill(null).map(() => [0])
-    );
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      firstScreenState: {
+        ...prevState.firstScreenState,
+        selectedKnife: parts,
+        secondBar: prevState.firstScreenState.equation.input.denominator
+          ? Array(prevState.firstScreenState.equation.input.denominator).fill([0])
+          : [],
+      },
+    }));
   };
 
-  // Handle second bar click
+  // Handler for clicks on the second bar
   const handleSecondBarClick = (partIndex: number, subPartIndex: number) => {
     if (currentStep > 1 || canProceed) return;
 
     if (selectedKnife) {
       // Break the clicked part into subparts
-      setSecondBar(prev => {
-        const newBar = prev.map(row => [...row]);
-        newBar[partIndex] = Array(selectedKnife).fill(0);
-        
-        const total = newBar.reduce((sum, part) => sum + part.length, 0);
-        console.log('Total parts:', total);
+      const newSecondBar = secondBar.map((row, idx) =>
+        idx === partIndex ? Array(selectedKnife).fill(0) : [...row]
+      );
 
-        const breakedPart = newBar.filter(part => part.length > 1).length;
-        console.log('Breaked parts:', breakedPart);
-        
-        if (total === equation.output.denominator && breakedPart === equation.input.denominator) {
-          setCanProceed(true);
-          setSelectedKnife(null);
-        }
-        
-        return newBar;
-      });
-      playBreakSound();
+      const total = newSecondBar.reduce((sum, part) => sum + part.length, 0);
+
+      const breakedPart = newSecondBar.filter(part => part.length > 1).length;
+
+      const shouldProceed =
+        total === equation.output.denominator && breakedPart === equation.input.denominator;
+      
+      setGameStateRef((prevState) => ({
+        ...prevState,
+        firstScreenState: {
+          ...prevState.firstScreenState,
+          secondBar: newSecondBar,
+          canProceed: shouldProceed,
+          selectedKnife: shouldProceed ? null : prevState.firstScreenState.selectedKnife,
+        },
+      }));
+
+      if (selectedKnife) playBreakSound();
     } else {
       // Toggle selection of subparts
-      setSecondBar(prev => {
-        const newBar = prev.map(row => [...row]);
-        newBar[partIndex][subPartIndex] = newBar[partIndex][subPartIndex] === 1 ? 0 : 1;
+      const newSecondBar = secondBar.map((row, idx) =>
+        idx === partIndex
+          ? row.map((subpart, sIdx) =>
+              sIdx === subPartIndex ? (subpart === 1 ? 0 : 1) : subpart
+            )
+          : [...row]
+      );
 
-        const totalSelected = newBar.reduce((sum, part) => 
-          sum + part.filter(subpart => subpart === 1).length, 0
-        );
-        
-        if (totalSelected === equation.input.numerator * (equation.output.denominator / equation.input.denominator)) {
-          setCanProceed(true);
-        } else {
-          setCanProceed(false);
-        }
+      const totalSelected = newSecondBar.reduce(
+        (sum, part) => sum + part.filter(subpart => subpart === 1).length,
+        0
+      );
 
-        return newBar;
-      });
+      const expectedSelection =
+        equation.input.numerator * (equation.output.denominator / equation.input.denominator);
+
+      const shouldProceed = totalSelected === expectedSelection;
+
+      setGameStateRef((prevState) => ({
+        ...prevState,
+        firstScreenState: {
+          ...prevState.firstScreenState,
+          secondBar: newSecondBar,
+          canProceed: shouldProceed,
+        },
+      }));
+
       playSelectSound();
     }
   };
 
+  // Handler for fraction numerator change
   const handleSecondBarFractionChange = (value: string) => {
-    setBarNumerator(value);
-    const numValue = parseInt(value);
-    
-    if (numValue === equation.input.numerator * (equation.output.denominator / equation.input.denominator)) {
-      setShowCorrect(true);
-    }
-  }
-
-  const handleMultiplierChange = (value: string, type: 'numerator' | 'denominator' | 'output_numerator') => {
     const numValue = parseInt(value) || 0;
-    
-    if (type === 'denominator') {
-      if (numValue === equation.output.denominator/ equation.input.denominator) {
-        setCurrentStep(4);
-        setFirstBar(Array(equation.input.denominator).fill(0).map((_, i) => i === 0 ? [1] : [0]));
-        setSecondBar(Array(equation.input.denominator).fill(null).map((_, i) =>
-          Array(equation.output.denominator/ equation.input.denominator).fill(i === 0 ? 1 : 0)
-        ))
-        playSelectSound();
-      }
-      setEquation(prev => ({
-        ...prev,
-        multiplier: { ...prev.multiplier, denominator: numValue }
-      }));
-      
-    } else if (type === 'numerator') {
-      if (numValue === equation.output.denominator/ equation.input.denominator) {
-        setCurrentStep(5); 
-        setFirstBar(Array(equation.input.denominator).fill(0).map((_, i) => i < equation.input.numerator ? [1] : [0]));
-        setSecondBar(Array(equation.input.denominator).fill(null).map((_, i) =>
-          Array(equation.output.denominator/ equation.input.denominator).fill(i < equation.input.numerator ? 1 : 0)
-        ))
-        playSelectSound();
-      }
-      setEquation(prev => ({
-        ...prev,
-        multiplier: { ...prev.multiplier, numerator: numValue }
-      }));
 
-      
-    } else if (type === 'output_numerator') {
-      const expectedNumerator = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
-      if (numValue === expectedNumerator) {
-        setIsCorrect(true);
-        sendAdminMessage('user', 'Completed first equation successfully!');
-      }
-      setEquation(prev => ({
-        ...prev,
-        output: { ...prev.output, numerator: numValue }
+    setGameStateRef((prevState) => ({
+      ...prevState,
+      firstScreenState: {
+        ...prevState.firstScreenState,
+        barNumerator: value,
+        showCorrect: numValue === equation.input.numerator * (equation.output.denominator / equation.input.denominator),
+      },
+    }));
+
+    if (numValue === equation.input.numerator * (equation.output.denominator / equation.input.denominator)) {
+      setGameStateRef((prevState) => ({
+        ...prevState,
+        firstScreenState: {
+          ...prevState.firstScreenState,
+          showCorrect: true,
+        },
       }));
     }
   };
 
+  // Handler for multiplier changes
+  const handleMultiplierChange = (value: string, type: 'numerator' | 'denominator' | 'output_numerator') => {
+    const numValue = parseInt(value) || 0;
+
+    setGameStateRef((prevState) => {
+      const updatedEquation = { ...prevState.firstScreenState.equation };
+      if (type === 'denominator') {
+        updatedEquation.multiplier.denominator = numValue;
+
+        if (numValue === updatedEquation.output.denominator / updatedEquation.input.denominator) {
+          return {
+            ...prevState,
+            firstScreenState: {
+              ...prevState.firstScreenState,
+              equation: updatedEquation,
+              currentStep: 4,
+              firstBar: Array(updatedEquation.input.denominator)
+                .fill(0)
+                .map((_, i) => (i === 0 ? [1] : [0])),
+              secondBar: Array(updatedEquation.input.denominator)
+                .fill(null)
+                .map(() => Array(updatedEquation.output.denominator / updatedEquation.input.denominator).fill(1)),
+            },
+          };
+        }
+      } else if (type === 'numerator') {
+        updatedEquation.multiplier.numerator = numValue;
+
+        if (numValue === updatedEquation.output.denominator / updatedEquation.input.denominator) {
+          return {
+            ...prevState,
+            firstScreenState: {
+              ...prevState.firstScreenState,
+              equation: updatedEquation,
+              currentStep: 5,
+              firstBar: Array(updatedEquation.input.denominator)
+                .fill(0)
+                .map((_, i) => (i < updatedEquation.input.numerator ? [1] : [0])),
+              secondBar: Array(updatedEquation.input.denominator)
+                .fill(null)
+                .map(() => Array(updatedEquation.output.denominator / updatedEquation.input.denominator).fill(1)),
+            },
+          };
+        }
+      } else if (type === 'output_numerator') {
+        updatedEquation.output.numerator = numValue;
+
+        const expectedNumerator =
+          updatedEquation.input.numerator * (updatedEquation.output.denominator / updatedEquation.input.denominator);
+
+        if (numValue === expectedNumerator) {
+          sendAdminMessage('user', 'Completed first equation successfully!');
+          return {
+            ...prevState,
+              firstScreenState: {
+              ...prevState.firstScreenState,
+              equation: updatedEquation,
+              isCorrect: true,
+            },
+          };
+        }
+      }
+
+      return {
+        ...prevState,
+        firstScreenState: {
+          ...prevState.firstScreenState,
+          equation: updatedEquation,
+        },
+      };
+    });
+  };
+
+  // Focus management based on current step
   useEffect(() => {
     if (currentStep === 2 && fractionNumerator.current) {
       fractionNumerator.current.focus();
-    }else  if (currentStep === 3 && denominatorInput.current) {
+    } else if (currentStep === 3 && denominatorInput.current) {
       denominatorInput.current.focus();
     } else if (currentStep === 4 && numeratorInput.current) {
       numeratorInput.current.focus();
@@ -184,27 +236,47 @@ export const FirstScreen = ({ input, output, sendAdminMessage }: FirstScreenProp
     }
   }, [currentStep]);
 
+  // Handler to proceed to the next step
   const handleProceed = () => {
     if (currentStep === 0) {
-      setCurrentStep(1);
-      setCanProceed(false);
+      setGameStateRef((prevState) => ({
+        ...prevState,
+        firstScreenState: {
+          ...prevState.firstScreenState,
+          currentStep: 1,
+          canProceed: false,
+        },
+      }));
     } else if (currentStep === 1) {
-      setCurrentStep(2);
-      setCanProceed(false);
+      setGameStateRef((prevState) => ({
+        ...prevState,
+        firstScreenState: {
+          ...prevState.firstScreenState,
+          currentStep: 2,
+          canProceed: false,
+        },
+      }));
     } else if (currentStep === 2) {
-      setCurrentStep(3);
-      setCanProceed(false);
+      setGameStateRef((prevState) => ({
+        ...prevState,
+        firstScreenState: {
+          ...prevState.firstScreenState,
+          currentStep: 3,
+          canProceed: false,
+        },
+      }));
     }
   };
 
+  // Render content based on the current step
   const renderTopContent = () => {
     switch (currentStep) {
       case 0:
         return (
-          <>          
-          <p className="text-left mb-6">
-            How many pieces would you get if this chocolate were broken into {equation.output.denominator} pieces?
-          </p>
+          <>
+            <p className="text-left mb-6">
+              How many pieces would you get if this chocolate were broken into {equation.output.denominator} pieces?
+            </p>
             <div className="text-left">
               <p className="mb-6">
                 <span className="font-bold">Step 1:</span> Let's try breaking the chocolate into {equation.output.denominator} pieces first.
@@ -215,7 +287,7 @@ export const FirstScreen = ({ input, output, sendAdminMessage }: FirstScreenProp
         );
       case 1:
         return (
-          <div className="text-left"> 
+          <div className="text-left">
             <p className="font-bold">Awesome!</p>
             <p className="mb-6">
               <span className="font-bold">Step 2:</span> Select pieces to get the same amount of chocolate as above!
@@ -224,14 +296,14 @@ export const FirstScreen = ({ input, output, sendAdminMessage }: FirstScreenProp
         );
       case 2:
         return (
-          <div className="space-y-4"> 
+          <div className="space-y-4">
             <p className="text-left">
               <span className="font-bold">Step 3:</span> So how many pieces do you get in total?
             </p>
           </div>
         );
       case 3:
-        return(
+        return (
           <div className="space-y-4">
             <p className="text-left">
               <span className="font-bold">Step 4:</span> To go from {equation.input.denominator} to {equation.output.denominator} total pieces, how many pieces did your knife split each piece into?
@@ -259,26 +331,28 @@ export const FirstScreen = ({ input, output, sendAdminMessage }: FirstScreenProp
     }
   };
 
+  // Render the downward arrow icon
   const rendermiddleContent = () => {
-return (
-  <div className="flex justify-center">
-    <ArrowBigDown className="w-20 h-20 text-black fill-black object-contai" />
-  </div>
-);
+    return (
+      <div className="flex justify-center">
+        <ArrowBigDown className="w-20 h-20 text-black fill-black object-contain" />
+      </div>
+    );
   };
 
+  // Render the equation with interactive inputs
   const renderEquation = () => {
     if (currentStep < 3) return null;
-    
+
     const baseInputClass = "w-12 h-12 text-xl text-center rounded outline-none transition-all duration-200";
     const enabledInputClass = "bg-gray-200 hover:bg-gray-300 focus:ring-2 focus:ring-blue-500 focus:bg-white";
     const disabledInputClass = "bg-gray-100 text-gray-500";
-    
+
     return (
       <div className="flex items-center justify-center gap-4">
         <div className="flex flex-col items-center">
           <span className="text-3xl font-bold">{equation.input.numerator}</span>
-          <div className="w-12 h-[2px] bg-black my-1"/>
+          <div className="w-12 h-[2px] bg-black my-1" />
           <span className="text-3xl font-bold">{equation.input.denominator}</span>
         </div>
         <span className="text-xl">×</span>
@@ -297,7 +371,7 @@ return (
           ) : (
             <span className="text-3xl font-bold h-12"></span>
           )}
-          <div className="w-12 h-[2px] bg-black my-1"/>
+          <div className="w-12 h-[2px] bg-black my-1" />
           <input
             type="text"
             value={equation.multiplier.denominator || ''}
@@ -325,7 +399,7 @@ return (
           ) : (
             <span className="text-3xl font-bold h-12"></span>
           )}
-          <div className="w-12 h-[2px] bg-black my-1"/>
+          <div className="w-12 h-[2px] bg-black my-1" />
           <span className="text-3xl font-bold">{equation.output.denominator}</span>
         </div>
       </div>
@@ -335,39 +409,38 @@ return (
   return (
     <div className="max-w-3xl h-full mx-auto text-center p-8 bg-[#FFF5EE]">
       <h1 className="text-3xl font-bold mb-8">Equivalent fractions</h1>
-      
+
       <div className="flex items-center justify-center space-x-6 mb-12">
         <div className="flex flex-col items-center">
           <span className="text-3xl font-bold">{equation.input.numerator}</span>
-          <div className="w-8 h-[2px] bg-black my-1"/>
+          <div className="w-8 h-[2px] bg-black my-1" />
           <span className="text-3xl font-bold">{equation.input.denominator}</span>
         </div>
         <span className="text-5xl font-extralight">=</span>
         <div className="flex flex-col items-center">
           <span className="text-3xl font-bold">?</span>
-          <div className="w-8 h-[2px] bg-black my-1"/>
+          <div className="w-8 h-[2px] bg-black my-1" />
           <span className="text-3xl font-bold">{equation.output.denominator}</span>
         </div>
       </div>
 
       <div className="space-y-8">
-
         {/* Step content */}
         <div className="">
           {renderTopContent()}
           {renderEquation()}
-
         </div>
+
         {/* First bar */}
         <div className="w-full flex items-center">
-          <Bar 
+          <Bar
             parts={firstBar}
             handleClick={handleFirstBarClick}
           />
           <div className="ml-4 w-[50px]">
             <div className="flex flex-col items-center">
               <span className="text-2xl">{firstBar.flat().filter(x => x === 1).length}</span>
-              <div className="w-6 h-[2px] bg-black my-1"/>
+              <div className="w-6 h-[2px] bg-black my-1" />
               <span className="text-2xl">{equation.input.denominator}</span>
             </div>
           </div>
@@ -378,22 +451,26 @@ return (
           {rendermiddleContent()}
         </div>
 
-
         {/* Second bar */}
         <div className="w-full flex items-start">
-          <Bar 
+          <Bar
             parts={secondBar}
             handleClick={handleSecondBarClick}
           />
-          <div className={`ml-4 w-[50px] h-full flex flex-col space-y-2 ${canProceed && 'opacity-50 pointer-events-none'}`}>
+          <div className={`ml-4 w-[50px] h-full flex flex-col space-y-2 ${canProceed ? 'opacity-50 pointer-events-none' : ''}`}>
             {currentStep === 0 ? (
               <>
-                <button 
+                <button
                   onClick={() => {
-                    setSelectedKnife(null);
-                    setSecondBar(Array(equation.input.denominator).fill([0]));
-                    setIsCorrect(false);
-                    setCurrentStep(0);
+                    setGameStateRef({
+                      firstScreenState: {
+                        ...firstScreenState,
+                        selectedKnife: null,
+                        secondBar: Array(equation.input.denominator).fill([0]),
+                        isCorrect: false,
+                        currentStep: 0,
+                      },
+                    });
                   }}
                   className="w-16 py-2 bg-gray-200 hover:bg-gray-300 rounded transition-colors duration-200"
                 >
@@ -419,8 +496,8 @@ return (
             ) : (
               <div className="flex flex-col items-center mb-4">
                 <span className="text-2xl">
-                  { currentStep >= 2 ? (
-                    <input 
+                  {currentStep >= 2 ? (
+                    <input
                       type="text"
                       value={barNumerator}
                       onChange={(e) => handleSecondBarFractionChange(e.target.value)}
@@ -432,15 +509,14 @@ return (
                       maxLength={2}
                       placeholder="?"
                     />
-                  ): '?'}
+                  ) : '?'}
                 </span>
-                <div className="w-6 h-[2px] bg-black my-1"/>
+                <div className="w-6 h-[2px] bg-black my-1" />
                 <span className="text-2xl">{equation.output.denominator}</span>
               </div>
             )}
           </div>
         </div>
-
       </div>
 
       {currentStep <= 2 && canProceed && (
@@ -453,6 +529,7 @@ return (
           </button>
         </div>
       )}
+
       {showCorrect && (
         <div className="mt-4">
           <div className="bg-[#2E7D32] text-white p-4 flex justify-between items-center">
@@ -460,14 +537,20 @@ return (
               <span>Correct!</span>
               <span className="text-xl">🎉</span>
             </div>
-            <button 
+            <button
               onClick={() => {
-                setShowCorrect(false)
-                setCurrentStep(3)
-                setFirstBar(Array(equation.input.denominator).fill(null).map((_, i) => [0]))
-                setSecondBar(Array(equation.input.denominator).fill(null).map(() => 
-                  Array(equation.output.denominator/ equation.input.denominator).fill(0)
-                ))
+                setGameStateRef((prevState) => ({
+                  ...prevState,
+                  firstScreenState: {
+                    ...prevState.firstScreenState,
+                    showCorrect: false,
+                    currentStep: 3,
+                    firstBar: Array(equation.input.denominator).fill(null).map(() => [0]),
+                    secondBar: Array(equation.input.denominator).fill(null).map(() =>
+                      Array(equation.output.denominator / equation.input.denominator).fill(0)
+                    ),
+                  },
+                }));
               }}
               className="bg-white text-black px-4 py-2 rounded"
             >
@@ -484,9 +567,12 @@ return (
               <span>Correct!</span>
               <span className="text-xl">🎉</span>
             </div>
-            <button 
+            <button
               onClick={() => {
-                window.dispatchEvent(new CustomEvent('moveToSecondScreen1'));
+                setGameStateRef((prevState) => ({
+                  ...prevState,
+                  currentScreen: 'second1',
+                }));
               }}
               className="bg-white text-black px-4 py-2 rounded"
             >
@@ -497,4 +583,4 @@ return (
       )}
     </div>
   );
-}
+};

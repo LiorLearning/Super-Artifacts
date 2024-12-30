@@ -12,15 +12,17 @@ import { handleScreenshot } from './utils/utils';
 import FractionAdditionGame from './games/fraction-addition/game';
 import AdditionGame from './games/addition/game';
 import FractionsGame from './games/fractions-game/game';
+import EquivalentFractionsGame from './games/equivalent-fractions/game';
 
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
 import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition/state-utils'
 import { GameStateProvider as FractionsGameStateProvider, useGameState as FractionsGameState } from './games/fractions-game/state-utils'
+import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState as EquivalentFractionsGameState } from './games/equivalent-fractions/state-utils'
 
 import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
 import { desc as AdditionGameDesc } from './games/addition/game-state';
 import { desc as FractionsGameDesc } from './games/fractions-game/game-state';
-
+import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
 
 
 interface GameInfo {
@@ -45,12 +47,12 @@ const gameInfo: Record<string, GameInfo> = {
     state: FractionsGameState,
     provider: FractionsGameStateProvider
   },
-  // 'equivalent-fractions-game': {
-  //   game: EquivalentFractionsGame,
-  //   desc: EquivalentFractionsGameDesc,
-  //   state: EquivalentFractionsGameState,
-  //   provider: EquivalentFractionsGameStateProvider
-  // },
+  'equivalent-fractions-game': {
+    game: EquivalentFractionsGame,
+    desc: EquivalentFractionsGameDesc,
+    state: EquivalentFractionsGameState,
+    provider: EquivalentFractionsGameStateProvider
+  },
   'fraction-addition': {
     game: FractionAdditionGame,
     desc: FractionAdditionGameDesc,
