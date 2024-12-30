@@ -13,7 +13,6 @@ import FractionAdditionGame from './games/fraction-addition/game';
 import AdditionGame from './games/addition/game';
 import FractionsGame from './games/fractions-game/game';
 import EquivalentFractionsGame from './games/equivalent-fractions/game';
-import FractionAdditionGame from './games/fraction-addition/game';
 
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
 import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition/state-utils'
