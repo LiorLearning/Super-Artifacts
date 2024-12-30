@@ -9,6 +9,12 @@ interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
 
+interface Vector {
+  x: number;
+  y: number;
+}
+
+
 export default function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
 
@@ -200,6 +206,27 @@ export default function Game({ sendAdminMessage }: GameProps) {
       bottom: "#6FA8C3",   // Darker blue for bottom
     };
 
+    const leftFaceVertices: Vector[][] = [[
+      { x: 0, y: 20 },
+      { x: 20, y: 0 },
+      { x: 20, y: containerHeight },
+      { x: 0, y: containerHeight + 20 }
+    ]];
+  
+    const bottomFaceVertices: Vector[][] = [[
+      { x: -containerWidth / 2, y: 0 },
+      { x: containerWidth / 2, y: 0 },
+      { x: containerWidth / 2 - 20, y: 20 },
+      { x: -containerWidth / 2 - 20, y: 20 }
+    ]];
+  
+    const rightFaceVertices: Vector[][] = [[
+      { x: 0, y: 20 },
+      { x: 20, y: 0 },
+      { x: 20, y: containerHeight },
+      { x: 0, y: containerHeight + 20 }
+    ]];
+
     const visualparts = [
       // Back face
       Matter.Bodies.rectangle(
@@ -225,12 +252,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
       Matter.Bodies.fromVertices(
         containerPosition.x - containerWidth / 2 - 10,
         containerPosition.y + 10,
-        [
-          { x: 0, y: 20 },
-          { x: 20, y: 0 },
-          { x: 20, y: containerHeight },
-          { x: 0, y: containerHeight+20 }
-        ],
+        leftFaceVertices,
         {
           isStatic: true,
           isSensor: true,
@@ -249,12 +271,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
       Matter.Bodies.fromVertices(
         containerPosition.x - 10,
         containerPosition.y + containerHeight / 2 + 10,
-        [
-          { x: -containerWidth / 2, y: 0 },
-          { x: containerWidth / 2, y: 0 },
-          { x: containerWidth / 2 - 20, y: 20 },
-          { x: -containerWidth / 2 - 20, y: 20 }
-        ],  
+        bottomFaceVertices,
         {
           isStatic: true,
           isSensor: true,
@@ -273,12 +290,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
        Matter.Bodies.fromVertices(
         containerPosition.x + containerWidth / 2 - 10,
         containerPosition.y + 10,
-        [
-          { x: 0, y: 20 },
-          { x: 20, y: 0 },
-          { x: 20, y: containerHeight },
-          { x: 0, y: containerHeight + 20 }
-        ],
+        rightFaceVertices,
         {
           isStatic: true,
           isSensor: true,
