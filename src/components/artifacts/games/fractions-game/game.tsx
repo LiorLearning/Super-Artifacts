@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SuccessAnimation from '../../utils/success-animate';
 import { Fraction, BarState, Bar } from './bar';
-import { useGameState } from './game-state';
+import { useGameState } from './state-utils';
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;

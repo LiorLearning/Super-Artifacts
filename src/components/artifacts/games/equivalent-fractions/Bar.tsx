@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useGameState } from './state-utils';
+import { GameState } from './game-state';
 
 interface BarProps {
   parts: number[][];  // Each part is an array of subparts, where number represents selection state (0 = unselected, 1 = selected)
@@ -16,10 +17,6 @@ export function Bar({
   parts, 
   handleClick
 }: BarProps) {
-
-  useEffect(() => {
-    console.log('parts', parts);
-  }, [parts]);
 
   return (
     <div className="w-full relative flex items-center">

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Cuboid in 2D</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <style>
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    const { Engine, Render, Runner, Bodies, Composite, World } = Matter;
+
+    // Create engine and world
+    const engine = Engine.create();
+    const world = engine.world;
+
+    // Create renderer
+    const render = Render.create({
+      element: document.body,
+      engine: engine,
+      options: {
+        width: 800,
+        height: 600,
+        wireframes: false, // Render with colors
+        background: "#f9f9f9",
+      },
+    });
+
+    Render.run(render);
+
+    // Create runner
+    const runner = Runner.create();
+    Runner.run(runner, engine);
+
+    // Colors for faces
+    const colors = {
+      front: "#E8F8FF",    // Light blue for front face
+      back: "#E8F8FF",     // Light blue for back face
+      left: "#B8E8FF",     // Medium blue for left side
+      right: "#AAD3E5",    // Grayish blue for right side
+      bottom: "#6FA8C3",   // Darker blue for bottom
+      middleLine: "#000000"
+    };
+
+    // SVG dimensions and scaling
+    const svgWidth = 300;
+    const svgHeight = 272;
+    const scale = 1.5;  // Scale up the SVG size
+
+    // Center position
+    const centerX = 400;
+    const centerY = 300;
+
+    // Create invisible U-shaped container for physics (z=1)
+    const wallThickness = 20;
+    const containerWalls = [
+      // Left wall
+      Bodies.rectangle(
+        centerX - svgWidth * scale / 2,
+        centerY - svgHeight * scale / 2,
+        wallThickness,
+        svgHeight * scale,
+        {
+          isStatic: true,
+          render: { visible: false },
+          collisionFilter: { category: 0x0004 }
+        }
+      ),
+      // Right wall
+      Bodies.rectangle(
+        centerX + svgWidth * scale / 2,
+        centerY,
+        wallThickness,
+        svgHeight * scale,
+        {
+          isStatic: true,
+          render: { visible: false },
+          collisionFilter: { category: 0x0004 }
+        }
+      ),
+      // Bottom wall
+      Bodies.rectangle(
+        centerX,
+        centerY + svgHeight * scale / 2,
+        svgWidth * scale,
+        wallThickness,
+        {
+          isStatic: true,
+          render: { visible: false },
+          collisionFilter: { category: 0x0004 }
+        }
+      )
+    ];
+
+    // Create the visual elements exactly matching SVG
+    // Back rectangle (Rectangle 35)
+    const backFace = Bodies.rectangle(
+      centerX,
+      centerY,
+      300 * scale,
+      232.77 * scale,
+      {
+        isStatic: true,
+        render: {
+          fillStyle: "#E8F8FF",
+          strokeStyle: "#000000",
+          lineWidth: 2.08899
+        },
+        collisionFilter: { category: 0x0002 }  // z=0
+      }
+    );
+
+    // Front rectangle (Rectangle 36) - transparent with border
+    const frontFace = Bodies.rectangle(
+      centerX - 38.8,
+      centerY + (38.8 * scale), // Offset by the difference in 'top' values (1131.04 - 1092.24)
+      301.41 * scale,
+      232.77 * scale,
+      {
+        isStatic: true,
+        render: {
+          fillStyle: "rgba(232, 248, 255, 0.3)", // Transparent background
+          strokeStyle: "#000000",
+          lineWidth: 2.08899
+        },
+        collisionFilter: { category: 0x0008 }  // z=2
+      }
+    );
+
+    // Left trapezoid
+    const leftFace = Bodies.fromVertices(
+      centerX - svgWidth * scale / 2 - 20,
+      centerY + 27,
+      [
+        { x: 1.7, y: 38.3 },
+        { x: 26.5, y: 3.5 },
+        { x: 26.5, y: 235 },
+        { x: 1.7, y: 272.4 }
+      ].map(pt => ({ x: pt.x * scale, y: pt.y * scale })),
+      {
+        isStatic: true,
+        render: {
+          fillStyle: "#B8E8FF",
+          strokeStyle: "#000000",
+          lineWidth: 2
+        },
+        collisionFilter: { category: 0x0002 }
+      }
+    );
+
+
+    // Bottom trapezoid
+    const bottomFace = Bodies.fromVertices(
+      centerX - 20,
+      centerY + svgHeight * scale / 2,
+      [
+        { x: 3.4, y: 270.3 },
+        { x: 28.3, y: 232.5 },
+        { x: 326.1, y: 232.5 },
+        { x: 301.3, y: 270.3 }
+      ].map(pt => ({ x: pt.x * scale, y: pt.y * scale })),
+      {
+        isStatic: true,
+        render: {
+          fillStyle: "#6FA8C3",
+          strokeStyle: "#000000",
+          lineWidth: 3
+        },
+        collisionFilter: { category: 0x0002 }
+      }
+    );
+
+    // Right trapezoid
+    const rightFace = Bodies.fromVertices(
+      centerX + svgWidth * scale / 2 - 20,
+      centerY + 27,
+      [
+        { x: 301.6, y: 40.8 },
+        { x: 326.3, y: 3.7 },
+        { x: 326.3, y: 233.8 },
+        { x: 302.6, y: 272 }
+      ].map(pt => ({ x: pt.x * scale, y: pt.y * scale })),
+      {
+        isStatic: true,
+        render: {
+          fillStyle: "#AAD3E5",
+          strokeStyle: "#000000",
+          lineWidth: 2
+        },
+        collisionFilter: { category: 0x0008 }
+      }
+    );
+
+    // Interactive ball - starting from much higher
+    const interactiveObject = Bodies.circle(
+      centerX,
+      centerY - 400,  // Positioned much higher above the box
+      15,
+      {
+        restitution: 0.5,
+        friction: 0.05,
+        render: { fillStyle: "#0077ff" },
+        collisionFilter: {
+          category: 0x0004,
+          mask: 0x0004
+        }
+      }
+    );
+
+    // Add all objects to the world
+    World.add(world, [
+      backFace,
+      leftFace,
+      rightFace,
+      bottomFace,
+      frontFace,
+      ...containerWalls,
+      interactiveObject
+    ]);
+  </script>
+</body>
+
+</html>

@@ -6,128 +6,113 @@
  */
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Bar } from "./Bar";
 import { useSound } from 'use-sound';
 import { ArrowBigDown } from 'lucide-react';
+import { useGameState } from './state-utils';
 
-interface SecondScreenProps {
-  input: { numerator: number; denominator: number };
-  output: { denominator: number };
-  nextEvent: string;
-  buttonText: string;
-}
+export const SecondScreen = () => {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const secondScreenState = gameStateRef.current.secondScreenState;
+  const { 
+    equation, 
+    firstBar, 
+    secondBar, 
+    currentStep, 
+    showCorrect, 
+    isCorrect,
+    selectedPieces 
+  } = secondScreenState;
 
-export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextEvent }) => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [showCorrect, setShowCorrect] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [selectedPieces, setSelectedPieces] = useState<number[]>([]);
   const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', { volume: 0.5 });
   const [playSelectSound] = useSound('/sounds/join.mp3', { volume: 0.5 });
 
-  const [equation, setEquation] = useState({
-    input: { numerator: input.numerator, denominator: input.denominator },
-    output: { numerator: 0, denominator: output.denominator },
-    multiplier: { numerator: 0, denominator: 0 }
-  });
-
-  const denominatorInput = useRef<HTMLInputElement | null>(null);
-  const numeratorInput = useRef<HTMLInputElement | null>(null);
-  const outputInput = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    if (currentStep === 1 && denominatorInput.current) {
-      denominatorInput.current.focus();
-    } else if (currentStep === 2 && numeratorInput.current) {
-      numeratorInput.current.focus();
-    } else if (currentStep === 3 && outputInput.current) {
-      outputInput.current.focus();
+  const handleNextScreen = () => {
+    if (gameStateRef.current.currentScreen === 'second1') {
+      setGameStateRef((prevState) => ({
+        ...prevState,
+        currentScreen: 'second2',
+        secondScreenState: {
+          equation: {
+            input: { numerator: 2, denominator: 3 },
+            multiplier: { numerator: 0, denominator: 0 },
+            output: { numerator: 0, denominator: 9 },
+          },
+          firstBar: Array(3).fill(null).map((_, i) => (i < 2 ? [1] : [0])),
+          secondBar: Array(3).fill([0]),
+          currentStep: 1,
+          showCorrect: false,
+          isCorrect: false,
+          selectedPieces: [],
+        },
+      }));
+    } else {
+      setGameStateRef((prevState) => ({
+        ...prevState,
+        currentScreen: 'third',
+      }));
     }
-  }, [currentStep]);
+  }
 
   const handleMultiplierChange = (value: string, type: 'numerator' | 'denominator' | 'output_numerator') => {
     const numValue = parseInt(value) || 0;
     
-    if (type === 'denominator') {
-      if (numValue === equation.output.denominator / equation.input.denominator) {
-        playBreakSound();
+    setGameStateRef((prevState) => {
+      const updatedState = { ...prevState };
+      const secondScreenState = updatedState.secondScreenState;
 
-        const subPartsPerPiece = equation.output.denominator / equation.input.denominator;
-        setSecondBar(
-          Array(equation.input.denominator).fill(null).map(() => 
-            Array(subPartsPerPiece).fill(0)
-          )
-        );
-        setCurrentStep(2);
+      if (type === 'denominator') {
+        if (numValue === equation.output.denominator / equation.input.denominator) {
+          playBreakSound();
+          secondScreenState.currentStep = 2;
+          secondScreenState.secondBar = Array(equation.input.denominator).fill(null).map(() => 
+            Array(equation.output.denominator / equation.input.denominator).fill(0)
+          );
+        }
+        secondScreenState.equation.multiplier.denominator = numValue;
+      } else if (type === 'numerator') {
+        if (numValue === equation.output.denominator / equation.input.denominator) {
+          playSelectSound();
+          secondScreenState.currentStep = 3;
+          secondScreenState.secondBar = Array(equation.input.denominator).fill(null).map((_, i) => 
+            Array(equation.output.denominator / equation.input.denominator).fill(i === 0 ? 1 : 0)
+          );
+        }
+        secondScreenState.equation.multiplier.numerator = numValue;
+      } else if (type === 'output_numerator') {
+        const expectedNumerator = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
+        if (numValue === expectedNumerator) {
+          playSelectSound();
+          secondScreenState.isCorrect = true;
+          secondScreenState.secondBar = Array(equation.input.denominator).fill(null).map((_, i) => 
+            Array(equation.output.denominator / equation.input.denominator).fill(i < equation.input.numerator ? 1 : 0)
+          );
+        }
+        secondScreenState.equation.output.numerator = numValue;
       }
-      setEquation(prev => ({
-        ...prev,
-        multiplier: { ...prev.multiplier, denominator: numValue }
-      }));
 
-    } else if (type === 'numerator') {
-      if (numValue === equation.output.denominator / equation.input.denominator) {
-
-        const subPartsPerPiece = equation.output.denominator / equation.input.denominator;
-        setSecondBar(
-          Array(equation.input.denominator).fill(null).map((_, i) => 
-            Array(subPartsPerPiece).fill(i === 0 ? 1 : 0)
-          )
-        );
-        playSelectSound();
-        setCurrentStep(3);
-      }
-      setEquation(prev => ({
-        ...prev,
-        multiplier: { ...prev.multiplier, numerator: numValue }
-      }));
-      
-    } else if (type === 'output_numerator') {
-      const expectedNumerator = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
-      if (numValue === expectedNumerator) {
-        // Select all required subparts
-        const subPartsPerPiece = equation.output.denominator / equation.input.denominator;
-        setSecondBar(
-          Array(equation.input.denominator).fill(null).map((_, i) => 
-            Array(subPartsPerPiece).fill(i < equation.input.numerator ? 1 : 0)
-          )
-        );
-        playSelectSound();
-        setIsCorrect(true);
-        // sendAdminMessage('user', 'Completed second equation successfully!');
-      }
-      setEquation(prev => ({
-        ...prev,
-        output: { ...prev.output, numerator: numValue }
-      }));
-    }
+      return updatedState;
+    });
   };
 
-  const [firstBar, setFirstBar] = useState<number[][]>(
-    Array(equation.input.denominator).fill(null).map((_, i) => 
-      i < equation.input.numerator ? [1] : [0]
-    )
-  );
-
-  const [secondBar, setSecondBar] = useState<number[][]>(
-    Array(equation.input.denominator).fill(null).map(() => [0])
-  );
-
   const handleBarClick = (partIndex: number, subPartIndex: number) => {
-    if (!equation.multiplier.denominator) return;
+    if (secondScreenState.currentStep < 3) return;
     
-    setSecondBar(prev => {
-      const newBar = prev.map(row => [...row]);  // Deep copy
-      newBar[partIndex][subPartIndex] = newBar[partIndex][subPartIndex] === 1 ? 0 : 1;
-      return newBar;
+    setGameStateRef((prevState) => {
+      const updatedState = { ...prevState };
+      const secondBar = updatedState.secondScreenState.secondBar;
+      
+      secondBar[partIndex][subPartIndex] = secondBar[partIndex][subPartIndex] === 1 ? 0 : 1;
+      
+      return updatedState;
     });
 
     playSelectSound();
   };
 
   const renderTopContent = () => {
-    switch (currentStep) {
+    switch (secondScreenState.currentStep) {
       case 1:
         return (
           <div className="space-y-4">
@@ -152,7 +137,6 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
             </p>
           </div>
         );
-      case 4:
       default:
         return null;
     }
@@ -179,7 +163,6 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
               onChange={(e) => handleMultiplierChange(e.target.value, 'numerator')}
               className={`${baseInputClass} mb-1 ${currentStep === 2 ? enabledInputClass : disabledInputClass}`}
               disabled={currentStep !== 2}
-              ref={numeratorInput}
               maxLength={2}
               placeholder={currentStep === 2 ? "?" : ""}
             />
@@ -193,7 +176,6 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
             onChange={(e) => handleMultiplierChange(e.target.value, 'denominator')}
             className={`${baseInputClass} mt-1 ${currentStep === 1 ? enabledInputClass : disabledInputClass}`}
             disabled={currentStep !== 1}
-            ref={denominatorInput}
             maxLength={2}
             placeholder={currentStep === 1 ? "?" : ""}
           />
@@ -207,7 +189,6 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
               onChange={(e) => handleMultiplierChange(e.target.value, 'output_numerator')}
               className={`${baseInputClass} mb-1 ${currentStep === 3 ? enabledInputClass : disabledInputClass}`}
               disabled={currentStep !== 3 || isCorrect}
-              ref={outputInput}
               maxLength={2}
               placeholder={currentStep === 3 ? "?" : ""}
             />
@@ -277,9 +258,7 @@ export const SecondScreen: React.FC<SecondScreenProps> = ({ input, output, nextE
               <span className="text-xl">🎉</span>
             </div>
             <button 
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent(nextEvent));
-              }}
+              onClick={handleNextScreen}
               className="bg-white text-black px-4 py-2 rounded"
             >
               Continue

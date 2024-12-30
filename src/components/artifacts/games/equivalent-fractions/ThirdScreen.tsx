@@ -6,37 +6,29 @@
  */
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSound } from 'use-sound';
+import { useGameState } from './state-utils';
 
 interface ThirdScreenProps {
-  input: { numerator: number; denominator: number };
-  output: { denominator: number };
-  nextEvent: string;
-  buttonText: string;
   sendAdminMessage: (role: string, content: string) => void;
 }
 
-export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEvent, buttonText, sendAdminMessage }) => {
-  const [equation, setEquation] = useState({
-    input: { numerator: input.numerator, denominator: input.denominator },
-    output: { numerator: 0, denominator: output.denominator },
-    multiplier: { numerator: 0, denominator: 0 }
-  });
+export const ThirdScreen = ({ sendAdminMessage }: ThirdScreenProps) => {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const thirdScreenState = gameStateRef.current.thirdScreenState;
 
-  const [firstBar, setFirstBar] = useState<number[][]>(
-    Array(equation.input.denominator).fill(null).map((_, i) => 
-      i < equation.input.numerator ? [1] : [0]
-    )
-  );
-  const [secondBar, setSecondBar] = useState<number[][]>(
-    Array(equation.input.denominator).fill(null).map(() => [0])
-  );
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [currentStep, setCurrentStep] = useState<number>(1);
+  const {
+    equation,
+    firstBar,
+    secondBar,
+    isCorrect,
+    currentStep,
+  } = thirdScreenState;
+
   const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', { volume: 0.5 });
   const [playSelectSound] = useSound('/sounds/join.mp3', { volume: 0.5 });
-  const fractionNumerator = useRef<HTMLInputElement>(null);
+
   const denominatorInput = useRef<HTMLInputElement | null>(null);
   const numeratorInput = useRef<HTMLInputElement | null>(null);
   const outputInput = useRef<HTMLInputElement | null>(null);
@@ -54,33 +46,73 @@ export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEve
   const handleMultiplierChange = (value: string, type: 'numerator' | 'denominator' | 'output_numerator') => {
     const numValue = parseInt(value) || 0;
     
-    if (type === 'denominator') {
-      if (numValue === equation.output.denominator / equation.input.denominator) {
-        setCurrentStep(2);
+    setGameStateRef((prevState) => {
+      const updatedEquation = { ...prevState.thirdScreenState.equation };
+
+      if (type === 'denominator') {
+        updatedEquation.multiplier.denominator = numValue;
+
+        if (numValue === updatedEquation.output.denominator / updatedEquation.input.denominator) {
+          return {
+            ...prevState,
+            thirdScreenState: {
+              ...prevState.thirdScreenState,
+              equation: updatedEquation,
+              currentStep: 2,
+            },
+          };
+        }
+      } else if (type === 'numerator') {
+        updatedEquation.multiplier.numerator = numValue;
+
+        if (numValue === updatedEquation.output.denominator / updatedEquation.input.denominator) {
+          return {
+            ...prevState,
+            thirdScreenState: {
+              ...prevState.thirdScreenState,
+              equation: updatedEquation,
+              currentStep: 3,
+            },
+          };
+        }
+      } else if (type === 'output_numerator') {
+        const expectedNumerator = updatedEquation.input.numerator * (updatedEquation.output.denominator / updatedEquation.input.denominator);
+        
+        if (numValue === expectedNumerator) {
+          sendAdminMessage('user', 'Completed final equation successfully!');
+          return {
+            ...prevState,
+            thirdScreenState: {
+              ...prevState.thirdScreenState,
+              equation: {
+                ...updatedEquation,
+                output: { ...updatedEquation.output, numerator: numValue },
+              },
+              isCorrect: true,
+            },
+          };
+        }
+
+        return {
+          ...prevState,
+          thirdScreenState: {
+            ...prevState.thirdScreenState,
+            equation: {
+              ...updatedEquation,
+              output: { ...updatedEquation.output, numerator: numValue },
+            },
+          },
+        };
       }
-      setEquation(prev => ({
-        ...prev,
-        multiplier: { ...prev.multiplier, denominator: numValue }
-      }));
-    } else if (type === 'numerator') {
-      if (numValue === equation.output.denominator / equation.input.denominator) {
-        setCurrentStep(3);
-      }
-      setEquation(prev => ({
-        ...prev,
-        multiplier: { ...prev.multiplier, numerator: numValue }
-      }));
-    } else if (type === 'output_numerator') {
-      const expectedNumerator = equation.input.numerator * (equation.output.denominator / equation.input.denominator);
-      if (numValue === expectedNumerator) {
-        setIsCorrect(true);
-        sendAdminMessage('user', 'Completed final equation successfully!');
-      }
-      setEquation(prev => ({
-        ...prev,
-        output: { ...prev.output, numerator: numValue }
-      }));
-    }
+
+      return {
+        ...prevState,
+        thirdScreenState: {
+          ...prevState.thirdScreenState,
+          equation: updatedEquation,
+        },
+      };
+    });
   };
 
   const renderTopContent = () => {
@@ -210,11 +242,14 @@ export const ThirdScreen: React.FC<ThirdScreenProps> = ({ input, output, nextEve
             </div>
             <button 
               onClick={() => {
-                window.dispatchEvent(new CustomEvent(nextEvent));
+                setGameStateRef((prevState) => ({
+                  ...prevState,
+                  currentScreen: 'third',
+                }));
               }}
               className="bg-white text-black px-4 py-2 rounded"
             >
-              {buttonText}
+              Proceed
             </button>
           </div>
         </div>

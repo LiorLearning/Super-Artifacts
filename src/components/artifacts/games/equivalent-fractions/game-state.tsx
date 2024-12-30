@@ -1,110 +1,98 @@
-import React, { createContext, useContext, ReactNode, useRef, useReducer } from 'react';
+export const desc = `
+Steps to Play the Equivalent Fractions Game:
+1. You'll start with two chocolate bars representing fraction1 and fraction2.
+2. Break the first chocolate bar into equal parts by clicking the "Split" button.
+3. Select the pieces of the first bar that represent the fraction fraction1.
+4. Break the second chocolate bar into equal parts by clicking the "Split" button.
+5. Select the pieces of the second bar that represent the fraction fraction2.
+6. Compare the selected pieces from both bars to determine which fraction is larger.
+7. Your goal is to correctly identify which fraction has a greater value.
+`
 
-export interface Fraction {
-  numerator: number;
-  denominator: number;
+export interface Equation {
+  input: { numerator: number; denominator: number };
+  multiplier: { numerator: number; denominator: number };
+  output: { numerator: number; denominator: number };
 }
 
-export interface BarState {
-  parts: number[][];
-  selectedParts: number[];
+export interface FirstScreenState {
+  equation: Equation;
+  firstBar: number[][];
+  secondBar: number[][];
+  selectedKnife: number | null;
+  isCorrect: boolean;
+  currentStep: number;
+  barNumerator: string;
+  showCorrect: boolean;
+  canProceed: boolean;
 }
 
-export const desc = `Steps to Play the Equivalent Fractions Game:
-1. Break the first chocolate bar by clicking the "Split" button.
-2. Select the pieces of the first bar that you want to keep.
-3. Break the second chocolate bar by clicking the "Split" button for the second bar.
-4. Select the pieces of the second bar that you want to keep.
-5. Understand how to create equivalent fractions by manipulating the bars.`;
+export interface SecondScreenState {
+  equation: Equation;
+  firstBar: number[][];
+  secondBar: number[][];
+  currentStep: number;
+  showCorrect: boolean;
+  isCorrect: boolean;
+  selectedPieces: number[];
+}
 
-export const GameStateContext = createContext<{
-  gameStateRef: React.MutableRefObject<GameState>;
-  setGameStateRef: (newState: ((prevState: GameState) => GameState) | Partial<GameState>) => void;
-} | undefined>(undefined);
+export interface ThirdScreenState {
+  equation: Equation;
+  firstBar: number[][];
+  secondBar: number[][];
+  isCorrect: boolean;
+  currentStep: number;
+}
 
-export const gameStateReducer = (state: GameState, action: Partial<GameState> | ((prevState: GameState) => GameState)): GameState => {
-  if (typeof action === 'function') {
-    return action(state);
-  }
-  return { ...state, ...action };
-};
+export type Screen = 'first' | 'second1' | 'second2' | 'third';
 
-export const GameStateProvider: React.FC<{ 
-  children: ReactNode 
-}> = ({ children }) => {
-  const initialGameState: GameState = {
-    currentScreen: 'first',
+export interface GameState {
+  currentScreen: Screen;
+  firstScreenState: FirstScreenState;
+  secondScreenState: SecondScreenState;
+  thirdScreenState: ThirdScreenState;
+}
+
+export const initialGameState: GameState = {
+  currentScreen: 'first',
+  firstScreenState: {
     equation: {
       input: { numerator: 3, denominator: 4 },
       multiplier: { numerator: 0, denominator: 0 },
-      output: { numerator: 0, denominator: 12 }
+      output: { numerator: 0, denominator: 12 },
     },
-    bars: {
-      first: {
-        parts: [],
-        selectedParts: []
-      },
-      second: {
-        parts: [],
-        selectedParts: []
-      }
-    },
-    currentStep: 0,
+    firstBar: Array(4).fill(null).map((_, i) => (i < 3 ? [1] : [0])),
+    secondBar: Array(4).fill([0]),
     selectedKnife: null,
     isCorrect: false,
-    canProceed: false,
-    showCorrect: false,
+    currentStep: 0,
     barNumerator: '',
-    gameCompleted: false
-  };
-
-  const gameStateRef = useRef<GameState>(initialGameState);
-  const [, dispatch] = useReducer(gameStateReducer, initialGameState);
-  
-  const setGameStateRef = (newState: ((prevState: GameState) => GameState) | Partial<GameState>) => {
-    if (typeof newState === 'function') {
-      gameStateRef.current = newState(gameStateRef.current);
-    } else {
-      gameStateRef.current = { ...gameStateRef.current, ...newState };
-    }
-    
-    dispatch(newState);
-  };
-
-  return (
-    <GameStateContext.Provider value={{ 
-      gameStateRef,
-      setGameStateRef,
-    }}>
-      {children}
-    </GameStateContext.Provider>
-  );
+    showCorrect: false,
+    canProceed: false,
+  },
+  secondScreenState: {
+    equation: {
+      input: { numerator: 3, denominator: 4 },
+      multiplier: { numerator: 0, denominator: 0 },
+      output: { numerator: 0, denominator: 8 },
+    },
+    firstBar: Array(4).fill(null).map((_, i) => (i < 3 ? [1] : [0])),
+    secondBar: Array(4).fill([0]),
+    currentStep: 1,
+    showCorrect: false,
+    isCorrect: false,
+    selectedPieces: [],
+  },
+  thirdScreenState: {
+    equation: {
+      input: { numerator: 2, denominator: 3 },
+      multiplier: { numerator: 0, denominator: 0 },
+      output: { numerator: 0, denominator: 12 },
+    },
+    firstBar: Array(3).fill(null).map((_, i) => (i < 2 ? [1] : [0])),
+    secondBar: Array(3).fill([0]),
+    isCorrect: false,
+    currentStep: 1,
+  },
 };
-
-export const useGameState = () => {
-  const context = useContext(GameStateContext);
-  if (!context) {
-    throw new Error('useGameState must be used within a GameStateProvider');
-  }
-  return context;
-};
-
-export interface GameState {
-  currentScreen: 'first' | 'second1' | 'second2' | 'third';
-  equation: {
-    input: Fraction;
-    multiplier: Fraction;
-    output: Fraction;
-  };
-  bars: {
-    first: BarState;
-    second: BarState;
-  };
-  currentStep: number;
-  selectedKnife: number | null;
-  isCorrect: boolean;
-  canProceed: boolean;
-  showCorrect: boolean;
-  barNumerator: string;
-  gameCompleted: boolean;
-}

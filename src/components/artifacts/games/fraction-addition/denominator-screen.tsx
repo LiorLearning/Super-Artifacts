@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useGameState } from './game-state'
+import { useGameState } from './state-utils'
 
 export function DenominatorScreen() {
   const { gameStateRef, setGameStateRef } = useGameState()
