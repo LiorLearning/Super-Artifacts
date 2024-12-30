@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { useGameState } from './game-state'
+import { useGameState } from './state-utils'
 
 interface ChocolateBarScreenProps {
   onProceed: () => void;

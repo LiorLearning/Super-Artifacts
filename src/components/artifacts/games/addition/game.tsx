@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as Matter from "matter-js";
-import { useGameState } from "./game-state";
+import { useGameState } from "./state-utils";
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;

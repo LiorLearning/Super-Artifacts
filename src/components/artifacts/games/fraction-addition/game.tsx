@@ -2,7 +2,7 @@
 
 import { ChocolateBarScreen } from './chocolate-bar-screen'
 import { DenominatorScreen } from './denominator-screen'
-import { useGameState } from './game-state'
+import { useGameState } from './state-utils'
 
 export default function FractionAddition() {
   const { gameStateRef, setGameStateRef } = useGameState()
