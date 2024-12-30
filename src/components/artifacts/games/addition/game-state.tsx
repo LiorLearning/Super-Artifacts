@@ -28,8 +28,8 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  greenScore: 0,
-  blueScore: 0,
+  greenScore: 8,
+  blueScore: 7,
   containerScore: 0,
   activePhase: 'left',
   leftContainerBalls: [],
@@ -40,4 +40,7 @@ export const initialGameState: GameState = {
   clickDisabled: false,
   isGameComplete: false,
   sceneRef: null,
+  showEmptyButton: false,
+  gameComplete: false,
+  showAddButton: false,
 };
