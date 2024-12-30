@@ -1,6 +1,8 @@
 // Sound effects manager for the addition game
+type SoundName = 'shoot' | 'collect' | 'rotate' | 'score' | 'complete' | 'pop';
+
 class SoundManager {
-  private sounds: { [key: string]: HTMLAudioElement } = {};
+  private sounds: { [K in SoundName]: HTMLAudioElement } = {} as { [K in SoundName]: HTMLAudioElement };
   private isMuted: boolean = false;
   private isClient: boolean;
 
@@ -28,22 +30,21 @@ class SoundManager {
       if (typeof window !== 'undefined') {
         const audio = new window.Audio(path);
         audio.preload = 'auto';
-        this.sounds[key] = audio;
+        this.sounds[key as SoundName] = audio;
       }
     });
   }
 
-  play(soundName: keyof typeof this.sounds) {
+  play(soundName: SoundName) {
     if (!this.isClient || this.isMuted || !this.sounds[soundName]) return;
 
-    // Clone and play to allow overlapping sounds
     const sound = this.sounds[soundName].cloneNode() as HTMLAudioElement;
     sound.volume = this.getVolumeForSound(soundName);
     sound.play().catch(err => console.warn('Sound play failed:', err));
   }
 
-  private getVolumeForSound(soundName: string): number {
-    const volumes: { [key: string]: number } = {
+  private getVolumeForSound(soundName: SoundName): number {
+    const volumes: { [K in SoundName]: number } = {
       shoot: 0.7,
       collect: 0.5,
       rotate: 0.4,
@@ -51,7 +52,7 @@ class SoundManager {
       complete: 0.8,
       pop: 0.3,
     };
-    return volumes[soundName] || 0.5;
+    return volumes[soundName];
   }
 
   toggleMute() {
