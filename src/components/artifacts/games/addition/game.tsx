@@ -1,13 +1,8 @@
 import * as Matter from "matter-js";
-<<<<<<< HEAD
 import { useGameState } from "./state-utils";
 import { getSoundManager } from './sounds';
 import { useEffect, useRef, useState } from "react";
 import { Minus, Plus } from "lucide-react";
-=======
-import { useGameState } from "./game-state";
-import { getSoundManager } from './sounds';
->>>>>>> a7f7488 (additionv3)
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
