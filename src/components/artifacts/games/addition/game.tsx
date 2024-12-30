@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+
 import * as Matter from "matter-js";
 import { useGameState } from "./state-utils";
+import { getSoundManager } from './sounds';
+import { useEffect, useRef, useState } from "react";
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -310,7 +312,10 @@ export default function Game({ sendAdminMessage }: GameProps) {
      let flip_currentStep = 0;
  
      const animate = () => {
-       if (flip_currentStep >= flip_steps) return;
+       if (flip_currentStep >= flip_steps) {
+         getSoundManager().play('complete');
+         return;
+       }
  
        // Rotate center container
        const containerBodies = Matter.Composite.allBodies(containerRef.current!);
@@ -369,6 +374,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
     const reduceScoreAndUpdateColor = () => {
       if (gameStateRef.current.containerScore > 0) {
         setGameStateRef(prevState => ({ ...prevState, containerScore: prevState.containerScore - 1 }));
+        getSoundManager().play('pop');
         updateContainerColors();
         setTimeout(reduceScoreAndUpdateColor, 200);
       }
@@ -481,7 +487,9 @@ export default function Game({ sendAdminMessage }: GameProps) {
   };
 
   const launchBall = (color: 'green' | 'blue') => {
-    if (!worldRef.current || gameStateRef.current.containerScore >= 10) return;
+    if (gameStateRef.current.clickDisabled) return;
+    
+    getSoundManager().play('shoot');
     if ((color === 'green' && gameStateRef.current.activePhase !== 'left') || (color === 'blue' && gameStateRef.current.activePhase !== 'right')) return;
 
     setGameStateRef(prevState => ({ ...prevState, clickDisabled: true }));
@@ -504,6 +512,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
         [isGreen ? 'greenScore' : 'blueScore']: prevState[isGreen ? 'greenScore' : 'blueScore'] - 1,
         containerScore: prevState.containerScore + 1
       }));
+      getSoundManager().play('collect');
     }, 1000);
 
     setTimeout(() => {
@@ -541,6 +550,8 @@ export default function Game({ sendAdminMessage }: GameProps) {
       additionStarted: true,
       showAddButton: false
     }));
+
+    getSoundManager().play('rotate');
 
     // Hide left platform and prepare for animation
     if (worldRef.current) {
@@ -598,86 +609,84 @@ export default function Game({ sendAdminMessage }: GameProps) {
   }, [gameStateRef.current.greenScore]);
 
   return (
-    <>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap"
-        rel="stylesheet"
-      />
-      <div className="flex flex-col w-[800px] items-center font-gaegu rounded-xl bg-white">
-        <div className="relative w-full mx-auto p-5 bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_1px),linear-gradient(rgba(0,0,0,.1)_1px,transparent_1px)] bg-[length:20px_20px]">
-          <div className="w-2/3 mx-auto bg-purple-100 border-2 shadow-[-3px_3px_0_0] border-black p-2 mb-5 rounded">
-            <p className="text-3xl font-bold text-center text-purple-600">
-              {gameStateRef.current.showAddButton
-                ? "Let's add the remaining marbles!"
-                : gameStateRef.current.activePhase === 'left'
-                  ? "Shoot the green marbles first!"
-                  : "Now shoot the blue marbles!"}
-            </p>
-          </div>
-
-          <div className="relative w-full">
-            {currentStep < 2 && (
-              <>
-                <div className="absolute top-5 left-5 text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500">
-                  {gameStateRef.current.greenScore}
-                </div>
-                <div className="absolute top-5 right-5 text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500">
-                  {gameStateRef.current.blueScore}
-                </div>
-              </>
-            )}
-
-            <div
-              ref={sceneRef}
-              className="w-[800px] h-[600px] mx-auto rounded-lg bg-transparent"
-            >
-              {/* {renderProceedButton()} */}
-            </div>
-
-            <div className="absolute left-1/3 transform -translate-x-1/3 -translate-y-1/4 bottom-1/4 text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500">
-              {gameStateRef.current.containerScore}
-            </div>
-
-            {gameStateRef.current.showAddButton ? (
-              <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
-                <button
-                  onClick={handleAddition}
-                  className="text-2xl px-8 py-3 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90"
-                >
-                  Add Remaining Marbles
-                </button>
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={launchGreen}
-                  disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left'}
-                  className={`absolute left-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                    ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  Shoot
-                </button>
-                <button
-                  onClick={launchBlue}
-                  disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right'}
-                  className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                    ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  Shoot
-                </button>
-              </>
-            )}
-          </div>
+    <div className="flex flex-col w-[800px] items-center font-gaegu rounded-xl bg-white">
+      <div className="relative w-full mx-auto p-5 bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_1px),linear-gradient(rgba(0,0,0,.1)_1px,transparent_1px)] bg-[length:20px_20px]">
+        <div className="w-2/3 mx-auto bg-purple-100 border-2 shadow-[-3px_3px_0_0] border-black p-2 mb-5 rounded">
+          <p className="text-3xl font-bold text-center text-purple-600">
+            {gameStateRef.current.showAddButton
+              ? "Let's add the remaining marbles!"
+              : gameStateRef.current.activePhase === 'left'
+                ? "Shoot the green marbles first!"
+                : "Now shoot the blue marbles!"}
+          </p>
         </div>
 
-        <style jsx global>{`
-          @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap');
+        <div className="relative w-full">
+          {currentStep < 2 && (
+            <>
+              <div className="absolute top-5 left-5 text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500">
+                {gameStateRef.current.greenScore}
+              </div>
+              <div className="absolute top-5 right-5 text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500">
+                {gameStateRef.current.blueScore}
+              </div>
+              <img src="./1.png" alt="Arrow" className="absolute top-[7.7rem] z-10 left-52 w-16 h-14" />
+              <img src="./2.png" alt="Arrow" className="absolute top-[7.7rem] z-10 left-52 w-16 h-14" />
+              <img src="./3.png" alt="Arrow" className="absolute top-[7.7rem] z-10 right-44 w-16 h-14" />
+              <img src="./4.png" alt="Arrow" className="absolute top-[7.7rem] z-10 right-44 w-16 h-14" />
+            </>
+          )}
 
-          .font-gaegu {
-            font-family: 'Gaegu', cursive;
-          }
-        `}</style>
+          <div
+            ref={sceneRef}
+            className="w-[800px] h-[600px] z-30 mx-auto rounded-lg bg-transparent"
+          >
+            {/* {renderProceedButton()} */}
+          </div>
+
+          <div className="absolute left-1/3 transform -translate-x-1/3 -translate-y-1/4 bottom-1/4 text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500">
+            {gameStateRef.current.containerScore}
+          </div>
+
+          {gameStateRef.current.showAddButton ? (
+            <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
+              <button
+                onClick={handleAddition}
+                className="text-2xl px-8 py-3 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90"
+              >
+                Add Remaining Marbles
+              </button>
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={launchGreen}
+                disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left'}
+                className={`absolute left-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+                  ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                Shoot
+              </button>
+              <button
+                onClick={launchBlue}
+                disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right'}
+                className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+                  ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                Shoot
+              </button>
+            </>
+          )}
+        </div>
       </div>
-    </>
+
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap');
+
+        .font-gaegu {
+          font-family: 'Gaegu', cursive;
+        }
+      `}</style>
+    </div>
   );
 };
