@@ -195,7 +195,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
                 <div className="absolute inset-0 w-full h-full">
                   <div className="absolute inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm"></div>
                 </div>
-                <div className="relative h-full w-full flex justify-center items-center">
+                <div className="relative h-full w-full flex justify-center items-center scale-75">
                   <GameComponent currentGame={(currentGame ?? 'addition-game')} sendAdminMessage={sendAdminMessage} />
                 </div>
               </div>
