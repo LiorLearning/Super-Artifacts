@@ -23,12 +23,10 @@ export default function EquivalentFractionsGame({ sendAdminMessage }: EquationPr
 
   return (
     <Card className="h-full w-full p-8 bg-gradient-to-br bg-[#FFF8EE] shadow-2xl">
-      <div className="w-full max-w-7xl mx-auto">
-        {currentScreen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
-        {currentScreen === 'second1' && <SecondScreen />}
-        {currentScreen === 'second2' && <SecondScreen />}
-        {currentScreen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
-      </div>
+      {currentScreen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
+      {currentScreen === 'second1' && <SecondScreen />}
+      {currentScreen === 'second2' && <SecondScreen />}
+      {currentScreen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
     </Card>
   );
 }

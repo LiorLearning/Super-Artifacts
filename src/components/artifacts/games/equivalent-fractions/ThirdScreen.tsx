@@ -7,8 +7,52 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useSound } from 'use-sound';
 import { useGameState } from './state-utils';
+import { Equation } from './game-state';
+import SuccessAnimation from '../../utils/success-animate';
+import { InteractiveEquation } from './components';
+
+// Step Content Component
+const StepContent = ({ step, equation }: { step: number; equation: Equation }) => {
+  const steps = {
+    1: (
+      <div className="space-y-4">
+        <p className="text-left">
+          <span className="font-bold">Step 1:</span> To go from {equation.input.denominator} to {equation.output.denominator} total pieces, how many pieces should you split each piece into?
+        </p>
+      </div>
+    ),
+    2: (
+      <div className="space-y-4">
+        <p className="text-left">
+          <span className="font-bold">Step 2:</span> So for every 1 piece you got earlier, how many pieces do you get now?
+        </p>
+      </div>
+    ),
+    3: (
+      <div className="space-y-4">
+        <p className="text-left">
+          <span className="font-bold">Step 3:</span> So how many pieces do you now get in total?
+        </p>
+      </div>
+    )
+  };
+
+  return steps[step as keyof typeof steps] || null;
+};
+
+// Success Message Component
+const SuccessMessage = () => (
+  <div className="mt-4">
+    <div className="bg-[#2E7D32] text-white p-4 flex justify-between items-center">
+      <div className="flex items-center gap-2">
+        <span>Well done!</span>
+        <span className="text-xl">🎉</span>
+      </div>
+      <SuccessAnimation />
+    </div>
+  </div>
+);
 
 interface ThirdScreenProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -20,14 +64,9 @@ export const ThirdScreen = ({ sendAdminMessage }: ThirdScreenProps) => {
 
   const {
     equation,
-    firstBar,
-    secondBar,
     isCorrect,
     currentStep,
   } = thirdScreenState;
-
-  const [playBreakSound] = useSound('/sounds/chocolate-break.mp3', { volume: 0.5 });
-  const [playSelectSound] = useSound('/sounds/join.mp3', { volume: 0.5 });
 
   const denominatorInput = useRef<HTMLInputElement | null>(null);
   const numeratorInput = useRef<HTMLInputElement | null>(null);
@@ -115,100 +154,6 @@ export const ThirdScreen = ({ sendAdminMessage }: ThirdScreenProps) => {
     });
   };
 
-  const renderTopContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <p className="text-left">
-              <span className="font-bold">Step 1:</span> To go from {equation.input.denominator} to {equation.output.denominator} total pieces, how many pieces should you split each piece into?
-            </p>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
-            <p className="text-left">
-              <span className="font-bold">Step 2:</span> So for every 1 piece you got earlier, how many pieces do you get now?
-            </p>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <p className="text-left">
-              <span className="font-bold">Step 3:</span> So how many pieces do you now get in total?
-            </p>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  const renderEquation = () => {
-    const baseInputClass = "w-12 h-12 text-xl text-center rounded outline-none transition-all duration-200 border-2 border-black";
-    const enabledInputClass = "bg-gray-200 hover:bg-gray-300 focus:ring-2 focus:ring-blue-500 focus:bg-white";
-    const disabledInputClass = "bg-gray-100 text-gray-500 border-gray-300";
-    
-    return (
-      <div className="flex items-center justify-center gap-4">
-        <div className="flex flex-col items-center">
-          <span className="text-3xl font-bold">{equation.input.numerator}</span>
-          <div className="w-12 h-[2px] bg-black my-1"/>
-          <span className="text-3xl font-bold">{equation.input.denominator}</span>
-        </div>
-        <span className="text-xl">×</span>
-        <div className="flex flex-col items-center">
-          {currentStep >= 2 ? (
-            <input
-              type="text"
-              value={equation.multiplier.numerator || ''}
-              onChange={(e) => handleMultiplierChange(e.target.value, 'numerator')}
-              className={`${baseInputClass} mb-1 ${currentStep === 2 ? enabledInputClass : disabledInputClass}`}
-              disabled={currentStep !== 2}
-              ref={numeratorInput}
-              maxLength={2}
-              placeholder={currentStep === 2 ? "?" : ""}
-            />
-          ) : (
-            <span className="text-3xl font-bold h-12"></span>
-          )}
-          <div className="w-12 h-[2px] bg-black my-1"/>
-          <input
-            type="text"
-            value={equation.multiplier.denominator || ''}
-            onChange={(e) => handleMultiplierChange(e.target.value, 'denominator')}
-            className={`${baseInputClass} mt-1 ${currentStep === 1 ? enabledInputClass : disabledInputClass}`}
-            disabled={currentStep !== 1}
-            ref={denominatorInput}
-            maxLength={2}
-            placeholder={currentStep === 1 ? "?" : ""}
-          />
-        </div>
-        <span className="text-xl">=</span>
-        <div className="flex flex-col items-center">
-          {currentStep >= 3 ? (
-            <input
-              type="text"
-              value={equation.output.numerator || ''}
-              onChange={(e) => handleMultiplierChange(e.target.value, 'output_numerator')}
-              className={`${baseInputClass} mb-1 ${currentStep === 3 ? enabledInputClass : disabledInputClass}`}
-              disabled={currentStep !== 3 || isCorrect}
-              ref={outputInput}
-              maxLength={2}
-              placeholder={currentStep === 3 ? "?" : ""}
-            />
-          ) : (
-            <span className="text-3xl font-bold h-12"></span>
-          )}
-          <div className="w-12 h-[2px] bg-black my-1"/>
-          <span className="text-3xl font-bold">{equation.output.denominator}</span>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="max-w-3xl h-full mx-auto text-center p-8 bg-[#FFF5EE]">
       <h1 className="text-3xl font-bold mb-8">Equivalent fractions</h1>
@@ -227,32 +172,22 @@ export const ThirdScreen = ({ sendAdminMessage }: ThirdScreenProps) => {
         </div>
       </div>
 
-      {renderTopContent()}
+      <StepContent step={currentStep} equation={equation} />
       
       <div className="mt-8 space-y-8">
-        {renderEquation()}
+        <InteractiveEquation
+          equation={equation}
+          currentStep={currentStep}
+          handleMultiplierChange={handleMultiplierChange}
+          isCorrect={isCorrect}
+          denominatorInputRef={denominatorInput}
+          numeratorInputRef={numeratorInput}
+          outputInputRef={outputInput}
+        />
       </div>
 
       {isCorrect && (
-        <div className="mt-4">
-          <div className="bg-[#2E7D32] text-white p-4 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <span>Well done!</span>
-              <span className="text-xl">🎉</span>
-            </div>
-            <button 
-              onClick={() => {
-                setGameStateRef((prevState) => ({
-                  ...prevState,
-                  currentScreen: 'third',
-                }));
-              }}
-              className="bg-white text-black px-4 py-2 rounded"
-            >
-              Proceed
-            </button>
-          </div>
-        </div>
+        <SuccessMessage />
       )}
     </div>
   );

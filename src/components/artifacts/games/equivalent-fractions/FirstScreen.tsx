@@ -7,15 +7,145 @@ import { Bar } from "./Bar";
 import { useSound } from 'use-sound';
 import { ArrowBigDown } from 'lucide-react';
 import { useGameState } from './state-utils';
+import { Equation } from './game-state';
+import { EquationInput, FractionDisplay, FirstScreenInteractiveEquation } from './components';
+
+
+// Step Content Component
+const StepContent = ({ currentStep, equation }: { currentStep: number; equation: Equation }) => {
+  const steps = {
+    0: (
+      <>
+        <p className="text-left mb-6">
+          How many pieces would you get if this chocolate were broken into {equation.output.denominator} pieces?
+        </p>
+        <div className="text-left">
+          <p className="mb-6">
+            <span className="font-bold">Step 1:</span> Let's try breaking the chocolate into {equation.output.denominator} pieces first.
+          </p>
+          <p className="italic mb-4">Pick a suitable knife to split each piece!</p>
+        </div>
+      </>
+    ),
+    1: (
+      <div className="text-left">
+        <p className="font-bold">Awesome!</p>
+        <p className="mb-6">
+          <span className="font-bold">Step 2:</span> Select pieces to get the same amount of chocolate as above!
+        </p>
+      </div>
+    ),
+    2: (
+      <div className="space-y-4">
+        <p className="text-left">
+          <span className="font-bold">Step 3:</span> So how many pieces do you get in total?
+        </p>
+      </div>
+    ),
+    3: (
+      <div className="space-y-4">
+        <p className="text-left">
+          <span className="font-bold">Step 4:</span> To go from {equation.input.denominator} to {equation.output.denominator} total pieces, how many pieces did your knife split each piece into?
+        </p>
+      </div>
+    ),
+    4: (
+      <div className="space-y-4">
+        <p className="text-left">
+          <span className="font-bold">Step 5:</span> So for every 1 piece you got earlier, how many pieces do you get now?
+        </p>
+      </div>
+    ),
+    5: (
+      <div className="space-y-4">
+        <p className="text-left">
+          <span className="font-bold">Step 6:</span> Great, so how many pieces do you get in total?
+        </p>
+      </div>
+    )
+  };
+
+  return steps[currentStep as keyof typeof steps] || null;
+};
+
+// Knife Selection Component
+const KnifeSelector = ({
+  selectedKnife,
+  handleKnifeSelect,
+  handleReset,
+  currentStep
+}: {
+  selectedKnife: number | null;
+  handleKnifeSelect: (parts: number) => void;
+  handleReset: () => void;
+  currentStep: number;
+}) => (
+  <>
+    <button
+      onClick={handleReset}
+      className="w-16 py-2 bg-gray-200 hover:bg-gray-300 rounded transition-colors duration-200"
+    >
+      Reset
+    </button>
+    {[2, 3, 5].map((parts) => (
+      <button
+        key={parts}
+        onClick={() => handleKnifeSelect(parts)}
+        disabled={currentStep !== 0}
+        className={`
+          w-16 py-2 bg-gray-200 rounded flex items-center justify-between px-3
+          ${selectedKnife === parts ? 'bg-gray-300' : 'hover:bg-gray-300'}
+          disabled:opacity-50 disabled:cursor-not-allowed
+          transition-colors duration-200
+        `}
+      >
+        <span className="text-2xl">🔪</span>
+        <span className="text-lg">{parts}</span>
+      </button>
+    ))}
+  </>
+);
+
+// Feedback Message Component
+const FeedbackMessage = ({
+  showCorrect,
+  isCorrect,
+  onContinue,
+  onProceed
+}: {
+  showCorrect: boolean;
+  isCorrect: boolean;
+  onContinue: () => void;
+  onProceed: () => void;
+}) => {
+  if (!showCorrect && !isCorrect) return null;
+
+  return (
+    <div className="mt-4">
+      <div className="bg-[#2E7D32] text-white p-4 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <span>Correct!</span>
+          <span className="text-xl">🎉</span>
+        </div>
+        <button
+          onClick={isCorrect ? onProceed : onContinue}
+          className="bg-white text-black px-4 py-2 rounded"
+        >
+          {isCorrect ? 'Proceed' : 'Continue'}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 interface FirstScreenProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
 
+// Main Component
 export const FirstScreen = ({ sendAdminMessage }: FirstScreenProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const firstScreenState = gameStateRef.current.firstScreenState;
-
   const {
     equation,
     firstBar,
@@ -32,10 +162,11 @@ export const FirstScreen = ({ sendAdminMessage }: FirstScreenProps) => {
   const [playSelectSound] = useSound('/sounds/join.mp3', { volume: 0.5 });
 
   const fractionNumerator = useRef<HTMLInputElement>(null);
-  const denominatorInput = useRef<HTMLInputElement | null>(null);
-  const numeratorInput = useRef<HTMLInputElement | null>(null);
-  const outputInput = useRef<HTMLInputElement | null>(null);
+  const denominatorInput = useRef<HTMLInputElement>(null);
+  const numeratorInput = useRef<HTMLInputElement>(null);
+  const outputInput = useRef<HTMLInputElement>(null);
 
+  
   // Handler to toggle selection in the first bar
   const handleFirstBarClick = (partIndex: number) => {
     if (currentStep !== 1) return;
@@ -268,254 +399,81 @@ export const FirstScreen = ({ sendAdminMessage }: FirstScreenProps) => {
     }
   };
 
-  // Render content based on the current step
-  const renderTopContent = () => {
-    switch (currentStep) {
-      case 0:
-        return (
-          <>
-            <p className="text-left mb-6">
-              How many pieces would you get if this chocolate were broken into {equation.output.denominator} pieces?
-            </p>
-            <div className="text-left">
-              <p className="mb-6">
-                <span className="font-bold">Step 1:</span> Let's try breaking the chocolate into {equation.output.denominator} pieces first.
-              </p>
-              <p className="italic mb-4">Pick a suitable knife to split each piece!</p>
-            </div>
-          </>
-        );
-      case 1:
-        return (
-          <div className="text-left">
-            <p className="font-bold">Awesome!</p>
-            <p className="mb-6">
-              <span className="font-bold">Step 2:</span> Select pieces to get the same amount of chocolate as above!
-            </p>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
-            <p className="text-left">
-              <span className="font-bold">Step 3:</span> So how many pieces do you get in total?
-            </p>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <p className="text-left">
-              <span className="font-bold">Step 4:</span> To go from {equation.input.denominator} to {equation.output.denominator} total pieces, how many pieces did your knife split each piece into?
-            </p>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-4">
-            <p className="text-left">
-              <span className="font-bold">Step 5:</span> So for every 1 piece you got earlier, how many pieces do you get now?
-            </p>
-          </div>
-        );
-      case 5:
-        return (
-          <div className="space-y-4">
-            <p className="text-left">
-              <span className="font-bold">Step 6:</span> Great, so how many pieces do you get in total?
-            </p>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  // Render the downward arrow icon
-  const rendermiddleContent = () => {
-    return (
-      <div className="flex justify-center">
-        <ArrowBigDown className="w-20 h-20 text-black fill-black object-contain" />
-      </div>
-    );
-  };
-
-  // Render the equation with interactive inputs
-  const renderEquation = () => {
-    if (currentStep < 3) return null;
-
-    const baseInputClass = "w-12 h-12 text-xl text-center rounded outline-none transition-all duration-200";
-    const enabledInputClass = "bg-gray-200 hover:bg-gray-300 focus:ring-2 focus:ring-blue-500 focus:bg-white";
-    const disabledInputClass = "bg-gray-100 text-gray-500";
-
-    return (
-      <div className="flex items-center justify-center gap-4">
-        <div className="flex flex-col items-center">
-          <span className="text-3xl font-bold">{equation.input.numerator}</span>
-          <div className="w-12 h-[2px] bg-black my-1" />
-          <span className="text-3xl font-bold">{equation.input.denominator}</span>
-        </div>
-        <span className="text-xl">×</span>
-        <div className="flex flex-col items-center">
-          {currentStep >= 4 ? (
-            <input
-              type="text"
-              value={equation.multiplier.numerator || ''}
-              onChange={(e) => handleMultiplierChange(e.target.value, 'numerator')}
-              className={`${baseInputClass} mb-1 ${currentStep === 4 ? enabledInputClass : disabledInputClass}`}
-              disabled={currentStep !== 4}
-              ref={numeratorInput}
-              maxLength={2}
-              placeholder={currentStep === 4 ? "?" : ""}
-            />
-          ) : (
-            <span className="text-3xl font-bold h-12"></span>
-          )}
-          <div className="w-12 h-[2px] bg-black my-1" />
-          <input
-            type="text"
-            value={equation.multiplier.denominator || ''}
-            onChange={(e) => handleMultiplierChange(e.target.value, 'denominator')}
-            className={`${baseInputClass} mt-1 ${currentStep === 3 ? enabledInputClass : disabledInputClass}`}
-            disabled={currentStep !== 3}
-            ref={denominatorInput}
-            maxLength={2}
-            placeholder={currentStep === 3 ? "?" : ""}
-          />
-        </div>
-        <span className="text-xl">=</span>
-        <div className="flex flex-col items-center">
-          {currentStep >= 5 ? (
-            <input
-              type="text"
-              value={equation.output.numerator || ''}
-              onChange={(e) => handleMultiplierChange(e.target.value, 'output_numerator')}
-              className={`${baseInputClass} mb-1 ${currentStep === 5 ? enabledInputClass : disabledInputClass}`}
-              disabled={currentStep !== 5 || isCorrect}
-              ref={outputInput}
-              maxLength={2}
-              placeholder={currentStep === 5 ? "?" : ""}
-            />
-          ) : (
-            <span className="text-3xl font-bold h-12"></span>
-          )}
-          <div className="w-12 h-[2px] bg-black my-1" />
-          <span className="text-3xl font-bold">{equation.output.denominator}</span>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="max-w-3xl h-full mx-auto text-center p-8 bg-[#FFF5EE]">
       <h1 className="text-3xl font-bold mb-8">Equivalent fractions</h1>
 
-      <div className="flex items-center justify-center space-x-6 mb-12">
-        <div className="flex flex-col items-center">
-          <span className="text-3xl font-bold">{equation.input.numerator}</span>
-          <div className="w-8 h-[2px] bg-black my-1" />
-          <span className="text-3xl font-bold">{equation.input.denominator}</span>
+      <div className="flex flex-row items-center justify-between mb-12">
+        <div className="w-[40%] flex items-center justify-center space-x-6">
+          <FractionDisplay numerator={equation.input.numerator} denominator={equation.input.denominator} />
+          <span className="text-3xl font-extralight">=</span>
+          <FractionDisplay numerator="?" denominator={equation.output.denominator} />
         </div>
-        <span className="text-5xl font-extralight">=</span>
-        <div className="flex flex-col items-center">
-          <span className="text-3xl font-bold">?</span>
-          <div className="w-8 h-[2px] bg-black my-1" />
-          <span className="text-3xl font-bold">{equation.output.denominator}</span>
+
+        <div className="w-[60%] space-y-8">
+          <div className="">
+            <StepContent currentStep={currentStep} equation={equation} />
+            <FirstScreenInteractiveEquation
+              equation={equation}
+              currentStep={currentStep}
+              handleMultiplierChange={handleMultiplierChange}
+              isCorrect={isCorrect}
+              refs={{ denominatorInput, numeratorInput, outputInput }}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="space-y-8">
-        {/* Step content */}
-        <div className="">
-          {renderTopContent()}
-          {renderEquation()}
-        </div>
-
-        {/* First bar */}
-        <div className="w-full flex items-center">
-          <Bar
-            parts={firstBar}
-            handleClick={handleFirstBarClick}
+      <div className="w-full flex items-center">
+        <Bar parts={firstBar} handleClick={handleFirstBarClick} />
+        <div className="ml-4 w-[50px]">
+          <FractionDisplay
+            numerator={firstBar.flat().filter(x => x === 1).length}
+            denominator={equation.input.denominator}
           />
-          <div className="ml-4 w-[50px]">
-            <div className="flex flex-col items-center">
-              <span className="text-2xl">{firstBar.flat().filter(x => x === 1).length}</span>
+        </div>
+      </div>
+
+      <div className="flex justify-center my-8">
+        <ArrowBigDown className="w-20 h-20 text-black fill-black object-contain" />
+      </div>
+
+      <div className="w-full flex items-start">
+        <Bar parts={secondBar} handleClick={handleSecondBarClick} />
+        <div className={`ml-4 w-[50px] h-full flex flex-col space-y-2 ${canProceed ? 'opacity-50 pointer-events-none' : ''}`}>
+          {currentStep === 0 ? (
+            <KnifeSelector
+              selectedKnife={selectedKnife}
+              handleKnifeSelect={handleKnifeSelect}
+              handleReset={() => {
+                setGameStateRef({
+                  firstScreenState: {
+                    ...firstScreenState,
+                    selectedKnife: null,
+                    secondBar: Array(equation.input.denominator).fill([0]),
+                    isCorrect: false,
+                    currentStep: 0,
+                  },
+                });
+              }}
+              currentStep={currentStep}
+            />
+          ) : (
+            <div className="flex flex-col items-center mb-4">
+              <EquationInput
+                value={barNumerator}
+                onChange={handleSecondBarFractionChange}
+                currentStep={currentStep}
+                targetStep={2}
+                disabled={showCorrect}
+                inputRef={fractionNumerator}
+                placeholder="?"
+              />
               <div className="w-6 h-[2px] bg-black my-1" />
-              <span className="text-2xl">{equation.input.denominator}</span>
+              <span className="text-2xl">{equation.output.denominator}</span>
             </div>
-          </div>
-        </div>
-
-        {/* Middle content */}
-        <div className="space-y-4">
-          {rendermiddleContent()}
-        </div>
-
-        {/* Second bar */}
-        <div className="w-full flex items-start">
-          <Bar
-            parts={secondBar}
-            handleClick={handleSecondBarClick}
-          />
-          <div className={`ml-4 w-[50px] h-full flex flex-col space-y-2 ${canProceed ? 'opacity-50 pointer-events-none' : ''}`}>
-            {currentStep === 0 ? (
-              <>
-                <button
-                  onClick={() => {
-                    setGameStateRef({
-                      firstScreenState: {
-                        ...firstScreenState,
-                        selectedKnife: null,
-                        secondBar: Array(equation.input.denominator).fill([0]),
-                        isCorrect: false,
-                        currentStep: 0,
-                      },
-                    });
-                  }}
-                  className="w-16 py-2 bg-gray-200 hover:bg-gray-300 rounded transition-colors duration-200"
-                >
-                  Reset
-                </button>
-                {[2, 3, 5].map((parts) => (
-                  <button
-                    key={parts}
-                    onClick={() => handleKnifeSelect(parts)}
-                    disabled={currentStep !== 0}
-                    className={`
-                      w-16 py-2 bg-gray-200 rounded flex items-center justify-between px-3
-                      ${selectedKnife === parts ? 'bg-gray-300' : 'hover:bg-gray-300'}
-                      disabled:opacity-50 disabled:cursor-not-allowed
-                      transition-colors duration-200
-                    `}
-                  >
-                    <span className="text-2xl">🔪</span>
-                    <span className="text-lg">{parts}</span>
-                  </button>
-                ))}
-              </>
-            ) : (
-              <div className="flex flex-col items-center mb-4">
-                <span className="text-2xl">
-                  {currentStep >= 2 ? (
-                    <input
-                      type="text"
-                      value={barNumerator}
-                      onChange={(e) => handleSecondBarFractionChange(e.target.value)}
-                      className="w-8 h-8 text-xl text-center rounded outline-none transition-all duration-200
-                        bg-gray-200 hover:bg-gray-300 focus:ring-2 focus:ring-blue-500 focus:bg-white
-                        disabled:bg-gray-100 disabled:text-gray-500"
-                      disabled={currentStep !== 2 || showCorrect}
-                      ref={fractionNumerator}
-                      maxLength={2}
-                      placeholder="?"
-                    />
-                  ) : '?'}
-                </span>
-                <div className="w-6 h-[2px] bg-black my-1" />
-                <span className="text-2xl">{equation.output.denominator}</span>
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
 
@@ -530,57 +488,30 @@ export const FirstScreen = ({ sendAdminMessage }: FirstScreenProps) => {
         </div>
       )}
 
-      {showCorrect && (
-        <div className="mt-4">
-          <div className="bg-[#2E7D32] text-white p-4 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <span>Correct!</span>
-              <span className="text-xl">🎉</span>
-            </div>
-            <button
-              onClick={() => {
-                setGameStateRef((prevState) => ({
-                  ...prevState,
-                  firstScreenState: {
-                    ...prevState.firstScreenState,
-                    showCorrect: false,
-                    currentStep: 3,
-                    firstBar: Array(equation.input.denominator).fill(null).map(() => [0]),
-                    secondBar: Array(equation.input.denominator).fill(null).map(() =>
-                      Array(equation.output.denominator / equation.input.denominator).fill(0)
-                    ),
-                  },
-                }));
-              }}
-              className="bg-white text-black px-4 py-2 rounded"
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      )}
-
-      {isCorrect && (
-        <div className="mt-4">
-          <div className="bg-[#2E7D32] text-white p-4 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <span>Correct!</span>
-              <span className="text-xl">🎉</span>
-            </div>
-            <button
-              onClick={() => {
-                setGameStateRef((prevState) => ({
-                  ...prevState,
-                  currentScreen: 'second1',
-                }));
-              }}
-              className="bg-white text-black px-4 py-2 rounded"
-            >
-              Proceed
-            </button>
-          </div>
-        </div>
-      )}
+      <FeedbackMessage
+        showCorrect={showCorrect}
+        isCorrect={isCorrect}
+        onContinue={() => {
+          setGameStateRef((prevState: any) => ({
+            ...prevState,
+            firstScreenState: {
+              ...prevState.firstScreenState,
+              showCorrect: false,
+              currentStep: 3,
+              firstBar: Array(equation.input.denominator).fill(null).map(() => [0]),
+              secondBar: Array(equation.input.denominator).fill(null).map(() =>
+                Array(equation.output.denominator / equation.input.denominator).fill(0)
+              ),
+            },
+          }));
+        }}
+        onProceed={() => {
+          setGameStateRef((prevState: any) => ({
+            ...prevState,
+            currentScreen: 'second1',
+          }));
+        }}
+      />
     </div>
   );
 };
