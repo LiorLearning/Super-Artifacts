@@ -3,7 +3,11 @@
 import { useEffect } from 'react'
 import { useGameState } from './state-utils'
 
-export function DenominatorScreen() {
+interface DenominatorScreenProps {
+  sendAdminMessage: (role: string, content: string) => void;
+}
+
+export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) {
   const { gameStateRef, setGameStateRef } = useGameState()
   const gameState = gameStateRef.current
   const { fractionProblem, correctAnswer, denominatorScreen } = gameState
@@ -44,6 +48,9 @@ export function DenominatorScreen() {
         isAnswerCorrect: correct,
       },
     })
+    if (correct) {
+      sendAdminMessage('agent', `Awesome, you indeed have ${fraction2.numerator} pieces of size 1/${fraction2.denominator}th!`);
+    }
   }, [answerNumerator, answerDenominator, correctAnswer])
 
   const handleDenominatorOptionClick = (option: number) => {

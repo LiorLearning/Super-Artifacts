@@ -158,8 +158,8 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
 
   return (
     <div className="flex h-screen">
-      <div className="w-[75%] border-r-border flex flex-col">
-        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 max-h-full max-w-full overflow-hidden">
+      <div className="w-[75%] border-r-border flex flex-col overflow-auto">
+        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 max-h-full max-w-full">
           <div className="mb-4 flex items-center gap-2">
             <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
               <SelectTrigger className="p-2 border-border rounded-md flex-1">
@@ -191,12 +191,16 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
             {!isConnected || loading ? (
               <GameLoader />
             ) : (
-              <div className="relative h-screen w-full">
+              <div className="relative h-full w-full">
                 <div className="absolute inset-0 w-full h-full">
                   <div className="absolute inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm"></div>
                 </div>
-                <div className="relative h-full w-full flex justify-center items-center scale-75">
-                  <GameComponent currentGame={(currentGame ?? 'addition-game')} sendAdminMessage={sendAdminMessage} />
+                <div className="relative h-full w-full overflow-auto">
+                  <div className="flex justify-center items-center min-w-[75%] min-h-[75%]">
+                    <div className="scale-75">
+                      <GameComponent currentGame={(currentGame ?? 'addition-game')} sendAdminMessage={sendAdminMessage} />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
