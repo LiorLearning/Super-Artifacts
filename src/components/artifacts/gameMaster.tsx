@@ -24,6 +24,7 @@ import { desc as AdditionGameDesc } from './games/addition/game-state';
 import { desc as FractionsGameDesc } from './games/fractions-game/game-state';
 import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
 
+
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
   desc: string;
