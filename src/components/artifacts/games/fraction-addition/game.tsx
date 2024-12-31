@@ -4,7 +4,11 @@ import { ChocolateBarScreen } from './chocolate-bar-screen'
 import { DenominatorScreen } from './denominator-screen'
 import { useGameState } from './state-utils'
 
-export default function FractionAddition() {
+interface GameProps {
+  sendAdminMessage: (role: string, content: string) => void;
+}
+
+export default function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState()
 
   const handleProceed = () => {
@@ -14,9 +18,9 @@ export default function FractionAddition() {
   return (
     <div className="bg-white p-16 rounded-lg">
       {gameStateRef.current.currentScreen === 'chocolate' ? (
-        <ChocolateBarScreen onProceed={handleProceed} />
+        <ChocolateBarScreen onProceed={handleProceed} sendAdminMessage={sendAdminMessage} />
       ) : (
-        <DenominatorScreen />
+        <DenominatorScreen sendAdminMessage={sendAdminMessage} />
       )}
     </div>
   )

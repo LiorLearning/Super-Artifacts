@@ -6,9 +6,10 @@ import { useGameState } from './state-utils'
 
 interface ChocolateBarScreenProps {
   onProceed: () => void;
+  sendAdminMessage: (role: string, content: string) => void;
 }
 
-export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
+export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBarScreenProps) {
   const { gameStateRef, setGameStateRef } = useGameState()
   const gameState = gameStateRef.current
   const { fractionProblem, chocolateBarPieces, correctAnswer, chocolateBarScreen } = gameState
@@ -32,6 +33,9 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
         showStep2: selectedPieces.length === fraction1.numerator,
       },
     }))
+    if (showStep2) {
+      sendAdminMessage('agent', `Great! Now imagine you get "${fraction2.numerator}" more pieces from a friend. Try selecting the pieces you have now.`);
+    }
   }, [selectedPieces, fraction1.numerator])
 
   useEffect(() => {
@@ -53,6 +57,9 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
         showFooter: selectedOption === 0 && numerator === correctAnswer.numerator.toString() && denominator === correctAnswer.denominator.toString(),
       },
     }))
+    if (showFooter) {
+      sendAdminMessage('agent', "You're right, why do you think the denominator remains the same?");
+    }
   }, [selectedOption, numerator, denominator])
 
   const handlePieceClick = (index: number) => {
@@ -277,7 +284,6 @@ export function ChocolateBarScreen({ onProceed }: ChocolateBarScreenProps) {
             )}
           </>
         )}
-        <p>{showFooter}</p>
       </div>
 
       {/* Footer */}
