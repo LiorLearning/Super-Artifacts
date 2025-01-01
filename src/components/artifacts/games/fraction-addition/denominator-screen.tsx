@@ -49,7 +49,7 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
       },
     })
     if (correct) {
-      sendAdminMessage('agent', `Awesome, you indeed have ${fraction2.numerator} pieces of size 1/${fraction2.denominator}th!`);
+      sendAdminMessage('agent', `Awesome, you indeed have ${correctAnswer.numerator} pieces of size 1/${correctAnswer.denominator}th!`);
     }
   }, [answerNumerator, answerDenominator, correctAnswer])
 

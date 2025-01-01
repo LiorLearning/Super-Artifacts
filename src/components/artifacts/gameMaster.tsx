@@ -87,14 +87,22 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
   const gameParam = searchParams.get('game') as GameKey;
-  const [currentGame, setCurrentGame] = useState<GameKey | null>(gameParam);
+  const [currentGame, setCurrentGame] = useState<GameKey | null>(null);
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected } = useWebSocketLogger()
 
-  const gameState = gameInfo[currentGame!]?.state
+  useEffect(() => {
+    setIsClient(true);
+    setCurrentGame(gameParam);
+  }, [gameParam]);
+
+  const gameState = isClient && currentGame ? gameInfo[currentGame]?.state : null;
 
   const sendAdminMessage = async (role: string, content: string) => {
+    if (!isClient) return;
+
     if (role == 'admin') {
       sendLog({
         type: 'admin',
@@ -102,8 +110,8 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         content: content,
         role: role,
         image: await handleScreenshot(componentRef),
-        desc: gameInfo[currentGame!]?.desc,
-        gameState: JSON.stringify(gameState, null, 0),
+        desc: currentGame ? gameInfo[currentGame]?.desc : '',
+        gameState: gameState ? JSON.stringify(gameState, null, 0) : '',
       } as AdminRequestMessage)
     } else if (role == 'agent') {
       addToChat({
@@ -117,15 +125,14 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
 
   useEffect(() => {
     const updatePageContent = async () => {
-      if (componentRef.current) {
-        const desc = currentGame ? gameInfo[currentGame].desc : '';
+      if (componentRef.current && isClient) {
         setComponentRef(componentRef);
       }
     };
 
     const observer = new MutationObserver(updatePageContent);
     
-    if (componentRef.current) {
+    if (componentRef.current && isClient) {
       observer.observe(componentRef.current, {
         attributes: true,
         childList: true,
@@ -137,13 +144,10 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
     updatePageContent();
 
     return () => observer.disconnect();
-  }, [currentGame]);
-
-  useEffect(() => {
-    setCurrentGame(gameParam);
-  }, [gameParam]);
+  }, [currentGame, isClient]);
 
   const handleGameChange = (value: GameKey) => {
+    if (!isClient) return;
     setLoading(true);
     router.push(`?game=${value}`);
     setTimeout(() => {
@@ -153,8 +157,12 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   };
 
   const handleReloadGame = () => {
-    window.location.reload();
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
   };
+
+  if (!isClient) return null;
 
   return (
     <div className="flex h-screen">
@@ -191,24 +199,25 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
             {!isConnected || loading ? (
               <GameLoader />
             ) : (
-              <div className="relative h-full w-full">
-                <div className="absolute inset-0 w-full h-full">
-                  <div className="absolute inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm"></div>
-                </div>
-                <div className="relative h-full w-full overflow-auto">
-                  <div className="flex justify-center items-center min-w-[75%] min-h-[75%]">
+              currentGame && (
+                <div className="relative h-full w-full">
+                  <div className="relative h-full w-full overflow-auto">
                     <div className="scale-75">
-                      <GameComponent currentGame={(currentGame ?? 'addition-game')} sendAdminMessage={sendAdminMessage} />
+                      <GameComponent currentGame={currentGame} sendAdminMessage={sendAdminMessage} />
                     </div>
                   </div>
                 </div>
-              </div>
+              )
             )}
           </div>
         </div>
       </div>
       <div className="w-[25%] min-w-[250px] flex flex-col">
-        <Chat desc={gameInfo[currentGame!]?.desc} componentRef={componentRef} gameState={gameState} />
+        <Chat 
+          desc={currentGame ? gameInfo[currentGame]?.desc : ''} 
+          componentRef={componentRef} 
+          gameState={gameState} 
+        />
       </div>
     </div>
   );
