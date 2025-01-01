@@ -35,7 +35,7 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
       },
     }))
     if (isCorrect) {
-      sendAdminMessage('agent', `Great! Now imagine you get "${fraction2.numerator}" more pieces from a friend. Try selecting the pieces you have now.`);
+      sendAdminMessage('agent', `Great! Now imagine you get ${fraction2.numerator} more pieces from a friend. Try selecting the pieces you have now.`);
     }
   }, [selectedPieces, fraction1.numerator])
 
