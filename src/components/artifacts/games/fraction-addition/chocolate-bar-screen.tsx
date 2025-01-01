@@ -26,14 +26,15 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
   } = chocolateBarScreen
 
   useEffect(() => {
+    const isCorrect = selectedPieces.length === fraction1.numerator
     setGameStateRef((prevState) => ({
       ...prevState,
       chocolateBarScreen: {
         ...prevState.chocolateBarScreen,
-        showStep2: selectedPieces.length === fraction1.numerator,
+        showStep2: isCorrect,
       },
     }))
-    if (showStep2) {
+    if (isCorrect) {
       sendAdminMessage('agent', `Great! Now imagine you get "${fraction2.numerator}" more pieces from a friend. Try selecting the pieces you have now.`);
     }
   }, [selectedPieces, fraction1.numerator])
@@ -50,14 +51,15 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
   }, [step2Pieces, numerator, denominator])
 
   useEffect(() => {
+    const isCorrect = selectedOption === 0 && numerator === correctAnswer.numerator.toString() && denominator === correctAnswer.denominator.toString()
     setGameStateRef((prevState) => ({
       ...prevState,
       chocolateBarScreen: {
         ...prevState.chocolateBarScreen,
-        showFooter: selectedOption === 0 && numerator === correctAnswer.numerator.toString() && denominator === correctAnswer.denominator.toString(),
+        showFooter: isCorrect,
       },
     }))
-    if (showFooter) {
+    if (isCorrect) {
       sendAdminMessage('agent', "You're right, why do you think the denominator remains the same?");
     }
   }, [selectedOption, numerator, denominator])
