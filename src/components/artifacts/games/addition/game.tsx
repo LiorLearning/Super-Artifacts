@@ -2,8 +2,9 @@ import * as Matter from "matter-js";
 import { useGameState } from "./state-utils";
 import { getSoundManager } from './sounds';
 import { useEffect, useRef, useState } from "react";
-import { Minus, Plus } from "lucide-react";
+import { Cross, Minus, Plus, PlusIcon } from "lucide-react";
 import { platform } from "os";
+import { get } from "http";
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -38,6 +39,8 @@ export default function Game({ sendAdminMessage }: GameProps) {
       { x: 200, y: 68 },
       { x: 480, y: 68 }
   ])
+
+  const duration = 5000;
 
   const [finalAnswer, setFinalAnswer] = useState<number>(0);
 
@@ -647,7 +650,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
     setGameStateRef(prevState => ({ ...prevState, clickDisabled: true }));
 
     const isGreen = color === 'green';
-    const platformX = isGreen ? 170 : 610;
+    const platformX = isGreen ? 170 : 623;
     let activeBall = isGreen ? gameStateRef.current.activeBallLeft : gameStateRef.current.activeBallRight;
     console.log('Active ball:', activeBall);
     const velocity = isGreen ? { x: 6.5, y: -5 } : { x: -5.8, y: -5 };
@@ -655,8 +658,9 @@ export default function Game({ sendAdminMessage }: GameProps) {
     // anchor points
     const leftAnchor1 = { x: 230, y: 100 };
     const leftAnchor2 = { x: 213, y: 100 };
-    const rightAnchor1 = { x: 570, y: 127 };
-    const rightAnchor2 = { x: 578, y: 127 };
+    const rightAnchor1 = { x: 563, y: 100 };
+    const rightAnchor2 = { x: 580, y: 100 };
+
     let anchor1: Matter.Vector, anchor2: Matter.Vector;
     if (color === 'green') {
       anchor1 = leftAnchor1;
@@ -670,22 +674,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
 
 
-    if (!activeBall){
-      if (isGreen) {
-        activeBall = containerBalls[containerBalls.length - 1]; ;
-        setGameStateRef(prevState => ({
-          ...prevState,
-          activeBallLeft: activeBall
-        }));
-      }
-      else {
-        activeBall = gameStateRef.current.rightContainerBalls.slice(-1)[0];
-        setGameStateRef(prevState => ({
-          ...prevState,
-          activeBallRight: gameStateRef.current.rightContainerBalls.slice(-1)[0]
-        }));
-      }
-    }
+    if (!activeBall){ return; }
 
     // Remove strings attached to the active ball
     const allConstraints = Matter.Composite.allConstraints(worldRef.current!).filter(constraint => 
@@ -696,7 +685,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
     });
     Matter.Body.setStatic(activeBall, false);
     Matter.Body.setVelocity(activeBall, velocity);
-    containerBalls[containerBalls.length - 1]; 
     setTimeout(() => {
       // Reduce score and manage ball movement
       setGameStateRef(prevState => ({
@@ -736,29 +724,35 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
   const launchGreen = () => {
     launchBall('green');
-    if (gameStateRef.current.greenScore === 0 && gameStateRef.current.activePhase === 'left') {
-      setGameStateRef(prevState => ({
-        ...prevState,
-        activePhase: 'right'
-      }));
-      setCurrentStep(3);
-      progressStep(3);
+    if (gameStateRef.current.greenScore === 1 && gameStateRef.current.activePhase === 'left') {
+      setTimeout(() => {
+        setGameStateRef(prevState => ({
+          ...prevState,
+          activePhase: 'right'
+        }));
+        setCurrentStep(3);
+        progressStep(3);
+      }, 1500);
     }
   }
   const launchBlue = () => {
     launchBall('blue');
-    if (gameStateRef.current.containerScore === 10) {
-      setCurrentStep(4);
-      progressStep(4);
-      console.log('Container full!-----------------------------');
+    if (gameStateRef.current.containerScore === 9) {
+      setTimeout(() => {
+        setCurrentStep(4);
+        progressStep(4);
+      }, 1500);
     }
   }
   const handlefinalCount = (i:number) => {
     if (i === -1 ) setFinalAnswer((prev) => prev - 1);
     else setFinalAnswer((prev) => {
       if (prev === 14) {
-          setCurrentStep(9);
-          progressStep(9);
+          getSoundManager().play('complete');
+          setTimeout(() => {
+            setCurrentStep(9);
+            progressStep(9);
+          }, 500);
         }
       return prev + 1;
     });
@@ -794,44 +788,46 @@ export default function Game({ sendAdminMessage }: GameProps) {
       setTimeout(() => {
         setCurrentStep(1);  
         progressStep(1);
-      }, 1000);
+      }, duration);
 
     } else if (step === 1) {
       if (!containerRef.current) createMainContainer();
       setTimeout(() => {
       setCurrentStep(2);
       progressStep(2);
-      }, 1000);
+      }, duration);
       
     } else if (step === 2) {
-      console.log('Main container created and added to the world.');
-      const activeball = gameStateRef.current.leftContainerBalls[gameStateRef.current.leftContainerBalls.length - 1];
-
-      setGameStateRef(prevState => ({ 
-        ...prevState,
-        activeBallLeft: activeball,
-        activePhase: 'left'
-      }));
-      console.log('Active ball:', activeball);
-      if (activeball) {
-        Matter.Body.setPosition(activeball, { x: 170, y: 130 });
-        attachStringsToBall(activeball, { x: 230, y: 100 }, { x: 213, y: 100 });
-        console.log('Active ball set to left container.');
+      if (!gameStateRef.current.activeBallLeft) {
+        const activeball = gameStateRef.current.leftContainerBalls[gameStateRef.current.leftContainerBalls.length - 1];
+        setGameStateRef(prevState => ({ 
+          ...prevState,
+          activeBallLeft: activeball,
+          activePhase: 'left',
+          leftContainerBalls: gameStateRef.current.leftContainerBalls.slice(0, -1)
+        }));
+        console.log('Active ball:', activeball);
+        if (activeball) {
+          Matter.Body.setPosition(activeball, { x: 170, y: 130 });
+          attachStringsToBall(activeball, { x: 230, y: 100 }, { x: 213, y: 100 });
+          console.log('Active ball set to left container.');
+        }
       }
 
     } else if (step === 3) {
-      if (gameStateRef.current.blueScore === 0) {
+      if (!gameStateRef.current.activeBallRight) {
 
         const activeball = gameStateRef.current.rightContainerBalls[gameStateRef.current.rightContainerBalls.length - 1];
         setGameStateRef(prevState => ({
           ...prevState,
           activeBallRight: activeball,
-          activePhase: 'right'
+          activePhase: 'right',
+          rightContainerBalls: gameStateRef.current.rightContainerBalls.slice(0, -1)
         }));
         console.log('Active ball:', activeball);
         if (activeball) {
-          Matter.Body.setPosition(activeball, { x: 630, y: 130 });
-          attachStringsToBall(activeball, { x: 570, y: 100 }, { x: 578, y: 100 });
+          Matter.Body.setPosition(activeball, { x: 623, y: 130 });
+          attachStringsToBall(activeball, { x: 563, y: 100 }, { x: 580, y: 100 });
           console.log('Active ball set to right container.');
         }
       }
@@ -839,7 +835,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
       setTimeout(() => {
         setCurrentStep(5);
         progressStep(5);
-      }, 1000);
+      }, duration);
 
     } else if (step === 5) {
       Matter.Composite.remove(worldRef.current!, leftPlatformRef1.current!);
@@ -850,7 +846,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
       setTimeout(() => {
         setCurrentStep(6);
         progressStep(6);
-      }, 1000);
+      }, duration);
 
     } else if (step === 6) {
       const finalcontainer = createFinalContainer();
@@ -921,7 +917,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
                 case 1:
                   return "And a container to collect the marbles";
                 case 2:
-                  if(gameStateRef.current.greenScore === 0) {
+                  if(gameStateRef.current.greenScore === 8) {
                     return <>Let's start! <br/> Step 1 : Finish shooting the green marbles into the marble holder!  </>;
                   } else {
                     return "Keep shooting until the container is full!";
@@ -965,7 +961,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
           }
 
             {currentStep > 1 && currentStep <= 5 &&
-            <div className="absolute left-1/3 transform -translate-x-1/3 -translate-y-1/4 bottom-1/4 text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500">
+            <div className={`absolute ${currentStep === 5 ? "left-1/2 top-[2.5rem]" :  "bottom-1/4 left-1/3" } transform -translate-x-1/3 -translate-y-1/4  text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500`}>
               {gameStateRef.current.containerScore}
             </div>
             }
@@ -1044,6 +1040,12 @@ export default function Game({ sendAdminMessage }: GameProps) {
               </button>
           }
 
+          {currentStep === 5 &&
+            <span className="absolute right-1/4 top-[1.6rem] text-black fill-black">
+              <Cross size={56} fill="#a855f7" />
+            </span>
+          }
+
           {currentStep === 6 &&
             <button
               onClick={handleAddition}
@@ -1082,11 +1084,11 @@ export default function Game({ sendAdminMessage }: GameProps) {
           )}
 
           {currentStep === 9 && (
-            <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
-              <p className="text-7xl font-bold text-purple-500">
+            <div className="absolute h-30 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
+              <p className="text-7xl text-center font-bold text-purple-500">
                 15
               </p>
-              <p className="text-7xl font-bold text-black">
+              <p className="text-7xl text-center font-bold text-black">
                 great job! <br/> correct answer
               </p>
             </div>
@@ -1105,4 +1107,3 @@ export default function Game({ sendAdminMessage }: GameProps) {
   </div>
   );
 };
-
