@@ -2,54 +2,54 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
+import { useGameState } from "./state-utils";
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
 
-
 export default function Second({ sendAdminMessage }: GameProps) {
-
-  const [greenMarbles, setGreenMarbles] = useState(0)
-  const [blueMarbles, setBlueMarbles] = useState(0)
-  const [blackMarbles, setBlackMarbles] = useState(0)
-  const [showAnswer, setShowAnswer] = useState(false)
-  const [answer, setAnswer] = useState(0)
-
-  const maxGreenMarbles = 7
-  const maxBlueMarbles = 5
-  const totalMarbles = maxGreenMarbles + maxBlueMarbles
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => setShowAnswer(true), 1000)
-  //   return () => clearTimeout(timer)
-  // }, [])
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const maxGreenMarbles = 7;
+  const maxBlueMarbles = 5;
+  const totalMarbles = maxGreenMarbles + maxBlueMarbles;
 
   const handleMarbleClick = (color: 'green' | 'blue') => {
-    if (color === 'green' && greenMarbles < maxGreenMarbles) {
-      setGreenMarbles(prev => prev + 1)
-    } else if (color === 'blue' && blueMarbles < maxBlueMarbles) {
-      setBlueMarbles(prev => prev + 1)
-    }
-  }
+    setGameStateRef(prev => ({
+      ...prev,
+      greenMarblesCount: color === 'green' && prev.greenMarblesCount < maxGreenMarbles ? 
+        prev.greenMarblesCount + 1 : prev.greenMarblesCount,
+      blueMarblesCount: color === 'blue' && prev.blueMarblesCount < maxBlueMarbles ? 
+        prev.blueMarblesCount + 1 : prev.blueMarblesCount
+    }));
+  };
 
   const handleBlackMarbleClick = (index: number) => {
-    if (blackMarbles < 10 && index >= blackMarbles) {
-      setBlackMarbles(prev => prev + 1)
-    } else if (index === blackMarbles - 1) {
-      setBlackMarbles(prev => prev - 1)
-    }
-  }
+    setGameStateRef(prev => ({
+      ...prev,
+      blackMarblesCount: index >= prev.blackMarblesCount && prev.blackMarblesCount < 10 ? 
+        prev.blackMarblesCount + 1 : 
+        index === prev.blackMarblesCount - 1 ? 
+          prev.blackMarblesCount - 1 : 
+          prev.blackMarblesCount
+    }));
+  };
 
   const handleAnswer = (value: number) => {
-    setAnswer(value)
+    setGameStateRef(prev => ({
+      ...prev,
+      finalAnswer: value,
+      showFinalAnswer: value === totalMarbles
+    }));
+
     if (value === totalMarbles) {
-      setShowAnswer(true)
-      sendAdminMessage('student', 'Correct! 7 + 5 = 12')
+      sendAdminMessage('student', 'Correct! 7 + 5 = 12');
     } else {
-      sendAdminMessage('student', 'Try again!')
+      sendAdminMessage('student', 'Try again!');
     }
-  }
+  };
+
+  const { greenMarblesCount, blueMarblesCount, blackMarblesCount, showFinalAnswer, finalAnswer } = gameStateRef.current;
 
   return (
       <>
@@ -71,7 +71,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
                 <div
                   key={`green-${i}`}
                   className={`w-6 h-6 rounded-full cursor-pointer transition-colors ${
-                    i < greenMarbles ? 'bg-green-500' : 'bg-gray-200'
+                    i < greenMarblesCount ? 'bg-green-500' : 'bg-gray-200'
                   }`}
                   onClick={() => handleMarbleClick('green')}
                 />
@@ -85,7 +85,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
                 <div
                   key={`blue-${i}`}
                   className={`w-6 h-6 rounded-full cursor-pointer transition-colors ${
-                    i < blueMarbles ? 'bg-blue-500' : 'bg-gray-200'
+                    i < blueMarblesCount ? 'bg-blue-500' : 'bg-gray-200'
                   }`}
                   onClick={() => handleMarbleClick('blue')}
                 />
@@ -94,7 +94,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
           </div>
         </div>
 
-        {(greenMarbles > 0 || blueMarbles > 0) && (
+        {(greenMarblesCount > 0 || blueMarblesCount > 0) && (
           <>
           <div className={`mx-auto text-lg bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mt-16 mb-10`}>
             <p className={`font-bold text-center text-purple-600`}>              
@@ -102,9 +102,9 @@ export default function Second({ sendAdminMessage }: GameProps) {
             </p>
             </div>
             <div className="flex justify-center items-center gap-4">
-              <div className="flex gap-1 flex-wrap max-w-[300px]">
+              <div className="flex gap-1 flex-wrap max-w-[300px] mx-auto">
 
-                {blackMarbles === 10? 
+                {blackMarblesCount === 10? 
                 <div className='flex flex-col gap-1'>
                   <div className="flex gap-1">
                     {Array.from({ length: 10 }).map((_, i) => (
@@ -119,14 +119,14 @@ export default function Second({ sendAdminMessage }: GameProps) {
                     10 + {totalMarbles - 10}
                     </div>
                 </div>
-
-                :Array.from({ length: greenMarbles + blueMarbles }).map((_, i) => (
+                :
+                Array.from({ length: greenMarblesCount + blueMarblesCount }).map((_, i) => (
                   <div
                     key={`container-${i}`}
                     className={`w-6 h-6 rounded-full cursor-pointer transition-colors ${
-                      i < blackMarbles 
+                      i < blackMarblesCount 
                         ? 'bg-black' 
-                        : i < greenMarbles 
+                        : i < greenMarblesCount 
                           ? 'bg-green-500' 
                           : 'bg-blue-500'
                     }`}
@@ -138,7 +138,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
           </>
         )}
 
-        {greenMarbles === maxGreenMarbles && blueMarbles === maxBlueMarbles && blackMarbles === 10 && (
+        {greenMarblesCount === maxGreenMarbles && blueMarblesCount === maxBlueMarbles && blackMarblesCount === 10 && (
           <div className="flex justify-center mt-8">
             <span className="text-3xl font-bold text-black0">Answer</span>
 
@@ -146,14 +146,14 @@ export default function Second({ sendAdminMessage }: GameProps) {
               type='number'
               className="border-2 text-xl font-bold border-black w-16 text-center mx-4 placeholder:color-black"
               placeholder="?"
-              value = {answer || ''}
+              value = {finalAnswer || ''}
               onChange={(e) => handleAnswer(e.target.value ? parseInt(e.target.value) : 0)}
-              disabled={showAnswer}
+              disabled={showFinalAnswer}
             />
           </div>
         )}
 
-        {showAnswer && (
+        {showFinalAnswer && (
           <div className="flex justify-center mt-8">
             <span className="text-3xl font-bold text-black">Correct Answer !!!!</span>
             </div>

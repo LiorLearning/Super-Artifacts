@@ -34,19 +34,21 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
   const rightPlatformRef1 = useRef<Matter.Composite | null>(null);
   const rightPlatformRef2 = useRef<Matter.Body | null>(null);
   const finalContainerRef = useRef<Matter.Composite | null>(null);
+  
   const [slingPosition, setSlingPosition] = useState<Position[]>([
-  //   { x: 300, y: 68 },
-  //   { x: 380, y: 68 }
-
       { x: 200, y: 68 },
       { x: 480, y: 68 }
   ])
 
   const duration = 5000;
 
-  const [finalAnswer, setFinalAnswer] = useState<number>(0);
+  const currentStep = gameStateRef.current.currentStep;
+  const finalAnswer = gameStateRef.current.finalAnswerOne;
 
-  const [currentStep, setCurrentStep] = useState(0);
+  const setCurrentStep = (step: number) => {
+    setGameStateRef(prev => ({ ...prev, currentStep: step }));
+  };
+
   const [positions, setPositions] = useState({
     leftPlatform: { x: 190, y: 180 },
     rightPlatform: { x: 610, y: 180 },
@@ -747,19 +749,22 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
     }
   }
   const handlefinalCount = (i:number) => {
-    if (i === -1 ) setFinalAnswer((prev) => prev - 1);
-    else setFinalAnswer((prev) => {
-      if (prev === 14) {
+    if (i === -1) {
+      setGameStateRef(prev => ({ ...prev, finalAnswerOne: prev.finalAnswerOne - 1 }));
+    } else {
+      setGameStateRef(prev => {
+        const newAnswer = prev.finalAnswerOne + 1;
+        if (newAnswer === 14) {
           getSoundManager().play('complete');
           setTimeout(() => {
             setCurrentStep(9);
             progressStep(9);
           }, 500);
         }
-      return prev + 1;
-    });
-    
-  }
+        return { ...prev, finalAnswerOne: newAnswer };
+      });
+    }
+  };
 
   const handleAddition = () => {
     setCurrentStep(7);
