@@ -1047,9 +1047,9 @@ export default function Game({ sendAdminMessage }: GameProps) {
           {currentStep === 6 &&
             <button
               onClick={handleAddition}
-              disabled={gameStateRef.current.additionStarted}
+              disabled={currentStep != 6}
               className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                ${gameStateRef.current.additionStarted ? 'opacity-50 cursor-not-allowed' : ''}`}
+                ${currentStep != 6 ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               Empty
             </button>
