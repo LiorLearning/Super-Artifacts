@@ -17,12 +17,12 @@ class SoundManager {
     if (!this.isClient) return;
 
     const soundFiles = {
-      shoot: '/sounds/join.mp3',        // Ball shooting sound
-      collect: '/sounds/join.mp3',    // Ball collected in container
-      rotate: '/sounds/join.mp3',      // Container rotation sound
-      score: '/sounds/join.mp3',        // Score increment sound
-      complete: '/sounds/join.mp3',  // Game completion sound
-      pop: '/sounds/join.mp3',           // Ball popping sound
+      shoot: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/join.mp3',        // Ball shooting sound
+      collect: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/join.mp3',    // Ball collected in container
+      rotate: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/join.mp3',      // Container rotation sound
+      score: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/join.mp3',        // Score increment sound
+      complete: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/join.mp3',  // Game completion sound
+      pop: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/join.mp3',           // Ball popping sound
     };
 
     // Preload all sounds
