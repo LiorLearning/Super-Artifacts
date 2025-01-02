@@ -14,6 +14,11 @@ interface Position {
   y: any;
 }
 
+interface Vector {
+  x: number;
+  y: number;
+}
+
 export default function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
 
@@ -198,6 +203,135 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
     const containerComposite = Matter.Composite.create();
 
+    const colors = {
+      front: "#E8F8FF",    // Light blue for front face
+      back: "#E8F8FF",     // Light blue for back face
+      left: "#B8E8FF",     // Medium blue for left side
+      right: "#AAD3E5",    // Grayish blue for right side
+      bottom: "#6FA8C3",   // Darker blue for bottom
+    };
+
+    const leftFaceVertices: Vector[][] = [[
+      { x: 0, y: 20 },
+      { x: 20, y: 0 },
+      { x: 20, y: containerHeight },
+      { x: 0, y: containerHeight + 20 }
+    ]];
+  
+    const bottomFaceVertices: Vector[][] = [[
+      { x: -containerWidth / 2, y: 0 },
+      { x: containerWidth / 2, y: 0 },
+      { x: containerWidth / 2 - 20, y: 20 },
+      { x: -containerWidth / 2 - 20, y: 20 }
+    ]];
+  
+    const rightFaceVertices: Vector[][] = [[
+      { x: 0, y: 20 },
+      { x: 20, y: 0 },
+      { x: 20, y: containerHeight },
+      { x: 0, y: containerHeight + 20 }
+    ]];
+
+    const visualparts = [
+      // Back face
+      Matter.Bodies.rectangle(
+        containerPosition.x,
+        containerPosition.y,
+        containerWidth,
+        containerHeight,
+        {
+          isStatic: true,
+          isSensor: true,
+          render: {
+            fillStyle: colors.back,
+            strokeStyle: "#000",
+            lineWidth: 1
+          },
+          collisionFilter: { 
+            category: 0x0002,
+            mask: 0x0000
+          }
+        }
+      ),
+      // Left face
+      Matter.Bodies.fromVertices(
+        containerPosition.x - containerWidth / 2 - 10,
+        containerPosition.y + 10,
+        leftFaceVertices,
+        {
+          isStatic: true,
+          isSensor: true,
+          render: {
+            fillStyle: colors.left,
+            strokeStyle: "#000",
+            lineWidth: 1
+          },
+          collisionFilter: { 
+            category: 0x0002,
+            mask: 0x0000
+          }
+        }
+      ),
+      // Bottom face
+      Matter.Bodies.fromVertices(
+        containerPosition.x - 10,
+        containerPosition.y + containerHeight / 2 + 10,
+        bottomFaceVertices,
+        {
+          isStatic: true,
+          isSensor: true,
+          render: {
+            fillStyle: colors.bottom,
+            strokeStyle: "#000",
+            lineWidth: 1
+          },
+          collisionFilter: { 
+            category: 0x0002,
+            mask: 0x0000
+          }
+        }
+      ),
+       // Right face
+       Matter.Bodies.fromVertices(
+        containerPosition.x + containerWidth / 2 - 10,
+        containerPosition.y + 10,
+        rightFaceVertices,
+        {
+          isStatic: true,
+          isSensor: true,
+          render: {
+            fillStyle: colors.right,
+            strokeStyle: "#000",
+            lineWidth: 1
+          },
+          collisionFilter: { 
+            category: 0x0002 ,
+            mask: 0x0000
+          }
+        }
+      ),
+      // Front face (semi-transparent)
+      Matter.Bodies.rectangle(
+        containerPosition.x - 20,
+        containerPosition.y + 20, // Slight offset for 3D effect
+        containerWidth,
+        containerHeight,
+        {
+          isStatic: true,
+          isSensor: true,
+          render: {
+            fillStyle: "rgba(232, 248, 255, 0.3)", // Semi-transparent front
+            strokeStyle: "#000",
+            lineWidth: 1,
+          },
+          collisionFilter: { 
+            category: 0x0008 ,
+            mask: 0x0000
+          }
+        }
+      ),
+    ];
+
     const parts = [
       // Left invisible border
       Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y - containerHeight/2+10 , 1, containerHeight, {
@@ -236,7 +370,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
     ]
 
 
-    Matter.Composite.add(containerComposite, [...parts]);
+    Matter.Composite.add(containerComposite, [...parts, ...visualparts]);
     finalContainerRef.current = containerComposite;
     return containerComposite;
   };
