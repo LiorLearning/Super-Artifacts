@@ -41,18 +41,18 @@ const gameInfo: Record<string, GameInfo> = {
     state: AdditionGameState,
     provider: AdditionGameStateProvider
   },
-  // 'fractions-game': {
-  //   game: FractionsGame,
-  //   desc: FractionsGameDesc,
-  //   state: FractionsGameState,
-  //   provider: FractionsGameStateProvider
-  // },
-  // 'equivalent-fractions-game': {
-  //   game: EquivalentFractionsGame,
-  //   desc: EquivalentFractionsGameDesc,
-  //   state: EquivalentFractionsGameState,
-  //   provider: EquivalentFractionsGameStateProvider
-  // },
+  'fractions-game': {
+    game: FractionsGame,
+    desc: FractionsGameDesc,
+    state: FractionsGameState,
+    provider: FractionsGameStateProvider
+  },
+  'equivalent-fractions-game': {
+    game: EquivalentFractionsGame,
+    desc: EquivalentFractionsGameDesc,
+    state: EquivalentFractionsGameState,
+    provider: EquivalentFractionsGameStateProvider
+  },
   'fraction-addition': {
     game: FractionAdditionGame,
     desc: FractionAdditionGameDesc,
