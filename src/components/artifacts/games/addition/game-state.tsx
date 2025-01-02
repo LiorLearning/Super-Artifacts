@@ -1,5 +1,5 @@
-const MAX_GREEN_MARBLES = 8;
-const MAX_BLUE_MARBLES = 7;
+const MAX_GREEN_MARBLES = 5;
+const MAX_BLUE_MARBLES = 5;
 const MAX_BLACK_MARBLES = 10;
 
 export const desc = `

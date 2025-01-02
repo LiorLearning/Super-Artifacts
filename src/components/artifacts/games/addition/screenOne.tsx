@@ -190,9 +190,12 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
     Matter.Composite.add(worldRef.current!, containerComposite);
   };
 
+  useEffect(() => {
+    updateContainerColors();
+  }, [containerScore]);
+
   const updateContainerColors = () => {
-    const bodies = Matter.Composite.allBodies(containerRef.current!);
-    console.log('Bodies:', bodies);
+    const bodies = containerRef.current ? Matter.Composite.allBodies(containerRef.current!) : [];
     bodies.forEach(body => {
       if (body.label?.startsWith('container_segment_')) {
         const score = containerScore;
@@ -493,18 +496,16 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
           };
         });
         soundEffects.pop.play();
-        updateContainerColors();
         setTimeout(reduceScoreAndUpdateColor, 200);
       }else{
         setTimeout(() => {
-        setCurrentStep(8);
-        progressStep(8);
+          setCurrentStep(8);
+          progressStep(8);
         }, 1000);
       }
     };
 
     setTimeout(reduceScoreAndUpdateColor, 1000);
-     
   };
 
   function attachStringsToBall(
@@ -731,7 +732,6 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
           containerScore: prevState.state1.containerScore + 1
         }
       }));
-      updateContainerColors();
       soundEffects.collect.play();
     }, 1000);
 
