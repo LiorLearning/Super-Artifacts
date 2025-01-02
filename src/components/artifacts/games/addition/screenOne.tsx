@@ -2,14 +2,12 @@ import * as Matter from "matter-js";
 import { useGameState } from "./state-utils";
 import { useSoundEffects } from "./sounds";
 import { useEffect, useRef, useState } from "react";
-import { Cross, Minus, Plus, PlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Position, Vector } from "./components/types";
+import { Cross } from "lucide-react";
+import { Button } from "@/components/custom_ui/button";
+import { Position, Vector, GameProps } from "./components/types";
 import { Catapult } from "./components/catapult";
+import { Counter } from "./components/counter";
 
-interface GameProps {
-  sendAdminMessage: (role: string, content: string) => void;
-}
 
 export default function First({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -667,7 +665,6 @@ export default function First({ sendAdminMessage }: GameProps) {
 
   const launchBall = (color: 'green' | 'blue') => {
     if (clickDisabled) return;
-    console.log('launchBall', color, activePhase);
     soundEffects.shoot.play();
 
     if ((color === 'green' && activePhase !== 'left') || (color === 'blue' && activePhase !== 'right')) return;
@@ -683,10 +680,7 @@ export default function First({ sendAdminMessage }: GameProps) {
     const isGreen = color === 'green';
     const platformX = isGreen ? 170 : 623;
 
-    console.log('activeBallLeft', activeBallLeftRef.current);
-    console.log('activeBallRight', activeBallRightRef.current);
     let activeBall = isGreen ? activeBallLeftRef.current : activeBallRightRef.current;
-    console.log('Active ball:', activeBall);
     const velocity = isGreen ? { x: 6.5, y: -5 } : { x: -5.8, y: -5 };
 
     // anchor points
@@ -724,7 +718,7 @@ export default function First({ sendAdminMessage }: GameProps) {
         state1: {
           ...prevState.state1,
           [isGreen ? 'greenScore' : 'blueScore']: prevState.state1[isGreen ? 'greenScore' : 'blueScore'] - 1,
-          containerScore: prevState.state1.containerScore + 1
+          containerScore: prevState.state1.containerScore + 1,
         }
       }));
       soundEffects.collect.play();
@@ -733,7 +727,7 @@ export default function First({ sendAdminMessage }: GameProps) {
     setTimeout(() => {
       if (!worldRef.current) return;
       setTimeout(() => {
-        if (containerBalls.length > 0 && containerScore < 10) {
+        if (containerBalls.length > 0 && containerScore < 9) {
           const ballToMove = containerBalls[containerBalls.length - 1]; 
 
           Matter.Body.setPosition(ballToMove, { x: platformX, y: 130 });
@@ -765,7 +759,7 @@ export default function First({ sendAdminMessage }: GameProps) {
           }));
         }
       }, 500);
-    }, 1000);
+    }, 1100);
   };
 
   const launchGreen = () => {
@@ -793,7 +787,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       }, 1500);
     }
   }
-  const handlefinalCount = (i:number) => {
+  const handlefinalCount = (i: number) => {
     if (i === -1) {
       setGameStateRef(prev => ({ 
         ...prev, 
@@ -805,7 +799,7 @@ export default function First({ sendAdminMessage }: GameProps) {
     } else {
       setGameStateRef(prev => {
         const newAnswer = finalAnswer + 1;
-        if (newAnswer === 14) {
+        if (newAnswer === (maxGreenMarbles + maxBlueMarbles)) {
           soundEffects.complete.play();
           setTimeout(() => {
             setCurrentStep(9);
@@ -1094,34 +1088,14 @@ export default function First({ sendAdminMessage }: GameProps) {
 
         { currentStep === 8 && (
           <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
-            <p className="flex">
-                <button 
-                  onClick={() => handlefinalCount(-1)}
-                  className="text-purple-500"
-                >
-                  <Minus size={24} />
-                </button>
-                <p className="text-2xl px-4 mx-8 font-bold border-2 border-purple-500 bg-white text-purple-500">
-                  count
-                </p>
-                <button 
-                  onClick={() => handlefinalCount(1)}
-                  className="text-purple-500"
-                >
-                  <Plus size={24} />
-                </button>
-
-            </p>
-            <p className="text-4xl font-bold text-purple-500">
-              {finalAnswer}
-            </p>
+            <Counter onIncrement={() => handlefinalCount(1)} onDecrement={() => handlefinalCount(-1)} />
           </div>
         )}
 
         {currentStep === 9 && (
           <div className="absolute h-30 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
             <p className="text-7xl text-center font-bold text-purple-500">
-              15
+              {maxGreenMarbles + maxBlueMarbles}
             </p>
             <p className="text-7xl text-center font-bold text-black">
               great job! <br/> correct answer

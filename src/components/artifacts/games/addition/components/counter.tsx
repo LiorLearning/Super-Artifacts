@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/custom_ui/button';
+import { useGameState } from '../state-utils';
 
 interface CounterProps {
-  value: number;
   onIncrement: () => void;
   onDecrement: () => void;
 }
 
-export const Counter: React.FC<CounterProps> = ({ value, onIncrement, onDecrement }) => {
+export const Counter: React.FC<CounterProps> = ({ onIncrement, onDecrement }) => {
+  const { gameStateRef } = useGameState();
   return (
     <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
       <p className="flex">
@@ -23,7 +24,7 @@ export const Counter: React.FC<CounterProps> = ({ value, onIncrement, onDecremen
         </Button>
       </p>
       <p className="text-4xl font-bold text-purple-500">
-        {value}
+        {gameStateRef.current.state1.finalAnswer}
       </p>
     </div>
   );

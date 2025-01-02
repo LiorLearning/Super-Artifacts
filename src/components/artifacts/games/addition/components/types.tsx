@@ -7,3 +7,7 @@ export interface Vector {
   x: number;
   y: number;
 }
+
+export interface GameProps {
+  sendAdminMessage: (role: string, content: string) => void;
+}

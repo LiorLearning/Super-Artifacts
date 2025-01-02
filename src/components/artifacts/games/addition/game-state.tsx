@@ -1,5 +1,5 @@
 const MAX_GREEN_MARBLES = 5;
-const MAX_BLUE_MARBLES = 5;
+const MAX_BLUE_MARBLES = 6;
 const MAX_BLACK_MARBLES = 10;
 
 export const desc = `
@@ -52,7 +52,6 @@ export interface GameState2 {
   blueMarblesCount: number;
   blackMarblesCount: number;
   showFinalAnswer: boolean;
-  finalAnswer: number;
 }
 
 export interface GameState {
@@ -65,7 +64,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  currentScreen: 'first',
+  currentScreen: 'second',
   maxGreenMarbles: MAX_GREEN_MARBLES,
   maxBlueMarbles: MAX_BLUE_MARBLES,
   maxBlackMarbles: MAX_BLACK_MARBLES,
@@ -85,6 +84,5 @@ export const initialGameState: GameState = {
     blueMarblesCount: 0,
     blackMarblesCount: 0,
     showFinalAnswer: false,
-    finalAnswer: 0
   }
 };
