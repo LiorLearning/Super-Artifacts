@@ -3,9 +3,6 @@ import First from './screenOne'
 import Second from './screenTwo';
 import { useGameState } from './state-utils';
 
-interface GameProps {
-  sendAdminMessage: (role: string, content: string) => void;
-}
 
 function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
