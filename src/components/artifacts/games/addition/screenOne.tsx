@@ -1,29 +1,22 @@
 import * as Matter from "matter-js";
 import { useGameState } from "./state-utils";
-import { getSoundManager } from './sounds';
+import { useSoundEffects } from "./sounds";
 import { useEffect, useRef, useState } from "react";
 import { Cross, Minus, Plus, PlusIcon } from "lucide-react";
-import { platform } from "os";
-import { get } from "http";
 import { Button } from "@/components/ui/button";
+import { Position, Vector } from "./components/types";
+import { Catapult } from "./components/catapult";
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
   setFirstDone: (done: boolean) => void;
 }
 
-interface Position {
-  x: any;
-  y: any;
-}
-
-interface Vector {
-  x: number;
-  y: number;
-}
-
 export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
+  const soundEffects = useSoundEffects();
+  const { greenScore, blueScore, containerScore, activePhase, currentStep, finalAnswer, clickDisabled, showAddButton, additionStarted } = gameStateRef.current.state1;
+  const { maxGreenMarbles, maxBlueMarbles } = gameStateRef.current;
 
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
@@ -34,19 +27,26 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
   const rightPlatformRef1 = useRef<Matter.Composite | null>(null);
   const rightPlatformRef2 = useRef<Matter.Body | null>(null);
   const finalContainerRef = useRef<Matter.Composite | null>(null);
-  
+  const leftContainerBallsRef = useRef<Matter.Body[]>([]);
+  const rightContainerBallsRef = useRef<Matter.Body[]>([]);
+  const activeBallLeftRef = useRef<Matter.Body | null>(null);
+  const activeBallRightRef = useRef<Matter.Body | null>(null);
+
   const [slingPosition, setSlingPosition] = useState<Position[]>([
       { x: 200, y: 68 },
       { x: 480, y: 68 }
-  ])
+  ]);
 
-  const duration = 5000;
-
-  const currentStep = gameStateRef.current.currentStep;
-  const finalAnswer = gameStateRef.current.finalAnswerOne;
+  const duration = 500;
 
   const setCurrentStep = (step: number) => {
-    setGameStateRef(prev => ({ ...prev, currentStep: step }));
+    setGameStateRef(prev => ({ 
+      ...prev, 
+      state1: {
+        ...prev.state1,
+        currentStep: step
+      }
+    }));
   };
 
   const [positions, setPositions] = useState({
@@ -150,7 +150,7 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
     
 
     const getColorForIndex = (index: number) => {
-      const score = gameStateRef.current.containerScore;
+      const score = containerScore;
       const isActive = index >= 10 - score;
       return isActive ? "#BA69EF" : "#fff";
     };
@@ -195,7 +195,7 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
     console.log('Bodies:', bodies);
     bodies.forEach(body => {
       if (body.label?.startsWith('container_segment_')) {
-        const score = gameStateRef.current.containerScore;
+        const score = containerScore;
         const index = parseInt(body.label.split('_')[2]);
         const isActive = index < score;
         body.render.fillStyle = isActive ? "#BA69EF" : "#fff";
@@ -402,7 +402,10 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
     // Don't set showEmptyButton
     setGameStateRef(prevState => ({
       ...prevState,
-      showAdditionStep: true
+      state1: {
+        ...prevState.state1,
+        showAdditionStep: true
+      }
     }));
 
     // 
@@ -419,7 +422,7 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
  
      const animate = () => {
        if (flip_currentStep >= flip_steps) {
-         getSoundManager().play('complete');
+         soundEffects.complete.play();
          return;
        }
  
@@ -478,9 +481,18 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
      animate();
 
     const reduceScoreAndUpdateColor = () => {
-      if (gameStateRef.current.containerScore > 0) {
-        setGameStateRef(prevState => ({ ...prevState, containerScore: prevState.containerScore - 1 }));
-        getSoundManager().play('pop');
+      if (containerScore > 0) {
+        setGameStateRef(prevState => {
+          const newContainerScore = Math.max(0, prevState.state1.containerScore - 1);
+          return { 
+            ...prevState, 
+            state1: { 
+              ...prevState.state1, 
+              containerScore: newContainerScore 
+            } 
+          };
+        });
+        soundEffects.pop.play();
         updateContainerColors();
         setTimeout(reduceScoreAndUpdateColor, 200);
       }else{
@@ -593,24 +605,34 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
       rightPlatform
     ]);
 
+    const leftContainerBalls = createContainerBalls(leftContainerX, "#4CAF50", maxGreenMarbles);
+    const rightContainerBalls = createContainerBalls(rightContainerX, "#3498db", maxBlueMarbles); 
+    leftContainerBallsRef.current = leftContainerBalls;
+    rightContainerBallsRef.current = rightContainerBalls;
+    activeBallLeftRef.current = null;
+    activeBallRightRef.current = null;
+
+
     setGameStateRef(prevState => ({
       ...prevState,
-      activeBallLeft: null,
-      activeBallRight: null,
-      leftContainerBalls: createContainerBalls(leftContainerX, "#4CAF50", 8),
-      rightContainerBalls: createContainerBalls(rightContainerX, "#3498db", 7),
-      showAdditionStep: true
+      state1: {
+        ...prevState.state1,
+        showAdditionStep: true
+      }
     }));
 
     // Don't set showEmptyButton
     setGameStateRef(prevState => ({
       ...prevState,
-      showAdditionStep: true
+      state1: {
+        ...prevState.state1,
+        showAdditionStep: true
+      }
     }));
 
     Matter.Composite.add(world, [
-      ...gameStateRef.current.leftContainerBalls,
-      ...gameStateRef.current.rightContainerBalls
+      ...leftContainerBalls,
+      ...rightContainerBalls
     ]);
 
     return { render, runner, engine };
@@ -646,16 +668,26 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
   // }
 
   const launchBall = (color: 'green' | 'blue') => {
-    if (gameStateRef.current.clickDisabled) return;
-    
-    getSoundManager().play('shoot');
-    if ((color === 'green' && gameStateRef.current.activePhase !== 'left') || (color === 'blue' && gameStateRef.current.activePhase !== 'right')) return;
+    if (clickDisabled) return;
+    console.log('launchBall', color, activePhase);
+    soundEffects.shoot.play();
 
-    setGameStateRef(prevState => ({ ...prevState, clickDisabled: true }));
+    if ((color === 'green' && activePhase !== 'left') || (color === 'blue' && activePhase !== 'right')) return;
+
+    setGameStateRef(prevState => ({ 
+      ...prevState, 
+      state1: {
+        ...prevState.state1,
+        clickDisabled: true
+      }
+    }));
 
     const isGreen = color === 'green';
     const platformX = isGreen ? 170 : 623;
-    let activeBall = isGreen ? gameStateRef.current.activeBallLeft : gameStateRef.current.activeBallRight;
+
+    console.log('activeBallLeft', activeBallLeftRef.current);
+    console.log('activeBallRight', activeBallRightRef.current);
+    let activeBall = isGreen ? activeBallLeftRef.current : activeBallRightRef.current;
     console.log('Active ball:', activeBall);
     const velocity = isGreen ? { x: 6.5, y: -5 } : { x: -5.8, y: -5 };
 
@@ -674,7 +706,7 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
       anchor2 = rightAnchor2;
     }
 
-    const containerBalls = isGreen ? gameStateRef.current.leftContainerBalls : gameStateRef.current.rightContainerBalls;
+    const containerBalls = isGreen ? leftContainerBallsRef.current : rightContainerBallsRef.current;
 
 
 
@@ -693,33 +725,48 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
       // Reduce score and manage ball movement
       setGameStateRef(prevState => ({
         ...prevState,
-        [isGreen ? 'greenScore' : 'blueScore']: prevState[isGreen ? 'greenScore' : 'blueScore'] - 1,
-        containerScore: prevState.containerScore + 1
+        state1: {
+          ...prevState.state1,
+          [isGreen ? 'greenScore' : 'blueScore']: prevState.state1[isGreen ? 'greenScore' : 'blueScore'] - 1,
+          containerScore: prevState.state1.containerScore + 1
+        }
       }));
       updateContainerColors();
-      getSoundManager().play('collect');
+      soundEffects.collect.play();
     }, 1000);
 
     setTimeout(() => {
       if (!worldRef.current) return;
       setTimeout(() => {
-        if (containerBalls.length > 0 && gameStateRef.current.containerScore < 10) {
+        if (containerBalls.length > 0 && containerScore < 10) {
           const ballToMove = containerBalls[containerBalls.length - 1]; 
 
           Matter.Body.setPosition(ballToMove, { x: platformX, y: 130 });
           attachStringsToBall(ballToMove, anchor1, anchor2);
 
+          if (isGreen) {
+            activeBallLeftRef.current = ballToMove;
+            leftContainerBallsRef.current = containerBalls.slice(0, -1);
+          } else {
+            activeBallRightRef.current = ballToMove;
+            rightContainerBallsRef.current = containerBalls.slice(0, -1);
+          }
+
           setGameStateRef(prevState => ({
             ...prevState,
-            [isGreen ? 'activeBallLeft' : 'activeBallRight']: ballToMove,
-            [isGreen ? 'leftContainerBalls' : 'rightContainerBalls']: containerBalls.slice(0, -1),
-            clickDisabled: false
+            state1: {
+              ...prevState.state1,
+              clickDisabled: false
+            }
           }));
         } else {
+          isGreen ? activeBallLeftRef.current = null : activeBallRightRef.current = null;
           setGameStateRef(prevState => ({
             ...prevState,
-            [isGreen ? 'activeBallLeft' : 'activeBallRight']: null,
-            clickDisabled: false
+            state1: {
+              ...prevState.state1,
+              clickDisabled: false
+            }
           }));
         }
       }, 500);
@@ -728,11 +775,14 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
 
   const launchGreen = () => {
     launchBall('green');
-    if (gameStateRef.current.greenScore === 1 && gameStateRef.current.activePhase === 'left') {
+    if (greenScore === 1 && activePhase === 'left') {
       setTimeout(() => {
         setGameStateRef(prevState => ({
           ...prevState,
-          activePhase: 'right'
+          state1: {
+            ...prevState.state1,
+            activePhase: 'right'
+          }
         }));
         setCurrentStep(3);
         progressStep(3);
@@ -741,7 +791,7 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
   }
   const launchBlue = () => {
     launchBall('blue');
-    if (gameStateRef.current.containerScore === 9) {
+    if (containerScore === 9) {
       setTimeout(() => {
         setCurrentStep(4);
         progressStep(4);
@@ -750,18 +800,24 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
   }
   const handlefinalCount = (i:number) => {
     if (i === -1) {
-      setGameStateRef(prev => ({ ...prev, finalAnswerOne: prev.finalAnswerOne - 1 }));
+      setGameStateRef(prev => ({ 
+        ...prev, 
+        state1: { 
+          ...prev.state1, 
+          finalAnswer: Math.max(0, finalAnswer - 1) 
+        } 
+      }));
     } else {
       setGameStateRef(prev => {
-        const newAnswer = prev.finalAnswerOne + 1;
+        const newAnswer = finalAnswer + 1;
         if (newAnswer === 14) {
-          getSoundManager().play('complete');
+          soundEffects.complete.play();
           setTimeout(() => {
             setCurrentStep(9);
             progressStep(9);
           }, 500);
         }
-        return { ...prev, finalAnswerOne: newAnswer };
+        return { ...prev, state1: { ...prev.state1, finalAnswer: newAnswer } };
       });
     }
   };
@@ -770,11 +826,14 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
     setCurrentStep(7);
     setGameStateRef(prevState => ({
       ...prevState,
-      additionStarted: true,
-      showAddButton: false
+      state1: {
+        ...prevState.state1,
+        additionStarted: true,
+        showAddButton: false
+      }
     }));
 
-    getSoundManager().play('rotate');
+    soundEffects.rotate.play();
 
     setTimeout(() => {
       flipContainerAndPlatform();
@@ -785,12 +844,15 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
     if (step === 0) {
       setGameStateRef(prevState => ({
         ...prevState,
-        greenScore: 8,
-        blueScore: 7,
-        containerScore: 0,
-        showAddButton: false,
-        clickDisabled: false,
-        activePhase: 'left'
+        state1: {
+          ...prevState.state1,
+          greenScore: maxGreenMarbles,
+          blueScore: maxBlueMarbles,
+          containerScore: 0,
+          showAddButton: false,
+          clickDisabled: false,
+          activePhase: 'left'
+        }
       }));
       setTimeout(() => {
         setCurrentStep(1);  
@@ -805,13 +867,18 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
       }, duration);
       
     } else if (step === 2) {
-      if (!gameStateRef.current.activeBallLeft) {
-        const activeball = gameStateRef.current.leftContainerBalls[gameStateRef.current.leftContainerBalls.length - 1];
+      if (!activeBallLeftRef.current) {
+        console.log('leftContainerBalls at step 2', leftContainerBallsRef.current);
+        const activeball = leftContainerBallsRef.current[leftContainerBallsRef.current.length - 1];
+        console.log('activeball at step 2', activeball);
+        activeBallLeftRef.current = activeball;
+        leftContainerBallsRef.current = leftContainerBallsRef.current.slice(0, -1);
         setGameStateRef(prevState => ({ 
           ...prevState,
-          activeBallLeft: activeball,
-          activePhase: 'left',
-          leftContainerBalls: gameStateRef.current.leftContainerBalls.slice(0, -1)
+          state1: {
+            ...prevState.state1,
+            activePhase: 'left',
+          }
         }));
         console.log('Active ball:', activeball);
         if (activeball) {
@@ -822,16 +889,17 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
       }
 
     } else if (step === 3) {
-      if (!gameStateRef.current.activeBallRight) {
-
-        const activeball = gameStateRef.current.rightContainerBalls[gameStateRef.current.rightContainerBalls.length - 1];
+      if (!activeBallRightRef.current) {
+        const activeball = rightContainerBallsRef.current[rightContainerBallsRef.current.length - 1];
+        activeBallRightRef.current = activeball;
+        rightContainerBallsRef.current = rightContainerBallsRef.current.slice(0, -1);
         setGameStateRef(prevState => ({
           ...prevState,
-          activeBallRight: activeball,
-          activePhase: 'right',
-          rightContainerBalls: gameStateRef.current.rightContainerBalls.slice(0, -1)
+          state1: {
+            ...prevState.state1,
+            activePhase: 'right',
+          }
         }));
-        console.log('Active ball:', activeball);
         if (activeball) {
           Matter.Body.setPosition(activeball, { x: 623, y: 130 });
           attachStringsToBall(activeball, { x: 563, y: 100 }, { x: 580, y: 100 });
@@ -848,7 +916,7 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
       Matter.Composite.remove(worldRef.current!, leftPlatformRef1.current!);
       Matter.Composite.remove(worldRef.current!, leftPlatformRef2.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef2.current!);
-      leftPlatformRef1.current
+      // leftPlatformRef1.current
 
       setTimeout(() => {
         setCurrentStep(6);
@@ -897,21 +965,24 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
   }, []);
 
   useEffect(() => {
-    if (gameStateRef.current.containerScore === 10 && !gameStateRef.current.showAddButton) {
+    if (containerScore === 10 && !showAddButton) {
       setGameStateRef(prevState => ({
         ...prevState,
-        showAddButton: true,
-        clickDisabled: true
+        state1: {
+          ...prevState.state1,
+          showAddButton: true,
+          clickDisabled: true
+        }
       }));
     }
-  }, [gameStateRef.current.containerScore]);
+  }, [containerScore]);
 
 
   return (
       <div className="relative w-[800px] mx-auto ">
         <section className="h-52 flex flex-col justify-center">
           <h3 className="text-5xl font-bold text-center pb-10">
-            8 + 7 = ?
+            {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
           </h3>
           <div className={`w-2/3 mx-auto text-2xl ${currentStep===4? 'bg-purple-600' : 'bg-purple-100'} border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`}>
           <p className={`font-bold text-center ${currentStep===4? 'text-purple-100' : ' text-purple-600'}`}>
@@ -922,17 +993,17 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
                 case 1:
                   return "And a container to collect the marbles";
                 case 2:
-                  if(gameStateRef.current.greenScore === 8) {
+                  if(greenScore === maxGreenMarbles) {
                     return <>Let's start! <br/> Step 1 : Finish shooting the green marbles into the marble holder!  </>;
                   } else {
                     return "Keep shooting until the container is full!";
                   }
                 case 3:
-                  return <> We have filled all 8 green ones. <br/> Step 2 : Let’s fill the blue ones.</>;
+                  return <> We have filled all ${maxGreenMarbles} green ones. <br/> Step 2 : Let’s fill the blue ones.</>;
                 case 4: 
                   return "Oops! The container is full.Let’s see how many marbles we have"
                 case 5:
-                  return "Look! 8+7 is same as 10+5";
+                  return `Look! ${maxGreenMarbles} + ${maxBlueMarbles} is same as 10+${maxGreenMarbles + maxBlueMarbles - 10}`;
                 case 6:
                   return "Step 3 : Click on empty to add 10+5";
                 case 7:
@@ -953,7 +1024,7 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
               top: slingPosition[0].y - 50,
               left: slingPosition[0].x - 160
             }}>
-              {gameStateRef.current.greenScore}
+              {greenScore}
             </div>
           }
           {currentStep <= 5 &&
@@ -961,53 +1032,21 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
               top: slingPosition[1].y - 50,
               left: slingPosition[1].x + 220
             }}>
-              {gameStateRef.current.blueScore}
+              {blueScore}
             </div>
           }
 
             {currentStep > 1 && currentStep <= 5 &&
             <div className={`absolute ${currentStep === 5 ? "left-1/2 top-[2.5rem]" :  "bottom-1/4 left-1/3" } transform -translate-x-1/3 -translate-y-1/4  text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500`}>
-              {gameStateRef.current.containerScore}
+              {containerScore}
             </div>
             }
 
             {currentStep < 5 && <>
-              <img 
-                src="./1.png" 
-                alt="Arrow" 
-                className="absolute z-10 w-28 h-18" 
-                style={{
-                  top: slingPosition[0].y,
-                  left: slingPosition[0].x
-                }}
-              />
-              <img 
-                src="./2.png" 
-                alt="Arrow" 
-                className="absolute z-10 w-28 h-18"
-                style={{
-                  top: slingPosition[0].y, 
-                  left: slingPosition[0].x 
-                }}
-              />
-              <img 
-                src="./3.png" 
-                alt="Arrow" 
-                className="absolute z-10 w-28 h-18"
-                style={{
-                  top: slingPosition[1].y,
-                  left: slingPosition[1].x 
-                }}
-              />
-              <img 
-                src="./4.png" 
-                alt="Arrow" 
-                className="absolute z-10 w-28 h-18"
-                style={{
-                  top: slingPosition[1].y,
-                  left: slingPosition[1].x
-                }}
-              />
+              <Catapult position={slingPosition[0]} type="half" side="left" />
+              <Catapult position={slingPosition[0]} type="full" side="left" />
+              <Catapult position={slingPosition[1]} type="half" side="right" />
+              <Catapult position={slingPosition[1]} type="full" side="right" />
             </>}
 
 
@@ -1026,9 +1065,9 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
           {currentStep === 2 &&
               <button
                 onClick={launchGreen}
-                disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left'}
+                disabled={clickDisabled || activePhase !== 'left'}
                 className={`absolute left-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                  ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  ${(clickDisabled || activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 Shoot
               </button>
@@ -1037,9 +1076,9 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
           {currentStep === 3 &&
               <button
                 onClick={launchBlue}
-                disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right'}
+                disabled={clickDisabled || activePhase !== 'right'}
                 className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                  ${(gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  ${(clickDisabled || activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 Shoot
               </button>

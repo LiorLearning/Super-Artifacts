@@ -1,7 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
 import { useGameState } from "./state-utils";
 
 interface GameProps {
@@ -10,28 +8,34 @@ interface GameProps {
 
 export default function Second({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const maxGreenMarbles = 7;
-  const maxBlueMarbles = 5;
+  const { greenMarblesCount, blueMarblesCount, blackMarblesCount, showFinalAnswer, finalAnswer } = gameStateRef.current.state2;
+  const { maxGreenMarbles, maxBlueMarbles, maxBlackMarbles } = gameStateRef.current;
   const totalMarbles = maxGreenMarbles + maxBlueMarbles;
 
   const handleMarbleClick = (color: 'green' | 'blue') => {
     setGameStateRef(prev => ({
       ...prev,
-      greenMarblesCount: color === 'green' && prev.greenMarblesCount < maxGreenMarbles ? 
-        prev.greenMarblesCount + 1 : prev.greenMarblesCount,
-      blueMarblesCount: color === 'blue' && prev.blueMarblesCount < maxBlueMarbles ? 
-        prev.blueMarblesCount + 1 : prev.blueMarblesCount
+      state2: {
+        ...prev.state2,
+        greenMarblesCount: color === 'green' && greenMarblesCount < maxGreenMarbles ? 
+          greenMarblesCount + 1 : greenMarblesCount,
+        blueMarblesCount: color === 'blue' && blueMarblesCount < maxBlueMarbles ? 
+          blueMarblesCount + 1 : blueMarblesCount
+      }
     }));
   };
 
   const handleBlackMarbleClick = (index: number) => {
     setGameStateRef(prev => ({
       ...prev,
-      blackMarblesCount: index >= prev.blackMarblesCount && prev.blackMarblesCount < 10 ? 
-        prev.blackMarblesCount + 1 : 
-        index === prev.blackMarblesCount - 1 ? 
-          prev.blackMarblesCount - 1 : 
-          prev.blackMarblesCount
+      state2: {
+        ...prev.state2,
+        blackMarblesCount: index >= blackMarblesCount && blackMarblesCount < maxBlackMarbles ? 
+          blackMarblesCount + 1 : 
+          index === blackMarblesCount - 1 ? 
+            blackMarblesCount - 1 : 
+          blackMarblesCount
+      }
     }));
   };
 
@@ -42,14 +46,12 @@ export default function Second({ sendAdminMessage }: GameProps) {
       showFinalAnswer: value === totalMarbles
     }));
 
-    if (value === totalMarbles) {
+    if (value === maxGreenMarbles + maxBlueMarbles) {
       sendAdminMessage('student', 'Correct! 7 + 5 = 12');
     } else {
       sendAdminMessage('student', 'Try again!');
     }
   };
-
-  const { greenMarblesCount, blueMarblesCount, blackMarblesCount, showFinalAnswer, finalAnswer } = gameStateRef.current;
 
   return (
       <>
