@@ -15,11 +15,6 @@ interface Position {
   y: any;
 }
 
-interface Position {
-  x: any;
-  y: any;
-}
-
 interface Vector {
   x: number;
   y: number;
@@ -33,11 +28,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
   const worldRef = useRef<Matter.World | null>(null);
   const leftPlatformRef1 = useRef<Matter.Composite | null>(null);
   const leftPlatformRef2 = useRef<Matter.Body | null>(null);
-  const leftPlatformRef1 = useRef<Matter.Composite | null>(null);
-  const leftPlatformRef2 = useRef<Matter.Body | null>(null);
   const containerRef = useRef<Matter.Composite | null>(null);
-  const rightPlatformRef1 = useRef<Matter.Composite | null>(null);
-  const rightPlatformRef2 = useRef<Matter.Body | null>(null);
   const rightPlatformRef1 = useRef<Matter.Composite | null>(null);
   const rightPlatformRef2 = useRef<Matter.Body | null>(null);
   const finalContainerRef = useRef<Matter.Composite | null>(null);
@@ -60,29 +51,12 @@ export default function Game({ sendAdminMessage }: GameProps) {
     centerContainer: { x: 390, y: 340 },
     finalContainer: { x: 550, y: 500 }
   });
-  const [currentStep, setCurrentStep] = useState(0);
-  const [positions, setPositions] = useState({
-    leftPlatform: { x: 190, y: 180 },
-    rightPlatform: { x: 610, y: 180 },
-    centerContainer: { x: 390, y: 340 },
-    finalContainer: { x: 550, y: 500 }
-  });
 
-  const createPlatform1 = (x: number, y: number, width: number) => {
   const createPlatform1 = (x: number, y: number, width: number) => {
     const height = 60;
     const wallThickness = 2;
 
     const composite = Matter.Composite.create();
-
-    // Background
-    // const bg = Matter.Bodies.rectangle(x, y - height/2, width, height, {
-    //   isStatic: true,
-    //   isSensor: true,  // Makes it not collide
-    //   render: {
-    //     fillStyle: "transparent",  // Light gray background
-    //   },
-    // });
 
     // Background
     // const bg = Matter.Bodies.rectangle(x, y - height/2, width, height, {
@@ -111,20 +85,10 @@ export default function Game({ sendAdminMessage }: GameProps) {
     //   },
     // });
 
-    // // Top
-    // const top = Matter.Bodies.rectangle(x, y - height, width, wallThickness, {
-    //   isStatic: true,
-    //   render: {
-    //     fillStyle: "#666", 
-    //     strokeStyle: "transparent",
-    //   },
-    // });
-
     // Left wall
     const leftWall = Matter.Bodies.rectangle(x - width / 2 + wallThickness / 2, y - height / 2, wallThickness, height, {
       isStatic: true,
       render: {
-        fillStyle: "transparent",
         fillStyle: "transparent",
         strokeStyle: "transparent",
       },
@@ -135,19 +99,14 @@ export default function Game({ sendAdminMessage }: GameProps) {
       isStatic: true,
       render: {
         fillStyle: "transparent",
-        fillStyle: "transparent",
         strokeStyle: "transparent",
       },
     });
 
     Matter.Composite.add(composite, [ base, leftWall, rightWall]);
-    Matter.Composite.add(composite, [ base, leftWall, rightWall]);
     return composite;
   };
 
-  const createPlatform2 = (x: number, y: number, width: number) => {
-    // Create the non-interactable base platform
-    return Matter.Bodies.rectangle(x, y, width, 2, {
   const createPlatform2 = (x: number, y: number, width: number) => {
     // Create the non-interactable base platform
     return Matter.Bodies.rectangle(x, y, width, 2, {
@@ -160,7 +119,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
   };
 
   const createMainContainer = () => {
-  const createMainContainer = () => {
     const containerWidth = 40;
     const containerHeight = 240;
     const containerPosition = { x: 390, y: 340 };
@@ -170,25 +128,21 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
     const parts = [
       Matter.Bodies.rectangle(containerPosition.x + containerWidth/2, containerPosition.y + containerHeight/2, containerWidth+20, 12, {
-      Matter.Bodies.rectangle(containerPosition.x + containerWidth/2, containerPosition.y + containerHeight/2, containerWidth+20, 12, {
         isStatic: true,
         render: { visible: false },
         collisionFilter: { category: 0x0004 }
       }),
       Matter.Bodies.rectangle(containerPosition.x, containerPosition.y + 10, 12, containerHeight + 20, {
-      Matter.Bodies.rectangle(containerPosition.x, containerPosition.y + 10, 12, containerHeight + 20, {
         isStatic: true,
         render: { visible: false },
         collisionFilter: { category: 0x0004 }
       }),
-      Matter.Bodies.rectangle(containerPosition.x + containerWidth, containerPosition.y + 10, 12, containerHeight + 20, {
       Matter.Bodies.rectangle(containerPosition.x + containerWidth, containerPosition.y + 10, 12, containerHeight + 20, {
         isStatic: true,
         render: { visible: false },
         collisionFilter: { category: 0x0004 }
       }),
     ];
-    
     
 
     const getColorForIndex = (index: number) => {
@@ -230,12 +184,9 @@ export default function Game({ sendAdminMessage }: GameProps) {
     Matter.Composite.add(containerComposite, [...parts, ...visualParts]);
     containerRef.current = containerComposite;
     Matter.Composite.add(worldRef.current!, containerComposite);
-    Matter.Composite.add(worldRef.current!, containerComposite);
   };
 
   const updateContainerColors = () => {
-    const bodies = Matter.Composite.allBodies(containerRef.current!);
-    console.log('Bodies:', bodies);
     const bodies = Matter.Composite.allBodies(containerRef.current!);
     console.log('Bodies:', bodies);
     bodies.forEach(body => {
@@ -250,9 +201,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
   const createFinalContainer = () => {
     const containerWidth = 400;  
-    const containerWidth = 400;  
     const containerHeight = 100;
-    const containerPosition = { x: 550, y: 500 }; 
     const containerPosition = { x: 550, y: 500 }; 
 
     const containerComposite = Matter.Composite.create();
@@ -744,7 +693,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
         containerScore: prevState.containerScore + 1
       }));
       updateContainerColors();
-      updateContainerColors();
       getSoundManager().play('collect');
     }, 1000);
 
@@ -754,8 +702,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
         if (containerBalls.length > 0 && gameStateRef.current.containerScore < 10) {
           const ballToMove = containerBalls[containerBalls.length - 1]; 
 
-          Matter.Body.setPosition(ballToMove, { x: platformX, y: 130 });
-          attachStringsToBall(ballToMove, anchor1, anchor2);
           Matter.Body.setPosition(ballToMove, { x: platformX, y: 130 });
           attachStringsToBall(ballToMove, anchor1, anchor2);
 
@@ -814,7 +760,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
   }
 
   const handleAddition = () => {
-    setCurrentStep(7);
     setCurrentStep(7);
     setGameStateRef(prevState => ({
       ...prevState,
@@ -931,11 +876,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
     // });
 
     progressStep();
-    // Matter.Events.on(engine, 'beforeUpdate', () => {
-    //   updateContainerColors();
-    // });
-
-    progressStep();
 
     return () => {
       Matter.Render.stop(render);
@@ -962,7 +902,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
   return (
     <div className="h-full w-full bg-white">
-      <div className="flex flex-col h-full w-full justify-center items-center font-gaegu bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_1px),linear-gradient(rgba(0,0,0,.1)_1px,transparent_1px)] bg-[length:20px_20px]">
+    <div className="flex flex-col h-full w-full justify-center items-center font-gaegu bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_1px),linear-gradient(rgba(0,0,0,.1)_1px,transparent_1px)] bg-[length:20px_20px]">
       <div className="relative w-[800px] mx-auto ">
         <section className="h-52 flex flex-col justify-center">
           <h3 className="text-5xl font-bold text-center pb-10">
@@ -999,8 +939,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
               }
             })()}
           </p>
-          </div>
-        </section>
           </div>
         </section>
 
@@ -1081,16 +1019,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
           }
 
           {currentStep === 2 &&
-          />
-          {currentStep === 1 &&
-            <div className="absolute right-20 top-80 w-60 mx-auto text-xl  bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-1">
-              <p className="font-bold text-center text-purple-600">
-                Can hold a maximum of 10 marbles
-              </p>
-            </div>
-          }
-
-          {currentStep === 2 &&
               <button
                 onClick={launchGreen}
                 disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left'}
@@ -1099,9 +1027,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
               >
                 Shoot
               </button>
-          }
-
-          {currentStep === 3 &&
           }
 
           {currentStep === 3 &&
@@ -1138,8 +1063,6 @@ export default function Game({ sendAdminMessage }: GameProps) {
                   <button 
                     onClick={() => handlefinalCount(-1)}
                     className="text-purple-500"
-                    onClick={() => handlefinalCount(-1)}
-                    className="text-purple-500"
                   >
                     <Minus size={24} />
                   </button>
@@ -1151,12 +1074,8 @@ export default function Game({ sendAdminMessage }: GameProps) {
                     className="text-purple-500"
                   >
                     <Plus size={24} />
-                    <Plus size={24} />
                   </button>
 
-              </p>
-              <p className="text-4xl font-bold text-purple-500">
-                {finalAnswer}
               </p>
               <p className="text-4xl font-bold text-purple-500">
                 {finalAnswer}
@@ -1188,4 +1107,3 @@ export default function Game({ sendAdminMessage }: GameProps) {
   </div>
   );
 };
-
