@@ -25,6 +25,16 @@ export interface GameState {
   showEmptyButton: boolean;
   gameComplete: boolean;
   showAddButton: boolean;
+  // New states for screenTwo
+  greenMarblesCount: number;
+  blueMarblesCount: number;
+  blackMarblesCount: number;
+  showFinalAnswer: boolean;
+  finalAnswer: number;
+  // New states for screenOne
+  currentStep: number;
+  finalAnswerOne: number;
+  firstDone: boolean;
 }
 
 export const initialGameState: GameState = {
@@ -43,4 +53,13 @@ export const initialGameState: GameState = {
   showEmptyButton: false,
   gameComplete: false,
   showAddButton: false,
+  // Initialize new states
+  greenMarblesCount: 0,
+  blueMarblesCount: 0,
+  blackMarblesCount: 0,
+  showFinalAnswer: false,
+  finalAnswer: 0,
+  currentStep: 0,
+  finalAnswerOne: 0,
+  firstDone: false
 };
