@@ -1,12 +1,17 @@
-
 import * as Matter from "matter-js";
 import { useGameState } from "./state-utils";
 import { getSoundManager } from './sounds';
 import { useEffect, useRef, useState } from "react";
 import { Minus, Plus } from "lucide-react";
+import { platform } from "os";
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
+}
+
+interface Position {
+  x: any;
+  y: any;
 }
 
 interface Vector {
@@ -14,33 +19,50 @@ interface Vector {
   y: number;
 }
 
-
 export default function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
 
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
   const worldRef = useRef<Matter.World | null>(null);
+  const leftPlatformRef1 = useRef<Matter.Composite | null>(null);
+  const leftPlatformRef2 = useRef<Matter.Body | null>(null);
   const containerRef = useRef<Matter.Composite | null>(null);
-  const leftPlatformRef = useRef<Matter.Body | null>(null);
-  const rightPlatformRef = useRef<Matter.Body | null>(null);
-  const rightContainerRef = useRef<Matter.Composite | null>(null);
+  const rightPlatformRef1 = useRef<Matter.Composite | null>(null);
+  const rightPlatformRef2 = useRef<Matter.Body | null>(null);
   const finalContainerRef = useRef<Matter.Composite | null>(null);
-  const [slings, setSlings] = useState(true);
+  const [slingPosition, setSlingPosition] = useState<Position[]>([
+  //   { x: 300, y: 68 },
+  //   { x: 380, y: 68 }
+
+      { x: 200, y: 68 },
+      { x: 480, y: 68 }
+  ])
+
   const [finalAnswer, setFinalAnswer] = useState<number>(0);
 
-  const COLLISION_CATEGORIES = {
-    BALL: 0x0001,
-    CONTAINER_VISUAL: 0x0002,
-    CONTAINER_COLLISION: 0x0004,
-    FINAL_CONTAINER: 0x0008
-  };
+  const [currentStep, setCurrentStep] = useState(0);
+  const [positions, setPositions] = useState({
+    leftPlatform: { x: 190, y: 180 },
+    rightPlatform: { x: 610, y: 180 },
+    centerContainer: { x: 390, y: 340 },
+    finalContainer: { x: 550, y: 500 }
+  });
 
-  const createBallContainer = (x: number, y: number, width: number) => {
+  const createPlatform1 = (x: number, y: number, width: number) => {
     const height = 60;
     const wallThickness = 2;
 
     const composite = Matter.Composite.create();
+
+    // Background
+    // const bg = Matter.Bodies.rectangle(x, y - height/2, width, height, {
+    //   isStatic: true,
+    //   isSensor: true,  // Makes it not collide
+    //   render: {
+    //     fillStyle: "transparent",  // Light gray background
+    //   },
+    // });
 
     // Bottom
     const base = Matter.Bodies.rectangle(x, y, width, wallThickness, {
@@ -51,11 +73,20 @@ export default function Game({ sendAdminMessage }: GameProps) {
       },
     });
 
+    // // Top
+    // const top = Matter.Bodies.rectangle(x, y - height, width, wallThickness, {
+    //   isStatic: true,
+    //   render: {
+    //     fillStyle: "#666", 
+    //     strokeStyle: "transparent",
+    //   },
+    // });
+
     // Left wall
     const leftWall = Matter.Bodies.rectangle(x - width / 2 + wallThickness / 2, y - height / 2, wallThickness, height, {
       isStatic: true,
       render: {
-        fillStyle: "#666",
+        fillStyle: "transparent",
         strokeStyle: "transparent",
       },
     });
@@ -64,44 +95,18 @@ export default function Game({ sendAdminMessage }: GameProps) {
     const rightWall = Matter.Bodies.rectangle(x + width / 2 - wallThickness / 2, y - height / 2, wallThickness, height, {
       isStatic: true,
       render: {
-        fillStyle: "#666",
+        fillStyle: "transparent",
         strokeStyle: "transparent",
       },
     });
 
-    Matter.Composite.add(composite, [base, leftWall, rightWall]);
+    Matter.Composite.add(composite, [ base, leftWall, rightWall]);
     return composite;
   };
 
-  const createBall = (x: number, y: number, color: string, isStatic: boolean = false) => {
-    return Matter.Bodies.circle(x, y, 12, {
-      isStatic,
-      restitution: 0.1,
-      render: {
-        fillStyle: color,
-        strokeStyle: "black",
-        lineWidth: 1
-      },
-    });
-  };
-
-  function createVisualString(bodyA: Matter.Body, pointB: Matter.Vector) {
-    return Matter.Constraint.create({
-      bodyA,
-      pointB,
-      // no length here, so the distance is free to change
-      stiffness: 0,
-      damping: 0,
-      render: {
-        visible: true,
-        strokeStyle: "#000",
-        lineWidth: 2,
-      },
-    });
-  }
-
-  const createPlatform = (x: number, y: number, width: number) => {
-    return Matter.Bodies.rectangle(x, y, width, 4, {
+  const createPlatform2 = (x: number, y: number, width: number) => {
+    // Create the non-interactable base platform
+    return Matter.Bodies.rectangle(x, y, width, 2, {
       isStatic: true,
       render: {
         fillStyle: "#666",
@@ -110,7 +115,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
     });
   };
 
-    const createContainer = () => {
+  const createMainContainer = () => {
     const containerWidth = 40;
     const containerHeight = 240;
     const containerPosition = { x: 390, y: 340 };
@@ -119,22 +124,23 @@ export default function Game({ sendAdminMessage }: GameProps) {
     const containerComposite = Matter.Composite.create();
 
     const parts = [
-      Matter.Bodies.rectangle(containerPosition.x + containerWidth/2, containerPosition.y + containerHeight/2, containerWidth, 2, {
+      Matter.Bodies.rectangle(containerPosition.x + containerWidth/2, containerPosition.y + containerHeight/2, containerWidth+20, 12, {
         isStatic: true,
         render: { visible: false },
         collisionFilter: { category: 0x0004 }
       }),
-      Matter.Bodies.rectangle(containerPosition.x, containerPosition.y, 2, containerHeight, {
+      Matter.Bodies.rectangle(containerPosition.x, containerPosition.y + 10, 12, containerHeight + 20, {
         isStatic: true,
         render: { visible: false },
         collisionFilter: { category: 0x0004 }
       }),
-      Matter.Bodies.rectangle(containerPosition.x + containerWidth, containerPosition.y, 2, containerHeight, {
+      Matter.Bodies.rectangle(containerPosition.x + containerWidth, containerPosition.y + 10, 12, containerHeight + 20, {
         isStatic: true,
         render: { visible: false },
         collisionFilter: { category: 0x0004 }
       }),
     ];
+    
 
     const getColorForIndex = (index: number) => {
       const score = gameStateRef.current.containerScore;
@@ -174,12 +180,12 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
     Matter.Composite.add(containerComposite, [...parts, ...visualParts]);
     containerRef.current = containerComposite;
-    return containerComposite;
+    Matter.Composite.add(worldRef.current!, containerComposite);
   };
 
   const updateContainerColors = () => {
-    if (!containerRef.current) return;
-    const bodies = Matter.Composite.allBodies(containerRef.current);
+    const bodies = Matter.Composite.allBodies(containerRef.current!);
+    console.log('Bodies:', bodies);
     bodies.forEach(body => {
       if (body.label?.startsWith('container_segment_')) {
         const score = gameStateRef.current.containerScore;
@@ -191,13 +197,12 @@ export default function Game({ sendAdminMessage }: GameProps) {
   };
 
   const createFinalContainer = () => {
-    const containerWidth = 400;  // Wider to fit all balls
+    const containerWidth = 400;  
     const containerHeight = 100;
-    const containerPosition = { x: 550, y: 500 }; // Lower position for balls to drop into
+    const containerPosition = { x: 550, y: 500 }; 
 
     const containerComposite = Matter.Composite.create();
 
-    // Colors for 3D effect
     const colors = {
       front: "#E8F8FF",    // Light blue for front face
       back: "#E8F8FF",     // Light blue for back face
@@ -329,25 +334,39 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
     const parts = [
       // Left invisible border
-      Matter.Bodies.rectangle(containerPosition.x - 10, containerPosition.y + 10, containerWidth, 1, {
+      Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y - containerHeight/2+10 , 1, containerHeight, {
         isStatic: true,
-        render: { visible: false },
+        render: {
+          fillStyle: "#000"
+        },
         collisionFilter: { category: 0x0004 }
       }),
 
       // Right invisible border
-      Matter.Bodies.rectangle(containerPosition.x + containerWidth / 2 - 10, containerPosition.y + 10, 1, containerHeight, {
+      Matter.Bodies.rectangle(containerPosition.x + containerWidth / 2 - 10, containerPosition.y - containerHeight/2 + 10, 1, containerHeight, {
         isStatic: true,
-        render: { visible: false },
+        render: {
+          fillStyle: "#000"
+        },
         collisionFilter: { category: 0x0004 }
       }),
 
       // Bottom invisible border
-      Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y + 10, containerWidth, 1, {
+      Matter.Bodies.rectangle(containerPosition.x - 10, containerPosition.y + 10, containerWidth, 1, {
         isStatic: true,
-        render: { visible: false },
+        render: {
+          fillStyle: "#000"
+        },
         collisionFilter: { category: 0x0004 }
       }),
+      
+      Matter.Bodies.rectangle(containerPosition.x, containerPosition.y+10, 800, 20, {
+        isStatic: true,
+        render: {
+          visible: false
+        },
+      }),
+  
     ]
 
 
@@ -357,7 +376,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
   };
 
   const flipContainerAndPlatform = () => {
-    if (!containerRef.current || !worldRef.current || !rightPlatformRef.current || !rightContainerRef.current) return;
+    if (!containerRef.current || !worldRef.current || !rightPlatformRef2.current || !rightPlatformRef1.current) return;
 
     // Hide left platform, container, and scores
     if (worldRef.current) {
@@ -414,8 +433,8 @@ export default function Game({ sendAdminMessage }: GameProps) {
        });
  
        // Rotate right platform and container together
-       const rightPlatform = rightPlatformRef.current!;
-       const rightContainer = rightContainerRef.current!;
+       const rightPlatform = rightPlatformRef2.current!;
+       const rightContainer = rightPlatformRef1.current!;
  
        // Platform rotation
        const platformDx = rightPlatform.position.x - rightPivot.x;
@@ -457,6 +476,11 @@ export default function Game({ sendAdminMessage }: GameProps) {
         getSoundManager().play('pop');
         updateContainerColors();
         setTimeout(reduceScoreAndUpdateColor, 200);
+      }else{
+        setTimeout(() => {
+        setCurrentStep(8);
+        progressStep(8);
+        }, 1000);
       }
     };
 
@@ -464,25 +488,53 @@ export default function Game({ sendAdminMessage }: GameProps) {
      
   };
 
-  const createGround = () => {
-    return Matter.Bodies.rectangle(400, 590, 800, 20, {
-      isStatic: true,
-      render: {
-        visible: false
-      },
-    });
-  };
-
   function attachStringsToBall(
     body: Matter.Body,
     anchor1: Matter.Vector,
     anchor2: Matter.Vector,
-    world: Matter.World
   ) {
-    const stringA = createVisualString(body, anchor1);
-    const stringB = createVisualString(body, anchor2);
-    Matter.World.add(world, [stringA, stringB]);
+    const createString = (bodyA: Matter.Body, pointB: Matter.Vector) => {
+      return Matter.Constraint.create({
+        bodyA,
+        pointB,
+        // no length here, so the distance is free to change
+        stiffness: 0,
+        damping: 0,
+        render: {
+          visible: true,
+          strokeStyle: "#000",
+          lineWidth: 1,
+        },
+      });
+    };
+    const stringA = createString(body, anchor1);
+    const stringB = createString(body, anchor2);
+    Matter.World.add(worldRef.current!, [stringA, stringB]);
   }
+
+  // Create initial balls in containers (n-1 balls)
+  const createContainerBalls = (startX: number, color: string, count: number) => {
+    const balls = [];
+    const spacing = 20;
+    const startY = 160; 
+
+    for (let i = 0; i < count; i++) { 
+      const ball = Matter.Bodies.circle(
+        startX + (i % 4) * spacing - 30,
+        startY - Math.floor(i / 4) * spacing,
+        8,
+        {
+        restitution: 0.1,
+        render: {
+          fillStyle: color,
+          strokeStyle: "transparent",
+          lineWidth: 15
+        },
+      });
+      balls.push(ball);
+    }
+    return balls;
+  };
 
   const initializeScene = () => {
     const engine = Matter.Engine.create();
@@ -509,79 +561,82 @@ export default function Game({ sendAdminMessage }: GameProps) {
     const platformWidth = 100;
     const containerWidth = 80;
 
-    // Left side setup (container on left of platform)
-    const leftContainerX = 100;  // Start with container
-    const leftPlatformX = leftContainerX + containerWidth / 2 + platformWidth / 2;  // Platform right next to container
+    // Left side setup 
+    const leftPlatformX =  slingPosition[0].x - platformWidth / 2 + 30
+    const leftContainerX = leftPlatformX - containerWidth / 2 - platformWidth / 2;  
 
-    const leftContainer = createBallContainer(leftContainerX, 180, containerWidth);
-    const leftPlatform = createPlatform(leftPlatformX, 180, platformWidth);
-    leftPlatformRef.current = leftPlatform;
+    const leftPlat1 = createPlatform1(leftPlatformX-platformWidth, 180, platformWidth);
+    leftPlatformRef1.current = leftPlat1;
+    const leftPlatform = createPlatform2(leftPlatformX, 180, platformWidth);
+    leftPlatformRef2.current = leftPlatform;
 
-    // Right side setup (container on right of platform)
-    const rightPlatformX = 700 - containerWidth / 2 - platformWidth / 2;  // Start with platform
-    const rightContainerX = 700;  // Container right next to platform
+    // Right side setup 
+    const rightPlatformX = slingPosition[1].x + platformWidth / 2 + 80
+    const rightContainerX = rightPlatformX + containerWidth / 2 + platformWidth / 2;  
 
-    const rightPlatform = createPlatform(rightPlatformX, 180, platformWidth);
-    rightPlatformRef.current = rightPlatform;
-    const rightContainer = createBallContainer(rightContainerX, 180, containerWidth);
-    rightContainerRef.current = rightContainer;
+    const rightPlatform1 = createPlatform1(rightPlatformX+platformWidth, 180, platformWidth);
+    rightPlatformRef1.current = rightPlatform1;
+    const rightPlatform = createPlatform2(rightPlatformX, 180, platformWidth);
+    rightPlatformRef2.current = rightPlatform;
 
-    Matter.Composite.add(world, [leftPlatform, rightPlatform, leftContainer, rightContainer]);
-
-    // Create central container (centered between platforms)
-    const container = createContainer();
-    containerRef.current = container;
-    Matter.Composite.add(world, container);
-
-    // Create ground
-    const ground = createGround();
-    Matter.Composite.add(world, ground);
-
-    // Create initial balls in containers (n-1 balls)
-    const createContainerBalls = (startX: number, color: string, count: number) => {
-      const balls = [];
-      const spacing = 20;
-      const startY = 160;  // Start higher in container
-
-      for (let i = 0; i < count - 1; i++) {  // Create one less ball for container
-        const ball = createBall(startX + (i % 4) * spacing - 30, startY - Math.floor(i / 4) * spacing, color);
-        balls.push(ball);
-      }
-      return balls;
-    };
-
-    // Create active balls on platforms
-    const leftActiveBall = createBall(leftPlatformX, 150, "#4CAF50");
-    const rightActiveBall = createBall(rightPlatformX, 150, "#3498db");
-    
-    // Anchor points for the strings
-    const leftAnchor1 = { x: 224, y: 127 };
-    const leftAnchor2 = { x: 213, y: 130 };
-    const rightAnchor1 = { x: 570, y: 127 };
-    const rightAnchor2 = { x: 578, y: 127 };
-
-    // Attach strings to each active ball
-    attachStringsToBall(leftActiveBall, leftAnchor1, leftAnchor2, world)
-    attachStringsToBall(rightActiveBall, rightAnchor1, rightAnchor2, world)
+    Matter.Composite.add(world, [
+      leftPlat1,
+      leftPlatform,
+      rightPlatform1,
+      rightPlatform
+    ]);
 
     setGameStateRef(prevState => ({
       ...prevState,
-      activeBallLeft: leftActiveBall,
-      activeBallRight: rightActiveBall,
+      activeBallLeft: null,
+      activeBallRight: null,
       leftContainerBalls: createContainerBalls(leftContainerX, "#4CAF50", 8),
       rightContainerBalls: createContainerBalls(rightContainerX, "#3498db", 7),
       showAdditionStep: true
     }));
 
+    // Don't set showEmptyButton
+    setGameStateRef(prevState => ({
+      ...prevState,
+      showAdditionStep: true
+    }));
+
     Matter.Composite.add(world, [
-      leftActiveBall,
-      rightActiveBall,
       ...gameStateRef.current.leftContainerBalls,
       ...gameStateRef.current.rightContainerBalls
     ]);
 
     return { render, runner, engine };
   };
+
+  // function movePlatform(
+  //   platform: Matter.Body,
+  //   targetX: number,
+  //   steps: number = 60
+  // ) {
+  //   if (!platform) return;
+
+  //   const dx = targetX - platform.position.x;
+  //   const stepX = dx / steps;
+  //   let currentStep = 0;
+
+  //   function animate() {
+  //     if (currentStep >= steps) {
+  //       Matter.Body.setPosition(platform, {
+  //         x: targetX,
+  //         y: platform.position.y
+  //       });
+  //       return;
+  //     }
+  //     Matter.Body.setPosition(platform, {
+  //       x: platform.position.x + stepX,
+  //       y: platform.position.y
+  //     });
+  //     currentStep++;
+  //     requestAnimationFrame(animate);
+  //   }
+  //   animate();
+  // }
 
   const launchBall = (color: 'green' | 'blue') => {
     if (gameStateRef.current.clickDisabled) return;
@@ -592,16 +647,16 @@ export default function Game({ sendAdminMessage }: GameProps) {
     setGameStateRef(prevState => ({ ...prevState, clickDisabled: true }));
 
     const isGreen = color === 'green';
-    const platformX = isGreen ? 190 : 610;
-    const activeBall = isGreen ? gameStateRef.current.activeBallLeft : gameStateRef.current.activeBallRight;
+    const platformX = isGreen ? 170 : 610;
+    let activeBall = isGreen ? gameStateRef.current.activeBallLeft : gameStateRef.current.activeBallRight;
+    console.log('Active ball:', activeBall);
     const velocity = isGreen ? { x: 6.5, y: -5 } : { x: -5.8, y: -5 };
 
     // anchor points
-    const leftAnchor1 = { x: 224, y: 127 };
-    const leftAnchor2 = { x: 213, y: 130 };
+    const leftAnchor1 = { x: 230, y: 100 };
+    const leftAnchor2 = { x: 213, y: 100 };
     const rightAnchor1 = { x: 570, y: 127 };
     const rightAnchor2 = { x: 578, y: 127 };
-
     let anchor1: Matter.Vector, anchor2: Matter.Vector;
     if (color === 'green') {
       anchor1 = leftAnchor1;
@@ -611,8 +666,26 @@ export default function Game({ sendAdminMessage }: GameProps) {
       anchor2 = rightAnchor2;
     }
 
+    const containerBalls = isGreen ? gameStateRef.current.leftContainerBalls : gameStateRef.current.rightContainerBalls;
 
-    if (!activeBall) return;
+
+
+    if (!activeBall){
+      if (isGreen) {
+        activeBall = containerBalls[containerBalls.length - 1]; ;
+        setGameStateRef(prevState => ({
+          ...prevState,
+          activeBallLeft: activeBall
+        }));
+      }
+      else {
+        activeBall = gameStateRef.current.rightContainerBalls.slice(-1)[0];
+        setGameStateRef(prevState => ({
+          ...prevState,
+          activeBallRight: gameStateRef.current.rightContainerBalls.slice(-1)[0]
+        }));
+      }
+    }
 
     // Remove strings attached to the active ball
     const allConstraints = Matter.Composite.allConstraints(worldRef.current!).filter(constraint => 
@@ -623,7 +696,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
     });
     Matter.Body.setStatic(activeBall, false);
     Matter.Body.setVelocity(activeBall, velocity);
-
+    containerBalls[containerBalls.length - 1]; 
     setTimeout(() => {
       // Reduce score and manage ball movement
       setGameStateRef(prevState => ({
@@ -631,21 +704,18 @@ export default function Game({ sendAdminMessage }: GameProps) {
         [isGreen ? 'greenScore' : 'blueScore']: prevState[isGreen ? 'greenScore' : 'blueScore'] - 1,
         containerScore: prevState.containerScore + 1
       }));
+      updateContainerColors();
       getSoundManager().play('collect');
     }, 1000);
 
     setTimeout(() => {
       if (!worldRef.current) return;
       setTimeout(() => {
-        const containerBalls = isGreen ? gameStateRef.current.leftContainerBalls : gameStateRef.current.rightContainerBalls;
-
         if (containerBalls.length > 0 && gameStateRef.current.containerScore < 10) {
           const ballToMove = containerBalls[containerBalls.length - 1]; 
 
-          Matter.Body.setPosition(ballToMove, { x: platformX, y: 150 });
-          const stringA = createVisualString(ballToMove, isGreen ? anchor1 : anchor2);
-          const stringB = createVisualString(ballToMove, isGreen ? anchor2 : anchor1);
-          Matter.World.add(worldRef.current!, [stringA, stringB]);
+          Matter.Body.setPosition(ballToMove, { x: platformX, y: 130 });
+          attachStringsToBall(ballToMove, anchor1, anchor2);
 
           setGameStateRef(prevState => ({
             ...prevState,
@@ -664,10 +734,39 @@ export default function Game({ sendAdminMessage }: GameProps) {
     }, 1000);
   };
 
-  const launchGreen = () => launchBall('green');
-  const launchBlue = () => launchBall('blue');
+  const launchGreen = () => {
+    launchBall('green');
+    if (gameStateRef.current.greenScore === 0 && gameStateRef.current.activePhase === 'left') {
+      setGameStateRef(prevState => ({
+        ...prevState,
+        activePhase: 'right'
+      }));
+      setCurrentStep(3);
+      progressStep(3);
+    }
+  }
+  const launchBlue = () => {
+    launchBall('blue');
+    if (gameStateRef.current.containerScore === 10) {
+      setCurrentStep(4);
+      progressStep(4);
+      console.log('Container full!-----------------------------');
+    }
+  }
+  const handlefinalCount = (i:number) => {
+    if (i === -1 ) setFinalAnswer((prev) => prev - 1);
+    else setFinalAnswer((prev) => {
+      if (prev === 14) {
+          setCurrentStep(9);
+          progressStep(9);
+        }
+      return prev + 1;
+    });
+    
+  }
 
   const handleAddition = () => {
+    setCurrentStep(7);
     setGameStateRef(prevState => ({
       ...prevState,
       additionStarted: true,
@@ -675,29 +774,112 @@ export default function Game({ sendAdminMessage }: GameProps) {
     }));
 
     getSoundManager().play('rotate');
-    setSlings(false)
 
-    // Hide left and right platforms and prepare for animation
-    if (worldRef.current) {
-      const left = leftPlatformRef.current;
-      const right = rightPlatformRef.current;
-
-      Matter.Composite.remove(worldRef.current, left!);
-      Matter.Composite.remove(worldRef.current, right!);
-
-    // Start the flip animation after a short delay
     setTimeout(() => {
       flipContainerAndPlatform();
-    }, 500);
-  }; }
+    }, 1000);
+  }
+
+  const progressStep = (step: number = currentStep) => {
+    if (step === 0) {
+      setGameStateRef(prevState => ({
+        ...prevState,
+        greenScore: 8,
+        blueScore: 7,
+        containerScore: 0,
+        showAddButton: false,
+        clickDisabled: false,
+        activePhase: 'left'
+      }));
+      setTimeout(() => {
+        setCurrentStep(1);  
+        progressStep(1);
+      }, 1000);
+
+    } else if (step === 1) {
+      if (!containerRef.current) createMainContainer();
+      setTimeout(() => {
+      setCurrentStep(2);
+      progressStep(2);
+      }, 1000);
+      
+    } else if (step === 2) {
+      console.log('Main container created and added to the world.');
+      const activeball = gameStateRef.current.leftContainerBalls[gameStateRef.current.leftContainerBalls.length - 1];
+
+      setGameStateRef(prevState => ({ 
+        ...prevState,
+        activeBallLeft: activeball,
+        activePhase: 'left'
+      }));
+      console.log('Active ball:', activeball);
+      if (activeball) {
+        Matter.Body.setPosition(activeball, { x: 170, y: 130 });
+        attachStringsToBall(activeball, { x: 230, y: 100 }, { x: 213, y: 100 });
+        console.log('Active ball set to left container.');
+      }
+
+    } else if (step === 3) {
+      if (gameStateRef.current.blueScore === 0) {
+
+        const activeball = gameStateRef.current.rightContainerBalls[gameStateRef.current.rightContainerBalls.length - 1];
+        setGameStateRef(prevState => ({
+          ...prevState,
+          activeBallRight: activeball,
+          activePhase: 'right'
+        }));
+        console.log('Active ball:', activeball);
+        if (activeball) {
+          Matter.Body.setPosition(activeball, { x: 630, y: 130 });
+          attachStringsToBall(activeball, { x: 570, y: 100 }, { x: 578, y: 100 });
+          console.log('Active ball set to right container.');
+        }
+      }
+    } else if (step === 4) {
+      setTimeout(() => {
+        setCurrentStep(5);
+        progressStep(5);
+      }, 1000);
+
+    } else if (step === 5) {
+      Matter.Composite.remove(worldRef.current!, leftPlatformRef1.current!);
+      Matter.Composite.remove(worldRef.current!, leftPlatformRef2.current!);
+      Matter.Composite.remove(worldRef.current!, rightPlatformRef2.current!);
+      leftPlatformRef1.current
+
+      setTimeout(() => {
+        setCurrentStep(6);
+        progressStep(6);
+      }, 1000);
+
+    } else if (step === 6) {
+      const finalcontainer = createFinalContainer();
+      finalContainerRef.current = finalcontainer;
+      Matter.Composite.add(worldRef.current!, finalcontainer);
+
+    } else if (step === 8) {
+      Matter.Composite.remove(worldRef.current!, containerRef.current!);
+      Matter.Composite.remove(worldRef.current!, rightPlatformRef1.current!);
+    } else if (step === 9) {
+      Matter.Composite.remove(worldRef.current!, finalContainerRef.current!);
+      
+      // change ball colors
+      // const containerBalls = gameStateRef.current.leftContainerBalls.concat(gameStateRef.current.rightContainerBalls);
+      // containerBalls.forEach(ball => {
+      //   ball.render.fillStyle = "#000";
+      // });
+      // Matter.Composite.add(worldRef.current!, containerBalls);
+    }
+  };
 
   useEffect(() => {
     const { render, runner, engine } = initializeScene();
-    const world = engine.world;
 
-    Matter.Events.on(engine, 'beforeUpdate', () => {
-      updateContainerColors();
-    });
+    // Matter.Events.on(engine, 'beforeUpdate', () => {
+    //   updateContainerColors();
+    // });
+
+    progressStep();
 
     return () => {
       Matter.Render.stop(render);
@@ -721,66 +903,126 @@ export default function Game({ sendAdminMessage }: GameProps) {
     }
   }, [gameStateRef.current.containerScore]);
 
-  useEffect(() => {
-    if (gameStateRef.current.greenScore === 0 && gameStateRef.current.activePhase === 'left') {
-      setGameStateRef(prevState => ({
-        ...prevState,
-        activePhase: 'right'
-      }));
-    }
-  }, [gameStateRef.current.greenScore]);
 
   return (
     <div className="h-full w-full bg-white">
     <div className="flex flex-col h-full w-full justify-center items-center font-gaegu bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_1px),linear-gradient(rgba(0,0,0,.1)_1px,transparent_1px)] bg-[length:20px_20px]">
-      <div className="relative w-[800px] mx-auto p-5 ">
-        <div className="w-2/3 mx-auto bg-purple-100 border-2 shadow-[-3px_3px_0_0] border-black p-2 mb-5 rounded">
-          <p className="text-3xl font-bold text-center text-purple-600">
-            {gameStateRef.current.showAddButton
-              ? "Let's add the remaining marbles!"
-              : gameStateRef.current.activePhase === 'left'
-                ? "Shoot the green marbles first!"
-                : "Now shoot the blue marbles!"}
+      <div className="relative w-[800px] mx-auto ">
+        <section className="h-52 flex flex-col justify-center">
+          <h3 className="text-5xl font-bold text-center pb-10">
+            8 + 7 = ?
+          </h3>
+          <div className={`w-2/3 mx-auto text-2xl ${currentStep===4? 'bg-purple-600' : 'bg-purple-100'} border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`}>
+          <p className={`font-bold text-center ${currentStep===4? 'text-purple-100' : ' text-purple-600'}`}>
+            {(() => {
+              switch (currentStep) {
+                case 0:
+                  return "Let’s play a game to solve this. Imagine you have 8 green, 7 blue marbles and a slingshot!!"; 
+                case 1:
+                  return "And a container to collect the marbles";
+                case 2:
+                  if(gameStateRef.current.greenScore === 0) {
+                    return <>Let's start! <br/> Step 1 : Finish shooting the green marbles into the marble holder!  </>;
+                  } else {
+                    return "Keep shooting until the container is full!";
+                  }
+                case 3:
+                  return <> We have filled all 8 green ones. <br/> Step 2 : Let’s fill the blue ones.</>;
+                case 4: 
+                  return "Oops! The container is full.Let’s see how many marbles we have"
+                case 5:
+                  return "Look! 8+7 is same as 10+5";
+                case 6:
+                  return "Step 3 : Click on empty to add 10+5";
+                case 7:
+                  return "Let us see how many marbles we havecollected. Let’s empty them in a box";
+                case 8:
+                  return "Step 4 : Let us count the total marbles in the box";
+                case 9:
+                  return "Great Job! You calculated the answer"
+              }
+            })()}
           </p>
-        </div>
+          </div>
+        </section>
 
         <div className="relative w-full">
-          {slings && <>
-              <div className="absolute top-5 left-5 text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500">
-                {gameStateRef.current.greenScore}
-              </div>
-              <div className="absolute top-5 right-5 text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500">
-                {gameStateRef.current.blueScore}
-              </div>
-              <div className="absolute left-1/3 transform -translate-x-1/3 -translate-y-1/4 bottom-1/4 text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500">
-                {gameStateRef.current.containerScore}
-              </div>
-              
-              <img src="./1.png" alt="Arrow" className="absolute top-[7.7rem] z-10 left-52 w-16 h-14" />
-              <img src="./2.png" alt="Arrow" className="absolute top-[7.7rem] z-10 left-52 w-16 h-14" />
-              <img src="./3.png" alt="Arrow" className="absolute top-[7.7rem] z-10 right-44 w-16 h-14" />
-              <img src="./4.png" alt="Arrow" className="absolute top-[7.7rem] z-10 right-44 w-16 h-14" />
-            </>
+          {currentStep < 5 &&
+            <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500" style={{
+              top: slingPosition[0].y - 50,
+              left: slingPosition[0].x - 160
+            }}>
+              {gameStateRef.current.greenScore}
+            </div>
           }
+          {currentStep <= 5 &&
+            <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500" style={{
+              top: slingPosition[1].y - 50,
+              left: slingPosition[1].x + 220
+            }}>
+              {gameStateRef.current.blueScore}
+            </div>
+          }
+
+            {currentStep > 1 && currentStep <= 5 &&
+            <div className="absolute left-1/3 transform -translate-x-1/3 -translate-y-1/4 bottom-1/4 text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500">
+              {gameStateRef.current.containerScore}
+            </div>
+            }
+
+            {currentStep < 5 && <>
+              <img 
+                src="./1.png" 
+                alt="Arrow" 
+                className="absolute z-10 w-28 h-18" 
+                style={{
+                  top: slingPosition[0].y,
+                  left: slingPosition[0].x
+                }}
+              />
+              <img 
+                src="./2.png" 
+                alt="Arrow" 
+                className="absolute z-10 w-28 h-18"
+                style={{
+                  top: slingPosition[0].y, 
+                  left: slingPosition[0].x 
+                }}
+              />
+              <img 
+                src="./3.png" 
+                alt="Arrow" 
+                className="absolute z-10 w-28 h-18"
+                style={{
+                  top: slingPosition[1].y,
+                  left: slingPosition[1].x 
+                }}
+              />
+              <img 
+                src="./4.png" 
+                alt="Arrow" 
+                className="absolute z-10 w-28 h-18"
+                style={{
+                  top: slingPosition[1].y,
+                  left: slingPosition[1].x
+                }}
+              />
+            </>}
+
 
           <div
             ref={sceneRef}
             className="w-[800px] h-[600px] z-30 mx-auto rounded-lg bg-transparent"
-          >
-            {/* {renderProceedButton()} */}
-          </div>
-
-          {gameStateRef.current.showAddButton ? (
-            <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-              <button
-                onClick={handleAddition}
-                className="text-xl px-8 py-3 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90"
-              >
-                Add Remaining Marbles
-              </button>
+          />
+          {currentStep === 1 &&
+            <div className="absolute right-20 top-80 w-60 mx-auto text-xl  bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-1">
+              <p className="font-bold text-center text-purple-600">
+                Can hold a maximum of 10 marbles
+              </p>
             </div>
-          ) : (slings ? (
-            <>
+          }
+
+          {currentStep === 2 &&
               <button
                 onClick={launchGreen}
                 disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'left'}
@@ -789,6 +1031,9 @@ export default function Game({ sendAdminMessage }: GameProps) {
               >
                 Shoot
               </button>
+          }
+
+          {currentStep === 3 &&
               <button
                 onClick={launchBlue}
                 disabled={gameStateRef.current.clickDisabled || gameStateRef.current.activePhase !== 'right'}
@@ -797,38 +1042,55 @@ export default function Game({ sendAdminMessage }: GameProps) {
               >
                 Shoot
               </button>
-            </>
-            ) : (
+          }
+
+          {currentStep === 6 &&
+            <button
+              onClick={handleAddition}
+              disabled={currentStep != 6}
+              className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+                ${currentStep != 6 ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              Empty
+            </button>
+          }
+
+          { currentStep === 8 && (
             <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
-              <p className="text-4xl font-bold text-purple-500">
-                Count the marbles in the container
-              </p>
               <p className="flex">
                   <button 
-                    onClick={() => {
-                      setFinalAnswer(prev => prev === null ? 1 : prev + 1)
-                      getSoundManager().play('pop');
-                    }}
-                    className="text-md px-2 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90"
+                    onClick={() => handlefinalCount(-1)}
+                    className="text-purple-500"
                   >
-                    <Plus size={16} />
+                    <Minus size={24} />
                   </button>
-                  <p className="text-4xl mx-8 font-bold text-purple-500">
-                    {finalAnswer}
+                  <p className="text-2xl px-4 mx-8 font-bold border-2 border-purple-500 bg-white text-purple-500">
+                    count
                   </p>
                   <button 
-                    onClick={() => {
-                      setFinalAnswer(prev => prev === null ? 0 : prev - 1)
-                      getSoundManager().play('pop');
-                    }}
-                    className="text-md px-2 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90"
+                    onClick={() => handlefinalCount(1)}
+                    className="text-purple-500"
                   >
-                    <Minus size={16} />
+                    <Plus size={24} />
                   </button>
 
               </p>
+              <p className="text-4xl font-bold text-purple-500">
+                {finalAnswer}
+              </p>
             </div>
-          ))}
+          )}
+
+          {currentStep === 9 && (
+            <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
+              <p className="text-7xl font-bold text-purple-500">
+                15
+              </p>
+              <p className="text-7xl font-bold text-black">
+                great job! <br/> correct answer
+              </p>
+            </div>
+          )}
           </div>
       </div>
 
@@ -840,6 +1102,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
         }
       `}</style>
     </div>
-    </div>
+  </div>
   );
 };
+
