@@ -47,7 +47,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
     }));
 
     if (value === maxGreenMarbles + maxBlueMarbles) {
-      sendAdminMessage('student', 'Correct! 7 + 5 = 12');
+      sendAdminMessage('student', `Correct! ${maxGreenMarbles} + ${maxBlueMarbles} = ${totalMarbles}`);
     } else {
       sendAdminMessage('student', 'Try again!');
     }
@@ -61,7 +61,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
 
       <div className={`mx-auto text-xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-10`}>
         <p className={`font-bold text-center text-purple-600`}>
-          Select 7 green and 5 blue marbles
+          Select {maxGreenMarbles} green and {maxBlueMarbles} blue marbles
         </p>
       </div>
 

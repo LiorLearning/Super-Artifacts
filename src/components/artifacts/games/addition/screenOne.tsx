@@ -9,10 +9,9 @@ import { Catapult } from "./components/catapult";
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
-  setFirstDone: (done: boolean) => void;
 }
 
-export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
+export default function First({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const soundEffects = useSoundEffects();
   const { greenScore, blueScore, containerScore, activePhase, currentStep, finalAnswer, clickDisabled, showAddButton, additionStarted } = gameStateRef.current.state1;
@@ -148,7 +147,6 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
       }),
     ];
     
-
     const getColorForIndex = (index: number) => {
       const score = containerScore;
       const isActive = index >= 10 - score;
@@ -191,10 +189,6 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
   };
 
   useEffect(() => {
-    updateContainerColors();
-  }, [containerScore]);
-
-  const updateContainerColors = () => {
     const bodies = containerRef.current ? Matter.Composite.allBodies(containerRef.current!) : [];
     bodies.forEach(body => {
       if (body.label?.startsWith('container_segment_')) {
@@ -204,7 +198,7 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
         body.render.fillStyle = isActive ? "#BA69EF" : "#fff";
       }
     });
-  };
+  }, [containerScore]);
 
   const createFinalContainer = () => {
     const containerWidth = 400;  
@@ -411,93 +405,96 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
       }
     }));
 
-    // 
-     // Center container pivot
-     const containerPivot = { x: 400, y: 300 };
-     // Right side pivot (between platform and container)
-     const rightPivot = { x: 660, y: 180 }; // Middle point between platform and container
- 
-     const targetAngle = 4 * Math.PI / 5;
-     const flip_steps = 60;
-     const containerAngleStep = targetAngle / flip_steps;
-     const rightAngleStep = -targetAngle / flip_steps; // Opposite direction
-     let flip_currentStep = 0;
- 
-     const animate = () => {
-       if (flip_currentStep >= flip_steps) {
-         soundEffects.complete.play();
-         return;
-       }
- 
-       // Rotate center container
-       const containerBodies = Matter.Composite.allBodies(containerRef.current!);
-       containerBodies.forEach(body => {
-         const dx = body.position.x - containerPivot.x;
-         const dy = body.position.y - containerPivot.y;
-         
-         const cos = Math.cos(containerAngleStep);
-         const sin = Math.sin(containerAngleStep);
-         
-         const newX = containerPivot.x + (dx * cos - dy * sin);
-         const newY = containerPivot.y + (dx * sin + dy * cos);
-         
-         Matter.Body.setPosition(body, { x: newX, y: newY });
-         Matter.Body.rotate(body, containerAngleStep);
-       });
- 
-       // Rotate right platform and container together
-       const rightPlatform = rightPlatformRef2.current!;
-       const rightContainer = rightPlatformRef1.current!;
- 
-       // Platform rotation
-       const platformDx = rightPlatform.position.x - rightPivot.x;
-       const platformDy = rightPlatform.position.y - rightPivot.y;
-       
-       const rightCos = Math.cos(rightAngleStep);
-       const rightSin = Math.sin(rightAngleStep);
-       
-       const newPlatformX = rightPivot.x + (platformDx * rightCos - platformDy * rightSin);
-       const newPlatformY = rightPivot.y + (platformDx * rightSin + platformDy * rightCos);
-       
-       Matter.Body.setPosition(rightPlatform, { x: newPlatformX, y: newPlatformY });
-       Matter.Body.rotate(rightPlatform, rightAngleStep);
- 
-       // Container rotation
-       const containerBodiesRight = Matter.Composite.allBodies(rightContainer);
-       containerBodiesRight.forEach(body => {
-         const dx = body.position.x - rightPivot.x;
-         const dy = body.position.y - rightPivot.y;
-         
-         const newX = rightPivot.x + (dx * rightCos - dy * rightSin);
-         const newY = rightPivot.y + (dx * rightSin + dy * rightCos);
-         
-         Matter.Body.setPosition(body, { x: newX, y: newY });
-         Matter.Body.rotate(body, rightAngleStep);
-       });
- 
-       flip_currentStep++;
-       if (flip_currentStep < flip_steps) {
-         requestAnimationFrame(animate);
-       }
-     };
- 
-     animate();
+    // Center container pivot
+    const containerPivot = { x: 400, y: 300 };
+    // Right side pivot (between platform and container)
+    const rightPivot = { x: 660, y: 180 }; // Middle point between platform and container
+
+    const targetAngle = 4 * Math.PI / 5;
+    const flip_steps = 60;
+    const containerAngleStep = targetAngle / flip_steps;
+    const rightAngleStep = -targetAngle / flip_steps; // Opposite direction
+    let flip_currentStep = 0;
+
+    const animate = () => {
+      if (flip_currentStep >= flip_steps) {
+        soundEffects.complete.play();
+        return;
+      }
+
+      // Rotate center container
+      const containerBodies = Matter.Composite.allBodies(containerRef.current!);
+      containerBodies.forEach(body => {
+        const dx = body.position.x - containerPivot.x;
+        const dy = body.position.y - containerPivot.y;
+        
+        const cos = Math.cos(containerAngleStep);
+        const sin = Math.sin(containerAngleStep);
+        
+        const newX = containerPivot.x + (dx * cos - dy * sin);
+        const newY = containerPivot.y + (dx * sin + dy * cos);
+        
+        Matter.Body.setPosition(body, { x: newX, y: newY });
+        Matter.Body.rotate(body, containerAngleStep);
+      });
+
+      // Rotate right platform and container together
+      const rightPlatform = rightPlatformRef2.current!;
+      const rightContainer = rightPlatformRef1.current!;
+
+      // Platform rotation
+      const platformDx = rightPlatform.position.x - rightPivot.x;
+      const platformDy = rightPlatform.position.y - rightPivot.y;
+      
+      const rightCos = Math.cos(rightAngleStep);
+      const rightSin = Math.sin(rightAngleStep);
+      
+      const newPlatformX = rightPivot.x + (platformDx * rightCos - platformDy * rightSin);
+      const newPlatformY = rightPivot.y + (platformDx * rightSin + platformDy * rightCos);
+      
+      Matter.Body.setPosition(rightPlatform, { x: newPlatformX, y: newPlatformY });
+      Matter.Body.rotate(rightPlatform, rightAngleStep);
+
+      // Container rotation
+      const containerBodiesRight = Matter.Composite.allBodies(rightContainer);
+      containerBodiesRight.forEach(body => {
+        const dx = body.position.x - rightPivot.x;
+        const dy = body.position.y - rightPivot.y;
+        
+        const newX = rightPivot.x + (dx * rightCos - dy * rightSin);
+        const newY = rightPivot.y + (dx * rightSin + dy * rightCos);
+        
+        Matter.Body.setPosition(body, { x: newX, y: newY });
+        Matter.Body.rotate(body, rightAngleStep);
+      });
+
+      flip_currentStep++;
+      if (flip_currentStep < flip_steps) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    animate();
+
+    const totalSteps = containerScore;
+    let dropBallStep = 0;
 
     const reduceScoreAndUpdateColor = () => {
-      if (containerScore > 0) {
+      if (dropBallStep < totalSteps) {
         setGameStateRef(prevState => {
-          const newContainerScore = Math.max(0, prevState.state1.containerScore - 1);
-          return { 
-            ...prevState, 
-            state1: { 
-              ...prevState.state1, 
-              containerScore: newContainerScore 
-            } 
+          const newContainerScore = prevState.state1.containerScore - 1;
+          return {
+            ...prevState,
+            state1: {
+              ...prevState.state1,
+              containerScore: newContainerScore
+            }
           };
         });
         soundEffects.pop.play();
+        dropBallStep++;
         setTimeout(reduceScoreAndUpdateColor, 200);
-      }else{
+      } else {
         setTimeout(() => {
           setCurrentStep(8);
           progressStep(8);
@@ -708,8 +705,6 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
     }
 
     const containerBalls = isGreen ? leftContainerBallsRef.current : rightContainerBallsRef.current;
-
-
 
     if (!activeBall){ return; }
 
@@ -946,10 +941,6 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
   useEffect(() => {
     const { render, runner, engine } = initializeScene();
 
-    // Matter.Events.on(engine, 'beforeUpdate', () => {
-    //   updateContainerColors();
-    // });
-
     progressStep();
 
     return () => {
@@ -979,166 +970,166 @@ export default function First({ sendAdminMessage, setFirstDone }: GameProps) {
 
 
   return (
-      <div className="relative w-[800px] mx-auto ">
-        <section className="h-52 flex flex-col justify-center">
-          <h3 className="text-5xl font-bold text-center pb-10">
-            {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
-          </h3>
-          <div className={`w-2/3 mx-auto text-2xl ${currentStep===4? 'bg-purple-600' : 'bg-purple-100'} border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`}>
-          <p className={`font-bold text-center ${currentStep===4? 'text-purple-100' : ' text-purple-600'}`}>
-            {(() => {
-              switch (currentStep) {
-                case 0:
-                  return "Let’s play a game to solve this. Imagine you have 8 green, 7 blue marbles and a slingshot!!"; 
-                case 1:
-                  return "And a container to collect the marbles";
-                case 2:
-                  if(greenScore === maxGreenMarbles) {
-                    return <>Let's start! <br/> Step 1 : Finish shooting the green marbles into the marble holder!  </>;
-                  } else {
-                    return "Keep shooting until the container is full!";
-                  }
-                case 3:
-                  return <> We have filled all ${maxGreenMarbles} green ones. <br/> Step 2 : Let’s fill the blue ones.</>;
-                case 4: 
-                  return "Oops! The container is full.Let’s see how many marbles we have"
-                case 5:
-                  return `Look! ${maxGreenMarbles} + ${maxBlueMarbles} is same as 10+${maxGreenMarbles + maxBlueMarbles - 10}`;
-                case 6:
-                  return "Step 3 : Click on empty to add 10+5";
-                case 7:
-                  return "Let us see how many marbles we havecollected. Let’s empty them in a box";
-                case 8:
-                  return "Step 4 : Let us count the total marbles in the box";
-                case 9:
-                  return "Great Job! You calculated the answer"
-              }
-            })()}
-          </p>
-          </div>
-        </section>
-
-        <div className="relative w-full">
-          {currentStep < 5 &&
-            <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500" style={{
-              top: slingPosition[0].y - 50,
-              left: slingPosition[0].x - 160
-            }}>
-              {greenScore}
-            </div>
-          }
-          {currentStep <= 5 &&
-            <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500" style={{
-              top: slingPosition[1].y - 50,
-              left: slingPosition[1].x + 220
-            }}>
-              {blueScore}
-            </div>
-          }
-
-            {currentStep > 1 && currentStep <= 5 &&
-            <div className={`absolute ${currentStep === 5 ? "left-1/2 top-[2.5rem]" :  "bottom-1/4 left-1/3" } transform -translate-x-1/3 -translate-y-1/4  text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500`}>
-              {containerScore}
-            </div>
+    <div className="relative w-[800px] mx-auto ">
+      <section className="h-52 flex flex-col justify-center">
+        <h3 className="text-5xl font-bold text-center pb-10">
+          {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
+        </h3>
+        <div className={`w-2/3 mx-auto text-2xl ${currentStep===4? 'bg-purple-600' : 'bg-purple-100'} border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`}>
+        <p className={`font-bold text-center ${currentStep===4? 'text-purple-100' : ' text-purple-600'}`}>
+          {(() => {
+            switch (currentStep) {
+              case 0:
+                return "Let’s play a game to solve this. Imagine you have 8 green, 7 blue marbles and a slingshot!!"; 
+              case 1:
+                return "And a container to collect the marbles";
+              case 2:
+                if(greenScore === maxGreenMarbles) {
+                  return <>Let's start! <br/> Step 1 : Finish shooting the green marbles into the marble holder!  </>;
+                } else {
+                  return "Keep shooting until the container is full!";
+                }
+              case 3:
+                return <> We have filled all ${maxGreenMarbles} green ones. <br/> Step 2 : Let’s fill the blue ones.</>;
+              case 4: 
+                return "Oops! The container is full.Let’s see how many marbles we have"
+              case 5:
+                return `Look! ${maxGreenMarbles} + ${maxBlueMarbles} is same as 10+${maxGreenMarbles + maxBlueMarbles - 10}`;
+              case 6:
+                return "Step 3 : Click on empty to add 10+5";
+              case 7:
+                return "Let us see how many marbles we havecollected. Let’s empty them in a box";
+              case 8:
+                return "Step 4 : Let us count the total marbles in the box";
+              case 9:
+                return "Great Job! You calculated the answer"
             }
+          })()}
+        </p>
+        </div>
+      </section>
 
-            {currentStep < 5 && <>
-              <Catapult position={slingPosition[0]} type="half" side="left" />
-              <Catapult position={slingPosition[0]} type="full" side="left" />
-              <Catapult position={slingPosition[1]} type="half" side="right" />
-              <Catapult position={slingPosition[1]} type="full" side="right" />
-            </>}
-
-
-          <div
-            ref={sceneRef}
-            className="w-[800px] h-[600px] z-30 mx-auto rounded-lg bg-transparent"
-          />
-          {currentStep === 1 &&
-            <div className="absolute right-20 top-80 w-60 mx-auto text-xl  bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-1">
-              <p className="font-bold text-center text-purple-600">
-                Can hold a maximum of 10 marbles
-              </p>
-            </div>
-          }
-
-          {currentStep === 2 &&
-              <button
-                onClick={launchGreen}
-                disabled={clickDisabled || activePhase !== 'left'}
-                className={`absolute left-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                  ${(clickDisabled || activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                Shoot
-              </button>
-          }
-
-          {currentStep === 3 &&
-              <button
-                onClick={launchBlue}
-                disabled={clickDisabled || activePhase !== 'right'}
-                className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                  ${(clickDisabled || activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                Shoot
-              </button>
-          }
-
-          {currentStep === 5 &&
-            <span className="absolute right-1/4 top-[1.6rem] text-black fill-black">
-              <Cross size={56} fill="#a855f7" />
-            </span>
-          }
-
-          {currentStep === 6 &&
-            <button
-              onClick={handleAddition}
-              disabled={currentStep != 6}
-              className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                ${currentStep != 6 ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              Empty
-            </button>
-          }
-
-          { currentStep === 8 && (
-            <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
-              <p className="flex">
-                  <button 
-                    onClick={() => handlefinalCount(-1)}
-                    className="text-purple-500"
-                  >
-                    <Minus size={24} />
-                  </button>
-                  <p className="text-2xl px-4 mx-8 font-bold border-2 border-purple-500 bg-white text-purple-500">
-                    count
-                  </p>
-                  <button 
-                    onClick={() => handlefinalCount(1)}
-                    className="text-purple-500"
-                  >
-                    <Plus size={24} />
-                  </button>
-
-              </p>
-              <p className="text-4xl font-bold text-purple-500">
-                {finalAnswer}
-              </p>
-            </div>
-          )}
-
-          {currentStep === 9 && (
-            <div className="absolute h-30 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
-              <p className="text-7xl text-center font-bold text-purple-500">
-                15
-              </p>
-              <p className="text-7xl text-center font-bold text-black">
-                great job! <br/> correct answer
-              </p>
-              <Button onClick={() => setFirstDone(true)} className="text-2xl bg-purple-500 text-white">Next</Button>
-            </div>
-          )}
+      <div className="relative w-full">
+        {currentStep < 5 &&
+          <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500" style={{
+            top: slingPosition[0].y - 50,
+            left: slingPosition[0].x - 160
+          }}>
+            {greenScore}
           </div>
-      </div>  
+        }
+        {currentStep <= 5 &&
+          <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500" style={{
+            top: slingPosition[1].y - 50,
+            left: slingPosition[1].x + 220
+          }}>
+            {blueScore}
+          </div>
+        }
+
+          {currentStep > 1 && currentStep <= 5 &&
+          <div className={`absolute ${currentStep === 5 ? "left-1/2 top-[2.5rem]" :  "bottom-1/4 left-1/3" } transform -translate-x-1/3 -translate-y-1/4  text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500`}>
+            {containerScore}
+          </div>
+          }
+
+          {currentStep < 5 && <>
+            <Catapult position={slingPosition[0]} type="half" side="left" />
+            <Catapult position={slingPosition[0]} type="full" side="left" />
+            <Catapult position={slingPosition[1]} type="half" side="right" />
+            <Catapult position={slingPosition[1]} type="full" side="right" />
+          </>}
+
+
+        <div
+          ref={sceneRef}
+          className="w-[800px] h-[600px] z-30 mx-auto rounded-lg bg-transparent"
+        />
+        {currentStep === 1 &&
+          <div className="absolute right-20 top-80 w-60 mx-auto text-xl  bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-1">
+            <p className="font-bold text-center text-purple-600">
+              Can hold a maximum of 10 marbles
+            </p>
+          </div>
+        }
+
+        {currentStep === 2 &&
+            <button
+              onClick={launchGreen}
+              disabled={clickDisabled || activePhase !== 'left'}
+              className={`absolute left-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+                ${(clickDisabled || activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              Shoot
+            </button>
+        }
+
+        {currentStep === 3 &&
+            <button
+              onClick={launchBlue}
+              disabled={clickDisabled || activePhase !== 'right'}
+              className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+                ${(clickDisabled || activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              Shoot
+            </button>
+        }
+
+        {currentStep === 5 &&
+          <span className="absolute right-1/4 top-[1.6rem] text-black fill-black">
+            <Cross size={56} fill="#a855f7" />
+          </span>
+        }
+
+        {currentStep === 6 &&
+          <button
+            onClick={handleAddition}
+            disabled={currentStep != 6}
+            className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+              ${currentStep != 6 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            Empty
+          </button>
+        }
+
+        { currentStep === 8 && (
+          <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
+            <p className="flex">
+                <button 
+                  onClick={() => handlefinalCount(-1)}
+                  className="text-purple-500"
+                >
+                  <Minus size={24} />
+                </button>
+                <p className="text-2xl px-4 mx-8 font-bold border-2 border-purple-500 bg-white text-purple-500">
+                  count
+                </p>
+                <button 
+                  onClick={() => handlefinalCount(1)}
+                  className="text-purple-500"
+                >
+                  <Plus size={24} />
+                </button>
+
+            </p>
+            <p className="text-4xl font-bold text-purple-500">
+              {finalAnswer}
+            </p>
+          </div>
+        )}
+
+        {currentStep === 9 && (
+          <div className="absolute h-30 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
+            <p className="text-7xl text-center font-bold text-purple-500">
+              15
+            </p>
+            <p className="text-7xl text-center font-bold text-black">
+              great job! <br/> correct answer
+            </p>
+            <Button onClick={() => setGameStateRef(prevState => ({...prevState, currentScreen: 'second'}))} className="text-2xl bg-purple-500 text-white">Next</Button>
+          </div>
+        )}
+      </div>
+    </div>  
   );
 };
