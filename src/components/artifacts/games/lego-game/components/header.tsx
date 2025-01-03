@@ -8,7 +8,7 @@ interface HeaderProps {
 const Header = ({ fraction }: HeaderProps) => {
   return (
     <div className="bg-[#e3f261] p-6 border-t-4 border-b-4 border-blue-600">
-      <h1 className="text-2xl font-bold flex items-center justify-center gap-4">
+      <h1 className="text-4xl font-bold flex items-center justify-center gap-4">
         Convert 
         <div className="bg-white px-4 py-2 inline-flex flex-col items-center border border-black">
           <span>{fraction.numerator}</span>
