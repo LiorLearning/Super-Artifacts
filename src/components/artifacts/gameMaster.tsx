@@ -202,7 +202,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               currentGame && (
                 <div className="relative h-full w-full">
                   <div className="relative h-full w-full overflow-auto">
-                    <div className="scale-75">
+                    <div className="">
                       <GameComponent currentGame={currentGame} sendAdminMessage={sendAdminMessage} />
                     </div>
                   </div>

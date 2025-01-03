@@ -201,7 +201,7 @@ export default function First({ sendAdminMessage }: GameProps) {
   const createFinalContainer = () => {
     const containerWidth = 400;  
     const containerHeight = 100;
-    const containerPosition = { x: 550, y: 500 }; 
+    const containerPosition = { x: 500, y: 500 };
 
     const containerComposite = Matter.Composite.create();
 
@@ -247,7 +247,8 @@ export default function First({ sendAdminMessage }: GameProps) {
           render: {
             fillStyle: colors.back,
             strokeStyle: "#000",
-            lineWidth: 1
+            lineWidth: 1,
+            opacity: 0.3,
           },
           collisionFilter: { 
             category: 0x0002,
@@ -266,7 +267,8 @@ export default function First({ sendAdminMessage }: GameProps) {
           render: {
             fillStyle: colors.left,
             strokeStyle: "#000",
-            lineWidth: 1
+            lineWidth: 1,
+            opacity: 0.7,
           },
           collisionFilter: { 
             category: 0x0002,
@@ -304,7 +306,8 @@ export default function First({ sendAdminMessage }: GameProps) {
           render: {
             fillStyle: colors.right,
             strokeStyle: "#000",
-            lineWidth: 1
+            lineWidth: 1,
+            opacity: 0.7,
           },
           collisionFilter: { 
             category: 0x0002 ,
@@ -325,6 +328,7 @@ export default function First({ sendAdminMessage }: GameProps) {
             fillStyle: "rgba(232, 248, 255, 0.3)", // Semi-transparent front
             strokeStyle: "#000",
             lineWidth: 1,
+            opacity: 0.3,
           },
           collisionFilter: { 
             category: 0x0008 ,
@@ -336,39 +340,31 @@ export default function First({ sendAdminMessage }: GameProps) {
 
     const parts = [
       // Left invisible border
-      Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y - containerHeight/2+10 , 1, containerHeight, {
+      Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y - containerHeight/2, 1, containerHeight, {
         isStatic: true,
         render: {
-          fillStyle: "#000"
+          visible: false
         },
         collisionFilter: { category: 0x0004 }
       }),
 
       // Right invisible border
-      Matter.Bodies.rectangle(containerPosition.x + containerWidth / 2 - 10, containerPosition.y - containerHeight/2 + 10, 1, containerHeight, {
+      Matter.Bodies.rectangle(containerPosition.x + containerWidth / 2 - 10, containerPosition.y - containerHeight/2, 1, containerHeight, {
         isStatic: true,
         render: {
-          fillStyle: "#000"
+          visible: false
         },
         collisionFilter: { category: 0x0004 }
       }),
 
       // Bottom invisible border
-      Matter.Bodies.rectangle(containerPosition.x - 10, containerPosition.y + 10, containerWidth, 1, {
-        isStatic: true,
-        render: {
-          fillStyle: "#000"
-        },
-        collisionFilter: { category: 0x0004 }
-      }),
-      
-      Matter.Bodies.rectangle(containerPosition.x, containerPosition.y+10, 800, 20, {
+      Matter.Bodies.rectangle(containerPosition.x - 10, containerPosition.y, containerWidth, 1, {
         isStatic: true,
         render: {
           visible: false
         },
+        collisionFilter: { category: 0x0004 }
       }),
-  
     ]
 
 
@@ -381,20 +377,13 @@ export default function First({ sendAdminMessage }: GameProps) {
     if (!containerRef.current || !worldRef.current || !rightPlatformRef2.current || !rightPlatformRef1.current) return;
 
     // Hide left platform, container, and scores
-    if (worldRef.current) {
-      const bodies = Matter.Composite.allBodies(worldRef.current);
-      bodies.forEach(body => {
-        if (body.position.x < 400) {
-          Matter.Composite.remove(worldRef.current!, body);
-        }
-      });
-    }
+    const bodies = Matter.Composite.allBodies(worldRef.current!);
+    bodies.forEach(body => {
+      if (body.position.x < 400) {
+        Matter.Composite.remove(worldRef.current!, body);
+      }
+    });
 
-    // Create and add final container
-    const finalContainer = createFinalContainer();
-    Matter.Composite.add(worldRef.current, finalContainer);
-
-    // Don't set showEmptyButton
     setGameStateRef(prevState => ({
       ...prevState,
       state1: {
@@ -543,8 +532,9 @@ export default function First({ sendAdminMessage }: GameProps) {
         render: {
           fillStyle: color,
           strokeStyle: "transparent",
-          lineWidth: 15
+          lineWidth: 15,
         },
+        label: "ball"
       });
       balls.push(ball);
     }
@@ -633,35 +623,6 @@ export default function First({ sendAdminMessage }: GameProps) {
 
     return { render, runner, engine };
   };
-
-  // function movePlatform(
-  //   platform: Matter.Body,
-  //   targetX: number,
-  //   steps: number = 60
-  // ) {
-  //   if (!platform) return;
-
-  //   const dx = targetX - platform.position.x;
-  //   const stepX = dx / steps;
-  //   let currentStep = 0;
-
-  //   function animate() {
-  //     if (currentStep >= steps) {
-  //       Matter.Body.setPosition(platform, {
-  //         x: targetX,
-  //         y: platform.position.y
-  //       });
-  //       return;
-  //     }
-  //     Matter.Body.setPosition(platform, {
-  //       x: platform.position.x + stepX,
-  //       y: platform.position.y
-  //     });
-  //     currentStep++;
-  //     requestAnimationFrame(animate);
-  //   }
-  //   animate();
-  // }
 
   const launchBall = (color: 'green' | 'blue') => {
     if (clickDisabled) return;
@@ -857,9 +818,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       
     } else if (step === 2) {
       if (!activeBallLeftRef.current) {
-        console.log('leftContainerBalls at step 2', leftContainerBallsRef.current);
         const activeball = leftContainerBallsRef.current[leftContainerBallsRef.current.length - 1];
-        console.log('activeball at step 2', activeball);
         activeBallLeftRef.current = activeball;
         leftContainerBallsRef.current = leftContainerBallsRef.current.slice(0, -1);
         setGameStateRef(prevState => ({ 
@@ -869,7 +828,6 @@ export default function First({ sendAdminMessage }: GameProps) {
             activePhase: 'left',
           }
         }));
-        console.log('Active ball:', activeball);
         if (activeball) {
           Matter.Body.setPosition(activeball, { x: 170, y: 130 });
           attachStringsToBall(activeball, { x: 230, y: 100 }, { x: 213, y: 100 });
@@ -911,12 +869,18 @@ export default function First({ sendAdminMessage }: GameProps) {
         setCurrentStep(6);
         progressStep(6);
       }, duration);
-
     } else if (step === 6) {
-      const finalcontainer = createFinalContainer();
-      finalContainerRef.current = finalcontainer;
-      Matter.Composite.add(worldRef.current!, finalcontainer);
+      const bodies = Matter.Composite.allBodies(worldRef.current!);
+      const balls = bodies.filter(body => body.label === 'ball');
+      balls.forEach(ball => {
+        Matter.Composite.remove(worldRef.current!, ball);
+      });
 
+      // Create and add final container
+      const finalContainer = createFinalContainer();
+      worldRef.current = Matter.World.add(worldRef.current!, finalContainer);
+
+      worldRef.current = Matter.World.add(worldRef.current, balls);
     } else if (step === 8) {
       Matter.Composite.remove(worldRef.current!, containerRef.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef1.current!);
@@ -965,7 +929,7 @@ export default function First({ sendAdminMessage }: GameProps) {
 
   return (
     <div className="relative w-[800px] mx-auto ">
-      <section className="h-52 flex flex-col justify-center">
+      <section className="mt-16 h-52 flex flex-col justify-center">
         <h3 className="text-5xl font-bold text-center pb-10">
           {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
         </h3>
@@ -974,7 +938,7 @@ export default function First({ sendAdminMessage }: GameProps) {
           {(() => {
             switch (currentStep) {
               case 0:
-                return "Let’s play a game to solve this. Imagine you have 8 green, 7 blue marbles and a slingshot!!"; 
+                return `Let's play a game to solve this. Imagine you have ${maxGreenMarbles} green, ${maxBlueMarbles} blue marbles and a slingshot!!`; 
               case 1:
                 return "And a container to collect the marbles";
               case 2:
@@ -984,15 +948,15 @@ export default function First({ sendAdminMessage }: GameProps) {
                   return "Keep shooting until the container is full!";
                 }
               case 3:
-                return <> We have filled all ${maxGreenMarbles} green ones. <br/> Step 2 : Let’s fill the blue ones.</>;
+                return <> We have filled all {maxGreenMarbles} green ones. <br/> Step 2 : Let's fill the blue ones.</>;
               case 4: 
-                return "Oops! The container is full.Let’s see how many marbles we have"
+                return "Oops! The container is full. Let's see how many marbles we have";
               case 5:
                 return `Look! ${maxGreenMarbles} + ${maxBlueMarbles} is same as 10+${maxGreenMarbles + maxBlueMarbles - 10}`;
               case 6:
-                return "Step 3 : Click on empty to add 10+5";
+                return `Step 3 : Click on empty to add 10+${maxGreenMarbles + maxBlueMarbles - 10}`;
               case 7:
-                return "Let us see how many marbles we havecollected. Let’s empty them in a box";
+                return "Let us see how many marbles we have collected. Let's empty them in a box";
               case 8:
                 return "Step 4 : Let us count the total marbles in the box";
               case 9:
