@@ -35,7 +35,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       { x: 480, y: 68 }
   ]);
 
-  const duration = 500;
+  const duration = 5000;
 
   const setCurrentStep = (step: number) => {
     setGameStateRef(prev => ({ 
