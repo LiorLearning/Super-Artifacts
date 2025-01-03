@@ -29,6 +29,10 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
 
+    const gridSize = 10;
+    const gridHelper = new THREE.GridHelper(gridSize, gridSize);
+    scene.add(gridHelper);
+
     // Camera setup
     const camera = new THREE.OrthographicCamera(
       -5, 5, 3.5, -3,

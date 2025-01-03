@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -20,7 +20,22 @@ export const useDragControls = ({
   orbitControls 
 }: DragControlsProps) => {
   const dragControlsRef = useRef<DragControls | null>(null);
-  const containerStatesRef = useRef<boolean[]>([false, false, false, false]);
+  const containerStatesRef = useRef<boolean[]>([false, false, false, false, false, false, false, false, false, false, false]);
+
+  const SNAPPABLE_POSITIONS = [
+    new THREE.Vector3(0, 0, -2),
+    new THREE.Vector3(0, 0, -4),
+    new THREE.Vector3(2, 0, 0),
+    new THREE.Vector3(2, 0, -2),
+    new THREE.Vector3(2, 0, -4),
+    new THREE.Vector3(4, 0, -2),
+    new THREE.Vector3(4, 0, 0),
+    new THREE.Vector3(HOLDER_POSITION[0], HOLDER_POSITION[1], HOLDER_POSITION[2]),
+    new THREE.Vector3(HOLDER_POSITION[0], HOLDER_POSITION[1], HOLDER_POSITION[2] + 1),
+    new THREE.Vector3(HOLDER_POSITION[0], HOLDER_POSITION[1], HOLDER_POSITION[2] + 2),
+    new THREE.Vector3(HOLDER_POSITION[0], HOLDER_POSITION[1], HOLDER_POSITION[2] + 3),
+  ];
+  
 
   useEffect(() => {
     if (!scene || !camera || !renderer || !dragObjects.length || !orbitControls) return;
@@ -46,47 +61,59 @@ export const useDragControls = ({
       );
 
       // Define container cell positions based on holder
-      const containerPositions = [];
-      for (let i = 0; i < 4; i++) {
-        containerPositions.push(
-          new THREE.Vector3(
-            HOLDER_POSITION[0], 
-            HOLDER_POSITION[1], 
-            HOLDER_POSITION[2] + i
-          )
-        );
+      const snappablePositions = [];
+      for (let i = 0; i < SNAPPABLE_POSITIONS.length; i++) {
+        snappablePositions.push(SNAPPABLE_POSITIONS[i]);
       }
+
+      snappablePositions.forEach(pos => {
+        const geometry = new THREE.SphereGeometry(0.1, 16, 16);
+        const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const dot = new THREE.Mesh(geometry, material);
+        dot.position.copy(pos);
+        scene.add(dot);
+      });
 
       let minDist = Infinity;
       let closestCellIndex = -1;
       
       // Find which container cell is closest and empty
-      containerPositions.forEach((pos, index) => {
+      snappablePositions.slice(-4).forEach((pos, index) => {
         const dist = piecePos.distanceTo(pos);
         if (dist < minDist && !containerStatesRef.current[index]) {
           minDist = dist;
           closestCellIndex = index;
         }
       });
-      
+
+      console.group('Drag End Debug');
+      console.log('Snappable Positions:', snappablePositions);
+      console.log('Closest Cell Index:', closestCellIndex);
+      console.log('Container States:', containerStatesRef.current);
+      console.groupEnd();
+
+
       // Adjust threshold as desired 
-      const snapThreshold = 2.0;
+      const snapThreshold = 4.0;
 
       // If within snapThreshold of an empty cell, snap it in place
       if (closestCellIndex !== -1 && minDist < snapThreshold) {
-        const snapPosition = containerPositions[closestCellIndex].clone();
+        const snapPosition = snappablePositions[closestCellIndex].clone();
         snapPosition.y += 0.1;
         snapPosition.x += 0.1;
         event.object.position.copy(snapPosition);
-        
-        // Update container states
-        const newContainerStates = [...containerStatesRef.current];
-        newContainerStates[closestCellIndex] = true;
-        containerStatesRef.current = newContainerStates;
       } else {
-        // If out of range, move back to the right side
-        event.object.position.set(3, 1, Math.random() * 4 - 2);
+        // If out of range, find an empty snappable position
+        const emptyPositionIndex = snappablePositions.findIndex((_, index) => !containerStatesRef.current[index]);
+        if (emptyPositionIndex !== -1) {
+          const emptyPosition = snappablePositions[emptyPositionIndex];
+          event.object.position.copy(emptyPosition);
+        }
       }
+      // Update container states
+      const newContainerStates = [...containerStatesRef.current];
+      newContainerStates[closestCellIndex] = true;
+      containerStatesRef.current = newContainerStates;
     };
 
     dragControlsRef.current.addEventListener('dragstart', onDragStart);

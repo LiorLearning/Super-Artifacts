@@ -2,12 +2,12 @@ import LegoGame from '../lego-game';
 import Header from '../components/header';
 import { useGameState } from '../state-utils';
 import { firstScreenFooterTexts } from './constants';
-
+import { Button } from '@/components/custom_ui/button';
 const MainContent = () => {
   const { gameStateRef } = useGameState();
   const { step, fraction } = gameStateRef.current.state1;
 
-  const color = step <= 6 ? 'pink-500' : step <= 12 ? 'blue-500' : 'purple-500';
+  const color = step <= 6 ? 'pink-400' : step <= 12 ? 'blue-400' : 'purple-400';
   const stepNumber = step <= 6 ? 1 : step <= 12 ? 2 : 3;
   const stepText = step <= 12 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
 
@@ -55,12 +55,21 @@ const MainContent = () => {
 
 
 const Footer = () => {
-  const { gameStateRef } = useGameState();
+  const { gameStateRef, setGameStateRef } = useGameState();
   const { step, fraction } = gameStateRef.current.state1;
   const denominator = fraction.denominator;
   const numerator = fraction.numerator;
   
   const stepText = firstScreenFooterTexts(numerator, denominator)[step];
+
+  const handleNumeratorClick = () => {
+    console.log('numerator clicked');
+    // Send admin message
+  };
+
+  const handleDenominatorClick = () => {
+    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
+  };
 
   return (
     <div className="relative">
@@ -69,6 +78,12 @@ const Footer = () => {
           <span key={index} style={{ color: line.color || 'black' }}>{line.text}<br /></span>
         ))}
       </div>
+      {step === 2 && (
+        <div className="flex justify-center mt-4">
+          <Button className="bg-pink-400 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={handleNumeratorClick}>NUMERATOR ({numerator})</Button>
+          <Button className="bg-pink-400 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={handleDenominatorClick}>DENOMINATOR ({denominator})</Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -6,5 +6,11 @@ export const COLORS = {
   PURPLE: 0x800080, // Purple
   GREEN: 0x66ff66, // Light Green
   BROWN: 0xA0522D, // Sienna
+  RED: 0xFF0000, // Pure Red
+  ORANGE: 0xFFA500, // Orange
+  YELLOW: 0xFFFF00, // Yellow
+  CYAN: 0x00FFFF, // Cyan
+  MAGENTA: 0xFF00FF, // Magenta
 };
 
+export const DURATION = 2000;
