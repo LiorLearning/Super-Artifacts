@@ -2,14 +2,16 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { HOLDER_POSITION } from '../utils/constants';
+import { HOLDER_POSITION, SNAPPABLE_POSITIONS } from '../utils/constants';
 
 interface DragControlsProps {
   scene: THREE.Scene | null;
   camera: THREE.OrthographicCamera | null;
   renderer: THREE.WebGLRenderer | null;
   dragObjects: THREE.Mesh[];
+  containerAssignmentsRef: React.MutableRefObject<Array<THREE.Mesh | null>>;
   orbitControls: OrbitControls | null;
+  onDragEnd: (count: number) => void;
 }
 
 export const useDragControls = ({ 
@@ -17,37 +19,11 @@ export const useDragControls = ({
   camera, 
   renderer, 
   dragObjects,
-  orbitControls 
+  containerAssignmentsRef,
+  orbitControls,
+  onDragEnd
 }: DragControlsProps) => {
   const dragControlsRef = useRef<DragControls | null>(null);
-
-  /**
-   * Instead of a boolean array, we’ll store the reference to 
-   * whichever piece currently occupies a given position.
-   * - If array cell is `null`, then that position is free.
-   * - If array cell is a THREE.Mesh, that position is occupied by that mesh.
-   */
-  const containerAssignmentsRef = useRef<Array<THREE.Mesh | null>>(
-    new Array(11).fill(null)
-  );
-
-  /**
-   * Note: If you only want to snap to the last 4 positions (the “container”),
-   * feel free to adjust the code logic or the threshold checks below.
-   */
-  const SNAPPABLE_POSITIONS = [
-    new THREE.Vector3(0, 0, -2),
-    new THREE.Vector3(0, 0, -4),
-    new THREE.Vector3(2, 0, 0),
-    new THREE.Vector3(2, 0, -2),
-    new THREE.Vector3(2, 0, -4),
-    new THREE.Vector3(4, 0, -2),
-    new THREE.Vector3(4, 0, 0),
-    new THREE.Vector3(HOLDER_POSITION[0], HOLDER_POSITION[1], HOLDER_POSITION[2]),
-    new THREE.Vector3(HOLDER_POSITION[0], HOLDER_POSITION[1], HOLDER_POSITION[2] + 1),
-    new THREE.Vector3(HOLDER_POSITION[0], HOLDER_POSITION[1], HOLDER_POSITION[2] + 2),
-    new THREE.Vector3(HOLDER_POSITION[0], HOLDER_POSITION[1], HOLDER_POSITION[2] + 3),
-  ];
 
   useEffect(() => {
     if (!scene || !camera || !renderer || !dragObjects.length || !orbitControls) return;
@@ -76,7 +52,7 @@ export const useDragControls = ({
     };
 
     // EVENT: onDragEnd
-    const onDragEnd = (event: { object: THREE.Object3D }) => {
+    const handleOnDragEnd = (event: { object: THREE.Object3D }) => {
       orbitControls.enabled = true;
       const mesh = event.object as THREE.Mesh;
       const material = mesh.material as THREE.MeshPhongMaterial;
@@ -92,7 +68,7 @@ export const useDragControls = ({
       // (Optional) Visual debugging: place small spheres where the snappable positions are
       // You can remove this in production
       SNAPPABLE_POSITIONS.forEach(pos => {
-        const sphereGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+        const sphereGeometry = new THREE.SphereGeometry(0.1, 8, 8);
         const sphereMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
         const dot = new THREE.Mesh(sphereGeometry, sphereMat);
         dot.position.copy(pos);
@@ -133,25 +109,25 @@ export const useDragControls = ({
         containerAssignmentsRef.current[closestIndex] = mesh;
         mesh.userData.containerIndex = closestIndex;
       } else {
-        // If no suitable snap cell found, you can define "fallback" logic here:
-        // 1) Return it to some default position, or
-        // 2) Leave it where the user dropped it. (Your preference)
-        //
-        // Below is an example to push it back to some default:
-        const defaultPos = new THREE.Vector3(0, 2, 0);
+        const emptyIndex = containerAssignmentsRef.current.findIndex(item => item === null && containerAssignmentsRef.current.indexOf(item) < 7);
+        const defaultPos = SNAPPABLE_POSITIONS[emptyIndex].clone();
         mesh.position.copy(defaultPos);
       }
+
+      // Count pieces at y = 1
+      const piecesAtYOne = dragObjects.filter(obj => Math.abs(obj.position.y - 1) < 0.2).length;
+      onDragEnd(piecesAtYOne);
     };
 
     // Add event listeners
     dragControlsRef.current.addEventListener('dragstart', onDragStart);
-    dragControlsRef.current.addEventListener('dragend', onDragEnd);
+    dragControlsRef.current.addEventListener('dragend', handleOnDragEnd);
 
     // Cleanup
     return () => {
       if (dragControlsRef.current) {
         dragControlsRef.current.removeEventListener('dragstart', onDragStart);
-        dragControlsRef.current.removeEventListener('dragend', onDragEnd);
+        dragControlsRef.current.removeEventListener('dragend', handleOnDragEnd);
         dragControlsRef.current.dispose();
       }
     };

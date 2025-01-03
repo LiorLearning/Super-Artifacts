@@ -29,7 +29,7 @@ export const GameStateProvider: React.FC<{
       gameStateRef.current = { ...gameStateRef.current, ...newState }
     }
 
-    console.log('gameStateRef.current', gameStateRef.current);
+    // console.log('gameStateRef.current', gameStateRef.current);
     
     // Conditionally trigger a re-render
     if (shouldRerender) {

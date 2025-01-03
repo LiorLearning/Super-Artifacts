@@ -3,13 +3,28 @@ import Header from '../components/header';
 import { useGameState } from '../state-utils';
 import { firstScreenFooterTexts } from './constants';
 import { Button } from '@/components/custom_ui/button';
+import { useState } from 'react';
 const MainContent = () => {
-  const { gameStateRef } = useGameState();
-  const { step, fraction } = gameStateRef.current.state1;
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const { step, fraction, piecesAtYOne } = gameStateRef.current.state1;
+  const numerator = fraction.numerator;
+  const denominator = fraction.denominator;
 
   const color = step <= 6 ? 'pink-400' : step <= 12 ? 'blue-400' : 'purple-400';
   const stepNumber = step <= 6 ? 1 : step <= 12 ? 2 : 3;
   const stepText = step <= 12 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
+
+  const [answer, setAnswer] = useState('');
+
+  const handleAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setAnswer(inputValue);
+    if (inputValue === numerator.toString()) {
+      console.log('Correct answer!');
+      setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
+    }
+  };
+  
 
   return (
     <div className="flex flex-col m-4">
@@ -35,9 +50,9 @@ const MainContent = () => {
                 <>
                   <span>CREATE</span>
                   <div className="bg-white text-black px-3 py-1 inline-flex flex-col items-center">
-                    <span>{fraction.numerator}</span>
+                    <span>{numerator}</span>
                     <div className="w-3 h-px bg-black" />
-                    <span>{fraction.denominator}</span>
+                    <span>{denominator}</span>
                   </div>
                   <span>LEGO BLOCKS</span>
                 </>
@@ -49,6 +64,31 @@ const MainContent = () => {
           </div>
         </div>
       )}
+      {step === 6 && (
+        <div className="flex justify-center mt-4 items-center space-x-4">
+          <div className="text-3xl font-bold text-center">
+            <span>1</span>
+            <div className="w-full h-px bg-black my-1" />
+            <span>{denominator}</span>
+          </div>
+          <span className="text-3xl">x</span>
+          <div className="text-3xl font-bold text-center text-purple-500 border-4 border-purple-500 px-3 py-1">
+            <span>{piecesAtYOne}</span>
+          </div>
+          <span className="text-3xl">x</span>
+          <div className="text-3xl font-bold text-center">
+            <input 
+              type="text" 
+              value={answer} 
+              placeholder="?"
+              onChange={handleAnswerChange} 
+              className="w-12 text-center border-b-2 border-black"
+            />
+            <div className="w-full h-px bg-black my-1" />
+            <span>{denominator}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -56,7 +96,7 @@ const MainContent = () => {
 
 const Footer = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step, fraction } = gameStateRef.current.state1;
+  const { step, fraction, piecesAtYOne } = gameStateRef.current.state1;
   const denominator = fraction.denominator;
   const numerator = fraction.numerator;
   
@@ -73,6 +113,19 @@ const Footer = () => {
 
   return (
     <div className="relative">
+      {step === 5 && (
+        <div className="flex justify-center mt-4 items-center space-x-4">
+          <div className="text-3xl font-bold text-center">
+            <span>1</span>
+            <div className="w-full h-px bg-black my-1" />
+            <span>{denominator}</span>
+          </div>
+          <span className="text-3xl">x</span>
+          <div className="text-3xl font-bold text-center text-purple-500 border-4 border-purple-500 px-3 py-1">
+            <span>{piecesAtYOne}</span>
+          </div>
+        </div>
+      )}
       <div className="text-center text-3xl font-bold mt-8 space-y-2">
         {stepText.lines.map((line, index) => (
           <span key={index} style={{ color: line.color || 'black' }}>{line.text}<br /></span>

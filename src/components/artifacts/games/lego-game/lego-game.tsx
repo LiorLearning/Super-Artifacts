@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useThreeSetup } from './hooks/useThreeSetup';
 import { useDragControls } from './hooks/useDragControls';
 import { useWindowResize } from './hooks/useWindowResize';
@@ -24,6 +24,21 @@ const LegoGame = () => {
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step, fraction } = gameStateRef.current.state1;
+
+  const containerAssignmentsRef = useRef<Array<THREE.Mesh | null>>(
+    new Array(11).fill(null)
+  );
+
+  const onDragEnd = (count: number) => {
+    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, piecesAtYOne: count } }));
+    if (count === 1) {
+      goToStep(4);
+    } else if (count < 7) {
+      goToStep(5);
+    } else if (count === 7) {
+      goToStep(6);
+    }
+  };
 
   const goToStep = (step: number) => {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step } }));
@@ -51,10 +66,13 @@ const LegoGame = () => {
 
   useEffect(() => {
     if (step === 0) {
+      // Create a piece in the first position
       const piece = createPiece({ scene: scene!, position: [3, 0, 0], color: COLORS.MAGENTA });
       if (piece) {
         setPieces([piece]);
       }
+
+      // Remove the piece after a delay
       if (piece) {
         setTimeout(() => {
           cleanUpPieces(scene!, [piece]);
@@ -64,20 +82,30 @@ const LegoGame = () => {
       }
 
     } else if (step === 1) {
+      // Show the holder
       toggleTextVisibilityOfHolder(true);
+
+      // Remove the piece after a delay
       setTimeout(() => {
         goToStep(2);
       }, DURATION);
 
     } else if (step === 3) {
+      // Hide the holder
       toggleTextVisibilityOfHolder(false);
 
+      // Create the pieces
       for (let i = 0; i < fraction.numerator; i++) {
         const piece = createPiece({ scene: scene!, position: [-1.9, 0.1, 0], color: COLORS.GREEN });
         if (piece) {
           setPieces([...pieces, piece]);
         }
       }
+
+      setTimeout(() => {
+        goToStep(4);
+      }, DURATION);
+      
     } else if (step === 4) {
       // Do nothing for step 4
     } else if (step === 5) {
@@ -113,7 +141,9 @@ const LegoGame = () => {
     camera,
     renderer,
     dragObjects: dragObjectsRef.current,
-    orbitControls
+    containerAssignmentsRef: containerAssignmentsRef,
+    orbitControls,
+    onDragEnd: onDragEnd,
   });
 
 
