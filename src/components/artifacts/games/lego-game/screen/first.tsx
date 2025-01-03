@@ -13,7 +13,6 @@ const MainContent = () => {
 
   return (
     <div className="flex flex-col m-4">
-      {/* <button onClick={() => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }))} className="bg-blue-500 text-white px-4 py-2 rounded-md">Next: {step}</button> */}
       {step === 0 && (
         <div className="p-8 bg-white">
           <h2 className="text-3xl font-bold">

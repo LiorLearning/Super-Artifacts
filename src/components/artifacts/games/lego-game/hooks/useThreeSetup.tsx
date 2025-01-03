@@ -9,6 +9,7 @@ interface ThreeSetup {
   camera: THREE.OrthographicCamera | null;
   renderer: THREE.WebGLRenderer | null;
   orbitControls: OrbitControls | null;
+  toggleTextVisibilityOfHolder: (visible: boolean) => void;
 }
 
 export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInitialized: React.MutableRefObject<boolean>): ThreeSetup => {
@@ -16,7 +17,8 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     scene: null,
     camera: null,
     renderer: null,
-    orbitControls: null
+    orbitControls: null,
+    toggleTextVisibilityOfHolder: () => {}
   });
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     setupLights(scene);
 
     // Add holder
-    createHolder(scene);
+    const { toggleTextVisibility: toggleTextVisibilityOfHolder } = createHolder(scene);
 
     // Controls
     const orbitControls = new OrbitControls(camera, renderer.domElement);
@@ -59,7 +61,7 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     };
     animate();
 
-    setSetup({ scene, camera, renderer, orbitControls });
+    setSetup({ scene, camera, renderer, orbitControls, toggleTextVisibilityOfHolder });
 
     return () => {
       renderer.dispose();
