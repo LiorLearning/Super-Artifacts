@@ -1,65 +1,88 @@
-import React, { createContext, useContext, ReactNode, useRef, useReducer } from 'react';
-import * as Matter from 'matter-js';
+const MAX_GREEN_MARBLES = 5;
+const MAX_BLUE_MARBLES = 6;
+const MAX_BLACK_MARBLES = 10;
 
-export const desc = `Steps to Play the Addition Game:
-1. You'll start with green and blue marbles on two platforms.
-2. Shoot the green marbles first by clicking the "Shoot" button.
-3. After shooting all green marbles, switch to blue marbles.
-4. Your goal is to get all marbles into the central container.
-5. Watch how the marbles combine to make 15!`;
+export const desc = `
+Addition Game: Interactive Marble Counting Adventure
 
+Game Overview:
+This interactive game helps you learn addition by physically moving and combining marbles across two platforms.
 
-export interface GameState {
+Detailed Gameplay:
+
+Platform Setup
+- You start with ${MAX_GREEN_MARBLES} green marbles on the left platform
+- You have ${MAX_BLUE_MARBLES} blue marbles on the right platform
+- Total marbles: ${MAX_GREEN_MARBLES + MAX_BLUE_MARBLES} (${MAX_GREEN_MARBLES} green + ${MAX_BLUE_MARBLES} blue)
+
+Shooting Marbles
+1. Begin by shooting green marbles into the central container
+   - Click the "Shoot" button to launch green marbles
+   - Aim to move all green marbles from the left platform
+2. After green marbles are depleted, switch to blue marbles
+   - Click the "Shoot" button to launch blue marbles
+   - Move all blue marbles from the right platform
+
+Goal
+- Successfully transfer ALL ${MAX_GREEN_MARBLES + MAX_BLUE_MARBLES} marbles into the central container
+- Visualize how ${MAX_GREEN_MARBLES} + ${MAX_BLUE_MARBLES} combines to make ${MAX_GREEN_MARBLES + MAX_BLUE_MARBLES}
+- Learn addition through a hands-on, interactive experience
+
+Learning Objectives:
+- Understand addition as combining groups of objects
+- Develop spatial reasoning skills
+- Practice counting and tracking marbles
+`;
+
+export interface GameState1 {
   greenScore: number;
   blueScore: number;
   containerScore: number;
   activePhase: 'left' | 'right';
-  leftContainerBalls: Matter.Body[];
-  rightContainerBalls: Matter.Body[];
-  platformsVisible: boolean;
-  activeBallLeft: Matter.Body | null;
-  activeBallRight: Matter.Body | null;
+  currentStep: number;
+  finalAnswer: number;
   clickDisabled: boolean;
-  isGameComplete: boolean;
-  sceneRef: React.RefObject<HTMLDivElement> | null;
-  showEmptyButton: boolean;
-  gameComplete: boolean;
   showAddButton: boolean;
-  // New states for screenTwo
+  additionStarted?: boolean;
+}
+
+
+export interface GameState2 {
   greenMarblesCount: number;
   blueMarblesCount: number;
   blackMarblesCount: number;
   showFinalAnswer: boolean;
-  finalAnswer: number;
-  // New states for screenOne
-  currentStep: number;
-  finalAnswerOne: number;
-  firstDone: boolean;
+}
+
+export interface GameState {
+  currentScreen: 'first' | 'second';
+  maxGreenMarbles: number;
+  maxBlueMarbles: number;
+  maxBlackMarbles: number;
+  state1: GameState1;
+  state2: GameState2;
 }
 
 export const initialGameState: GameState = {
-  greenScore: 8,
-  blueScore: 7,
-  containerScore: 0,
-  activePhase: 'left',
-  leftContainerBalls: [],
-  rightContainerBalls: [],
-  platformsVisible: true,
-  activeBallLeft: null,
-  activeBallRight: null,
-  clickDisabled: false,
-  isGameComplete: false,
-  sceneRef: null,
-  showEmptyButton: false,
-  gameComplete: false,
-  showAddButton: false,
-  // Initialize new states
-  greenMarblesCount: 0,
-  blueMarblesCount: 0,
-  blackMarblesCount: 0,
-  showFinalAnswer: false,
-  finalAnswer: 0,
-  currentStep: 0,
-  finalAnswerOne: 0,
-  firstDone: false
+  currentScreen: 'first',
+  maxGreenMarbles: MAX_GREEN_MARBLES,
+  maxBlueMarbles: MAX_BLUE_MARBLES,
+  maxBlackMarbles: MAX_BLACK_MARBLES,
+  state1: {
+    greenScore: MAX_GREEN_MARBLES,
+    blueScore: MAX_BLUE_MARBLES,
+    containerScore: 0,
+    activePhase: 'left',
+    clickDisabled: false,
+    currentStep: 0,
+    finalAnswer: 0,
+    showAddButton: false,
+    additionStarted: false
+  },
+  state2: {
+    greenMarblesCount: 0,
+    blueMarblesCount: 0,
+    blackMarblesCount: 0,
+    showFinalAnswer: false,
+  }
 };
