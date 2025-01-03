@@ -73,7 +73,7 @@ const LegoGame = () => {
       toggleTextVisibilityOfHolder(false);
 
       for (let i = 0; i < fraction.numerator; i++) {
-        const piece = createPiece({ scene: scene!, position: [-0.9, 0.1, 0], color: COLORS.GREEN });
+        const piece = createPiece({ scene: scene!, position: [-1.9, 0.1, 0], color: COLORS.GREEN });
         if (piece) {
           setPieces([...pieces, piece]);
         }

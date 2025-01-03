@@ -1,4 +1,4 @@
-export const HOLDER_POSITION: [number, number, number] = [-1, 0, 0];
+export const HOLDER_POSITION: [number, number, number] = [-2, 0, 0];
 
 export const COLORS = {
   PINK: 0xff69b4, // Hot Pink
