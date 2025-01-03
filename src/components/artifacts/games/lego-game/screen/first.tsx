@@ -1,13 +1,19 @@
 import LegoGame from '../lego-game';
 import Header from '../components/header';
 import { useGameState } from '../state-utils';
+import { firstScreenFooterTexts } from './constants';
 
 const MainContent = () => {
   const { gameStateRef } = useGameState();
   const { step, fraction } = gameStateRef.current.state1;
 
+  const color = step <= 6 ? 'pink-500' : step <= 12 ? 'blue-500' : 'purple-500';
+  const stepNumber = step <= 6 ? 1 : step <= 12 ? 2 : 3;
+  const stepText = step <= 12 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
+
   return (
     <div className="flex flex-col m-4">
+      {/* <button onClick={() => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }))} className="bg-blue-500 text-white px-4 py-2 rounded-md">Next: {step}</button> */}
       {step === 0 && (
         <div className="p-8 bg-white">
           <h2 className="text-3xl font-bold">
@@ -19,20 +25,27 @@ const MainContent = () => {
           </h2>
         </div>
       )}
-      {step === 1 && (
+      {step > 0 && (
         <div className="flex items-stretch justify-center gap-4">
-          <div className="bg-white border-8 border-pink-500 px-6 py-2 flex items-center justify-center">
-            <span className="text-xl font-bold">STEP 1</span>
+          <div className={`bg-white text-${color} border-8 border-${color} px-6 py-2 flex items-center justify-center`}>
+            <span className="text-2xl font-bold">STEP {stepNumber}</span>
           </div>
-          <div className="flex-1 bg-pink-500 border-8 border-pink-500 flex items-center max-w-xl">
-            <h2 className="text-white text-xl font-bold flex items-center gap-4 mx-auto">
-              CREATE
-              <div className="bg-white text-black px-3 py-1 inline-flex flex-col items-center">
-                <span>{fraction.numerator}</span>
-                <div className="w-3 h-px bg-black" />
-                <span>{fraction.denominator}</span>
-              </div>
-              LEGO BLOCKS
+          <div className={`flex-1 bg-${color} border-8 border-${color} flex items-center max-w-xl`}>
+            <h2 className="text-white text-2xl font-bold flex items-center gap-4 mx-auto">
+              {step <= 6 && (
+                <>
+                  <span>CREATE</span>
+                  <div className="bg-white text-black px-3 py-1 inline-flex flex-col items-center">
+                    <span>{fraction.numerator}</span>
+                    <div className="w-3 h-px bg-black" />
+                    <span>{fraction.denominator}</span>
+                  </div>
+                  <span>LEGO BLOCKS</span>
+                </>
+              )}
+              {step > 6 && (
+                <span>{stepText}</span>
+              )}
             </h2>
           </div>
         </div>
@@ -41,10 +54,22 @@ const MainContent = () => {
   );
 };
 
+
 const Footer = () => {
+  const { gameStateRef } = useGameState();
+  const { step, fraction } = gameStateRef.current.state1;
+  const denominator = fraction.denominator;
+  const numerator = fraction.numerator;
+  
+  const stepText = firstScreenFooterTexts(numerator, denominator)[step];
+
   return (
-    <div className="bg-white p-8">
-      <h2 className="text-3xl font-bold">Footer</h2>
+    <div className="relative">
+      <div className="text-center text-3xl font-bold mt-8 space-y-2">
+        {stepText.lines.map((line, index) => (
+          <span key={index} style={{ color: line.color || 'black' }}>{line.text}<br /></span>
+        ))}
+      </div>
     </div>
   );
 };
@@ -58,7 +83,9 @@ export default function FirstScreen() {
       <div className="mx-auto">
         <Header fraction={fraction} />
         <MainContent />
-        <LegoGame />
+        <div className="flex items-center justify-center">
+          <LegoGame />
+        </div>
         <Footer />
       </div>
     )

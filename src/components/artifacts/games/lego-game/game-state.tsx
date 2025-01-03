@@ -20,7 +20,7 @@ export interface GameState {
 export const initialGameState: GameState = {
     screen: 'first',
     state1: {
-        step: 1,
+        step: 0,
         fraction: {
             numerator: 7,
             denominator: 4,

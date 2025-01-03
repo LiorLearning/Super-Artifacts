@@ -1,6 +1,13 @@
 import { useEffect } from 'react';
+import * as THREE from 'three';
 
-export const useWindowResize = ({ camera, renderer, mountRef }) => {
+interface UseWindowResizeProps {
+  camera: THREE.OrthographicCamera;
+  renderer: THREE.WebGLRenderer;
+  mountRef: React.RefObject<HTMLDivElement>;
+}
+
+export const useWindowResize = ({ camera, renderer, mountRef }: UseWindowResizeProps) => {
   useEffect(() => {
     const handleResize = () => {
       if (!camera || !renderer || !mountRef.current) return;

@@ -45,14 +45,14 @@ const LegoGame = () => {
     orbitControls
   });
 
-  useWindowResize({ camera, renderer, mountRef });
+  useWindowResize({ camera: camera as THREE.OrthographicCamera, renderer: renderer as THREE.WebGLRenderer, mountRef });
 
   return (
     <div 
       ref={mountRef} 
       style={{ 
-        width: '100%', 
-        height: '500px',
+        width: '800px', 
+        height: '400px',
       }}
     />
   );
