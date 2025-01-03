@@ -9,12 +9,27 @@ import { useGameState } from './state-utils';
 import { Card } from '@/components/ui/card'; // Add Card import
 import { useEffect, useState } from 'react';
 
-export const desc = `Steps to Play the Game:
-1. Break the first chocolate bar by clicking the "Split" button.
-2. Select the pieces of the first bar that you want to keep.
-3. Break the second chocolate bar by clicking the "Split" button for the second bar.
-4. Select the pieces of the second bar that you want to keep.
-5. Compare the selected pieces from both bars to determine which fraction is larger.`;
+export const desc = `Steps to Find Common Denominators:
+
+1. Create equivalent fractions from the original fractions
+   - Use the knife tool to split each chocolate bar
+   - Calculate the total pieces after splitting
+
+2. Find multiples of each denominator
+   - List out the first few multiples
+   - Identify common multiples between denominators
+
+3. Identify the least common multiple (LCM)
+   - Look for the smallest number that appears in both lists
+   - This will be your common denominator
+
+4. Select fractions with matching denominators
+   - Compare the chocolate bars
+   - Choose the ones that have been split into the same number of pieces
+
+5. Use this understanding to convert fractions to equivalent forms
+   - Both fractions should have the same denominator
+   - The numerators will change based on how many times you split the bar`;
 
 interface EquationProps {
   sendAdminMessage: (role: string, content: string) => void;
