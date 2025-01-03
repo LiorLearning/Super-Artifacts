@@ -4,7 +4,8 @@ export const createLegoPiece = (color: number) => {
   const geometry = new THREE.BoxGeometry(0.9, 1, 0.9);
   const material = new THREE.MeshPhongMaterial({ 
     color,
-    transparent: true
+    transparent: true,
+    opacity: 0.9
   });
   const piece = new THREE.Mesh(geometry, material);
 

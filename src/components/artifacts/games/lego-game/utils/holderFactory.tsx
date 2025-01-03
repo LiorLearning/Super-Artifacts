@@ -7,9 +7,9 @@ export const createHolder = (scene: THREE.Scene) => {
   for (let i = 0; i < 4; i++) {
     const cellGeom = new THREE.BoxGeometry(1, 1, 1);
     const cellMat = new THREE.MeshPhongMaterial({
-      color: 0xe28840,
+      color: 0xA0522D,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.6, // Increased opacity for better visibility
     });
 
     const cellMesh = new THREE.Mesh(cellGeom, cellMat);
