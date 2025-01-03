@@ -50,7 +50,9 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
   }
 
   const handleFinalAnswerChange = (value: string) => {
-    const isCorrect = value === '1';
+    const expectedAnswer = fraction1.numerator - fraction2.numerator;
+    const isCorrect = value === String(expectedAnswer);
+
     setGameStateRef({
       screen2State: {
         ...screen2State,
