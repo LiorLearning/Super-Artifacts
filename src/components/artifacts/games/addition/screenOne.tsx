@@ -7,6 +7,7 @@ import { Button } from "@/components/custom_ui/button";
 import { Position, Vector, GameProps } from "./components/types";
 import { Catapult } from "./components/catapult";
 import { Counter } from "./components/counter";
+import { ShootButton } from "./components/shoot-button";
 
 
 export default function First({ sendAdminMessage }: GameProps) {
@@ -251,7 +252,7 @@ export default function First({ sendAdminMessage }: GameProps) {
             opacity: 0.3,
           },
           collisionFilter: { 
-            category: 0x0002,
+            category: 0x0000,
             mask: 0x0000
           }
         }
@@ -271,7 +272,7 @@ export default function First({ sendAdminMessage }: GameProps) {
             opacity: 0.7,
           },
           collisionFilter: { 
-            category: 0x0002,
+            category: 0x0000,
             mask: 0x0000
           }
         }
@@ -290,7 +291,7 @@ export default function First({ sendAdminMessage }: GameProps) {
             lineWidth: 1
           },
           collisionFilter: { 
-            category: 0x0002,
+            category: 0x0000,
             mask: 0x0000
           }
         }
@@ -310,7 +311,7 @@ export default function First({ sendAdminMessage }: GameProps) {
             opacity: 0.7,
           },
           collisionFilter: { 
-            category: 0x0002 ,
+            category: 0x0000 ,
             mask: 0x0000
           }
         }
@@ -340,7 +341,7 @@ export default function First({ sendAdminMessage }: GameProps) {
 
     const parts = [
       // Left invisible border
-      Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y - containerHeight/2, 1, containerHeight, {
+      Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y - containerHeight/2 + 50, 1, containerHeight, {
         isStatic: true,
         render: {
           visible: false
@@ -349,7 +350,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       }),
 
       // Right invisible border
-      Matter.Bodies.rectangle(containerPosition.x + containerWidth / 2 - 10, containerPosition.y - containerHeight/2, 1, containerHeight, {
+      Matter.Bodies.rectangle(containerPosition.x + containerWidth / 2 - 10, containerPosition.y - containerHeight/2 + 50, 1, containerHeight, {
         isStatic: true,
         render: {
           visible: false
@@ -358,7 +359,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       }),
 
       // Bottom invisible border
-      Matter.Bodies.rectangle(containerPosition.x - 10, containerPosition.y, containerWidth, 1, {
+      Matter.Bodies.rectangle(containerPosition.x - 10, containerPosition.y + 50, containerWidth, 1, {
         isStatic: true,
         render: {
           visible: false
@@ -1012,25 +1013,19 @@ export default function First({ sendAdminMessage }: GameProps) {
         }
 
         {currentStep === 2 &&
-            <button
+            <ShootButton 
               onClick={launchGreen}
               disabled={clickDisabled || activePhase !== 'left'}
-              className={`absolute left-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                ${(clickDisabled || activePhase !== 'left') ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              Shoot
-            </button>
+              position="left"
+            />
         }
 
         {currentStep === 3 &&
-            <button
+            <ShootButton 
               onClick={launchBlue}
               disabled={clickDisabled || activePhase !== 'right'}
-              className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
-                ${(clickDisabled || activePhase !== 'right') ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              Shoot
-            </button>
+              position="right"
+            />
         }
 
         {currentStep === 5 &&
@@ -1040,14 +1035,14 @@ export default function First({ sendAdminMessage }: GameProps) {
         }
 
         {currentStep === 6 &&
-          <button
+          <Button
             onClick={handleAddition}
             disabled={currentStep != 6}
             className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
               ${currentStep != 6 ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             Empty
-          </button>
+          </Button>
         }
 
         { currentStep === 8 && (
