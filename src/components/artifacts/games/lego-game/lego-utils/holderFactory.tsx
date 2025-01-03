@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { HOLDER_POSITION } from './constants';
+import { HOLDER_POSITION } from '../utils/constants';
 
 export const createHolder = (scene: THREE.Scene) => {
   const group = new THREE.Group();

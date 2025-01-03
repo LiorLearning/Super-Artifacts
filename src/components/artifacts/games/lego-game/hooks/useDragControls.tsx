@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { HOLDER_POSITION } from '../constants';
+import { HOLDER_POSITION } from '../utils/constants';
 
 interface DragControlsProps {
   scene: THREE.Scene | null;

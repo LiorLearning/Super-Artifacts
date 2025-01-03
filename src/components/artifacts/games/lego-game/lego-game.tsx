@@ -3,7 +3,7 @@ import { useThreeSetup } from './hooks/useThreeSetup';
 import { useDragControls } from './hooks/useDragControls';
 import { useWindowResize } from './hooks/useWindowResize';
 import { createLegoPiece } from './utils/pieceFactory';
-import { INITIAL_PIECES_CONFIG } from './constants';
+import { INITIAL_PIECES_CONFIG } from './utils/constants';
 import * as THREE from 'three';
 
 const LegoGame = () => {
@@ -53,7 +53,6 @@ const LegoGame = () => {
       style={{ 
         width: '100%', 
         height: '500px',
-        backgroundColor: '#f0f0f0'
       }}
     />
   );
