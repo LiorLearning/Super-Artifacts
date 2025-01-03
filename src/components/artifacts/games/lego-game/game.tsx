@@ -17,9 +17,10 @@ const LegoGame = () => {
     if (!scene) return;
 
     // Create pieces based on configuration
-    const newPieces = INITIAL_PIECES_CONFIG.map(({ color, position }) => {
+    const newPieces = INITIAL_PIECES_CONFIG.map(({ color, opacity, position }) => {
       const piece = createLegoPiece(color);
       piece.position.set(...position);
+      piece.material.opacity = opacity;
       scene.add(piece);
       return piece;
     });
