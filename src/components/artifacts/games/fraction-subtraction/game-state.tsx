@@ -90,6 +90,14 @@ export interface GameState {
   isFirstQuestionCorrect: boolean;
   firstAnswer: string | null;
   secondAnswer: string | null;
+  screen2State: {
+    currentStep: number;
+    denominatorAnswer: string | null;
+    numeratorAnswer: string | null;
+    finalAnswer: string;
+    completedSteps: number[];
+    isStep3Correct: boolean;
+  };
 }
 
 export const initialGameState: GameState = {
@@ -132,4 +140,12 @@ export const initialGameState: GameState = {
   isFirstQuestionCorrect: false,
   firstAnswer: null,
   secondAnswer: null,
+  screen2State: {
+    currentStep: 1,
+    denominatorAnswer: null,
+    numeratorAnswer: null,
+    finalAnswer: '',
+    completedSteps: [],
+    isStep3Correct: false
+  }
 }
