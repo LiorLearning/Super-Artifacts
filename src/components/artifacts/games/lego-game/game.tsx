@@ -1,62 +1,56 @@
-import React from 'react';
-import { useThreeSetup } from './hooks/useThreeSetup';
-import { useDragControls } from './hooks/useDragControls';
-import { useWindowResize } from './hooks/useWindowResize';
-import { createLegoPiece } from './utils/pieceFactory';
-import { INITIAL_PIECES_CONFIG } from './constants';
-import * as THREE from 'three';
+import LegoGame from './lego-game';
 
-const LegoGame = () => {
-  const mountRef = React.useRef<HTMLDivElement>(null);
-  const hasInitialized = React.useRef(false);
-  const { scene, camera, renderer, orbitControls } = useThreeSetup(mountRef, hasInitialized);
-  const [pieces, setPieces] = React.useState<THREE.Mesh[]>([]);
-
-  // Initialize pieces
-  React.useEffect(() => {
-    if (!scene) return;
-
-    // Create pieces based on configuration
-    const newPieces = INITIAL_PIECES_CONFIG.map(({ color, opacity, position }) => {
-      const piece = createLegoPiece(color);
-      piece.position.set(...position);
-      piece.material.opacity = opacity;
-      scene.add(piece);
-      return piece;
-    });
-
-    setPieces(newPieces);
-
-    // Cleanup
-    return () => {
-      newPieces.forEach(piece => {
-        scene?.remove(piece);
-        piece.geometry.dispose();
-        (piece.material as THREE.Material).dispose();
-      });
-    };
-  }, [scene]);
-
-  useDragControls({
-    scene,
-    camera,
-    renderer,
-    dragObjects: pieces,
-    orbitControls
-  });
-
-  useWindowResize({ camera, renderer, mountRef });
-
-  return (
-    <div 
-      ref={mountRef} 
-      style={{ 
-        width: '100%', 
-        height: '500px',
-        backgroundColor: '#f0f0f0'
-      }}
-    />
-  );
-};
-
-export default LegoGame;
+export default function FractionConverter() {
+    return (
+      <div className="mx-auto">
+        {/* Header */}
+        <div className="bg-[#e3f261] p-6 border-t-4 border-b-4 border-blue-600">
+          <h1 className="text-2xl font-bold flex items-center justify-center gap-4">
+            Convert 
+            <div className="bg-white px-4 py-2 inline-flex flex-col items-center border border-black">
+              <span>7</span>
+              <div className="w-4 h-px bg-black" />
+              <span>4</span>
+            </div>
+            to a mixed fraction
+          </h1>
+        </div>
+  
+        {/* Main Content */}
+        <div className="p-8 bg-white">
+          <h2 className="text-3xl font-bold mb-16">
+            Hey let us understand mixed fractions, with{' '}
+            <span className="text-red-500 relative">
+              LEGOS!
+              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500" />
+            </span>
+          </h2>
+  
+          <div className="relative">
+            {/* Lego Holder Label */}
+            <div className="absolute -top-6 left-8">
+              <div className="bg-[#8B4513] text-white px-4 py-2">
+                Lego Holder
+              </div>
+            </div>
+  
+            <div className="flex justify-between items-center gap-12">
+              {/* Lego Holder Component */}
+              <LegoGame />
+  
+              {/* Lego Block */}
+              <div className="relative">
+                <div className="absolute -bottom-12 right-0">
+                  <div className="bg-purple-600 text-white px-4 py-2">
+                    Lego Block
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  
+  
