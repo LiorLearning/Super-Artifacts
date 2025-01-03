@@ -1,4 +1,4 @@
-import useSound from 'use-sound';
+'use client'
 
 const soundFiles = {
   shoot: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/join.mp3',
@@ -20,17 +20,18 @@ const soundVolumes: { [key: string]: number } = {
 
 export const useSoundEffects = () => {
   const soundEffects = Object.entries(soundFiles).reduce((acc, [name, path]) => {
-    const [play, { sound }] = useSound(path, { 
-      volume: soundVolumes[name] 
-    });
-    acc[name as keyof typeof soundFiles] = { play, sound };
+    const audio = new Audio(path);
+    audio.volume = soundVolumes[name];
+    acc[name as keyof typeof soundFiles] = {
+      play: () => audio.play(),
+      sound: audio
+    };
     return acc;
-  }, {} as { 
-    [K in keyof typeof soundFiles]: { 
-      play: () => void, 
-      sound: HTMLAudioElement 
-    } 
+  }, {} as {
+    [K in keyof typeof soundFiles]: {
+      play: () => Promise<void>,
+      sound: HTMLAudioElement
+    }
   });
-
   return soundEffects;
 };
