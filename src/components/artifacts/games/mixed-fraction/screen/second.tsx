@@ -29,8 +29,8 @@ const MainContent = () => {
     }
   };
 
-  const nextStep = () => {
-    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
+  const nextScreen = () => {
+    setGameStateRef(prev => ({ ...prev, screen: 'second' }));
   };
 
   return (
@@ -114,7 +114,7 @@ const MainContent = () => {
             <span>Correct Answer</span>
           </div>
           <div className="flex justify-center mt-16">
-            <Button className="text-black px-6 py-3 mx-2 text-3xl shadow-lg rounded-none" onClick={nextStep}>
+            <Button className="text-black px-6 py-3 mx-2 text-3xl shadow-lg rounded-none" onClick={nextScreen}>
               PROCEED
               <StepForwardIcon className="inline-block ml-2 text-green-500" />
             </Button>
@@ -248,7 +248,7 @@ const Footer = () => {
 };
 
 
-export default function FirstScreen() {
+export default function SecondScreen() {
     const { gameStateRef } = useGameState();
     const { fraction, step } = gameStateRef.current.state1;
 

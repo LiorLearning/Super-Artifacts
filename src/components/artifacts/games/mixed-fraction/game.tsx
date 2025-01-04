@@ -1,9 +1,18 @@
 import FirstScreen from './screen/first';
+import SecondScreen from './screen/second';
+import ThirdScreen from './screen/third';
+import { useGameState } from './state-utils';
 
 export default function Game() {
+  const { gameStateRef } = useGameState();
+  const { screen } = gameStateRef.current;
+
   return (
     <div className="mx-auto game font-jersey">
-      <FirstScreen />
+      {screen === 'first' && <FirstScreen />}
+      {screen === 'second' && <SecondScreen />}
+      {screen === 'third' && <ThirdScreen />}
+      
       <style jsx global>{`
           @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');
           .font-jersey {
