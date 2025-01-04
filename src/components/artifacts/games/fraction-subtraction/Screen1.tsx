@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { FRACTIONS } from './config'
 import { FractionDisplay } from './components/FractionDisplay'
+import { useEffect } from 'react'
 
 interface FractionSubtractionProps {
   sendAdminMessage: (role: string, content: string) => void
@@ -14,6 +15,23 @@ interface FractionSubtractionProps {
 export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction1, fraction2 } = FRACTIONS.screen1;
+
+  useEffect(() => {
+    switch (gameStateRef.current.currentStep) {
+      case 1:
+        sendAdminMessage('agent', `Let's start subtracting fractions! First, select ${fraction1.numerator}/${fraction1.denominator} of the chocolate bar. This represents our starting amount.`);
+        break;
+      case 2:
+        sendAdminMessage('agent', `Great! Now we'll remove ${fraction2.numerator}/${fraction2.denominator} of the bar. Watch how the pieces change when we subtract.`);
+        break;
+      case 3:
+        sendAdminMessage('agent', 'Count the remaining pieces.');
+        break;
+      case 4:
+        sendAdminMessage('agent', 'Based on the observation, answer the following questions:');
+        break;
+    }
+  }, [gameStateRef.current.currentStep]);
 
   const handlePieceClick = (index: number) => {
     if (gameStateRef.current.currentStep === 1) {
@@ -71,7 +89,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
 
   const isAnswerCorrect = () => {
     const expectedNumerator = fraction1.numerator - fraction2.numerator;
-    const expectedDenominator = fraction1.denominator; // denominator stays same in subtraction
+    const expectedDenominator = fraction1.denominator; 
 
     return gameStateRef.current.answer.numerator === String(expectedNumerator) &&
       gameStateRef.current.answer.denominator === String(expectedDenominator);

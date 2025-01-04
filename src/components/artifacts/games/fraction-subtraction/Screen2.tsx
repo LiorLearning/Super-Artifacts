@@ -6,6 +6,7 @@ import { useGameState } from './state-utils'
 import { FRACTIONS } from './config'
 import { StepHeader } from './components/StepHeader'
 import { FractionDisplay } from './components/FractionDisplay'
+import { useEffect } from 'react'
 
 interface FractionSubtractionProps {
   sendAdminMessage: (role: string, content: string) => void
@@ -22,6 +23,21 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
   const { gameStateRef, setGameStateRef } = useGameState();
   const { screen2State } = gameStateRef.current;
   const { fraction1, fraction2 } = FRACTIONS.screen2;
+
+  // Add useEffect for admin messages
+  useEffect(() => {
+    switch (screen2State.currentStep) {
+      case 1:
+        sendAdminMessage('agent', 'Lets solve the problem step by step. But first lets make sure we understand the rules of fraction subtraction. When subtracting fractions with the same denominator, What happens to the denominator?');
+        break;
+      case 2:
+        sendAdminMessage('agent', 'Now focus on the numerators. When subtracting fractions with the same denominator, how do the top numbers change?');
+        break;
+      case 3:
+        sendAdminMessage('agent', `Let's solve the problem now. Remember the rules we just learned!`);
+        break;
+    }
+  }, [screen2State.currentStep]);
 
   const handleDenominatorAnswer = (answer: string) => {
     if (answer === 'same') {
@@ -52,11 +68,14 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
   const handleFinalAnswerChange = (value: string) => {
     const expectedAnswer = fraction1.numerator - fraction2.numerator;
     const isCorrect = value === String(expectedAnswer);
+    if (isCorrect) {
+      sendAdminMessage('agent', `Correct!`);
+    }
 
     setGameStateRef({
       screen2State: {
         ...screen2State,
-        finalAnswer: value,
+        finalAnswer: value,     
         isStep3Correct: isCorrect
       }
     });
