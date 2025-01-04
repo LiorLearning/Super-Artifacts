@@ -7,6 +7,7 @@ import { FractionDisplay } from './components/FractionDisplay'
 import { use, useEffect } from 'react'
 import { send } from 'node:process'
 import { stringify } from 'node:querystring'
+import { useSoundEffects } from './sounds'
 
 interface FractionSubtractionProps {
   sendAdminMessage: (role: string, content: string) => void
@@ -16,6 +17,7 @@ interface FractionSubtractionProps {
 export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction1, fraction2 } = gameStateRef.current.questions.question1;
+  const soundEffects = useSoundEffects();
 
   useEffect(() => {
     sendAdminMessage('agent', `Here's a chocolate for you! Try selecting pieces to get ${fraction1.numerator}/${fraction1.denominator}ths of the chocolate.`);
@@ -23,6 +25,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
 
   const handlePieceClick = (index: number) => {
     if (gameStateRef.current.currentStep === 1) {
+      soundEffects.drop.play();
       setGameStateRef(prev => ({
         ...prev,
         selectedPieces: index < prev.selectedPieces ? index + 1 : index + 1
@@ -63,6 +66,8 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
       const x = Math.min(Math.max(e.clientX - rect.left - 32, 0), rect.width - 64);
       const y = Math.min(Math.max(e.clientY - rect.top - 32, 0), rect.height - 64);
 
+      soundEffects.drop.play();
+
       setGameStateRef(prev => ({
         ...prev,
         droppedPieces: [...prev.droppedPieces, { x, y, originalIndex: draggedIndex }]
@@ -88,10 +93,16 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
 
   const handleReflectionAnswer = (question: 'first' | 'second', answer: string) => {
     if (question === 'first' && answer === 'same') {
+      soundEffects.correct.play();
       sendAdminMessage('agent', 'Correct! what about the numerator?');
     } else if (question === 'first' && answer != 'same') {
+      soundEffects.wrong.play();
       sendAdminMessage('agent', 'Ah, not quite. What do you think the denominator was before and after subtraction?');
+    } else if (question === 'second' && answer === 'subtracted') {
+      soundEffects.correct.play();
+      sendAdminMessage('agent', 'Correct!');
     } else if (question === 'second' && answer != 'subtracted') {
+      soundEffects.wrong.play();
       sendAdminMessage('agent', 'Not quite. What do you think the numerator was before and after subtraction?');
     }
     setGameStateRef({ 
@@ -100,8 +111,8 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
   }
 
   const handleFinalProceed = () => {
-      onProceed();
-   }
+    onProceed();
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

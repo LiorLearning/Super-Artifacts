@@ -6,6 +6,7 @@ import { useGameState } from './state-utils'
 import { StepHeader } from './components/StepHeader'
 import { FractionDisplay } from './components/FractionDisplay'
 import { useEffect } from 'react'
+import { useSoundEffects } from './sounds'
 
 interface FractionSubtractionProps {
   sendAdminMessage: (role: string, content: string) => void
@@ -22,6 +23,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
   const { gameStateRef, setGameStateRef } = useGameState();
   const { screen2State } = gameStateRef.current;
   const { fraction1, fraction2 } = gameStateRef.current.questions.question2;
+  const soundEffects = useSoundEffects();
 
   useEffect(() => {
     sendAdminMessage('agent', `Great, here's another question for you!`);
@@ -29,6 +31,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
   
   const handleDenominatorAnswer = (answer: string) => {
     if (answer === 'same') {
+      soundEffects.correct.play();
       sendAdminMessage('agent', 'Correct! what about the numerator?');
       setGameStateRef({
         screen2State: {
@@ -39,12 +42,14 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
         } 
       });
     } else {
+      soundEffects.wrong.play();
       sendAdminMessage('agent', 'Ah, not quite. What do you think the denominator was before and after subtraction?');
     }
   }
 
   const handleNumeratorAnswer = (answer: string) => {
     if (answer === 'subtracted') {
+      soundEffects.correct.play();
       sendAdminMessage('agent', 'Correct! Now lets solve the problem.');
       setGameStateRef({
         screen2State: {
@@ -55,6 +60,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
         }
       });
     } else {
+      soundEffects.wrong.play();
       sendAdminMessage('agent', 'Not quite. What do you think the numerator was before and after subtraction?');
     }
   }
@@ -62,8 +68,12 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
   const handleFinalAnswerChange = (value: string) => {
     const expectedAnswer = fraction1.numerator - fraction2.numerator;
     const isCorrect = value === String(expectedAnswer);
-    if (isCorrect) {
+    
+    if (isCorrect && !screen2State.isStep3Correct) {
+      soundEffects.correct.play();
       sendAdminMessage('agent', `Correct!`);
+    } else if (value !== '' && !isCorrect && screen2State.isStep3Correct) {
+      soundEffects.wrong.play();
     }
 
     setGameStateRef({
