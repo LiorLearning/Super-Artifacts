@@ -107,6 +107,23 @@ const LegoGame = () => {
         createPiece({ scene: scene!, position: position, color: COLORS.GREEN });
       }
 
+    } else if (step === 3) {
+      cleanUpPieces(scene!, pieces);
+      setPieces([]);
+      cleanUpHolders(scene!, holders);
+      setHolders([]);
+    } else if (step === 4) {
+      for (let i = 0; i < denomOptions.length; i++) {
+        const position: [number, number, number] = [-3 + i * 2.2, 0, - i * 2.2];
+        createHolder(scene, position, fraction.denominator);
+      }
+
+      for (let i = 0; i < fraction.numerator; i++) {
+        const holder = i % 3;
+        const index = Math.floor(i / 3);
+        const position: [number, number, number] = [-2.9 + holder * 2.2, 0.1, -holder * 2.2 + ((4 * index)/fraction.denominator)];
+        createPiece({ scene: scene!, position: position, color: COLORS.GREEN });
+      }
     }
   }, [step, scene]);
 

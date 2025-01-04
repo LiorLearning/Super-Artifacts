@@ -4,8 +4,7 @@ import { useGameState } from '../state-utils';
 import { firstScreenFooterTexts } from './constants';
 import { Button } from '@/components/custom_ui/button';
 import { useState } from 'react';
-import { StepForwardIcon } from 'lucide-react';
-import { Input } from '@/components/custom_ui/input';
+import { CorrectAnswer, FinalAnswer } from './components/first';
 
 const STEPS_WITH_PROCEED = [0, 1, 11];
 
@@ -100,29 +99,7 @@ const MainContent = () => {
         </div>
       )}
       {step === 13 && (
-        <>
-          <div className="flex justify-center mt-48">
-            <div className="flex items-center justify-center h-full">
-              <div className="text-8xl font-bold text-center my-16 mx-4">
-                <span>{Math.floor(numerator / denominator)}</span>
-              </div>
-            </div>
-            <div className="text-8xl font-bold text-center mx-2">
-              <span>{numerator % denominator}</span>
-              <div className="w-full h-px bg-black my-2" />
-              <span>{denominator}</span>
-            </div>
-          </div>
-          <div className="flex justify-center text-6xl mt-8 text-green-500">
-            <span>Correct Answer</span>
-          </div>
-          <div className="flex justify-center mt-16">
-            <Button className="text-black px-6 py-3 mx-2 text-3xl shadow-lg rounded-none" onClick={nextScreen}>
-              PROCEED
-              <StepForwardIcon className="inline-block ml-2 text-green-500" />
-            </Button>
-          </div>
-        </>
+        <CorrectAnswer numerator={numerator} denominator={denominator} large={true} nextScreen={nextScreen} />
       )}
     </div>
   );
@@ -136,23 +113,6 @@ const Footer = () => {
   const numerator = fraction.numerator;
   const stepText = firstScreenFooterTexts(numerator, denominator)[step];
 
-  const [mixedFraction, setMixedFraction] = useState({integer: '', numerator: '', denominator: ''});
-
-  const handleIntegerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setMixedFraction(prev => ({ ...prev, integer: inputValue }));
-  }; 
-
-  const handleNumeratorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setMixedFraction(prev => ({ ...prev, numerator: inputValue }));
-  };
-
-  const handleDenominatorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setMixedFraction(prev => ({ ...prev, denominator: inputValue }));
-  };
-
   const handleNumeratorClick = () => {
     console.log('numerator clicked');
     // Send admin message
@@ -160,12 +120,6 @@ const Footer = () => {
 
   const nextStep = () => {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
-  };
-
-  const verifyMixedFraction = () => {
-    if (parseInt(mixedFraction.integer) * parseInt(mixedFraction.denominator) + parseInt(mixedFraction.numerator) === numerator) {
-      nextStep();
-    }
   };
 
   return (
@@ -202,49 +156,7 @@ const Footer = () => {
         </div>
       )}
       {step === 12 && (
-        <>
-        <div className="flex justify-center mt-4">
-          <div className="flex items-center justify-center h-full">
-            <div className="text-3xl font-bold text-center my-8">
-              <div className="border-4 border-purple-500 px-1 py-1 rounded-lg">
-                <Input 
-                  type="text" 
-                  value={mixedFraction.integer} 
-                  placeholder="?"
-                  onChange={handleIntegerChange} 
-                  className="w-12 text-center text-purple-500"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-center mx-2">
-            <div className="border-4 border-green-500 px-1 py-1 rounded-lg">
-              <Input 
-                type="text" 
-                value={mixedFraction.numerator} 
-                placeholder="?"
-                onChange={handleNumeratorChange} 
-                className="w-12 text-center text-green-500"
-              />
-            </div>
-            <div className="w-full h-px bg-black my-2" />
-            <div className="border-4 border-gray-600 px-1 py-1 rounded-lg">
-              <Input 
-                type="text" 
-                value={mixedFraction.denominator} 
-                placeholder="?"
-                onChange={handleDenominatorChange} 
-                className="w-12 text-center text-gray-600"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-center mt-4">
-          <Button className="bg-blue-500 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={verifyMixedFraction}>
-            Verify
-          </Button>
-        </div>
-        </>
+        <FinalAnswer numerator={numerator} nextStep={nextStep} />
       )}
     </div>
   );
