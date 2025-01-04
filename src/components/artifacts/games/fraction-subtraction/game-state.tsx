@@ -1,5 +1,49 @@
-// Game state for fraction subtraction game with two main screens
+// Game state for fraction addition game with two main screens:
+// 1. Chocolate bar screen for visual fraction addition
+// 2. Denominator screen for understanding fraction addition rules
 
+// Each screen maintains its own state tracking:
+// - User selections and inputs
+// - Multi-step progression
+// - Validation and feedback
+
+export const desc = `
+Welcome to the Fraction Subtraction Game! Learn to subtract fractions using interactive chocolate bars.
+
+Detailed Gameplay:
+
+Visual Subtraction Screen
+1. Start with a chocolate bar divided into equal parts (the minuend)
+2. Select the correct number of pieces to represent the first fraction
+3. Remove pieces by dragging them away (the subtrahend)
+4. Count the remaining pieces to find the difference
+5. Enter your answer as a fraction
+6. Reflect on how the subtraction affected the numerator and denominator
+
+Rules Understanding Screen
+1. Learn about denominator behavior in fraction subtraction
+   - Understand why denominators stay the same when subtracting fractions
+   - Practice with different examples
+
+2. Learn about numerator behavior
+   - See how numerators are subtracted when denominators are the same
+   - Practice finding the difference between numerators
+
+3. Apply the rules
+   - Use your understanding to solve fraction subtraction problems
+   - Check your answers with visual confirmation
+
+Key Concepts:
+- When subtracting fractions with the same denominator:
+  * The denominator stays the same
+  * Only the numerators are subtracted
+  * The result represents the remaining pieces
+
+Tips:
+- Use the chocolate bar to visualize the subtraction process
+- Remember that pieces must be the same size (same denominator) to subtract
+- Practice connecting the visual model to the numerical representation
+`
 interface Fraction {
   numerator: number;
   denominator: number;
