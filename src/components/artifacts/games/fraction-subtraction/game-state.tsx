@@ -52,10 +52,16 @@ interface Fraction {
 
 export interface GameState {
   currentFrame: number;
-  fractionProblem: {
-    fraction1: Fraction;
-    fraction2: Fraction;
-  };
+  questions: {
+    question1: {
+      fraction1: Fraction;
+      fraction2: Fraction;
+    }
+    question2: {
+      fraction1: Fraction;
+      fraction2: Fraction;
+    }
+  }
   chocolateBarPieces: number;
   correctAnswer: Fraction;
   currentScreen: 'chocolate' | 'denominator';
@@ -102,10 +108,29 @@ export interface GameState {
 
 export const initialGameState: GameState = {
   currentFrame: 1,
-  fractionProblem: {
-    fraction1: { numerator: 1, denominator: 3 },
-    fraction2: { numerator: 1, denominator: 3 },
+  questions: {
+    question1: {
+      fraction1: {
+        numerator: 7,
+        denominator: 8
+      },
+      fraction2: {
+        numerator: 1,
+        denominator: 8
+      }
+    },
+    question2: {
+      fraction1: {
+        numerator: 5,
+        denominator: 5
+      },
+      fraction2: {
+        numerator: 3,
+        denominator: 5
+      }
+    }
   },
+
   chocolateBarPieces: 3,
   correctAnswer: { numerator: 2, denominator: 3 },
   currentScreen: 'chocolate',
