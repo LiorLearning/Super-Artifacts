@@ -65,16 +65,6 @@ export const useDragControls = ({
         mesh.position.z
       );
 
-      // (Optional) Visual debugging: place small spheres where the snappable positions are
-      // You can remove this in production
-      SNAPPABLE_POSITIONS.forEach(pos => {
-        const sphereGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-        const sphereMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-        const dot = new THREE.Mesh(sphereGeometry, sphereMat);
-        dot.position.copy(pos);
-        scene.add(dot); // Uncomment if you really want them in the scene
-      });
-
       // Find the closest snappable position that is unoccupied
       let minDist = Infinity;
       let closestIndex = -1;
@@ -87,13 +77,6 @@ export const useDragControls = ({
           closestIndex = index;
         }
       });
-
-      // Debugging
-      console.group('Drag End Debug');
-      console.log('Closest Index:', closestIndex);
-      console.log('Minimum Distance:', minDist);
-      console.log('Assignments:', containerAssignmentsRef.current);
-      console.groupEnd();
 
       // Snap threshold: distance within which we will snap
       const snapThreshold = 3.0;

@@ -14,6 +14,45 @@ interface CreatePieceProps {
   color: number;
 }
 
+const animateCamera = (camera: THREE.OrthographicCamera, targetPosition: THREE.Vector3, duration: number) => {
+  if (!camera) return;
+  const startPosition = camera.position.clone();
+  const startTime = performance.now();
+
+  const animateCamera = (time: number) => {
+    const elapsed = (time - startTime) / 1000; // convert to seconds
+    const progress = Math.min(elapsed / duration, 1); // clamp to [0, 1]
+
+    camera.position.lerpVectors(startPosition, targetPosition, progress);
+
+    if (progress < 1) {
+      requestAnimationFrame(animateCamera);
+    }
+  };
+
+  requestAnimationFrame(animateCamera);
+}
+
+const animatePiece = (piece: THREE.Mesh, targetPosition: THREE.Vector3, duration: number) => {
+  if (!piece) return;
+  const startPosition = piece.position.clone();
+  const startTime = performance.now();
+
+  const animate = (time: number) => {
+    const elapsed = (time - startTime) / 1000; // convert to seconds
+    const progress = Math.min(elapsed / duration, 1); // clamp to [0, 1]
+
+    piece.position.lerpVectors(startPosition, targetPosition, progress);
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  };
+
+  requestAnimationFrame(animate);
+};
+
+
 
 const LegoGame = () => {
   const mountRef = React.useRef<HTMLDivElement>(null);
@@ -29,14 +68,26 @@ const LegoGame = () => {
     new Array(11).fill(null)
   );
 
+  const fillContainerRef = useRef<boolean>(false);
+
   const onDragEnd = (count: number) => {
-    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, piecesAtYOne: count } }));
-    if (count === 1) {
-      goToStep(4);
-    } else if (count < 7) {
-      goToStep(5);
-    } else if (count === 7) {
-      goToStep(6);
+    if (!fillContainerRef.current) {
+      setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, piecesAtYOne: count } }));
+      if (count === 1) {
+        goToStep(4);
+      } else if (count < 7) {
+        goToStep(5);
+      } else if (count === 7) {
+        goToStep(6);
+        fillContainerRef.current = true;
+      }
+    } else {
+      goToStep(8);
+      if (count === 3) {
+        goToStep(9);
+      } else if (count === 0) {
+        goToStep(11);
+      }
     }
   };
 
@@ -62,6 +113,34 @@ const LegoGame = () => {
       (piece.material as THREE.Material).dispose();
     });
   }
+
+  const animateAllPieces = (yPos: number) => {
+    const newPieces: THREE.Mesh[] = [];
+    pieces.forEach(piece => {
+      console.log(piece.position.y);
+      if (Math.abs(piece.position.y - yPos) <= 0.1) {
+        // Update piece position
+        animatePiece(piece, new THREE.Vector3(piece.position.x-3, piece.position.y - 0.5, piece.position.z + 1.3), 1);
+
+        piece.material = new THREE.MeshPhongMaterial({ color: COLORS.MAGENTA });
+        
+        // Update containerAssignmentsRef
+        const prevIndex = piece.userData.containerIndex;
+        if (prevIndex !== -1) {
+          containerAssignmentsRef.current[prevIndex] = null;
+          
+          // Find new index based on new position
+          const newIndex = containerAssignmentsRef.current.findIndex(item => item === null);
+          if (newIndex !== -1) {
+            containerAssignmentsRef.current[newIndex] = piece;
+            piece.userData.containerIndex = newIndex;
+          }
+        }
+      }
+      newPieces.push(piece);
+    });
+    setPieces(newPieces);
+  }
   
 
   useEffect(() => {
@@ -72,67 +151,46 @@ const LegoGame = () => {
         setPieces([piece]);
       }
 
-      // Remove the piece after a delay
-      if (piece) {
-        setTimeout(() => {
-          cleanUpPieces(scene!, [piece]);
-          setPieces([]);
-          goToStep(1);
-        }, DURATION);
-      }
-
     } else if (step === 1) {
+      cleanUpPieces(scene!, pieces);
+      setPieces([]);
+
       // Show the holder
       toggleTextVisibilityOfHolder(true);
 
-      // Remove the piece after a delay
-      setTimeout(() => {
-        goToStep(2);
-      }, DURATION);
-
-    } else if (step === 3) {
-      // Hide the holder
-      toggleTextVisibilityOfHolder(false);
-
       // Create the pieces
+      const newPieces: THREE.Mesh[] = [];
       for (let i = 0; i < fraction.numerator; i++) {
         const piece = createPiece({ scene: scene!, position: [-1.9, 0.1, 0], color: COLORS.GREEN });
         if (piece) {
-          setPieces([...pieces, piece]);
+          newPieces.push(piece);
         }
       }
+      setPieces(newPieces);
+
+    } else if (step === 3) {
+      animateCamera(camera!, new THREE.Vector3(2, 3, 4), 1);
+      
+      // Hide the holder
+      toggleTextVisibilityOfHolder(false);
+
+      animateCamera(camera!, new THREE.Vector3(5, 5, 5), 1);
 
       setTimeout(() => {
         goToStep(4);
       }, DURATION);
       
-    } else if (step === 4) {
-      // Do nothing for step 4
-    } else if (step === 5) {
-      // Do nothing for step 5
     } else if (step === 6) {
-      // Do nothing for step 6
+      animateCamera(camera!, new THREE.Vector3(7, 5, 3), 1);
     } else if (step === 7) {
-      // Do nothing for step 7
-    } else if (step === 8) {
-      // Do nothing for step 8
+      animateCamera(camera!, new THREE.Vector3(5, 5, 5), 1);
     } else if (step === 9) {
-      // Do nothing for step 9
-    } else if (step === 10) {
-      // Do nothing for step 10
+      animateAllPieces(0.1);
+      goToStep(10);
     } else if (step === 11) {
-      // Do nothing for step 11
-    } else if (step === 12) {
-      // Do nothing for step 12
-    } else if (step === 13) {
-      // Do nothing for step 13
-    } else if (step === 14) {
-      // Do nothing for step 14
+      animateAllPieces(-0.4);
+      animateCamera(camera!, new THREE.Vector3(-0, 5, 7.7), 1);
     }
-
-    // return () => {
-    //   cleanUpPieces(scene!, pieces);
-    // }
   }, [step, scene]);
 
 

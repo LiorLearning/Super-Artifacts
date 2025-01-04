@@ -11,7 +11,7 @@ export const firstScreenFooterTexts = (numerator: number, denominator: number): 
     { lines: [] },
     { 
       lines: [
-        { text: `We need ${numerator} of these ${denominator} blocks` }, 
+        { text: `We need ${numerator} of these 1/${denominator}th blocks` }, 
         { text: `to make ${numerator}/${denominator}!`}
       ]
     },
@@ -73,4 +73,5 @@ export const firstScreenFooterTexts = (numerator: number, denominator: number): 
         { text: `PROCEED` }
       ]
     },
+    { lines: [] },
 ];

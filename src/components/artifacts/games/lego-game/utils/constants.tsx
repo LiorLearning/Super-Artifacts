@@ -28,6 +28,7 @@ export const COLORS = {
   YELLOW: 0xFFFF00, // Yellow
   CYAN: 0x00FFFF, // Cyan
   MAGENTA: 0xFF00FF, // Magenta
+  WHITE: 0xffffff, // White
 };
 
-export const DURATION = 2000;
+export const DURATION = 5000;
