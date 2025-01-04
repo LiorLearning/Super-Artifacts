@@ -21,7 +21,14 @@ const STEPS = [
 
 export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { screen2State } = gameStateRef.current;
+  const {
+    currentStep,
+    denominatorAnswer,
+    numeratorAnswer,
+    finalAnswer,
+    completedSteps,
+    isStep3Correct
+  } = gameStateRef.current.screen2State;
   const { fraction1, fraction2 } = gameStateRef.current.questions.question2;
   const soundEffects = useSoundEffects();
 
@@ -33,14 +40,15 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
     if (answer === 'same') {
       soundEffects.correct.play();
       sendAdminMessage('agent', 'Correct! what about the numerator?');
-      setGameStateRef({
+      setGameStateRef(prev => ({
+        ...prev,
         screen2State: {
-          ...screen2State,
+          ...prev.screen2State,
           denominatorAnswer: answer,
-          completedSteps: [...screen2State.completedSteps, 1],
+          completedSteps: [...prev.screen2State.completedSteps, 1],
           currentStep: 2
         } 
-      });
+      }));
     } else {
       soundEffects.wrong.play();
       sendAdminMessage('agent', 'Ah, not quite. What do you think the denominator was before and after subtraction?');
@@ -51,14 +59,15 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
     if (answer === 'subtracted') {
       soundEffects.correct.play();
       sendAdminMessage('agent', 'Correct! Now lets solve the problem.');
-      setGameStateRef({
+      setGameStateRef(prev => ({
+        ...prev,
         screen2State: {
-          ...screen2State,
+          ...prev.screen2State,
           numeratorAnswer: answer,
-          completedSteps: [...screen2State.completedSteps, 2],
+          completedSteps: [...prev.screen2State.completedSteps, 2],
           currentStep: 3
         }
-      });
+      }));
     } else {
       soundEffects.wrong.play();
       sendAdminMessage('agent', 'Not quite. What do you think the numerator was before and after subtraction?');
@@ -69,20 +78,21 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
     const expectedAnswer = fraction1.numerator - fraction2.numerator;
     const isCorrect = value === String(expectedAnswer);
     
-    if (isCorrect && !screen2State.isStep3Correct) {
+    if (isCorrect && !isStep3Correct) {
       soundEffects.correct.play();
       sendAdminMessage('agent', `Correct!`);
-    } else if (value !== '' && !isCorrect && screen2State.isStep3Correct) {
+    } else if (value !== '' && !isCorrect && isStep3Correct) {
       soundEffects.wrong.play();
     }
 
-    setGameStateRef({
+    setGameStateRef(prev => ({
+      ...prev,
       screen2State: {
-        ...screen2State,
+        ...prev.screen2State,
         finalAnswer: value,     
         isStep3Correct: isCorrect
       }
-    });
+    }));
   }
 
   return (
@@ -91,27 +101,29 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
       <div className="bg-[#F9F871] p-6 flex items-center justify-between border-b-4 border-black">
         {/* Left side - Navigation buttons */}
         <div className="flex gap-2">
-          {screen2State.currentStep > 1 && (
+          {currentStep > 1 && (
             <Button
-              onClick={() => setGameStateRef({
+              onClick={() => setGameStateRef(prev => ({
+                ...prev,
                 screen2State: {
-                  ...screen2State,
-                  currentStep: screen2State.currentStep - 1
+                  ...prev.screen2State,
+                  currentStep: prev.screen2State.currentStep - 1
                 }
-              })}
+              }))}
               className="bg-[#FF497C] text-white px-4 py-2 text-sm font-bold border-2 border-black hover:bg-[#FF497C]/90"
             >
               Previous Step
             </Button>
           )}
-          {screen2State.currentStep < 3 && screen2State.completedSteps.includes(screen2State.currentStep) && (
+          {currentStep < 3 && completedSteps.includes(currentStep) && (
             <Button
-              onClick={() => setGameStateRef({
+              onClick={() => setGameStateRef(prev => ({
+                ...prev,
                 screen2State: {
-                  ...screen2State,
-                  currentStep: screen2State.currentStep + 1
+                  ...prev.screen2State,
+                  currentStep: prev.screen2State.currentStep + 1
                 }
-              })}
+              }))}
               className="bg-[#FF497C] text-white px-4 py-2 text-sm font-bold border-2 border-black hover:bg-[#FF497C]/90"
             >
               Next Step
@@ -140,7 +152,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
       {/* Main Content */}
       <div className="flex-1 relative bg-white pt-16 p-8 flex flex-col items-center gap-8">
         {STEPS.map(step => (
-          (screen2State.completedSteps.includes(step.id) || screen2State.currentStep === step.id) && (
+          (completedSteps.includes(step.id) || currentStep === step.id) && (
             <div key={step.id} className="w-full max-w-2xl mb-8 flex flex-col gap-8 items-center">
               <StepHeader step={step.id} title={step.title} />
               {step.id === 1 && (
@@ -153,10 +165,10 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                     <Button
                       onClick={() => handleDenominatorAnswer('same')}
                       className={`px-8 py-2 text-lg font-bold border-2 border-black text-white
-                        ${screen2State.denominatorAnswer === 'same'
+                          ${denominatorAnswer === 'same'
                           ? 'bg-[#2EA500] hover:bg-[#2EA500]'
                           : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`}
-                      disabled={screen2State.completedSteps.includes(1)}
+                      disabled={completedSteps.includes(1)}
                     >
                       Stays the same
                     </Button>
@@ -164,7 +176,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                       onClick={() => handleDenominatorAnswer('subtracted')}
                       className={`px-8 py-2 text-lg font-bold border-2 border-black text-white
                         bg-[#FF497C] hover:bg-[#FF497C]/90`}
-                      disabled={screen2State.completedSteps.includes(1)}
+                      disabled={completedSteps.includes(1)}
                     >
                       It'll be subtracted
                     </Button>
@@ -182,17 +194,17 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                       onClick={() => handleNumeratorAnswer('same')}
                       className={`px-8 py-2 text-lg font-bold border-2 border-black text-white
                         bg-[#FF497C] hover:bg-[#FF497C]/90`}
-                      disabled={screen2State.completedSteps.includes(2)}
+                      disabled={completedSteps.includes(2)}
                     >
                       Stays the same
                     </Button>
                     <Button
                       onClick={() => handleNumeratorAnswer('subtracted')}
                       className={`px-8 py-2 text-lg font-bold border-2 border-black text-white
-                        ${screen2State.numeratorAnswer === 'subtracted'
+                        ${numeratorAnswer === 'subtracted'
                           ? 'bg-[#2EA500] hover:bg-[#2EA500]'
                           : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`}
-                      disabled={screen2State.completedSteps.includes(2)}
+                      disabled={completedSteps.includes(2)}
                     >
                       It'll be subtracted
                     </Button>
@@ -215,7 +227,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                     <div className="flex flex-col items-center gap-2">
                       <Input
                         type="text"
-                        value={screen2State.finalAnswer}
+                        value={finalAnswer}
                         onChange={(e) => handleFinalAnswerChange(e.target.value)}
                         className="w-16 h-16 text-2xl font-bold text-center border-2 border-black"
                       />
@@ -223,7 +235,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                       <div className="text-2xl font-bold">{fraction1.denominator}</div>
                     </div>
                   </div>
-                  {screen2State.isStep3Correct && (
+                  {isStep3Correct && (
                     <div className="mt-4 flex flex-col items-center">
                       <div className="px-4 py-2 bg-[#2EA500] text-white font-bold rounded-lg">
                         Correct 🎉
