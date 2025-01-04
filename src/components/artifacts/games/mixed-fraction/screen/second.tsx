@@ -1,9 +1,7 @@
 import LegoGame from '../lego-game/second';
 import Header from '../components/header';
 import { useGameState } from '../state-utils';
-import { Button } from '@/components/custom_ui/button';
-import { useState } from 'react';
-import { Input } from '@/components/custom_ui/input';
+import { VerifyPiecesAndDivisions, ChooseHolder, CreateBlocks } from './components/second';
 
 const MainContent = () => {
   const { gameStateRef } = useGameState();
@@ -59,99 +57,19 @@ const MainContent = () => {
 
 
 const Footer = () => {
-  const { gameStateRef, setGameStateRef } = useGameState();
-  const { step, fraction, denomOptions } = gameStateRef.current.state2;
-  const denominator = fraction.denominator;
-  const numerator = fraction.numerator;
-  
-  const [answer, setAnswer] = useState({count: '', numerator: '', denominator: ''});
-
-  const verifyMixedFraction = () => {
-    const answerNumerator = parseInt(answer.count) * parseInt(answer.numerator);
-    const answerDenominator = parseInt(answer.denominator);
-    if (answerNumerator === numerator && answerDenominator === denominator) {
-      nextStep();
-    }
-  };
-
-  const handleDenomOptionClick = (option: number) => {
-    if (option === denominator) {
-      nextStep();
-    } else {
-      // TODO: Show error message
-    }
-  };
-
-  const nextStep = () => {
-    setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
-  };
+  const { gameStateRef } = useGameState();
+  const { step } = gameStateRef.current.state2;
 
   return (
     <div className="relative">
       {step === 0 && (
-        <>
-          <div className="flex justify-center mt-4 items-center space-x-4">
-            <span className="text-3xl">I need </span>
-            <div className="text-3xl font-bold text-center">
-              <Input 
-                  type="text" 
-                  value={answer.count} 
-                  placeholder="?"
-                  onChange={(e) => setAnswer(prev => ({ ...prev, count: e.target.value }))}
-                  className="w-12 text-3xl text-center border-2 border-black"
-                />
-            </div>
-            <span className="text-3xl"> legos X size </span>
-            <div className="text-3xl font-bold text-center">
-              <Input 
-                type="text" 
-                value={answer.numerator} 
-                placeholder="?"
-                onChange={(e) => setAnswer(prev => ({ ...prev, numerator: e.target.value }))} 
-                className="w-12 text-center border-2 border-black"
-              />
-              <div className="w-full h-px bg-black my-2" />
-              <Input 
-                type="text" 
-                value={answer.denominator}
-                placeholder="?"
-                onChange={(e) => setAnswer(prev => ({ ...prev, denominator: e.target.value }))}
-                className="w-12 text-center border-2 border-black"
-              />
-            </div>
-            <span className="text-3xl"> to create </span>
-            <span className="text-3xl font-bold text-center w-6">
-              <span>{numerator}</span>
-                <div className="w-full h-px bg-black my-1" />
-              <span>{denominator}</span>
-            </span>
-          </div>
-
-          <div className="flex justify-center mt-4">
-            <Button className="bg-pink-400 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={verifyMixedFraction}>
-              CREATE
-            </Button>
-          </div>
-        </>
+        <CreateBlocks />
       )}
       {step === 1 && (
-        <div className="flex flex-col items-center justify-center mt-4 space-y-2">
-          <div className="flex justify-center space-x-4">
-            {denomOptions.map((option, index) => (
-              <Button 
-                key={index} 
-                className="bg-blue-500 text-white px-4 py-2 text-xl rounded-lg hover:bg-blue-600 transition-colors duration-300 shadow-md"
-                onClick={() => handleDenomOptionClick(option)}
-              >
-                {option}
-              </Button>
-            ))}
-          </div>
-          <div className="text-center">
-            <span className="text-3xl font-bold block mb-2">Now choose the holder</span>
-            <span className="text-2xl text-gray-600">Hint: Number of Divisions should be same as denominator</span>
-          </div>
-        </div>
+        <ChooseHolder />
+      )}
+      {step === 2 && (
+        <VerifyPiecesAndDivisions />
       )}
     </div>
   );
