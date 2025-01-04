@@ -113,7 +113,6 @@ const Footer = () => {
   const stepText = firstScreenFooterTexts(numerator, denominator)[step];
 
   const handleNumeratorClick = () => {
-
     // Send admin message
   };
 
