@@ -105,7 +105,7 @@ const MainContent = () => {
               </div>
             </div>
             <div className="text-8xl font-bold text-center mx-2">
-              <span>{numerator}</span>
+              <span>{numerator % denominator}</span>
               <div className="w-full h-px bg-black my-2" />
               <span>{denominator}</span>
             </div>
