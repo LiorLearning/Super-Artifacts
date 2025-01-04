@@ -33,7 +33,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-    screen: 'second',
+    screen: 'first',
     state1: {
         step: 0,
         fraction: {
@@ -43,7 +43,7 @@ export const initialGameState: GameState = {
         piecesAtYOne: 0,
     },
     state2: {
-        step: 4,
+        step: 0,
         fraction: {
             numerator: 8,
             denominator: 3,
@@ -53,8 +53,8 @@ export const initialGameState: GameState = {
     state3: {
         step: 0,
         fraction: {
-            numerator: 7,
-            denominator: 4,
+            numerator: 9,
+            denominator: 5,
         },
     },
 };

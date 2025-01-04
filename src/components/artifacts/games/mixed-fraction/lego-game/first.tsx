@@ -160,6 +160,11 @@ const LegoGame = () => {
       animateAllPieces(-0.4);
       animateCamera(camera!, new THREE.Vector3(-0, 5, 7.7), 1);
     }
+
+    return () => {
+      cleanUpPieces(scene!, pieces);
+      setPieces([]);
+    }
   }, [step, scene]);
 
 

@@ -85,7 +85,7 @@ interface CorrectAnswerProps {
   numerator: number;
   denominator: number;
   large: boolean;
-  nextScreen: () => void;
+  nextScreen?: () => void;
 }
 
 export const CorrectAnswer = ({ numerator, denominator, large, nextScreen }: CorrectAnswerProps) => {
@@ -111,10 +111,12 @@ export const CorrectAnswer = ({ numerator, denominator, large, nextScreen }: Cor
         <span>Correct Answer</span>
       </div>
       <div className={`flex justify-center ${large ? 'mt-16' : 'mt-4'}`}>
-        <Button className="text-black px-6 py-3 mx-2 text-3xl shadow-lg rounded-none" onClick={nextScreen}>
-          PROCEED
-          <StepForwardIcon className="inline-block ml-2 text-green-500" />
-        </Button>
+        {nextScreen && (
+          <Button className="text-black px-6 py-3 mx-2 text-3xl shadow-lg rounded-none" onClick={nextScreen}>
+            PROCEED
+            <StepForwardIcon className="inline-block ml-2 text-green-500" />
+          </Button>
+        )}
       </div>
     </>
   )
