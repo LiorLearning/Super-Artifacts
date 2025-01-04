@@ -44,92 +44,93 @@ Tips:
 - Remember that pieces must be the same size (same denominator) to subtract
 - Practice connecting the visual model to the numerical representation
 `
-
 interface Fraction {
   numerator: number;
   denominator: number;
 }
 
-export interface GameState {
-  currentFrame: number;
-  fractionProblem: {
-    fraction1: Fraction;
-    fraction2: Fraction;
-  };
-  chocolateBarPieces: number;
-  correctAnswer: Fraction;
-  currentScreen: 'chocolate' | 'denominator';
-  chocolateBarScreen: {
-    selectedPieces: number[];
-    step2Pieces: number[];
-    numerator: string;
-    denominator: string;
-    selectedOption: number | null;
-    showStep2: boolean;
-    showStep3: boolean;
-    showFooter: boolean;
-  };
-  denominatorScreen: {
-    denominatorOption: number | null;
-    numeratorOption: number | null;
-    answerNumerator: string;
-    answerDenominator: string;
-    showStep2: boolean;
-    showStep3: boolean;
-    isAnswerCorrect: boolean;
-  };
-  selectedPieces: number;
+interface Screen1State {
   currentStep: number;
+  selectedPieces: number;
   droppedPieces: Array<{ x: number, y: number, originalIndex: number }>;
   answer: {
     numerator: string;
     denominator: string;
   };
-  reflectionStep: number;
-  selectedAnswer: string | null;
-  isFirstQuestionCorrect: boolean;
   firstAnswer: string | null;
   secondAnswer: string | null;
 }
 
+interface Screen2State {
+  currentStep: number;
+  denominatorAnswer: string | null;
+  numeratorAnswer: string | null;
+  finalAnswer: string;
+  completedSteps: number[];
+  isStep3Correct: boolean;
+}
+
+interface SharedState {
+  currentFrame: number;
+  questions: {
+    question1: {
+      fraction1: Fraction;
+      fraction2: Fraction;
+    }
+    question2: {
+      fraction1: Fraction;
+      fraction2: Fraction;
+    }
+  }
+}
+
+export interface GameState extends SharedState {
+  screen1State: Screen1State;
+  screen2State: Screen2State;
+}
+
 export const initialGameState: GameState = {
   currentFrame: 1,
-  fractionProblem: {
-    fraction1: { numerator: 1, denominator: 3 },
-    fraction2: { numerator: 1, denominator: 3 },
+  questions: {
+    question1: {
+      fraction1: {
+        numerator: 7,
+        denominator: 8
+      },
+      fraction2: {
+        numerator: 1,
+        denominator: 8
+      }
+    },
+    question2: {
+      fraction1: {
+        numerator: 5,
+        denominator: 5
+      },
+      fraction2: {
+        numerator: 3,
+        denominator: 5
+      }
+    }
   },
-  chocolateBarPieces: 3,
-  correctAnswer: { numerator: 2, denominator: 3 },
-  currentScreen: 'chocolate',
-  chocolateBarScreen: {
-    selectedPieces: [],
-    step2Pieces: [],
-    numerator: '',
-    denominator: '',
-    selectedOption: null,
-    showStep2: false,
-    showStep3: false,
-    showFooter: false,
+  screen1State: {
+    currentStep: 1,
+    selectedPieces: 0,
+    droppedPieces: [],
+    answer: {
+      numerator: '',
+      denominator: ''
+    },
+    firstAnswer: null,
+    secondAnswer: null,
   },
-  denominatorScreen: {
-    denominatorOption: null,
-    numeratorOption: null,
-    answerNumerator: '',
-    answerDenominator: '',
-    showStep2: false,
-    showStep3: false,
-    isAnswerCorrect: false,
-  },
-  selectedPieces: 0,
-  currentStep: 1,
-  droppedPieces: [],
-  answer: {
-    numerator: '',
-    denominator: ''
-  },
-  reflectionStep: 1,
-  selectedAnswer: null,
-  isFirstQuestionCorrect: false,
-  firstAnswer: null,
-  secondAnswer: null,
+
+  screen2State: {
+    currentStep: 1,
+    denominatorAnswer: null,
+    numeratorAnswer: null,
+    finalAnswer: '',
+    completedSteps: [],
+    isStep3Correct: false
+  }
 }
