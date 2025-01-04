@@ -3,61 +3,24 @@ import { useThreeSetup } from './hooks/useThreeSetup';
 import { useDragControls } from './hooks/useDragControls';
 import { useWindowResize } from './hooks/useWindowResize';
 import { createLegoPiece } from './utils/pieceFactory';
-// import { INITIAL_PIECES_CONFIG } from './utils/constants';
+import { createHolder } from './utils/holderFactory';
 import * as THREE from 'three';
-import { useGameState } from './state-utils';
-import { COLORS, DURATION } from './utils/constants';
-
+import { useGameState } from '../state-utils';
+import { COLORS, DURATION, HOLDER_POSITION } from './utils/constants';
+import { animateCamera, animatePiece } from './utils/animation';
 interface CreatePieceProps {
   scene: THREE.Scene | null;
   position: [number, number, number];
   color: number;
 }
 
-const animateCamera = (camera: THREE.OrthographicCamera, targetPosition: THREE.Vector3, duration: number) => {
-  if (!camera) return;
-  const startPosition = camera.position.clone();
-  const startTime = performance.now();
-
-  const animateCamera = (time: number) => {
-    const elapsed = (time - startTime) / 1000; // convert to seconds
-    const progress = Math.min(elapsed / duration, 1); // clamp to [0, 1]
-
-    camera.position.lerpVectors(startPosition, targetPosition, progress);
-
-    if (progress < 1) {
-      requestAnimationFrame(animateCamera);
-    }
-  };
-
-  requestAnimationFrame(animateCamera);
-}
-
-const animatePiece = (piece: THREE.Mesh, targetPosition: THREE.Vector3, duration: number) => {
-  if (!piece) return;
-  const startPosition = piece.position.clone();
-  const startTime = performance.now();
-
-  const animate = (time: number) => {
-    const elapsed = (time - startTime) / 1000; // convert to seconds
-    const progress = Math.min(elapsed / duration, 1); // clamp to [0, 1]
-
-    piece.position.lerpVectors(startPosition, targetPosition, progress);
-
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    }
-  };
-
-  requestAnimationFrame(animate);
-};
-
 
 
 const LegoGame = () => {
   const mountRef = React.useRef<HTMLDivElement>(null);
   const hasInitialized = React.useRef(false);
-  const { scene, camera, renderer, orbitControls, toggleTextVisibilityOfHolder } = useThreeSetup(mountRef, hasInitialized);
+  const { scene, camera, renderer, orbitControls } = useThreeSetup(mountRef, hasInitialized);
+  
   const [pieces, setPieces] = React.useState<THREE.Mesh[]>([]);
   const dragObjectsRef = React.useRef<THREE.Mesh[]>([]);
 
@@ -97,7 +60,7 @@ const LegoGame = () => {
 
   const createPiece = ({ scene, position, color }: CreatePieceProps) => {
     if (!scene) return null;
-    const piece = createLegoPiece(color);
+    const piece = createLegoPiece(color, 4/fraction.denominator);
     piece.position.set(...position);
     scene.add(piece);
     dragObjectsRef.current = [...dragObjectsRef.current, piece];
@@ -117,7 +80,6 @@ const LegoGame = () => {
   const animateAllPieces = (yPos: number) => {
     const newPieces: THREE.Mesh[] = [];
     pieces.forEach(piece => {
-      console.log(piece.position.y);
       if (Math.abs(piece.position.y - yPos) <= 0.1) {
         // Update piece position
         animatePiece(piece, new THREE.Vector3(piece.position.x-3, piece.position.y - 0.5, piece.position.z + 1.3), 1);
@@ -141,6 +103,12 @@ const LegoGame = () => {
     });
     setPieces(newPieces);
   }
+
+  useEffect(() => {
+    if (scene && mountRef.current) {
+      createHolder(scene, HOLDER_POSITION, 4);
+    }
+  }, [scene]);
   
 
   useEffect(() => {
@@ -156,7 +124,7 @@ const LegoGame = () => {
       setPieces([]);
 
       // Show the holder
-      toggleTextVisibilityOfHolder(true);
+      // toggleTextVisibilityOfHolder(true);
 
       // Create the pieces
       const newPieces: THREE.Mesh[] = [];
@@ -172,7 +140,7 @@ const LegoGame = () => {
       animateCamera(camera!, new THREE.Vector3(2, 3, 4), 1);
       
       // Hide the holder
-      toggleTextVisibilityOfHolder(false);
+      // toggleTextVisibilityOfHolder(false);
 
       animateCamera(camera!, new THREE.Vector3(5, 5, 5), 1);
 
@@ -191,6 +159,7 @@ const LegoGame = () => {
       animateAllPieces(-0.4);
       animateCamera(camera!, new THREE.Vector3(-0, 5, 7.7), 1);
     }
+
   }, [step, scene]);
 
 
