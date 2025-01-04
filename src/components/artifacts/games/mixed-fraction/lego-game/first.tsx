@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useThreeSetup } from './hooks/useThreeSetup';
 import { useDragControls } from './hooks/useDragControls';
 import { useWindowResize } from './hooks/useWindowResize';
@@ -6,7 +6,7 @@ import { createLegoPiece } from './utils/pieceFactory';
 import { createHolder } from './utils/holderFactory';
 import * as THREE from 'three';
 import { useGameState } from '../state-utils';
-import { COLORS, DURATION, HOLDER_POSITION } from './utils/constants';
+import { COLORS, HOLDER_POSITION } from './utils/constants';
 import { animateCamera, animatePiece } from './utils/animation';
 interface CreatePieceProps {
   scene: THREE.Scene | null;
@@ -32,6 +32,7 @@ const LegoGame = () => {
   );
 
   const fillContainerRef = useRef<boolean>(false);
+  const [enableDragging, setEnableDragging] = useState(false);
 
   const onDragEnd = (count: number) => {
     if (!fillContainerRef.current) {
@@ -137,6 +138,8 @@ const LegoGame = () => {
       setPieces(newPieces);
 
     } else if (step === 3) {
+      setEnableDragging(true);
+
       animateCamera(camera!, new THREE.Vector3(2, 3, 4), 1);
       
       // Hide the holder
@@ -144,9 +147,6 @@ const LegoGame = () => {
 
       animateCamera(camera!, new THREE.Vector3(5, 5, 5), 1);
 
-      setTimeout(() => {
-        goToStep(4);
-      }, DURATION);
       
     } else if (step === 6) {
       animateCamera(camera!, new THREE.Vector3(7, 5, 3), 1);
@@ -158,6 +158,7 @@ const LegoGame = () => {
     } else if (step === 11) {
       animateAllPieces(-0.4);
       animateCamera(camera!, new THREE.Vector3(-0, 5, 7.7), 1);
+      setEnableDragging(false);
     }
 
   }, [step, scene]);
@@ -167,7 +168,7 @@ const LegoGame = () => {
     scene,
     camera,
     renderer,
-    dragObjects: dragObjectsRef.current,
+    dragObjects: enableDragging ? dragObjectsRef.current : [],
     containerAssignmentsRef: containerAssignmentsRef,
     orbitControls,
     onDragEnd: onDragEnd,
