@@ -15,6 +15,7 @@ import AdditionGame from './games/addition/game';
 import FractionsGame from './games/fractions-game/game';
 import EquivalentFractionsGame from './games/equivalent-fractions/game';
 import DifferentNumeratorDenominator from './games/different-numerator-denominator/game';
+import LegoGame from './games/lego-game/game';
 
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
 import { GameStateProvider as FractionSubtractionGameStateProvider, useGameState as FractionSubtractionGameState } from './games/fraction-subtraction/state-utils'
@@ -22,6 +23,7 @@ import { GameStateProvider as AdditionGameStateProvider, useGameState as Additio
 import { GameStateProvider as FractionsGameStateProvider, useGameState as FractionsGameState } from './games/fractions-game/state-utils'
 import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState as EquivalentFractionsGameState } from './games/equivalent-fractions/state-utils'
 import { GameStateProvider as DifferentNumeratorDenominatorGameStateProvider, useGameState as DifferentNumeratorDenominatorGameState } from './games/different-numerator-denominator/state-utils'
+import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/lego-game/state-utils'
 
 import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
 import { desc as FractionSubtractionGameDesc } from './games/fraction-subtraction/game-state';
@@ -29,7 +31,7 @@ import { desc as AdditionGameDesc } from './games/addition/game-state';
 import { desc as FractionsGameDesc } from './games/fractions-game/game-state';
 import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
 import { desc as DifferentNumeratorDenominatorGameDesc } from './games/different-numerator-denominator/game-state';
-
+import { desc as LegoGameDesc } from './games/lego-game/game-state';
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
@@ -77,6 +79,13 @@ const gameInfo: Record<string, GameInfo> = {
     state: DifferentNumeratorDenominatorGameState,
     provider: DifferentNumeratorDenominatorGameStateProvider
   },
+  'lego-game': {
+    game: LegoGame,
+    desc: LegoGameDesc,
+    state: LegoGameState,
+    provider: LegoGameStateProvider
+  },
+  // Add other games here as they are implemented
 };
 
 interface GameComponentProps {
