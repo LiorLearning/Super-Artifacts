@@ -42,7 +42,7 @@ export const initialGameState: GameState = {
         piecesAtYOne: 0,
     },
     state2: {
-        step: 0,
+        step: 1,
         fraction: {
             numerator: 8,
             denominator: 3,

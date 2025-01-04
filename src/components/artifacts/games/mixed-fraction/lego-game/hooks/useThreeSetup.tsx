@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { createHolder } from '../utils/holderFactory';
 import { setupLights } from '../utils/lightSetup';
 
 interface ThreeSetup {
@@ -9,7 +8,6 @@ interface ThreeSetup {
   camera: THREE.OrthographicCamera | null;
   renderer: THREE.WebGLRenderer | null;
   orbitControls: OrbitControls | null;
-  toggleTextVisibilityOfHolder: (visible: boolean) => void;
 }
 
 export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInitialized: React.MutableRefObject<boolean>): ThreeSetup => {
@@ -18,7 +16,6 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     camera: null,
     renderer: null,
     orbitControls: null,
-    toggleTextVisibilityOfHolder: () => {}
   });
 
   useEffect(() => {
@@ -50,9 +47,6 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     // Add lights
     setupLights(scene);
 
-    // Add holder
-    const { toggleTextVisibility: toggleTextVisibilityOfHolder } = createHolder(scene);
-
     // Controls
     const orbitControls = new OrbitControls(camera, renderer.domElement);
     orbitControls.enableRotate = false;
@@ -65,7 +59,7 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     };
     animate();
 
-    setSetup({ scene, camera, renderer, orbitControls, toggleTextVisibilityOfHolder });
+    setSetup({ scene, camera, renderer, orbitControls });
 
     return () => {
       renderer.dispose();

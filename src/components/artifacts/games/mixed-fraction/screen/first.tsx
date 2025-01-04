@@ -5,6 +5,7 @@ import { firstScreenFooterTexts } from './constants';
 import { Button } from '@/components/custom_ui/button';
 import { useState } from 'react';
 import { StepForwardIcon } from 'lucide-react';
+import { Input } from '@/components/custom_ui/input';
 
 const STEPS_WITH_PROCEED = [0, 1, 11];
 
@@ -65,7 +66,9 @@ const MainContent = () => {
                 </>
               )}
               {step > 6 && (
-                <span>{stepText}</span>
+                <div className="flex items-center justify-center my-4">
+                  <span>{stepText}</span>
+                </div>
               )}
             </h2>
           </div>
@@ -204,7 +207,7 @@ const Footer = () => {
           <div className="flex items-center justify-center h-full">
             <div className="text-3xl font-bold text-center my-8">
               <div className="border-4 border-purple-500 px-1 py-1 rounded-lg">
-                <input 
+                <Input 
                   type="text" 
                   value={mixedFraction.integer} 
                   placeholder="?"
@@ -216,7 +219,7 @@ const Footer = () => {
           </div>
           <div className="text-3xl font-bold text-center mx-2">
             <div className="border-4 border-green-500 px-1 py-1 rounded-lg">
-              <input 
+              <Input 
                 type="text" 
                 value={mixedFraction.numerator} 
                 placeholder="?"
@@ -226,7 +229,7 @@ const Footer = () => {
             </div>
             <div className="w-full h-px bg-black my-2" />
             <div className="border-4 border-gray-600 px-1 py-1 rounded-lg">
-              <input 
+              <Input 
                 type="text" 
                 value={mixedFraction.denominator} 
                 placeholder="?"

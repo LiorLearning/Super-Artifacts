@@ -3,10 +3,10 @@ import { useThreeSetup } from './hooks/useThreeSetup';
 import { useDragControls } from './hooks/useDragControls';
 import { useWindowResize } from './hooks/useWindowResize';
 import { createLegoPiece } from './utils/pieceFactory';
-// import { INITIAL_PIECES_CONFIG } from './utils/constants';
+import { createHolder } from './utils/holderFactory';
 import * as THREE from 'three';
 import { useGameState } from '../state-utils';
-import { COLORS, DURATION } from './utils/constants';
+import { COLORS, DURATION, HOLDER_POSITION } from './utils/constants';
 
 interface CreatePieceProps {
   scene: THREE.Scene | null;
@@ -57,7 +57,8 @@ const animatePiece = (piece: THREE.Mesh, targetPosition: THREE.Vector3, duration
 const LegoGame = () => {
   const mountRef = React.useRef<HTMLDivElement>(null);
   const hasInitialized = React.useRef(false);
-  const { scene, camera, renderer, orbitControls, toggleTextVisibilityOfHolder } = useThreeSetup(mountRef, hasInitialized);
+  const { scene, camera, renderer, orbitControls } = useThreeSetup(mountRef, hasInitialized);
+  
   const [pieces, setPieces] = React.useState<THREE.Mesh[]>([]);
   const dragObjectsRef = React.useRef<THREE.Mesh[]>([]);
 
@@ -97,7 +98,7 @@ const LegoGame = () => {
 
   const createPiece = ({ scene, position, color }: CreatePieceProps) => {
     if (!scene) return null;
-    const piece = createLegoPiece(color);
+    const piece = createLegoPiece(color, 4/fraction.denominator);
     piece.position.set(...position);
     scene.add(piece);
     dragObjectsRef.current = [...dragObjectsRef.current, piece];
@@ -141,6 +142,12 @@ const LegoGame = () => {
     });
     setPieces(newPieces);
   }
+
+  useEffect(() => {
+    if (scene && mountRef.current) {
+      createHolder(scene, HOLDER_POSITION, 4);
+    }
+  }, [scene]);
   
 
   useEffect(() => {
@@ -156,7 +163,7 @@ const LegoGame = () => {
       setPieces([]);
 
       // Show the holder
-      toggleTextVisibilityOfHolder(true);
+      // toggleTextVisibilityOfHolder(true);
 
       // Create the pieces
       const newPieces: THREE.Mesh[] = [];
@@ -172,7 +179,7 @@ const LegoGame = () => {
       animateCamera(camera!, new THREE.Vector3(2, 3, 4), 1);
       
       // Hide the holder
-      toggleTextVisibilityOfHolder(false);
+      // toggleTextVisibilityOfHolder(false);
 
       animateCamera(camera!, new THREE.Vector3(5, 5, 5), 1);
 

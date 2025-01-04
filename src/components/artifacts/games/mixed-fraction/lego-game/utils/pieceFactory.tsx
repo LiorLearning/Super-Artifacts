@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { COLORS } from './constants';
 
-export const createLegoPiece = (color: number) => {
-  const geometry = new THREE.BoxGeometry(0.9, 1, 0.9);
+export const createLegoPiece = (color: number, depth: number) => {
+  const geometry = new THREE.BoxGeometry(0.9, 1, depth * 0.9);
   const material = new THREE.MeshPhongMaterial({ 
     color,
     transparent: true,

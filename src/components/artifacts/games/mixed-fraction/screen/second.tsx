@@ -1,59 +1,30 @@
-import LegoGame from '../lego-game/first';
+import LegoGame from '../lego-game/second';
 import Header from '../components/header';
 import { useGameState } from '../state-utils';
-import { firstScreenFooterTexts } from './constants';
 import { Button } from '@/components/custom_ui/button';
 import { useState } from 'react';
-import { StepForwardIcon } from 'lucide-react';
-
-const STEPS_WITH_PROCEED = [0, 1, 11];
+import { Input } from '@/components/custom_ui/input';
 
 const MainContent = () => {
-  const { gameStateRef, setGameStateRef } = useGameState();
-  const { step, fraction, piecesAtYOne } = gameStateRef.current.state1;
+  const { gameStateRef } = useGameState();
+  const { step, fraction } = gameStateRef.current.state2;
   const numerator = fraction.numerator;
   const denominator = fraction.denominator;
 
-  const color = step <= 6 ? 'pink-400' : step <= 12 ? 'blue-500' : 'purple-500';
-  const stepNumber = step <= 6 ? 1 : step <= 12 ? 2 : 3;
-  const stepText = step <= 12 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
-
-  const [answer, setAnswer] = useState('');
-
-  const handleAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setAnswer(inputValue);
-    if (inputValue === numerator.toString()) {
-      console.log('Correct answer!');
-      setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
-    }
-  };
-
-  const nextScreen = () => {
-    setGameStateRef(prev => ({ ...prev, screen: 'second' }));
-  };
+  const color = step <= 1 ? 'pink-400' : step <= 2 ? 'blue-500' : 'purple-500';
+  const stepNumber = step <= 1 ? 1 : step <= 2 ? 2 : 3;
+  const stepText = step <= 2 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
 
   return (
     <div className="flex flex-col m-4">
-      {step === 0 && (
-        <div className="p-8 bg-white">
-          <h2 className="text-3xl font-bold">
-            Hey let us understand mixed fractions, with{' '}
-            <span className="text-red-500 relative">
-              LEGOS!
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500" />
-            </span>
-          </h2>
-        </div>
-      )}
-      {step > 0 && (
+      {step >= 0 && (
         <div className="flex items-stretch justify-center gap-4">
           <div className={`bg-white text-${color} border-8 border-${color} px-6 py-2 flex items-center justify-center`}>
             <span className="text-2xl font-bold">STEP {stepNumber}</span>
           </div>
           <div className={`flex-1 bg-${color} border-8 border-${color} flex items-center max-w-xl`}>
             <h2 className="text-white text-2xl font-bold flex items-center gap-4 mx-auto">
-              {step <= 6 && (
+              {step <= 1 && (
                 <>
                   <span>CREATE</span>
                   <div className="bg-white text-black px-3 py-1 inline-flex flex-col items-center">
@@ -64,62 +35,23 @@ const MainContent = () => {
                   <span>LEGO BLOCKS</span>
                 </>
               )}
-              {step > 6 && (
-                <span>{stepText}</span>
+              {step > 1 && (
+                <div className="flex items-center justify-center my-4">
+                  <span>{stepText}</span>
+                </div>
               )}
             </h2>
           </div>
         </div>
       )}
-      {step === 6 && (
-        <div className="flex justify-center mt-4 items-center space-x-4">
-          <div className="text-3xl font-bold text-center">
-            <span>1</span>
-            <div className="w-full h-px bg-black my-1" />
-            <span>{denominator}</span>
-          </div>
-          <span className="text-3xl">x</span>
-          <div className="text-3xl font-bold text-center text-purple-500 border-4 border-purple-500 px-3 py-1">
-            <span>{piecesAtYOne}</span>
-          </div>
-          <span className="text-3xl">=</span>
-          <div className="text-3xl font-bold text-center">
-            <input 
-              type="text" 
-              value={answer} 
-              placeholder="?"
-              onChange={handleAnswerChange} 
-              className="w-12 text-center"
-            />
-            <div className="w-full h-px bg-black my-1" />
-            <span>{denominator}</span>
+      {step === 1 && (
+        <div className="flex justify-center mt-4">
+          <div className="flex items-center justify-center h-full">
+            <div className="text-3xl font-bold text-center my-8">
+              Here you go!
+            </div>
           </div>
         </div>
-      )}
-      {step === 13 && (
-        <>
-          <div className="flex justify-center mt-48">
-            <div className="flex items-center justify-center h-full">
-              <div className="text-8xl font-bold text-center my-16 mx-4">
-                <span>{Math.floor(numerator / denominator)}</span>
-              </div>
-            </div>
-            <div className="text-8xl font-bold text-center mx-2">
-              <span>{numerator % denominator}</span>
-              <div className="w-full h-px bg-black my-2" />
-              <span>{denominator}</span>
-            </div>
-          </div>
-          <div className="flex justify-center text-6xl mt-8 text-green-500">
-            <span>Correct Answer</span>
-          </div>
-          <div className="flex justify-center mt-16">
-            <Button className="text-black px-6 py-3 mx-2 text-3xl shadow-lg rounded-none" onClick={nextScreen}>
-              PROCEED
-              <StepForwardIcon className="inline-block ml-2 text-green-500" />
-            </Button>
-          </div>
-        </>
       )}
     </div>
   );
@@ -128,120 +60,82 @@ const MainContent = () => {
 
 const Footer = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step, fraction, piecesAtYOne } = gameStateRef.current.state1;
+  const { step, fraction } = gameStateRef.current.state2;
   const denominator = fraction.denominator;
   const numerator = fraction.numerator;
-  const stepText = firstScreenFooterTexts(numerator, denominator)[step];
-
-  const [mixedFraction, setMixedFraction] = useState({integer: '', numerator: '', denominator: ''});
-
-  const handleIntegerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setMixedFraction(prev => ({ ...prev, integer: inputValue }));
-  }; 
-
-  const handleNumeratorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setMixedFraction(prev => ({ ...prev, numerator: inputValue }));
-  };
-
-  const handleDenominatorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setMixedFraction(prev => ({ ...prev, denominator: inputValue }));
-  };
-
-  const handleNumeratorClick = () => {
-    console.log('numerator clicked');
-    // Send admin message
-  };
-
-  const nextStep = () => {
-    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
-  };
+  
+  const [answer, setAnswer] = useState({count: '', numerator: '', denominator: ''});
 
   const verifyMixedFraction = () => {
-    if (parseInt(mixedFraction.integer) * parseInt(mixedFraction.denominator) + parseInt(mixedFraction.numerator) === numerator) {
+    const answerNumerator = parseInt(answer.count) * parseInt(answer.numerator);
+    const answerDenominator = parseInt(answer.denominator);
+    if (answerNumerator === numerator && answerDenominator === denominator) {
       nextStep();
     }
   };
 
+  const nextStep = () => {
+    setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
+  };
+
   return (
     <div className="relative">
-      {step === 5 && (
-        <div className="flex justify-center mt-4 items-center space-x-4">
-          <div className="text-3xl font-bold text-center">
-            <span>1</span>
-            <div className="w-full h-px bg-black my-1" />
-            <span>{denominator}</span>
-          </div>
-          <span className="text-3xl">x</span>
-          <div className="text-3xl font-bold text-center text-purple-500 border-4 border-purple-500 px-3 py-1">
-            <span>{piecesAtYOne}</span>
-          </div>
-        </div>
-      )}
-      <div className="text-center text-3xl font-bold mt-8 space-y-2">
-        {stepText.lines.map((line, index) => (
-          <span key={index} style={{ color: line.color || 'black' }}>{line.text}<br /></span>
-        ))}
-      </div>
-      {step === 2 && (
-        <div className="flex justify-center mt-4">
-          <Button className="bg-pink-400 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={handleNumeratorClick}>NUMERATOR ({numerator})</Button>
-          <Button className="bg-pink-400 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={nextStep}>DENOMINATOR ({denominator})</Button>
-        </div>
-      )}
-      {STEPS_WITH_PROCEED.includes(step) && (
-        <div className="flex justify-center mt-4">
-          <Button className="bg-blue-500 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={nextStep}>
-            Proceed
-          </Button>
-        </div>
-      )}
-      {step === 12 && (
+      {step === 0 && (
         <>
+          <div className="flex justify-center mt-4 items-center space-x-4">
+            <span className="text-3xl">I need </span>
+            <div className="text-3xl font-bold text-center">
+              <Input 
+                  type="text" 
+                  value={answer.count} 
+                  placeholder="?"
+                  onChange={(e) => setAnswer(prev => ({ ...prev, count: e.target.value }))}
+                  className="w-12 text-3xl text-center border-2 border-black"
+                />
+            </div>
+            <span className="text-3xl"> legos X size </span>
+            <div className="text-3xl font-bold text-center">
+              <Input 
+                type="text" 
+                value={answer.numerator} 
+                placeholder="?"
+                onChange={(e) => setAnswer(prev => ({ ...prev, numerator: e.target.value }))} 
+                className="w-12 text-center border-2 border-black"
+              />
+              <div className="w-full h-px bg-black my-2" />
+              <Input 
+                type="text" 
+                value={answer.denominator}
+                placeholder="?"
+                onChange={(e) => setAnswer(prev => ({ ...prev, denominator: e.target.value }))}
+                className="w-12 text-center border-2 border-black"
+              />
+            </div>
+            <span className="text-3xl"> to create </span>
+            <span className="text-3xl font-bold text-center w-6">
+              <span>{numerator}</span>
+                <div className="w-full h-px bg-black my-1" />
+              <span>{denominator}</span>
+            </span>
+          </div>
+
+          <div className="flex justify-center mt-4">
+            <Button className="bg-pink-400 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={verifyMixedFraction}>
+              CREATE
+            </Button>
+          </div>
+        </>
+      )}
+      {step === 1 && (
         <div className="flex justify-center mt-4">
           <div className="flex items-center justify-center h-full">
-            <div className="text-3xl font-bold text-center my-8">
-              <div className="border-4 border-purple-500 px-1 py-1 rounded-lg">
-                <input 
-                  type="text" 
-                  value={mixedFraction.integer} 
-                  placeholder="?"
-                  onChange={handleIntegerChange} 
-                  className="w-12 text-center text-purple-500"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-center mx-2">
-            <div className="border-4 border-green-500 px-1 py-1 rounded-lg">
-              <input 
-                type="text" 
-                value={mixedFraction.numerator} 
-                placeholder="?"
-                onChange={handleNumeratorChange} 
-                className="w-12 text-center text-green-500"
-              />
-            </div>
-            <div className="w-full h-px bg-black my-2" />
-            <div className="border-4 border-gray-600 px-1 py-1 rounded-lg">
-              <input 
-                type="text" 
-                value={mixedFraction.denominator} 
-                placeholder="?"
-                onChange={handleDenominatorChange} 
-                className="w-12 text-center text-gray-600"
-              />
+            <div className="font-bold text-center my-8">
+              <span className="text-3xl">Now choose the holder</span>
+              <br />
+              <span className="text-2xl">Hint : Number of Divisions should be same as denominator</span>
             </div>
           </div>
         </div>
-        <div className="flex justify-center mt-4">
-          <Button className="bg-blue-500 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={verifyMixedFraction}>
-            Verify
-          </Button>
-        </div>
-        </>
       )}
     </div>
   );
@@ -250,13 +144,13 @@ const Footer = () => {
 
 export default function SecondScreen() {
     const { gameStateRef } = useGameState();
-    const { fraction, step } = gameStateRef.current.state1;
+    const { fraction, step } = gameStateRef.current.state2;
 
     return (
       <div className="mx-auto">
         <Header fraction={fraction} />
         <MainContent />
-        {step <= 12 && (
+        {step <= 5 && (
           <div className="flex items-center justify-center">
             <LegoGame />
           </div>
