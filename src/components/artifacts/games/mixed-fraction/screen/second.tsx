@@ -1,4 +1,4 @@
-import LegoGame from '../lego-game';
+import LegoGame from '../lego-game/first';
 import Header from '../components/header';
 import { useGameState } from '../state-utils';
 import { firstScreenFooterTexts } from './constants';

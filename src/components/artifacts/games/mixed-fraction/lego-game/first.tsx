@@ -5,7 +5,7 @@ import { useWindowResize } from './hooks/useWindowResize';
 import { createLegoPiece } from './utils/pieceFactory';
 // import { INITIAL_PIECES_CONFIG } from './utils/constants';
 import * as THREE from 'three';
-import { useGameState } from './state-utils';
+import { useGameState } from '../state-utils';
 import { COLORS, DURATION } from './utils/constants';
 
 interface CreatePieceProps {

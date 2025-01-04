@@ -44,8 +44,8 @@ export const initialGameState: GameState = {
     state2: {
         step: 0,
         fraction: {
-            numerator: 7,
-            denominator: 4,
+            numerator: 8,
+            denominator: 3,
         },
     },
     state3: {
