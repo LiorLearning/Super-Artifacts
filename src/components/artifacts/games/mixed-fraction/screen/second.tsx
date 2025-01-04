@@ -47,7 +47,7 @@ const MainContent = () => {
       {step === 1 && (
         <div className="flex justify-center mt-4">
           <div className="flex items-center justify-center h-full">
-            <div className="text-3xl font-bold text-center my-8">
+            <div className="text-3xl font-bold text-center my-2">
               Here you go!
             </div>
           </div>
@@ -60,7 +60,7 @@ const MainContent = () => {
 
 const Footer = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step, fraction } = gameStateRef.current.state2;
+  const { step, fraction, denomOptions } = gameStateRef.current.state2;
   const denominator = fraction.denominator;
   const numerator = fraction.numerator;
   
@@ -71,6 +71,14 @@ const Footer = () => {
     const answerDenominator = parseInt(answer.denominator);
     if (answerNumerator === numerator && answerDenominator === denominator) {
       nextStep();
+    }
+  };
+
+  const handleDenomOptionClick = (option: number) => {
+    if (option === denominator) {
+      nextStep();
+    } else {
+      // TODO: Show error message
     }
   };
 
@@ -127,13 +135,21 @@ const Footer = () => {
         </>
       )}
       {step === 1 && (
-        <div className="flex justify-center mt-4">
-          <div className="flex items-center justify-center h-full">
-            <div className="font-bold text-center my-8">
-              <span className="text-3xl">Now choose the holder</span>
-              <br />
-              <span className="text-2xl">Hint : Number of Divisions should be same as denominator</span>
-            </div>
+        <div className="flex flex-col items-center justify-center mt-4 space-y-2">
+          <div className="flex justify-center space-x-4">
+            {denomOptions.map((option, index) => (
+              <Button 
+                key={index} 
+                className="bg-blue-500 text-white px-4 py-2 text-xl rounded-lg hover:bg-blue-600 transition-colors duration-300 shadow-md"
+                onClick={() => handleDenomOptionClick(option)}
+              >
+                {option}
+              </Button>
+            ))}
+          </div>
+          <div className="text-center">
+            <span className="text-3xl font-bold block mb-2">Now choose the holder</span>
+            <span className="text-2xl text-gray-600">Hint: Number of Divisions should be same as denominator</span>
           </div>
         </div>
       )}

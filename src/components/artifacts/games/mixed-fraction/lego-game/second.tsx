@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { useGameState } from '../state-utils';
 import { COLORS, HOLDER_POSITION } from './utils/constants';
 import { createHolder as createLegoHolder } from './utils/holderFactory';
+import { animateCamera } from './utils/animation';
 
 interface CreatePieceProps {
   scene: THREE.Scene | null;
@@ -27,7 +28,7 @@ const LegoGame = () => {
   const [pieces, setPieces] = React.useState<THREE.Mesh[]>([]);
   const [holders, setHolders] = React.useState<THREE.Group[]>([]);
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step, fraction } = gameStateRef.current.state2;
+  const { step, fraction, denomOptions } = gameStateRef.current.state2;
 
   const goToStep = (step: number) => {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step } }));
@@ -75,6 +76,37 @@ const LegoGame = () => {
     if (step === 0) {
       createHolder(scene, [0, 0, 0], 3);
     } else if (step === 1) {
+      cleanUpHolders(scene!, holders);
+      setHolders([]);
+
+      for (let i = 0; i < denomOptions.length; i++) {
+        const position: [number, number, number] = [-1 + i * 2.2, 0, 2 - i * 2.2];
+        createHolder(scene, position, denomOptions[i]);
+      }
+
+      for (let i = 0; i < fraction.numerator; i++) {
+        const row = Math.floor(i / 4);  // 4 pieces per row
+        const col = i % 4;              // Position within the row
+        const position: [number, number, number] = [-3.5 + col, 0, -3 + row * 1.5];
+        createPiece({ scene: scene!, position: position, color: COLORS.GREEN });
+      }
+
+    } else if (step === 2) {
+      cleanUpPieces(scene!, pieces);
+      setPieces([]);
+      cleanUpHolders(scene!, holders);
+      setHolders([]);
+
+      createHolder(scene, [2, 0, -3], 3);
+
+      const mid = Math.floor(fraction.numerator / 2);
+      for (let i = 0; i < fraction.numerator; i++) {
+        const row = Math.floor(i / 2);
+        const col = i % 2;
+        const position: [number, number, number] = [-3 + col * 1.2, 0, -2 + row * 1.5];
+        createPiece({ scene: scene!, position: position, color: COLORS.GREEN });
+      }
+
     }
   }, [step, scene]);
 

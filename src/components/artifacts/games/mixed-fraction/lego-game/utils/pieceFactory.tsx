@@ -6,7 +6,7 @@ export const createLegoPiece = (color: number, depth: number) => {
   const material = new THREE.MeshPhongMaterial({ 
     color,
     transparent: true,
-    opacity: 0.9
+    opacity: 1
   });
   const piece = new THREE.Mesh(geometry, material);
 

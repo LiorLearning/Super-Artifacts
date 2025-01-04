@@ -7,50 +7,12 @@ import { createHolder } from './utils/holderFactory';
 import * as THREE from 'three';
 import { useGameState } from '../state-utils';
 import { COLORS, DURATION, HOLDER_POSITION } from './utils/constants';
-
+import { animateCamera, animatePiece } from './utils/animation';
 interface CreatePieceProps {
   scene: THREE.Scene | null;
   position: [number, number, number];
   color: number;
 }
-
-const animateCamera = (camera: THREE.OrthographicCamera, targetPosition: THREE.Vector3, duration: number) => {
-  if (!camera) return;
-  const startPosition = camera.position.clone();
-  const startTime = performance.now();
-
-  const animateCamera = (time: number) => {
-    const elapsed = (time - startTime) / 1000; // convert to seconds
-    const progress = Math.min(elapsed / duration, 1); // clamp to [0, 1]
-
-    camera.position.lerpVectors(startPosition, targetPosition, progress);
-
-    if (progress < 1) {
-      requestAnimationFrame(animateCamera);
-    }
-  };
-
-  requestAnimationFrame(animateCamera);
-}
-
-const animatePiece = (piece: THREE.Mesh, targetPosition: THREE.Vector3, duration: number) => {
-  if (!piece) return;
-  const startPosition = piece.position.clone();
-  const startTime = performance.now();
-
-  const animate = (time: number) => {
-    const elapsed = (time - startTime) / 1000; // convert to seconds
-    const progress = Math.min(elapsed / duration, 1); // clamp to [0, 1]
-
-    piece.position.lerpVectors(startPosition, targetPosition, progress);
-
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    }
-  };
-
-  requestAnimationFrame(animate);
-};
 
 
 
