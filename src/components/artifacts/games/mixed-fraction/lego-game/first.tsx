@@ -80,7 +80,6 @@ const LegoGame = () => {
   const animateAllPieces = (yPos: number) => {
     const newPieces: THREE.Mesh[] = [];
     pieces.forEach(piece => {
-      console.log(piece.position.y);
       if (Math.abs(piece.position.y - yPos) <= 0.1) {
         // Update piece position
         animatePiece(piece, new THREE.Vector3(piece.position.x-3, piece.position.y - 0.5, piece.position.z + 1.3), 1);
@@ -161,10 +160,6 @@ const LegoGame = () => {
       animateCamera(camera!, new THREE.Vector3(-0, 5, 7.7), 1);
     }
 
-    return () => {
-      cleanUpPieces(scene!, pieces);
-      setPieces([]);
-    }
   }, [step, scene]);
 
 

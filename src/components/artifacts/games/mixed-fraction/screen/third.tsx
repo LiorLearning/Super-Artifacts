@@ -18,7 +18,6 @@ const DivisionSteps = () => {
   const [denomCorrect, setDenomCorrect] = useState<boolean | null>(null);
 
   useEffect(() => {
-    console.log(answer);
     if (answer.numerator === '') {
       setNumCorrect(null);
     } else if (parseInt(answer.numerator) === fraction.numerator) {

@@ -115,13 +115,7 @@ const LegoGame = () => {
         createPiece({ scene: scene!, position: position, color: color });
       }
     }
-
-    return () => {
-      cleanUpPieces(scene!, pieces);
-      setPieces([]);
-      cleanUpHolders(scene!, holders);
-      setHolders([]);
-    }
+    
   }, [step, scene]);
 
   useWindowResize({ camera: camera as THREE.OrthographicCamera, renderer: renderer as THREE.WebGLRenderer, mountRef });

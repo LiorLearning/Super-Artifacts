@@ -24,7 +24,6 @@ const MainContent = () => {
     const inputValue = e.target.value;
     setAnswer(inputValue);
     if (inputValue === numerator.toString()) {
-      console.log('Correct answer!');
       setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
     }
   };
@@ -114,7 +113,7 @@ const Footer = () => {
   const stepText = firstScreenFooterTexts(numerator, denominator)[step];
 
   const handleNumeratorClick = () => {
-    console.log('numerator clicked');
+
     // Send admin message
   };
 
