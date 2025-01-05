@@ -282,21 +282,37 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
           </div>
           <div className="bg-[#FF497C] px-6 flex items-center gap-2 h-full">
             <span className="text-white font-bold text-xl">
-              {currentStep === 1 ? 'CREATE' :
+              {
+                currentStep === 1 ? (
+                  <>
+                    CREATE {(currentStep === 1 || currentStep === 2) && (
+                    <div className="bg-white px-2">
+                      <div className="text-black font-bold">
+                        {currentStep === 1 ? fraction1.numerator : fraction2.numerator}
+                      </div>
+                      <div className="border-t-2 border-black"></div>
+                      <div className="text-black font-bold">{fraction1.denominator}</div>
+                    </div>
+                    )} 
+                  </>
+                ) : 
                 barValueStep ? 'THE ANSWER' :
-                currentStep === 2 ? 'REMOVE' :
+                currentStep === 2 ? (
+                  <>
+                    REMOVE {(currentStep === 2) && (
+                    <div className="bg-white px-2">
+                      <div className="text-black font-bold">
+                        {fraction2.numerator}
+                      </div>
+                      <div className="border-t-2 border-black"></div>
+                      <div className="text-black font-bold">{fraction1.denominator}</div>
+                    </div>
+                    )} 
+                  </>
+                ) :
                 currentStep === 3 ? 'THE ANSWER' : 'REFLECT'
               }
             </span>
-            {currentStep !== 3 && currentStep !== 4 && (
-              <div className="bg-white px-2">
-                <div className="text-black font-bold">
-                  {currentStep === 1 ? fraction1.numerator : fraction2.numerator}
-                </div>
-                <div className="border-t-2 border-black"></div>
-                <div className="text-black font-bold">{fraction1.denominator}</div>
-              </div>
-            )}
           </div>
         </div>
 
