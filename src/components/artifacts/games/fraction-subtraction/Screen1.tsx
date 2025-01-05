@@ -283,8 +283,8 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
           <div className="bg-[#FF497C] px-6 flex items-center gap-2 h-full">
             <span className="text-white font-bold text-xl">
               {currentStep === 1 ? 'CREATE' :
-                currentStep === 2 ? 'REMOVE' :
                 barValueStep ? 'THE ANSWER' :
+                currentStep === 2 ? 'REMOVE' :
                 currentStep === 3 ? 'THE ANSWER' : 'REFLECT'
               }
             </span>
