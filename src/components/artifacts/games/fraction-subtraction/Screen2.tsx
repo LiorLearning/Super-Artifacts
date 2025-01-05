@@ -34,7 +34,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    sendAdminMessage('agent', `Great, here's another question for you!`);
+    sendAdminMessage('agent', `Great, here's another question for you?`);
   },[]);
   
   const handleDenominatorAnswer = (answer: string) => {
@@ -52,6 +52,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
       }));
     } else {
       soundEffects.wrong.play();
+      sendAdminMessage('agent', 'Ah, not quite. What do you think the denominator was before and after subtraction?')
       setGameStateRef(prev => ({
         ...prev,
         screen2State: {
@@ -77,6 +78,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
       }));
     } else {
       soundEffects.wrong.play();
+      sendAdminMessage('agent', 'Ah, not quite. What do you think the numerator was before and after subtraction?')
       setGameStateRef(prev => ({
         ...prev,
         screen2State: {
@@ -93,7 +95,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
     
     if (isCorrect && !isStep3Correct) {
       soundEffects.correct.play();
-      sendAdminMessage('agent', `Correct!`);
+      sendAdminMessage('agent', `Great job, you're really getting a hang of fraction subtraction!`);
     } else if (value !== '' && !isCorrect && isStep3Correct) {
       soundEffects.wrong.play();
     }

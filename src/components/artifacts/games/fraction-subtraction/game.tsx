@@ -34,9 +34,9 @@ export default function DifferentNumeratorDenominator({ sendAdminMessage }: Equa
 
 
 
-
-
-
+// - “⁠Awesome, it's time to answer our original question?” - no question mark at the end
+// - ⁠chocolate state gets changed if i click previous from screen 2 (it should 6/8 instead of 7)
+// - ⁠Conversation should be exactly as in figma, some parts are different. Really changes the experience.
 
 
 

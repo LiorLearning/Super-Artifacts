@@ -61,6 +61,11 @@ interface Screen1State {
   secondAnswer: string | null;
   isNumeratorCorrect?: boolean;
   isDenominatorCorrect?: boolean;
+  barValueStep: boolean;
+  barValue: {
+    numerator: number;
+    denominator: number;
+  };
 }
 
 interface Screen2State {
@@ -125,6 +130,11 @@ export const initialGameState: GameState = {
     },
     firstAnswer: null,
     secondAnswer: null,
+    barValueStep: false,
+    barValue: {
+      numerator: 0,
+      denominator: 1
+    },
   },
 
   screen2State: {
