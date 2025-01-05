@@ -59,6 +59,8 @@ interface Screen1State {
   };
   firstAnswer: string | null;
   secondAnswer: string | null;
+  isNumeratorCorrect?: boolean;
+  isDenominatorCorrect?: boolean;
 }
 
 interface Screen2State {
@@ -104,7 +106,7 @@ export const initialGameState: GameState = {
     },
     question2: {
       fraction1: {
-        numerator: 5,
+        numerator: 4,
         denominator: 5
       },
       fraction2: {

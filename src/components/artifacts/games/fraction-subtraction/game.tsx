@@ -31,3 +31,12 @@ export default function DifferentNumeratorDenominator({ sendAdminMessage }: Equa
       return <Card>Invalid Frame</Card>;
   }
 }
+
+
+
+
+
+
+
+
+
