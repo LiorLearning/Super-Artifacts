@@ -1,8 +1,10 @@
 import { GameScreen, GameState } from '../game-state';
-import { useGameState } from '../state-utils';
 
-export function nextStep(screen: GameScreen) {
-  const { gameStateRef, setGameStateRef } = useGameState();
+export const nextStep = (
+  screen: GameScreen, 
+  gameState: GameState, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void
+) => {
   if (screen === 'first') {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
   } else {
@@ -10,8 +12,11 @@ export function nextStep(screen: GameScreen) {
   }
 }
 
-export function prevStep(screen: GameScreen) {
-  const { gameStateRef, setGameStateRef } = useGameState();
+export const prevStep = (
+  screen: GameScreen, 
+  gameState: GameState, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void
+) => {
   if (screen === 'first') {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: Math.max(prev.state1.step - 1, 0) } }));
   } else {
@@ -19,7 +24,10 @@ export function prevStep(screen: GameScreen) {
   }
 }
 
-export function nextScreen(screen: GameScreen) {
-  const { setGameStateRef } = useGameState();
+export const nextScreen = (
+  screen: GameScreen, 
+  gameState: GameState, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void
+) => {
   setGameStateRef(prev => ({ ...prev, screen }));
 }

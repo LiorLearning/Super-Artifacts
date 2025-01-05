@@ -124,7 +124,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const gameParam = searchParams.get('game') as GameKey;
-  const [currentGame, setCurrentGame] = useState<GameKey | null>(null);
+  const [currentGame, setCurrentGame] = useState<GameKey>('template-game');
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected } = useWebSocketLogger()
 

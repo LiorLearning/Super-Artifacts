@@ -1,24 +1,40 @@
+import { GameScreen } from './game-state';
 import FirstScreen from './screen/first';
 import SecondScreen from './screen/second';
 import { useGameState } from './state-utils';
 import { prevStep, nextStep } from './utils/helper';
-
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 const DevHelper = () => {
-  const { gameStateRef } = useGameState();
+  const { gameStateRef, setGameStateRef } = useGameState();
   const { screen } = gameStateRef.current;
   const { step: step1 } = gameStateRef.current.state1;
   const { step: step2 } = gameStateRef.current.state2;
 
   return (
     <div className="flex justify-between mt-4">
-      <button onClick={() => nextStep(screen)}>Next Step</button>
+      <Button className='m-2' onClick={() => prevStep(screen, gameStateRef.current, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
-        Current Step:  {screen} 
-        {screen === 'first' && <span>{step1}</span>}
-        {screen === 'second' && <span>{step2}</span>}
+        <Select 
+          value={screen} 
+          onValueChange={(selectedScreen) => {
+            setGameStateRef(prev => ({ ...prev, screen: selectedScreen as GameScreen }));
+          }}
+        >
+          <SelectTrigger className="m-2">
+            <SelectValue placeholder="Select a screen" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="first">First Screen</SelectItem>
+            <SelectItem value="second">Second Screen</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <button onClick={() => prevStep(screen)}>Previous Step</button>
+      {screen === 'first' && <span>Step: {step1}</span>}
+      {screen === 'second' && <span>Step: {step2}</span>}
+      <Button className='m-2' onClick={() => nextStep(screen, gameStateRef.current, setGameStateRef)}>Next Step</Button>
     </div>
   );
 };
@@ -35,10 +51,9 @@ export default function Game({sendAdminMessage}: GameProps) {
   return (
     <div className="mx-auto game font-jersey">
       <DevHelper />
-      
       {/* Game screens */}
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
+      {/* {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />} */}
 
       
       {/* Select font */}
