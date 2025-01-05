@@ -51,8 +51,6 @@ interface Fraction {
 
 interface Screen1State {
   currentStep: number;
-interface Screen1State {
-  currentStep: number;
   selectedPieces: number;
   droppedPieces: Array<{ x: number, y: number, originalIndex: number }>;
   answer: {

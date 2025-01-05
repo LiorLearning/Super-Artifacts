@@ -19,12 +19,6 @@ const STEPS = [
   { id: 3, title: 'ANSWER' }
 ];
 
-const STEPS = [
-  { id: 1, title: 'DENOMINATOR' },
-  { id: 2, title: 'NUMERATOR' },
-  { id: 3, title: 'ANSWER' }
-];
-
 export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {
@@ -284,14 +278,11 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
         @keyframes fall {
           0% { transform: translateY(0) rotate(0deg); }
           100% { transform: translateY(200vh) rotate(360deg); }
-          100% { transform: translateY(200vh) rotate(360deg); }
         }
         .animate-fall {
-          animation: fall 6s linear infinite;
           animation: fall 6s linear infinite;
         }
       `}</style>
     </div>
   )
 }
-

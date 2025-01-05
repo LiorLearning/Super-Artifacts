@@ -8,11 +8,6 @@ import {  useEffect } from 'react'
 import { send } from 'node:process'
 import { stringify } from 'node:querystring'
 import { useSoundEffects } from './sounds'
-import { FractionDisplay } from './components/FractionDisplay'
-import {  useEffect } from 'react'
-import { send } from 'node:process'
-import { stringify } from 'node:querystring'
-import { useSoundEffects } from './sounds'
 
 interface FractionSubtractionProps {
   sendAdminMessage: (role: string, content: string) => void
@@ -36,33 +31,12 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
   useEffect(() => {
     sendAdminMessage('agent', `Here's a chocolate for you! Try selecting pieces to get ${fraction1.numerator}/${fraction1.denominator}ths of the chocolate.`);
   }, []);
-  const { 
-    currentStep,
-    selectedPieces,
-    droppedPieces,
-    answer,
-    firstAnswer,
-    secondAnswer
-  } = gameStateRef.current.screen1State;
-
-  const { fraction1, fraction2 } = gameStateRef.current.questions.question1;
-  const soundEffects = useSoundEffects();
-
-  useEffect(() => {
-    sendAdminMessage('agent', `Here's a chocolate for you! Try selecting pieces to get ${fraction1.numerator}/${fraction1.denominator}ths of the chocolate.`);
-  }, []);
 
   const handlePieceClick = (index: number) => {
     if (currentStep === 1) {
       soundEffects.drop.play();
-    if (currentStep === 1) {
-      soundEffects.drop.play();
       setGameStateRef(prev => ({
         ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          selectedPieces: index < selectedPieces ? index + 1 : index + 1
-        }
         screen1State: {
           ...prev.screen1State,
           selectedPieces: index < selectedPieces ? index + 1 : index + 1
@@ -100,39 +74,10 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
           currentStep: 4
         }
       }));
-    if (currentStep === 1 && selectedPieces === fraction1.numerator) {
-      sendAdminMessage('agent', `How about we share ${fraction2.numerator}/${fraction2.denominator}ths with a friend? Try picking and dropping pieces to do that!`);
-      setGameStateRef(prev => ({
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          currentStep: 2
-        }
-      }));
-    } else if (currentStep === 2 && droppedPieces.length === fraction2.numerator) {
-      sendAdminMessage('agent', 'Awesome, here are some fun questions for you to reflect on!');
-      setGameStateRef(prev => ({
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          currentStep: 3
-        }
-      }));
-    } else if (currentStep === 3 &&
-      answer.numerator === String(fraction1.numerator - fraction2.numerator) &&
-      answer.denominator === String(fraction1.denominator)) {
-      setGameStateRef(prev => ({ 
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          currentStep: 4
-        }
-      }));
     }
   }
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
-    if (currentStep === 2 && index < selectedPieces) {
     if (currentStep === 2 && index < selectedPieces) {
       e.dataTransfer.setData('text/plain', index.toString())
     }
@@ -149,14 +94,8 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
 
       soundEffects.drop.play();
 
-      soundEffects.drop.play();
-
       setGameStateRef(prev => ({
         ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          droppedPieces: [...prev.screen1State.droppedPieces, { x, y, originalIndex: draggedIndex }]
-        }
         screen1State: {
           ...prev.screen1State,
           droppedPieces: [...prev.screen1State.droppedPieces, { x, y, originalIndex: draggedIndex }]
@@ -171,15 +110,9 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
 
   const isPieceDropped = (index: number) => {
     return droppedPieces.some(piece => piece.originalIndex === index)
-    return droppedPieces.some(piece => piece.originalIndex === index)
   }
 
   const isAnswerCorrect = () => {
-    const expectedNumerator = fraction1.numerator - fraction2.numerator;
-    const expectedDenominator = fraction1.denominator; 
-
-    return answer.numerator === String(expectedNumerator) &&
-      answer.denominator === String(expectedDenominator);
     const expectedNumerator = fraction1.numerator - fraction2.numerator;
     const expectedDenominator = fraction1.denominator; 
 
@@ -315,7 +248,6 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
           <div className="border-2 border-[#FF497C] px-6 flex items-center h-full">
             <span className="text-[#FF497C] font-bold text-xl">
               STEP {currentStep === 4 ? 4 : currentStep}
-              STEP {currentStep === 4 ? 4 : currentStep}
             </span>
           </div>
           <div className="bg-[#FF497C] px-6 flex items-center gap-2 h-full">
@@ -323,19 +255,13 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
               {currentStep === 1 ? 'CREATE' :
                 currentStep === 2 ? 'REMOVE' :
                   currentStep === 3 ? 'THE ANSWER' : 'REFLECT'}
-              {currentStep === 1 ? 'CREATE' :
-                currentStep === 2 ? 'REMOVE' :
-                  currentStep === 3 ? 'THE ANSWER' : 'REFLECT'}
             </span>
-            {currentStep !== 3 && currentStep !== 4 && (
             {currentStep !== 3 && currentStep !== 4 && (
               <div className="bg-white px-2">
                 <div className="text-black font-bold">
                   {currentStep === 1 ? fraction1.numerator : fraction2.numerator}
-                  {currentStep === 1 ? fraction1.numerator : fraction2.numerator}
                 </div>
                 <div className="border-t-2 border-black"></div>
-                <div className="text-black font-bold">{fraction1.denominator}</div>
                 <div className="text-black font-bold">{fraction1.denominator}</div>
               </div>
             )}
@@ -343,7 +269,6 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
         </div>
 
         {/* Chocolate Bar and Instructions */}
-        {currentStep !== 5 && (
         {currentStep !== 5 && (
           <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-4">
@@ -442,7 +367,6 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
 
         {/* Reflection Questions */}
         {currentStep === 4 ? (
-        {currentStep === 4 ? (
           <div className="w-full max-w-2xl flex flex-col items-center">
             <div className="bg-[#FCF0FF] p-8 rounded-lg flex flex-col items-center gap-8">
               <h3 className="text-xl font-bold text-center">Mark the correct answer</h3>
@@ -456,7 +380,6 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                   <Button
                     onClick={() => handleReflectionAnswer('first', 'same')}
                     className={`px-8 py-2 text-lg font-bold border-2 border-black text-white
-                      ${firstAnswer === 'same'
                       ${firstAnswer === 'same'
                         ? 'bg-[#2EA500] hover:bg-[#2EA500]'
                         : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`}
@@ -480,7 +403,6 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
 
               {/* Second Question - Only shows after first is answered correctly */}
               {firstAnswer === 'same' && (
-              {firstAnswer === 'same' && (
                 <div className="w-full flex flex-col items-center gap-4">
                   <p className="text-lg font-bold text-center">
                     How did the numerator (top number) change on subtraction?
@@ -495,7 +417,6 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                     <Button
                       onClick={() => handleReflectionAnswer('second', 'subtracted')}
                       className={`px-8 py-2 text-lg font-bold border-2 border-black text-white
-                        ${secondAnswer === 'subtracted'
                         ${secondAnswer === 'subtracted'
                           ? 'bg-[#2EA500] hover:bg-[#2EA500]'
                           : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`}
@@ -537,7 +458,6 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                 <span>{fraction2.numerator}</span>
                 <span className="border-t border-black w-4"></span>
                 <span>{fraction1.denominator}</span>
-                <span>{fraction1.denominator}</span>
               </span> of the bar here!
             </p>
             <div
@@ -545,7 +465,6 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
               onDragOver={handleDragOver}
               className="w-full h-32 relative bg-[#FCF0FF] rounded-xl border-2 border-black"
             >
-              {droppedPieces.map((piece, index) => (
               {droppedPieces.map((piece, index) => (
                 <div
                   key={index}
@@ -565,7 +484,6 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                 </div>
               ))}
             </div>
-            {droppedPieces.length === fraction2.numerator && (
             {droppedPieces.length === fraction2.numerator && (
               <div className="flex justify-center w-full mt-4">
                 <Button
@@ -594,9 +512,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
             <Button
               onClick={handleFinalProceed}
               disabled={firstAnswer !== 'same' || secondAnswer !== 'subtracted'}
-              disabled={firstAnswer !== 'same' || secondAnswer !== 'subtracted'}
               className={`bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black 
-                ${firstAnswer === 'same' && secondAnswer === 'subtracted' ? 'hover:bg-[#FF497C]/90' : 'opacity-50 cursor-not-allowed'}`}
                 ${firstAnswer === 'same' && secondAnswer === 'subtracted' ? 'hover:bg-[#FF497C]/90' : 'opacity-50 cursor-not-allowed'}`}
             >
               Next question
