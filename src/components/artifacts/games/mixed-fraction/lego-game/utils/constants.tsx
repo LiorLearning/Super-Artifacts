@@ -18,17 +18,21 @@ export const SNAPPABLE_POSITIONS = [
 ];
 
 export const COLORS = {
-  PINK: 0xff69b4, // Hot Pink
-  BLUE: 0x1e90ff, // Dodger Blue
-  PURPLE: 0x800080, // Purple
-  GREEN: 0x66ff66, // Light Green
-  BROWN: 0xA0522D, // Sienna
-  RED: 0xFF0000, // Pure Red
-  ORANGE: 0xFFA500, // Orange
-  YELLOW: 0xFFFF00, // Yellow
-  CYAN: 0x00FFFF, // Cyan
-  MAGENTA: 0xFF00FF, // Magenta
-  WHITE: 0xffffff, // White
+  PINK: 0xff69b4,
+  BLUE: 0x1e90ff,
+  PURPLE: 0x800080,
+  GREEN: 0x66cc66, // Slightly muted green
+  BROWN: 0xA0522D, // Sienna brown
+  RED: 0xFF0000,
+  ORANGE: 0xFFA500,
+  YELLOW: 0xFFD700, // More golden yellow
+  CYAN: 0x00FFFF,
+  MAGENTA: 0xFF00FF,
+  WHITE: 0xffffff,
+  HOLDER_CELL: 0x7B3F00, // Vibrant brown
+  HOLDER_BACK: 0xFFB300, // Bright yellowish brown
+  HOLDER_BASE: 0x8B4513, // Slightly darker sienna
+  HOLDER_EDGE: 0x8B5A2B, // Rich brown for edges
 };
 
 export const DURATION = 5000;

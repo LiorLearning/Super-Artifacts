@@ -32,10 +32,10 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
 
     // Camera setup
     const camera = new THREE.OrthographicCamera(
-      -5, 5, 3.5, -3,
+      -6, 6, 4, -4,
       0.1, 1000
     );
-    camera.position.set(5, 5, 5);
+    camera.position.set(7, 10, 7);
     camera.lookAt(0, 0, 0);
 
     // Renderer setup

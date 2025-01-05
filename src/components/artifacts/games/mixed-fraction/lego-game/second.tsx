@@ -64,6 +64,8 @@ const LegoGame = () => {
     if (step === 0) {
       createHolder(scene, [0, 0, 0], fraction.denominator);
     } else if (step === 1) {
+      cleanUpPieces(scene!, pieces);
+      setPieces([]);
       cleanUpHolders(scene!, holders);
       setHolders([]);
 
@@ -72,12 +74,12 @@ const LegoGame = () => {
         createHolder(scene, position, denomOptions[i]);
       }
 
-      for (let i = 0; i < fraction.numerator; i++) {
-        const row = Math.floor(i / 4);  // 4 pieces per row
-        const col = i % 4;              // Position within the row
-        const position: [number, number, number] = [-3.5 + col, 0, -3 + row * 1.5];
-        createPiece({ scene: scene!, position: position, color: COLORS.GREEN });
-      }
+      // for (let i = 0; i < fraction.numerator; i++) {
+      //   const row = Math.floor(i / 4);  // 4 pieces per row
+      //   const col = i % 4;              // Position within the row
+      //   const position: [number, number, number] = [-3.5 + col, 0, -3 + row * 1.5];
+      //   createPiece({ scene: scene!, position: position, color: COLORS.GREEN });
+      // }
 
     } else if (step === 2) {
       cleanUpPieces(scene!, pieces);
@@ -111,11 +113,11 @@ const LegoGame = () => {
         const holder = i % numHolder;
         const index = Math.floor(i / numHolder);
         const color = holder === numHolder - 1 ? COLORS.GREEN : COLORS.MAGENTA;
-        const position: [number, number, number] = [-2.9 + holder * 2.2, 0.1, -holder * 2.2 + ((4 * index)/fraction.denominator)];
+        const position: [number, number, number] = [-2.9 + holder * 2.2, 0.1, 0.2 -holder * 2.2 + ((4 * index)/fraction.denominator)];
         createPiece({ scene: scene!, position: position, color: color });
       }
     }
-    
+
   }, [step, scene]);
 
   useWindowResize({ camera: camera as THREE.OrthographicCamera, renderer: renderer as THREE.WebGLRenderer, mountRef });

@@ -4,7 +4,6 @@ import SecondScreen from './screen/second';
 import { useGameState } from './state-utils';
 import { prevStep, nextStep } from './utils/helper';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 const DevHelper = () => {
@@ -15,7 +14,7 @@ const DevHelper = () => {
 
   return (
     <div className="flex justify-between mt-4">
-      <Button className='m-2' onClick={() => prevStep(screen, gameStateRef.current, setGameStateRef)}>Previous Step</Button>
+      <Button className='m-2' onClick={() => prevStep(screen, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
         <Select 
           value={screen} 
@@ -34,7 +33,7 @@ const DevHelper = () => {
       </div>
       {screen === 'first' && <span>Step: {step1}</span>}
       {screen === 'second' && <span>Step: {step2}</span>}
-      <Button className='m-2' onClick={() => nextStep(screen, gameStateRef.current, setGameStateRef)}>Next Step</Button>
+      <Button className='m-2' onClick={() => nextStep(screen, setGameStateRef)}>Next Step</Button>
     </div>
   );
 };
@@ -53,7 +52,7 @@ export default function Game({sendAdminMessage}: GameProps) {
       <DevHelper />
       {/* Game screens */}
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
-      {/* {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />} */}
+      {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
 
       
       {/* Select font */}
