@@ -31,7 +31,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
   const soundEffects = useSoundEffects();
 
   useEffect(() => {
-    sendAdminMessage('agent', `Here's a chocolate for you! Try selecting pieces to get ${fraction1.numerator}/${fraction1.denominator}ths of the chocolate.`);
+    sendAdminMessage('agent', `Here's a chocolate for you! Try selecting pieces to get ${fraction1.numerator}/${fraction1.denominator}th of the chocolate.`);
     setGameStateRef(prev => ({
       ...prev,
       screen1State: {
@@ -59,7 +59,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
 
   const handleProceed = () => {
     if (currentStep === 1 && selectedPieces === fraction1.numerator) {
-      sendAdminMessage('agent', `How about we share ${fraction2.numerator}/${fraction2.denominator}ths with a friend? Try picking and dropping pieces to do that!`);
+      sendAdminMessage('agent', `How about we share ${fraction2.numerator}/${fraction2.denominator}th with a friend? Try picking and dropping pieces to do that!`);
       setGameStateRef(prev => ({
         ...prev,
         screen1State: {
@@ -374,7 +374,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                     </div>
                   
                 </div>
-                <p className="text-xl font-bold text-center max-w-md">
+                <p className="text-xl font-bold text-center">
                   {currentStep === 1
                     ? `Select pieces to get ${fraction1.numerator}/${fraction1.denominator} of the chocolate bar.`
                     : currentStep === 2 && !barValueStep
@@ -527,11 +527,13 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
               /* Drop Zone */
               <div className="w-full flex flex-col items-center justify-start pt-4">
                 <p className="text-xl font-bold mb-4">
-                  Drop <span className="inline-flex flex-col align-middle items-center mx-1">
+                {barValueStep ? 'You have given ' : "Drop "} 
+                  <span className="inline-flex flex-col align-middle items-center mx-1">
                     <span>{fraction2.numerator}</span>
                     <span className="border-t border-black w-4"></span>
                     <span>{fraction1.denominator}</span>
-                  </span> of the bar here!
+                  </span> 
+                  {barValueStep ? ' of the bar to your friend' : ' of the bar here!'}
                 </p>
                 <div
                   onDrop={handleDrop}

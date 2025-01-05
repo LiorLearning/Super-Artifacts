@@ -230,18 +230,28 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                 </>
               )}
               {step.id === 3 && (
-                <>
-                    <div className="flex flex-col items-center gap-2">
-                      <input
-                        type="text"
-                        value={finalAnswer}
-                        onChange={(e) => handleFinalAnswerChange(e.target.value)}
-                        className="w-16 h-16 text-2xl font-bold text-center border-2 border-black"
-                      />
-                      <div className="w-16 border-t-2 border-black"></div>
-                      <div className="text-2xl font-bold">{fraction1.denominator}</div>
-                    </div>
-                </>
+                <div className="flex items-center gap-4">
+                  <FractionDisplay
+                    numerator={fraction1.numerator}
+                    denominator={fraction1.denominator}
+                  />
+                  <span className="text-4xl font-bold">-</span>
+                  <FractionDisplay
+                    numerator={fraction2.numerator}
+                    denominator={fraction2.denominator}
+                  />
+                  <span className="text-4xl font-bold">=</span>
+                  <div className="flex flex-col items-center gap-2">
+                    <input
+                      type="text"
+                      value={finalAnswer}
+                      onChange={(e) => handleFinalAnswerChange(e.target.value)}
+                      className="w-16 h-16 text-2xl font-bold text-center border-2 border-black"
+                    />
+                    <div className="w-16 border-t-2 border-black"></div>
+                    <div className="text-2xl font-bold">{fraction1.denominator}</div>
+                  </div>
+                </div>
               )}
             </div>
           )
