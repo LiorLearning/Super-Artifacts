@@ -141,7 +141,7 @@ export const useDragControls = ({
     const onDragStart = (event: THREE.Event) => {
       if (!orbitControls) return;
       orbitControls.enabled = false; // Disable orbiting while dragging
-      const mesh = event.object as THREE.Mesh;
+      const mesh = (event as unknown as { object: THREE.Object3D }).object as THREE.Mesh;
       const mat = mesh.material as THREE.MeshPhongMaterial;
       mat.opacity = 0.6;
 
@@ -158,7 +158,7 @@ export const useDragControls = ({
     const onDragEndInternal = (event: THREE.Event) => {
       if (!orbitControls) return;
       orbitControls.enabled = true;
-      const mesh = event.object as THREE.Mesh;
+      const mesh = (event as unknown as { object: THREE.Object3D }).object as THREE.Mesh;
       const mat = mesh.material as THREE.MeshPhongMaterial;
       mat.opacity = 1.0;
 
