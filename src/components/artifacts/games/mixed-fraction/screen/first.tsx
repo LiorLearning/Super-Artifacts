@@ -36,7 +36,7 @@ const MainContent = () => {
     <div className="flex flex-col m-4">
       {step === 0 && (
         <div className="p-8 bg-white">
-          <h2 className="text-3xl font-bold">
+          <h2 className="text-3xl">
             Hey let us understand mixed fractions, with{' '}
             <span className="text-red-500 relative">
               LEGOS!
