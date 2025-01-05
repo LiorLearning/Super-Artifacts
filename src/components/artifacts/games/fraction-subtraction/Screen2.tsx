@@ -19,11 +19,6 @@ const STEPS = [
   { id: 3, title: 'ANSWER' }
 ];
 
-const STEPS = [
-  { id: 1, title: 'DENOMINATOR' },
-  { id: 2, title: 'NUMERATOR' },
-  { id: 3, title: 'ANSWER' }
-];
 
 export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
