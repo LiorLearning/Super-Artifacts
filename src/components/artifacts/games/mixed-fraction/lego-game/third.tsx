@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { useGameState } from '../state-utils';
 import { COLORS } from './utils/constants';
 import { createHolder as createLegoHolder } from './utils/holderFactory';
+import { createText } from './utils/textFactory';
 
 interface CreatePieceProps {
   scene: THREE.Scene | null;
@@ -30,17 +31,6 @@ const LegoGame = () => {
     return holder;
   }
 
-  const cleanUpHolders = (scene: THREE.Scene | null, holders: THREE.Group[]) => {
-    if (!scene) return;
-    holders.forEach(holder => {
-      scene.remove(holder);
-      if (holder instanceof THREE.Mesh) {
-        holder.geometry.dispose();
-        holder.material.dispose();
-      }
-    });
-  }
-
   const createPiece = ({ scene, position, color }: CreatePieceProps) => {
     if (!scene) return null;
     const piece = createLegoPiece(color, 4/fraction.denominator);
@@ -49,16 +39,6 @@ const LegoGame = () => {
     setPieces(prev => [...prev, piece]);
     return piece;
   }
-  
-  const cleanUpPieces = (scene: THREE.Scene | null, pieces: THREE.Mesh[]) => {
-    if (!scene) return;
-    pieces.forEach(piece => {
-      scene.remove(piece);
-      piece.geometry.dispose();
-      (piece.material as THREE.Material).dispose();
-    });
-  }
-
 
   useEffect(() => {
     const numHolder = Math.ceil(fraction.numerator / fraction.denominator);
@@ -67,13 +47,29 @@ const LegoGame = () => {
       createHolder(scene, position, fraction.denominator);
     }
 
+    createText(scene!, [0, 0, 6], "1 Whole Block", {
+      textColor: COLORS.MAGENTA,
+      orientation: 'orthogonal',
+      size: 0.25,
+      centered: true,
+    });
+    
     for (let i = 0; i < fraction.numerator; i++) {
       const holder = i % numHolder;
       const index = Math.floor(i / numHolder);
       const color = holder === numHolder - 1 ? COLORS.GREEN : COLORS.MAGENTA;
-      const position: [number, number, number] = [-0.9 + holder * 3, 0.1, -holder * 3 + ((4 * index)/fraction.denominator)];
+      const position: [number, number, number] = [-0.9 + holder * 3, 0.1, -0.1 -holder * 3 + ((4 * index)/fraction.denominator)];
       createPiece({ scene: scene!, position: position, color: color });
     }
+
+    createText(scene!, [4, 0, 2], "3/4", {
+      textColor: COLORS.GREEN,
+      orientation: 'orthogonal',
+      size: 0.25,
+      centered: true,
+      // offset: [0, 0, 0.1]
+    });
+
 
   }, [scene]);
 

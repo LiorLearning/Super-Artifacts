@@ -3,22 +3,52 @@ import { COLORS } from './constants';
 
 export const createHolder = (scene: THREE.Scene, position: [number, number, number], count: number) => {
   const group = new THREE.Group();
-  const cellDepth = 4 / count;
-  for (let i = 0; i < count; i++) {
-    // 1) Create each cell as before
-    const cellGeom = new THREE.BoxGeometry(1, 1, cellDepth);
+  const wallDepth = 4 / count;
+  const thickness = 0.02;
+
+  // Create base holder
+  const baseGeom = new THREE.BoxGeometry(1, thickness, 4);
+  const baseMat = new THREE.MeshPhongMaterial({
+    color: COLORS.HOLDER_BASE,
+    transparent: false,
+    shininess: 30
+  });
+  const baseMesh = new THREE.Mesh(baseGeom, baseMat);
+  baseMesh.position.set(position[0], position[1]-0.5, position[2]+1.5);
+  group.add(baseMesh);
+
+  // Create back holder
+  const backGeom = new THREE.BoxGeometry(thickness, 1, 4);
+  const backMat = new THREE.MeshPhongMaterial({
+    color: COLORS.HOLDER_BACK,
+    transparent: false,
+    shininess: 70
+  });
+  const backMesh = new THREE.Mesh(backGeom, backMat);
+  backMesh.position.set(position[0]-0.5, position[1], position[2]+1.5);
+  group.add(backMesh);
+
+  // Create walls
+  for (let i = 0; i < count+1; i++) {
+    const cellGeom = new THREE.BoxGeometry(1, 1, thickness);
     const cellMat = new THREE.MeshPhongMaterial({
-      color: COLORS.BROWN,
-      transparent: true,
-      opacity: 0.6,
+      color: COLORS.HOLDER_CELL,
+      transparent: false,
+      shininess: 50,
     });
 
     const cellMesh = new THREE.Mesh(cellGeom, cellMat);
-    cellMesh.position.set(position[0], position[1], position[2] + i * cellDepth);
+    cellMesh.position.set(position[0], position[1], position[2] - 0.5 + i * wallDepth);
+    
+    // Add subtle border
+    const edgeGeometry = new THREE.EdgesGeometry(cellGeom);
+    const edgeMaterial = new THREE.LineBasicMaterial({ color: COLORS.HOLDER_EDGE, linewidth: 2 });
+    const edges = new THREE.LineSegments(edgeGeometry, edgeMaterial);
+    cellMesh.add(edges);
+
     group.add(cellMesh);
   }
 
   scene.add(group);
-
-  return { group }; // Return the group and the toggle function
+  return { group };
 };

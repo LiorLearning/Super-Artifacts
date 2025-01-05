@@ -2,6 +2,8 @@
 export const desc = `
 `;
 
+export type GameScreen = 'first' | 'second' | 'third';
+
 export interface Fraction {
     numerator: number;
     denominator: number;
@@ -26,7 +28,7 @@ export interface GameState3 {
 
 
 export interface GameState {
-    screen: 'first' | 'second' | 'third';
+    screen: GameScreen;
     state1: GameState1;
     state2: GameState2;
     state3: GameState3;
