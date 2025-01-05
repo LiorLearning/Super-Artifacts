@@ -9,6 +9,7 @@ import { RefreshCw } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 
+import TemplateGame from './games/template/game';
 import FractionAdditionGame from './games/fraction-addition/game';
 import FractionSubtractionGame from './games/fraction-subtraction/game';
 import AdditionGame from './games/addition/game';
@@ -17,6 +18,7 @@ import EquivalentFractionsGame from './games/equivalent-fractions/game';
 import DifferentNumeratorDenominator from './games/different-numerator-denominator/game';
 import LegoGame from './games/mixed-fraction/game';
 
+import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
 import { GameStateProvider as FractionSubtractionGameStateProvider, useGameState as FractionSubtractionGameState } from './games/fraction-subtraction/state-utils'
 import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition/state-utils'
@@ -25,6 +27,7 @@ import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState
 import { GameStateProvider as DifferentNumeratorDenominatorGameStateProvider, useGameState as DifferentNumeratorDenominatorGameState } from './games/different-numerator-denominator/state-utils'
 import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/mixed-fraction/state-utils'
 
+import { desc as TemplateGameDesc } from './games/template/game-state';
 import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
 import { desc as FractionSubtractionGameDesc } from './games/fraction-subtraction/game-state';
 import { desc as AdditionGameDesc } from './games/addition/game-state';
@@ -43,6 +46,12 @@ interface GameInfo {
 type GameKey = keyof typeof gameInfo;
 
 const gameInfo: Record<string, GameInfo> = {
+  'template-game': {
+    game: TemplateGame,
+    desc: TemplateGameDesc,
+    state: TemplateGameState,
+    provider: TemplateGameStateProvider
+  },
   'addition-game': {
     game: AdditionGame,
     desc: AdditionGameDesc,
@@ -115,7 +124,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const gameParam = searchParams.get('game') as GameKey;
-  const [currentGame, setCurrentGame] = useState<GameKey | null>(null);
+  const [currentGame, setCurrentGame] = useState<GameKey>('template-game');
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected } = useWebSocketLogger()
 
