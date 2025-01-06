@@ -1,9 +1,10 @@
 import LegoGame from '../lego-game/third';
 import Header from '../components/header';
 import { useGameState } from '../state-utils';
-import { CorrectAnswer, FinalAnswer } from './components/first';
+import { CorrectAnswer, FinalAnswer, StepModule } from './components/first';
 import { Input } from '@/components/custom_ui/input';
 import { useEffect, useState } from 'react';
+import { COLORS } from './constants';
 
 const DivisionSteps = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -138,9 +139,8 @@ const DivisionSteps = () => {
 }
 
 
-
 const MainContent = () => {
-  const { gameStateRef, setGameStateRef } = useGameState();
+  const { gameStateRef } = useGameState();
   const { fraction, step } = gameStateRef.current.state3;
 
   return (
@@ -149,7 +149,10 @@ const MainContent = () => {
         <DivisionSteps />
       )}
       {step === 1 && (
-        <CorrectAnswer numerator={fraction.numerator} denominator={fraction.denominator} large={false} />
+        <>
+          <StepModule screen='second' color={COLORS.purple} stepNumber={3} stepText='THE ANSWER' />
+          <CorrectAnswer numerator={fraction.numerator} denominator={fraction.denominator} large={false} />
+        </>
       )}
     </div>
   );
