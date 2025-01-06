@@ -1,12 +1,10 @@
 'use client'
 
 import { useGameState } from './state-utils'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useEffect } from 'react'
+import { Button } from "@/components/custom_ui/button"
+import { Input } from "@/components/custom_ui/input"
 import { FractionDisplay } from './components/FractionDisplay'
-import {  useEffect } from 'react'
-import { send } from 'node:process'
-import { stringify } from 'node:querystring'
 import { useSoundEffects } from './sounds'
 
 interface FractionSubtractionProps {
