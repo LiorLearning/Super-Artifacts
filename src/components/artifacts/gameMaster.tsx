@@ -46,17 +46,17 @@ interface GameInfo {
 type GameKey = keyof typeof gameInfo;
 
 const gameInfo: Record<string, GameInfo> = {
-  'template-game': {
-    game: TemplateGame,
-    desc: TemplateGameDesc,
-    state: TemplateGameState,
-    provider: TemplateGameStateProvider
-  },
-  'addition-game': {
+  'addition-within-20-using-ten-frames': {
     game: AdditionGame,
     desc: AdditionGameDesc,
     state: AdditionGameState,
     provider: AdditionGameStateProvider
+  },
+  'compare-fractions-with-same-numerator-or-denominator': {
+    game: FractionsGame,
+    desc: FractionsGameDesc,
+    state: FractionsGameState,
+    provider: FractionsGameStateProvider
   },
   'fraction-subtraction': {
     game: FractionSubtractionGame,
@@ -64,25 +64,19 @@ const gameInfo: Record<string, GameInfo> = {
     state: FractionSubtractionGameState,
     provider: FractionSubtractionGameStateProvider
   },
-  'fractions-game': {
-    game: FractionsGame,
-    desc: FractionsGameDesc,
-    state: FractionsGameState,
-    provider: FractionsGameStateProvider
-  },
-  'equivalent-fractions-game': {
+  'equivalent-fractions': {
     game: EquivalentFractionsGame,
     desc: EquivalentFractionsGameDesc,
     state: EquivalentFractionsGameState,
     provider: EquivalentFractionsGameStateProvider
   },
-  'fraction-addition': {
+  'add-fractions-with-common-denominator': {
     game: FractionAdditionGame,
     desc: FractionAdditionGameDesc,
     state: FractionAdditionGameState,
     provider: FractionAdditionGameStateProvider
   },
-  'different-fraction-addition': {
+  'common-denominator': {
     game: DifferentNumeratorDenominator,
     desc: DifferentNumeratorDenominatorGameDesc,
     state: DifferentNumeratorDenominatorGameState,
@@ -95,6 +89,12 @@ const gameInfo: Record<string, GameInfo> = {
     provider: LegoGameStateProvider
   },
   // Add other games here as they are implemented
+  'template-game': {
+    game: TemplateGame,
+    desc: TemplateGameDesc,
+    state: TemplateGameState,
+    provider: TemplateGameStateProvider
+  },
 };
 
 interface GameComponentProps {
@@ -130,7 +130,9 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
 
   useEffect(() => {
     setIsClient(true);
-    setCurrentGame(gameParam);
+    if (gameParam) {
+      setCurrentGame(gameParam);
+    }
   }, [gameParam]);
 
   const gameState = isClient && currentGame ? gameInfo[currentGame]?.state : null;
