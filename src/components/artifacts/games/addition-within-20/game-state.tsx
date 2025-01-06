@@ -39,6 +39,7 @@ export type GameScreen = 'first' | 'second';
 export interface GameState1 {
   greenScore: number;
   blueScore: number;
+  blackScore: number;
   containerScore: number;
   activePhase: 'left' | 'right';
   currentStep: number;
@@ -73,6 +74,7 @@ export const initialGameState: GameState = {
   state1: {
     greenScore: MAX_GREEN_MARBLES,
     blueScore: MAX_BLUE_MARBLES,
+    blackScore: 0,
     containerScore: 0,
     activePhase: 'left',
     clickDisabled: false,

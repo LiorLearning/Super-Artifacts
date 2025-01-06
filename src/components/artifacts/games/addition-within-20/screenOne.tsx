@@ -758,15 +758,29 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
   }
 
   const handlefinalCount = (i: number) => {
+    const bodies = Matter.Composite.allBodies(worldRef.current!);
     if (i === -1) {
+      const balls = bodies.filter(body => body.label === 'black');
+      const firstBlackBall = balls.find(ball => ball.label === 'black_ball');
+      if (firstBlackBall) {
+        firstBlackBall.render.fillStyle = 'white';
+        firstBlackBall.label = 'ball';
+      }
       setGameStateRef(prev => ({ 
         ...prev, 
         state1: { 
           ...prev.state1, 
+          blackScore: Math.max(0, prev.state1.blackScore - 1),
           finalAnswer: Math.max(0, finalAnswer - 1) 
         } 
       }));
     } else {
+      const balls = bodies.filter(body => body.label === 'ball');
+      const firstNonBlackBall = balls.find(ball => ball.label !== 'black');
+      if (firstNonBlackBall) {
+        firstNonBlackBall.render.fillStyle = 'black';
+        firstNonBlackBall.label = 'black_ball';
+      }
       setGameStateRef(prev => {
         const newAnswer = finalAnswer + 1;
         if (newAnswer === (maxGreenMarbles + maxBlueMarbles)) {
@@ -776,7 +790,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
             progressStep(9);
           }, 500);
         }
-        return { ...prev, state1: { ...prev.state1, finalAnswer: newAnswer } };
+        return { ...prev, state1: { ...prev.state1, finalAnswer: newAnswer, blackScore: Math.max(0, prev.state1.blackScore - 1) } };
       });
     }
   };
@@ -852,6 +866,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       }
 
     } else if (step === 3) {
+      sendAdminMessage('agent', `Awesome! We have filled all ${maxGreenMarbles} green ones. Step 2 : Let's fill the blue ones.`);
       if (!activeBallRightRef.current) {
         const activeball = rightContainerBallsRef.current[rightContainerBallsRef.current.length - 1];
         activeBallRightRef.current = activeball;
@@ -870,16 +885,17 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         }
       }
     } else if (step === 4) {
-      sendAdminMessage('agent', `Awesome! We have filled all ${maxGreenMarbles} green ones. Step 2 : Let's fill the blue ones.`);
+      sendAdminMessage('agent', `Oops! The container is full. Let's count how many marbles we have now`);
 
     } else if (step === 5) {
-      sendAdminMessage('agent', `Oops! The container is full. Let's count how many marbles we have now`);
+      sendAdminMessage('agent', 'Look we made it easy');
       Matter.Composite.remove(worldRef.current!, leftPlatformRef1.current!);
       Matter.Composite.remove(worldRef.current!, leftPlatformRef2.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef2.current!);
       progressStep(6);
 
     } else if (step === 6) {
+      sendAdminMessage('agent', `Let us empty the marbles in one place to add them`);
       const bodies = Matter.Composite.allBodies(worldRef.current!);
       const balls = bodies.filter(body => body.label === 'ball');
       balls.forEach(ball => {
@@ -892,7 +908,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
 
       worldRef.current = Matter.World.add(worldRef.current, balls);
     } else if (step === 8) {
-      sendAdminMessage('agent', 'Look we made it easy');
+      
       Matter.Composite.remove(worldRef.current!, containerRef.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef1.current!);
     } else if (step === 9) {
