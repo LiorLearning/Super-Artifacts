@@ -212,9 +212,9 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
   }, [currentStep])
 
   const createFinalContainer = () => {
-    const containerWidth = 400;  
+    const containerWidth = 440;  
     const containerHeight = 50;
-    const containerPosition = { x: 500, y: 450 };
+    const containerPosition = { x: 460, y: 450 };
 
     const containerComposite = Matter.Composite.create();
     console.log("createFinalContainer");
@@ -966,7 +966,9 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         <h3 className="text-5xl font-bold text-center pb-10">
           {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
         </h3>
-        <div className={`w-2/3 mx-auto text-2xl ${currentStep===4? 'bg-purple-600' : 'bg-purple-100'} border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`}>
+        <div className={`w-2/3 mx-auto text-2xl ${currentStep===4? 'bg-purple-600' : 'bg-purple-100'} border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
+          fontSize: 26
+        }}>
         <p className={`font-bold text-center ${currentStep===4? 'text-purple-100' : ' text-purple-600'}`}>
           {(() => {
             switch (currentStep) {
