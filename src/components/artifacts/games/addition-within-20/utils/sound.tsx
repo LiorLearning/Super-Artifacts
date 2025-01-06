@@ -1,5 +1,3 @@
-'use client'
-
 const soundFiles = {
   shoot: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/join.mp3',
   collect: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/join.mp3',

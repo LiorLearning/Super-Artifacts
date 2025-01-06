@@ -1,18 +1,27 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import First from './screenOne'
 import Second from './screenTwo';
+import ComparisonPage from './components/comparison-page';
 import { useGameState } from './state-utils';
 import { GameProps } from './components/types';
 
 function Game({ sendAdminMessage }: GameProps) {
-  const { gameStateRef, setGameStateRef } = useGameState();
+  const { gameStateRef } = useGameState();
   
   return (
     <div className="h-full w-full bg-white">
       <div className="flex flex-col pb-96 h-full w-full justify-center items-center font-gaegu bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_1px),linear-gradient(rgba(0,0,0,.1)_1px,transparent_1px)] bg-[length:20px_20px]">
-        {gameStateRef.current.currentScreen === 'first' ? 
-          <First sendAdminMessage={sendAdminMessage} /> 
-          :
+        {gameStateRef.current.screen === 'first' && (
+          <>
+            <First sendAdminMessage={sendAdminMessage} visible={true} />
+            {gameStateRef.current.state1.currentStep === 5 && (
+              <div className="absolute inset-0 z-10 bg-white">
+                <ComparisonPage sendAdminMessage={sendAdminMessage} />
+              </div>
+            )}
+          </>
+        )}
+        {gameStateRef.current.screen === 'second' &&
           <Second sendAdminMessage={sendAdminMessage} />
         }
         <style jsx global>{`
