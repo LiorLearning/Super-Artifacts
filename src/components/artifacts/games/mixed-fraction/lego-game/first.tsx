@@ -133,22 +133,20 @@ const LegoGame = () => {
         setPieces([piece]);
       }
 
-      const holderText = createText(scene!, [-2.5, 2.5, 3], "Lego Holder", {
+      const holderText = createText(scene!, [-2.5, 3.5, 3.5], "Lego Holder", {
         textColor: COLORS.WHITE,
         orientation: 'orthogonal',
         bgColor: COLORS.HOLDER_BASE,
-        size: 0.2,
         centered: true,
       });
       if (holderText) {
         textsRef.current = [...textsRef.current, holderText];
       }
 
-      const pieceText = createText(scene!, [2.5, -1, 1], "Lego Block", {
+      const pieceText = createText(scene!, [4.5, 0, 1.4], "Lego Block", {
         textColor: COLORS.WHITE,
         orientation: 'orthogonal',
         bgColor: COLORS.MAGENTA,
-        size: 0.2,
         centered: true,
       });
       if (pieceText) {
@@ -177,7 +175,6 @@ const LegoGame = () => {
         textColor: COLORS.WHITE,
         orientation: 'orthogonal',
         bgColor: COLORS.MAGENTA,
-        size: 0.2,
         centered: true,
       });
       if (pieceText) {
@@ -185,10 +182,9 @@ const LegoGame = () => {
       }
 
       for (let i = 0; i < fraction.denominator; i++) {
-        const fractionalText = createText(scene!, [-2.5, 1.5, 0.25 + i * (fraction.denominator/4)], "1\n--\n4", {
+        const fractionalText = createText(scene!, [-2, 1.9, 1 + i * (fraction.denominator/4)], "1/4", {
           textColor: COLORS.MAGENTA,
-          orientation: 'axial',
-          size: 0.2,
+          orientation: 'orthogonal',
           centered: true,
         });
         if (fractionalText) {
@@ -226,7 +222,6 @@ const LegoGame = () => {
       const wholeBlockText = createText(scene!, [-4.5, 3, 4], "1 Whole Block", {
         textColor: COLORS.MAGENTA,
         orientation: 'orthogonal',
-        size: 0.2,
         centered: true,
       });
       if (wholeBlockText) {
@@ -239,20 +234,20 @@ const LegoGame = () => {
       animateCamera(camera!, new THREE.Vector3(-0, 5, 7.7), 1);
       setEnableDragging(false);
 
-      const text1 = createText(scene!, [-7, 3, 7], "1", {
+      const text1 = createText(scene!, [-7, 1, 6], "1", {
+        size: 0.3,
         textColor: COLORS.MAGENTA,
         orientation: 'orthogonal',
-        size: 0.25,
         centered: true,
       });
       if (text1) {
         textsRef.current = [...textsRef.current, text1];
       }
 
-      const text2 = createText(scene!, [-2.5, 2, 1], "3/4", {
-      textColor: COLORS.GREEN,
+      const text2 = createText(scene!, [-2.5, 2, 2], "3/4", {
+        textColor: COLORS.GREEN,
+        size: 0.3,
         orientation: 'orthogonal',
-        size: 0.25,
         centered: true,
       });
       if (text2) {
