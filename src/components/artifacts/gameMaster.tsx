@@ -12,7 +12,7 @@ import { handleScreenshot } from './utils/utils';
 import TemplateGame from './games/template/game';
 import FractionAdditionGame from './games/fraction-addition/game';
 import FractionSubtractionGame from './games/fraction-subtraction/game';
-import AdditionGame from './games/addition/game';
+import AdditionGame from './games/addition-within-20/game';
 import FractionsGame from './games/fractions-game/game';
 import EquivalentFractionsGame from './games/equivalent-fractions/game';
 import DifferentNumeratorDenominator from './games/different-numerator-denominator/game';
@@ -21,7 +21,7 @@ import LegoGame from './games/mixed-fraction/game';
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
 import { GameStateProvider as FractionSubtractionGameStateProvider, useGameState as FractionSubtractionGameState } from './games/fraction-subtraction/state-utils'
-import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition/state-utils'
+import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition-within-20/state-utils'
 import { GameStateProvider as FractionsGameStateProvider, useGameState as FractionsGameState } from './games/fractions-game/state-utils'
 import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState as EquivalentFractionsGameState } from './games/equivalent-fractions/state-utils'
 import { GameStateProvider as DifferentNumeratorDenominatorGameStateProvider, useGameState as DifferentNumeratorDenominatorGameState } from './games/different-numerator-denominator/state-utils'
@@ -30,7 +30,7 @@ import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameSta
 import { desc as TemplateGameDesc } from './games/template/game-state';
 import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
 import { desc as FractionSubtractionGameDesc } from './games/fraction-subtraction/game-state';
-import { desc as AdditionGameDesc } from './games/addition/game-state';
+import { desc as AdditionGameDesc } from './games/addition-within-20/game-state';
 import { desc as FractionsGameDesc } from './games/fractions-game/game-state';
 import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
 import { desc as DifferentNumeratorDenominatorGameDesc } from './games/different-numerator-denominator/game-state';
