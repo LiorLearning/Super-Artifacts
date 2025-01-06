@@ -81,7 +81,9 @@ export default function Second({ sendAdminMessage }: GameProps) {
         {maxGreenMarbles} + {maxBlueMarbles} = ?
       </div>
 
-      <div className={`mx-auto text-xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-10`}>
+      <div className={`mx-auto text-xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-10`} style={{
+        fontSize: 26
+      }}>
         <p className={`font-bold text-center text-purple-600`}>
           Select {maxGreenMarbles} green and {maxBlueMarbles} blue marbles
         </p>
@@ -120,7 +122,9 @@ export default function Second({ sendAdminMessage }: GameProps) {
 
         {(greenMarblesCount > 0 || blueMarblesCount > 0) && (
           <>
-          <div className={`mx-auto text-lg bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mt-16 mb-10`}>
+          <div className={`mx-auto text-lg bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mt-16 mb-10`} style={{
+          fontSize: 26
+        }}>
             <p className={`font-bold text-center text-purple-600`}>              
               Select 10 marbles here to fill the container
             </p>
