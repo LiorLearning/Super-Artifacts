@@ -40,8 +40,8 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       { x: 480, y: 68 }
   ]);
 
-  // const STEPS_WITH_PROCEED = [0, 1, 4, 5, 6, 7];
-  const STEPS_WITH_PROCEED = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const STEPS_WITH_PROCEED = [0, 1, 4, 5, 6, 7];
+  // const STEPS_WITH_PROCEED = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const setCurrentStep = (step: number) => {
     setGameStateRef(prev => ({ 
