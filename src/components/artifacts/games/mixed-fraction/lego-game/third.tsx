@@ -62,7 +62,7 @@ const LegoGame = () => {
       createPiece({ scene: scene!, position: position, color: color });
     }
 
-    createText(scene!, [4, 0, 2], `${fraction.numerator}/${fraction.denominator}`, {
+    createText(scene!, [4, 0, 2], `${fraction.numerator % fraction.denominator}/${fraction.denominator}`, {
       textColor: COLORS.GREEN,
       orientation: 'orthogonal',
       size: 0.3,
