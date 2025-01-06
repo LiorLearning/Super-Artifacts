@@ -3,6 +3,12 @@ export interface Line {
   color?: string;
 }
 
+export const COLORS = {
+  pink: '#FF497C',
+  blue: '#0099FF',
+  purple: '#C800FF',
+}
+
 export interface StepText {
   lines: Line[];
 }

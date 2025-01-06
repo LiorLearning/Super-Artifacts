@@ -2,7 +2,8 @@ import LegoGame from '../lego-game/second';
 import Header from '../components/header';
 import { useGameState } from '../state-utils';
 import { VerifyPiecesAndDivisions, ChooseHolder, CreateBlocks } from './components/second';
-import { FinalAnswer, CorrectAnswer } from './components/first';
+import { FinalAnswer, CorrectAnswer, StepModule } from './components/first';
+import { COLORS } from './constants';
 
 const MainContent = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -10,7 +11,7 @@ const MainContent = () => {
   const numerator = fraction.numerator;
   const denominator = fraction.denominator;
 
-  const color = step <= 1 ? 'pink-400' : step <= 2 ? 'blue-500' : 'purple-500';
+  const color = step <= 1 ? COLORS.pink : step <= 2 ? COLORS.blue : COLORS.purple;
   const stepNumber = step <= 1 ? 1 : step <= 2 ? 2 : 3;
   const stepText = step <= 2 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
 
@@ -21,31 +22,7 @@ const MainContent = () => {
   return (
     <div className="flex flex-col m-4">
       {step >= 0 && (
-        <div className="flex items-stretch justify-center gap-4">
-          <div className={`bg-white text-${color} border-8 border-${color} px-6 py-2 flex items-center justify-center`}>
-            <span className="text-2xl font-bold">STEP {stepNumber}</span>
-          </div>
-          <div className={`flex-1 bg-${color} border-8 border-${color} flex items-center max-w-xl`}>
-            <h2 className="text-white text-2xl font-bold flex items-center gap-4 mx-auto">
-              {step <= 1 && (
-                <>
-                  <span>CREATE</span>
-                  <div className="bg-white text-black px-3 py-1 inline-flex flex-col items-center">
-                    <span>{numerator}</span>
-                    <div className="w-3 h-px bg-black" />
-                    <span>{denominator}</span>
-                  </div>
-                  <span>LEGO BLOCKS</span>
-                </>
-              )}
-              {step > 1 && (
-                <div className="flex items-center justify-center my-4">
-                  <span>{stepText}</span>
-                </div>
-              )}
-            </h2>
-          </div>
-        </div>
+        <StepModule screen={step <= 1 ? 'first' : 'second'} color={color} stepNumber={stepNumber} numerator={numerator} denominator={denominator} stepText={stepText} />
       )}
       {step === 1 && (
         <div className="flex justify-center mt-4">
@@ -125,5 +102,3 @@ export default function SecondScreen() {
       </div>
     )
   }
-  
-  

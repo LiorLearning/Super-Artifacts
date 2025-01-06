@@ -1,10 +1,10 @@
 import LegoGame from '../lego-game/first';
 import Header from '../components/header';
 import { useGameState } from '../state-utils';
-import { firstScreenFooterTexts } from './constants';
+import { firstScreenFooterTexts, COLORS } from './constants';
 import { Button } from '@/components/custom_ui/button';
 import { useState } from 'react';
-import { CorrectAnswer, FinalAnswer } from './components/first';
+import { CorrectAnswer, FinalAnswer, StepModule } from './components/first';
 
 const STEPS_WITH_PROCEED = [0, 1, 11];
 
@@ -14,7 +14,7 @@ const MainContent = () => {
   const numerator = fraction.numerator;
   const denominator = fraction.denominator;
 
-  const color = step <= 6 ? 'pink-400' : step <= 12 ? 'blue-500' : 'purple-500';
+  const color = step <= 6 ? COLORS.pink : step <= 12 ? COLORS.blue : COLORS.purple;
   const stepNumber = step <= 6 ? 1 : step <= 12 ? 2 : 3;
   const stepText = step <= 12 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
 
@@ -46,31 +46,7 @@ const MainContent = () => {
         </div>
       )}
       {step > 0 && (
-        <div className="flex items-stretch justify-center gap-4">
-          <div className={`bg-white text-${color} border-8 border-${color} px-6 py-2 flex items-center justify-center`}>
-            <span className="text-2xl font-bold">STEP {stepNumber}</span>
-          </div>
-          <div className={`flex-1 bg-${color} border-8 border-${color} flex items-center max-w-xl`}>
-            <h2 className="text-white text-2xl font-bold flex items-center gap-4 mx-auto">
-              {step <= 6 && (
-                <>
-                  <span>CREATE</span>
-                  <div className="bg-white text-black px-3 py-1 inline-flex flex-col items-center">
-                    <span>{numerator}</span>
-                    <div className="w-3 h-px bg-black" />
-                    <span>{denominator}</span>
-                  </div>
-                  <span>LEGO BLOCKS</span>
-                </>
-              )}
-              {step > 6 && (
-                <div className="flex items-center justify-center my-4">
-                  <span>{stepText}</span>
-                </div>
-              )}
-            </h2>
-          </div>
-        </div>
+        <StepModule screen={step <= 6 ? 'first' : 'second'} color={color} stepNumber={stepNumber} numerator={numerator} denominator={denominator} stepText={stepText} />
       )}
       {step === 6 && (
         <div className="flex justify-center mt-4 items-center space-x-4">
@@ -142,8 +118,8 @@ const Footer = () => {
       </div>
       {step === 2 && (
         <div className="flex justify-center mt-4">
-          <Button className="bg-pink-400 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={handleNumeratorClick}>NUMERATOR ({numerator})</Button>
-          <Button className="bg-pink-400 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={nextStep}>DENOMINATOR ({denominator})</Button>
+          <Button className={`bg-[${COLORS.pink}] text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none`} onClick={handleNumeratorClick}>NUMERATOR ({numerator})</Button>
+          <Button className={`bg-[${COLORS.pink}] text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none`} onClick={nextStep}>DENOMINATOR ({denominator})</Button>
         </div>
       )}
       {STEPS_WITH_PROCEED.includes(step) && (
@@ -178,5 +154,3 @@ export default function FirstScreen() {
       </div>
     )
   }
-  
-  

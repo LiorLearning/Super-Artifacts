@@ -3,8 +3,7 @@
 import Screen1 from './Screen1';
 import Screen2 from './Screen2';
 import { useGameState } from './state-utils';
-import { Card } from '@/components/ui/card'; // Add Card import
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 
 interface EquationProps {
@@ -28,7 +27,7 @@ export default function DifferentNumeratorDenominator({ sendAdminMessage }: Equa
     case 2:
       return <Screen2 onProceed={() => handleNext(3)} sendAdminMessage={sendAdminMessage} />;
     default:
-      return <Card>Invalid Frame</Card>;
+      return <div>Invalid Frame</div>;
   }
 }
 

@@ -1,12 +1,12 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/custom_ui/button"
 import { useGameState } from './state-utils'
 import { StepHeader } from './components/StepHeader'
 import { FractionDisplay } from './components/FractionDisplay'
 import { useEffect, useRef } from 'react'
 import { useSoundEffects } from './sounds'
+import SuccessAnimation from '@/components/artifacts/utils/success-animate'
 
 interface FractionSubtractionProps {
   sendAdminMessage: (role: string, content: string) => void
@@ -20,7 +20,7 @@ const STEPS = [
 ];
 
 
-export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
+export default function Screen2({ sendAdminMessage }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {
     currentStep,
@@ -253,24 +253,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
           >
             Correct 🎉
           </div>
-          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-            <div className="relative overflow-hidden w-full h-full">
-              {[...Array(50)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute animate-fall"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `-${Math.random() * 20 + 10}%`,
-                    animation: `fall ${Math.random() * 3 + 2}s linear infinite`,
-                    backgroundColor: ['#FFD700', '#FF6347', '#00CED1', '#FF69B4'][Math.floor(Math.random() * 4)],
-                    width: '10px',
-                    height: '10px',
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+          <SuccessAnimation />
         </div>
         )}
       </div>
