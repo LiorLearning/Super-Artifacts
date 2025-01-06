@@ -7,7 +7,7 @@ import FourthScreen from './FourthScreen';
 import FiveScreen from './FiveScreen';
 import { useGameState } from './state-utils';
 import { Card } from '@/components/ui/card'; // Add Card import
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export const desc = `Steps to Find Common Denominators:
 
