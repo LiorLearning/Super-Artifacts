@@ -15,8 +15,10 @@ function Game({ sendAdminMessage }: GameProps) {
           <>
             <First sendAdminMessage={sendAdminMessage} visible={true} />
             {gameStateRef.current.state1.currentStep === 5 && (
-              <div className="absolute inset-0 z-10 bg-white">
-                <ComparisonPage sendAdminMessage={sendAdminMessage} />
+              <div className="h-full w-full absolute inset-0 z-10 bg-white">
+                <div className="h-full w-full bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_1px),linear-gradient(rgba(0,0,0,.1)_1px,transparent_1px)] bg-[length:20px_20px]">
+                  <ComparisonPage sendAdminMessage={sendAdminMessage} />
+                </div>
               </div>
             )}
           </>

@@ -205,6 +205,12 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
     });
   }, [containerScore]);
 
+  useEffect(() => {
+    if (currentStep === 6) {
+      sendAdminMessage('agent', `Let us empty the marbles in one place to add them`);
+    }
+  }, [currentStep])
+
   const createFinalContainer = () => {
     const containerWidth = 400;  
     const containerHeight = 50;
@@ -895,7 +901,6 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       progressStep(6);
 
     } else if (step === 6) {
-      sendAdminMessage('agent', `Let us empty the marbles in one place to add them`);
       const bodies = Matter.Composite.allBodies(worldRef.current!);
       const balls = bodies.filter(body => body.label === 'ball');
       balls.forEach(ball => {
@@ -1065,7 +1070,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
           <Button
             onClick={handleAddition}
             disabled={currentStep != 6}
-            className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+            className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 rounded-none
               ${currentStep != 6 ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             Empty
@@ -1086,13 +1091,12 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
             <p className="text-7xl text-center font-bold text-black">
               great job! <br/> correct answer
             </p>
-            <Button onClick={() => setGameStateRef(prevState => ({...prevState, currentScreen: 'second'}))} className="text-2xl bg-purple-500 text-white">Next</Button>
+            <Button onClick={() => setGameStateRef(prevState => ({...prevState, screen: 'second'}))} className="text-2xl bg-purple-500 text-white">Next</Button>
           </div>
         )}
 
         {STEPS_WITH_PROCEED.includes(currentStep) && (
           <>
-            {currentStep}
             <div className="absolute right-5">
               <Button 
                 onClick={() => handleProceed(currentStep)} 

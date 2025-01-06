@@ -65,19 +65,6 @@ export default function ComparisonPage({ sendAdminMessage }: GameProps) {
   }
 
   const progressStep = () => {
-    setGameStateRef(prevState => ({
-      ...prevState,
-      state1: {
-        ...prevState.state1,
-        greenScore: maxGreenMarbles,
-        blueScore: maxBlueMarbles,
-        containerScore: 0,
-        showAddButton: false,
-        clickDisabled: false,
-        activePhase: 'left'
-      }
-    }));
-
     createMainContainer();
     
     if (!activeBallLeftRef.current) {
@@ -383,6 +370,13 @@ export default function ComparisonPage({ sendAdminMessage }: GameProps) {
           left: slingPosition[1].x + 220
         }}>
           {maxBlueMarbles}
+        </div>
+
+        <div className="absolute text-5xl font-bold px-4 py-2 z-10 text-black transform rotate-90 origin-center" style={{
+          top: slingPosition[1].y + 200,
+          left: slingPosition[1].x - 100
+        }}>
+          &gt;&gt;
         </div>
 
         <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500" style={{
