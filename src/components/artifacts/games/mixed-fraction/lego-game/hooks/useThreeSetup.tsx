@@ -24,13 +24,9 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
 
     // Scene setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf0f0f0);
+    scene.background = new THREE.Color(0xffffff);
 
-    // const gridSize = 10;
-    // const gridHelper = new THREE.GridHelper(gridSize, gridSize);
-    // scene.add(gridHelper);
-
-    // Camera setup
+    // Camera setup with higher pixel ratio for better resolution
     const camera = new THREE.OrthographicCamera(
       -6, 6, 4, -4,
       0.1, 1000
@@ -38,10 +34,15 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     camera.position.set(7, 10, 7);
     camera.lookAt(0, 0, 0);
 
-    // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    // Renderer setup with high-quality settings
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Higher quality shadows
     mountRef.current.appendChild(renderer.domElement);
 
     // Add lights
@@ -52,10 +53,11 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     orbitControls.enableRotate = false;
     orbitControls.enableZoom = false;
 
-    // Animation loop
+    // Improved animation loop with performance optimization
     const animate = () => {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
+      // orbitControls.update();
     };
     animate();
 
@@ -63,6 +65,7 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
 
     return () => {
       renderer.dispose();
+      // orbitControls.dispose();
       mountRef.current?.removeChild(renderer.domElement);
     };
   }, []);

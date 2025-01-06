@@ -50,7 +50,7 @@ const LegoGame = () => {
     createText(scene!, [0, 0, 6], "1 Whole Block", {
       textColor: COLORS.MAGENTA,
       orientation: 'orthogonal',
-      size: 0.25,
+      size: 0.3,
       centered: true,
     });
     
@@ -58,14 +58,14 @@ const LegoGame = () => {
       const holder = i % numHolder;
       const index = Math.floor(i / numHolder);
       const color = holder === numHolder - 1 ? COLORS.GREEN : COLORS.MAGENTA;
-      const position: [number, number, number] = [-0.9 + holder * 3, 0.1, -0.1 -holder * 3 + ((4 * index)/fraction.denominator)];
+      const position: [number, number, number] = [-1 + holder * 3, 0.1, -0.1 -holder * 3 + ((4 * index)/fraction.denominator)];
       createPiece({ scene: scene!, position: position, color: color });
     }
 
     createText(scene!, [4, 0, 2], "3/4", {
       textColor: COLORS.GREEN,
       orientation: 'orthogonal',
-      size: 0.25,
+      size: 0.3,
       centered: true,
       // offset: [0, 0, 0.1]
     });

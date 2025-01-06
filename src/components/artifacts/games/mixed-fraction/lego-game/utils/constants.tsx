@@ -27,7 +27,7 @@ export const COLORS = {
   ORANGE: 0xFFA500,
   YELLOW: 0xFFD700, // More golden yellow
   CYAN: 0x00FFFF,
-  MAGENTA: 0xFF00FF,
+  MAGENTA: 0xD625FE, // Vibrant magenta (deep pink)
   WHITE: 0xffffff,
   HOLDER_CELL: 0x7B3F00, // Vibrant brown
   HOLDER_BACK: 0xFFB300, // Bright yellowish brown

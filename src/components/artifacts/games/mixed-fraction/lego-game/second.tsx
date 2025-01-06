@@ -113,7 +113,7 @@ const LegoGame = () => {
         const holder = i % numHolder;
         const index = Math.floor(i / numHolder);
         const color = holder === numHolder - 1 ? COLORS.GREEN : COLORS.MAGENTA;
-        const position: [number, number, number] = [-2.9 + holder * 2.2, 0.1, 0.2 -holder * 2.2 + ((4 * index)/fraction.denominator)];
+        const position: [number, number, number] = [-2.95 + holder * 2.2, 0.1, 0.2 -holder * 2.2 + ((4 * index)/fraction.denominator)];
         createPiece({ scene: scene!, position: position, color: color });
       }
     }
