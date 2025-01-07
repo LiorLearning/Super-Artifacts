@@ -1,6 +1,4 @@
 import { Button } from "@/components/custom_ui/button";
-import { GameScreen, GameState } from "../game-state";
-import { goToStep } from "../utils/helper";
 
 interface ProceedButtonProps {
   onClick: () => void;
@@ -11,7 +9,7 @@ const ProceedButton = ({ onClick }: ProceedButtonProps) => {
     <div className="flex flex-col items-center justify-center m-8 mb-16">
       <Button
         onClick={onClick}
-        className="bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90"
+        className="bg-[#FF497C] text-white px-8 py-2 text-2xl font-bold border-2 border-black hover:bg-[#FF497C]/90 shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] rounded-none"
       >
         PROCEED
       </Button>

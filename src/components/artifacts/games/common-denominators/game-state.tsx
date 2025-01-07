@@ -22,13 +22,31 @@ interface State2 {
   chocolatesWithSameDenominator: number[];
 }
 
+interface State3 {
+  step: number;
+  fraction1: Fraction;
+  fraction2: Fraction;
+  gcd: number;
+}
+
+interface State4 {
+  step: number;
+}
+
+interface State5 {
+  step: number;
+}
+
 export interface GameState {
   screen: GameScreen;
   state1: State1;
   state2: State2;
+  state3: State3;
+  state4: State4;
+  state5: State5;
 }
 export const initialGameState: GameState = {
-  screen: 'second',
+  screen: 'third',
   state1: {
     step: 0,
     fraction1: { numerator: '1', denominator: '2' },
@@ -47,4 +65,16 @@ export const initialGameState: GameState = {
     selectedChocolate: [false, false, false, false],
     chocolatesWithSameDenominator: [1, 2]
   },
+  state3: {
+    step: 0,
+    fraction1: { numerator: '1', denominator: '3' },
+    fraction2: { numerator: '1', denominator: '5' },
+    gcd: 15
+  },
+  state4: {
+    step: 0,
+  },
+  state5: {
+    step: 0,
+  }
 };

@@ -1,6 +1,7 @@
 import { GameScreen } from './game-state';
 import FirstScreen from './screen/first';
 import SecondScreen from './screen/second';
+import ThirdScreen from './screen/third';
 import { useGameState } from './state-utils';
 import { prevStep, nextStep } from './utils/helper';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ const DevHelper = () => {
   const { screen } = gameStateRef.current;
   const { step: step1 } = gameStateRef.current.state1;
   const { step: step2 } = gameStateRef.current.state2;
+  const { step: step3 } = gameStateRef.current.state3;
 
   return (
     <div className="flex justify-between mt-4">
@@ -28,11 +30,13 @@ const DevHelper = () => {
           <SelectContent>
             <SelectItem value="first">First Screen</SelectItem>
             <SelectItem value="second">Second Screen</SelectItem>
+            <SelectItem value="third">Third Screen</SelectItem>
           </SelectContent>
         </Select>
       </div>
       {screen === 'first' && <span>Step: {step1}</span>}
       {screen === 'second' && <span>Step: {step2}</span>}
+      {screen === 'third' && <span>Step: {step3}</span>}
       <Button className='m-2' onClick={() => nextStep(screen, setGameStateRef)}>Next Step</Button>
     </div>
   );
@@ -53,7 +57,14 @@ export default function Game({sendAdminMessage}: GameProps) {
       {/* Game screens */}
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
 
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');
+        .font-jersey {
+          font-family: 'Jersey 25', cursive;
+        }
+      `}</style>
     </div>
   )
 }
