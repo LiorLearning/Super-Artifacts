@@ -413,7 +413,7 @@ export default function ComparisonPage({ sendAdminMessage }: GameProps) {
         <div className="absolute right-5">
           <Button 
             onClick={() => handleProceed()} 
-            className="text-2xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 mb-5 text-purple-600 rounded-none"
+            className="text-2xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 text-purple-600 rounded-none"
           >
             Proceed &gt;&gt;
           </Button>

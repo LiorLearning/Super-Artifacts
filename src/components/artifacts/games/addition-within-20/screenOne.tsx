@@ -40,7 +40,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       { x: 480, y: 68 }
   ]);
 
-  const STEPS_WITH_PROCEED = [0, 1, 4, 5, 6, 7];
+  const STEPS_WITH_PROCEED = [0, 1, 4, 5];
   // const STEPS_WITH_PROCEED = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const setCurrentStep = (step: number) => {
@@ -766,11 +766,10 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
   const handlefinalCount = (i: number) => {
     const bodies = Matter.Composite.allBodies(worldRef.current!);
     if (i === -1) {
-      const balls = bodies.filter(body => body.label === 'black');
-      const firstBlackBall = balls.find(ball => ball.label === 'black_ball');
-      if (firstBlackBall) {
-        firstBlackBall.render.fillStyle = 'white';
-        firstBlackBall.label = 'ball';
+      const blackBalls = bodies.filter(body => body.label === 'black_ball');
+      if (blackBalls.length > 0) {
+        blackBalls[0].render.fillStyle = 'gray';
+        blackBalls[0].label = 'ball';
       }
       setGameStateRef(prev => ({ 
         ...prev, 
@@ -849,7 +848,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
 
       setTimeout(() => {
         sendAdminMessage('agent', `But remember! The container can only hold 10 marbles at once`);
-      }, 1000);
+      }, 5000);
       
     } else if (step === 2) {
       sendAdminMessage('agent', `Let's begin! First let's finish shooting the green marbles into the marble holder!`);
