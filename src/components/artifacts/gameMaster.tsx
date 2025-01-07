@@ -15,8 +15,9 @@ import FractionSubtractionGame from './games/fraction-subtraction/game';
 import AdditionGame from './games/addition-within-20/game';
 import FractionsGame from './games/fractions-game/game';
 import EquivalentFractionsGame from './games/equivalent-fractions/game';
-import DifferentNumeratorDenominator from './games/different-numerator-denominator/game';
+import DifferentNumeratorDenominatorGame from './games/different-numerator-denominator/game';
 import LegoGame from './games/mixed-fraction/game';
+import CommonDenominatorGame from './games/common-denominators/game';
 
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
@@ -26,6 +27,7 @@ import { GameStateProvider as FractionsGameStateProvider, useGameState as Fracti
 import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState as EquivalentFractionsGameState } from './games/equivalent-fractions/state-utils'
 import { GameStateProvider as DifferentNumeratorDenominatorGameStateProvider, useGameState as DifferentNumeratorDenominatorGameState } from './games/different-numerator-denominator/state-utils'
 import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/mixed-fraction/state-utils'
+import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState as CommonDenominatorGameState } from './games/common-denominators/state-utils'
 
 import { desc as TemplateGameDesc } from './games/template/game-state';
 import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
@@ -35,6 +37,7 @@ import { desc as FractionsGameDesc } from './games/fractions-game/game-state';
 import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
 import { desc as DifferentNumeratorDenominatorGameDesc } from './games/different-numerator-denominator/game-state';
 import { desc as LegoGameDesc } from './games/mixed-fraction/game-state';
+import { desc as CommonDenominatorGameDesc } from './games/common-denominators/game-state';
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
@@ -76,8 +79,14 @@ const gameInfo: Record<string, GameInfo> = {
     state: FractionAdditionGameState,
     provider: FractionAdditionGameStateProvider
   },
-  'common-denominator': {
-    game: DifferentNumeratorDenominator,
+  'common-denominators': {
+    game: CommonDenominatorGame,
+    desc: CommonDenominatorGameDesc,
+    state: CommonDenominatorGameState,
+    provider: CommonDenominatorGameStateProvider
+  },
+  'different-numerator-denominator': {
+    game: DifferentNumeratorDenominatorGame,
     desc: DifferentNumeratorDenominatorGameDesc,
     state: DifferentNumeratorDenominatorGameState,
     provider: DifferentNumeratorDenominatorGameStateProvider
