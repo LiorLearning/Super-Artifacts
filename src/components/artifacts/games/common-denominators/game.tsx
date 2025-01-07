@@ -54,14 +54,6 @@ export default function Game({sendAdminMessage}: GameProps) {
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
 
-      
-      {/* Select font */}
-      <style jsx global>{`
-          @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');
-          .font-jersey {
-            font-family: 'Jersey 25', cursive;
-          }
-        `}</style>
     </div>
   )
 }

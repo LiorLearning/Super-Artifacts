@@ -1,16 +1,86 @@
+import { useState } from 'react';
 import { useGameState } from '../state-utils';
 import Header from '../components/header';
-import { BaseProps } from '../utils/types';
+import { BaseProps, COLORS } from '../utils/types';
+import { StepModule } from '../components/stepHeader';
+import { ChocolateBar } from '../components/chocolate-bar';
+import { Fraction } from '../game-state';
 
-export default function SecondScreen({ sendAdminMessage }: BaseProps) {
-  const { gameStateRef } = useGameState();
-  const { step, variable } = gameStateRef.current.state2;
-
+function SelectableChocolateBars({ fraction, selected, onSelect, id }: { fraction: Fraction, selected: boolean, onSelect: () => void, id: number }) {
   return (
-    <div className="mx-auto">
-      <Header variable={variable} />
+    <div id={id.toString()} key={id} className="flex items-center justify-center gap-8 w-full">
+      <div className="w-16"></div>
+      <div className="w-[480px]">
+        <ChocolateBar 
+          pieces={parseInt(fraction.denominator)} 
+          filledPieces={parseInt(fraction.numerator)} 
+          selectable
+          selected={selected}
+          onSelect={onSelect}
+        />
+      </div>
+      <div className="flex flex-col items-center w-12">
+        <div className="text-2xl font-bold">{fraction.numerator}</div>
+        <div className="border-t-2 border-black w-8"></div>
+        <div className="text-2xl font-bold">{fraction.denominator}</div>
+      </div>
     </div>
   )
 }
-  
-  
+
+export default function SecondScreen({ sendAdminMessage }: BaseProps) {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const { 
+    step, 
+    fraction1, 
+    fraction2, 
+    chocolateFractions,
+    selectedChocolate,
+    chocolatesWithSameDenominator
+  } = gameStateRef.current.state2;
+
+  const setSelectedChocolate = (index: number) => {
+    setGameStateRef(prev => {
+      const newSelectedChocolate = [...prev.state2.selectedChocolate];
+      newSelectedChocolate[index] = !newSelectedChocolate[index];
+      return {
+        ...prev,
+        state2: { 
+          ...prev.state2, 
+          selectedChocolate: newSelectedChocolate
+        }
+      };
+    });
+    console.log(selectedChocolate, chocolatesWithSameDenominator);
+
+    chocolatesWithSameDenominator.forEach(index => {
+      if (selectedChocolate[index]) {
+        console.log(`Selected chocolate at index ${index}`);
+      }
+    });
+  }
+
+  return (
+    <div className="mx-auto">
+      <Header fraction1={fraction1} fraction2={fraction2} />
+      <div className="flex flex-col items-center justify-center m-4">
+        <StepModule color={COLORS.pink} stepNumber={3} stepText="Select chocolate with same denominator" />
+      </div>
+
+      <div className="flex flex-col items-center justify-center m-8">
+        <span className="text-2xl font-bold">Select the chocolate bars that have the same denominator.</span>
+      </div>
+
+      <div className="w-full flex flex-col items-center gap-16">
+        {chocolateFractions.map((fraction, index) => (
+          <SelectableChocolateBars 
+            fraction={fraction} 
+            selected={selectedChocolate[index]} 
+            onSelect={() => setSelectedChocolate(index)} 
+            id={index}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}

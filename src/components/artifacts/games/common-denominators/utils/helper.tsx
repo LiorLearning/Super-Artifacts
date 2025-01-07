@@ -11,9 +11,21 @@ export const nextStep = (
   }
 }
 
+export const goToStep = (
+  screen: GameScreen, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
+  step: number
+) => {
+  if (screen === 'first') {
+    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step } }));
+  } else {
+    setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step } }));
+  }
+}
+
 export const prevStep = (
   screen: GameScreen, 
-  setGameStateRef: (newState: (prevState: GameState) => GameState) => void
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
 ) => {
   if (screen === 'first') {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: Math.max(prev.state1.step - 1, 0) } }));
