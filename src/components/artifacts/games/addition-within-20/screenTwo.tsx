@@ -77,7 +77,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
 
   return (
       <>
-      <div className="text-3xl font-bold text-center py-8">
+      <div className="text-3xl font-bold text-center py-8 pb-80">
         {maxGreenMarbles} + {maxBlueMarbles} = ?
       </div>
 
