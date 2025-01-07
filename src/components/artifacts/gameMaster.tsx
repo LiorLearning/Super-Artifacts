@@ -16,6 +16,7 @@ import AdditionGame from './games/addition/game';
 import FractionsGame from './games/fractions-game/game';
 import EquivalentFractionsGame from './games/equivalent-fractions/game';
 import DifferentNumeratorDenominator from './games/different-numerator-denominator/game';
+import MixedFractionGame from './games/mixed-fraction-without-regouping/game';
 import LegoGame from './games/mixed-fraction/game';
 
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
@@ -26,6 +27,7 @@ import { GameStateProvider as FractionsGameStateProvider, useGameState as Fracti
 import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState as EquivalentFractionsGameState } from './games/equivalent-fractions/state-utils'
 import { GameStateProvider as DifferentNumeratorDenominatorGameStateProvider, useGameState as DifferentNumeratorDenominatorGameState } from './games/different-numerator-denominator/state-utils'
 import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/mixed-fraction/state-utils'
+import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/mixed-fraction-without-regouping/state-utils'
 
 import { desc as TemplateGameDesc } from './games/template/game-state';
 import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
@@ -35,6 +37,7 @@ import { desc as FractionsGameDesc } from './games/fractions-game/game-state';
 import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
 import { desc as DifferentNumeratorDenominatorGameDesc } from './games/different-numerator-denominator/game-state';
 import { desc as LegoGameDesc } from './games/mixed-fraction/game-state';
+import { desc as MixedFractionGameDesc } from './games/mixed-fraction-without-regouping/game-state';
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
@@ -76,6 +79,12 @@ const gameInfo: Record<string, GameInfo> = {
     state: FractionAdditionGameState,
     provider: FractionAdditionGameStateProvider
   },
+  'mixed-fraction-without-regouping': {
+    game: MixedFractionGame,
+    desc: MixedFractionGameDesc,
+    state: MixedFractionGameState,
+    provider: MixedFractionGameStateProvider
+  },
   'common-denominator': {
     game: DifferentNumeratorDenominator,
     desc: DifferentNumeratorDenominatorGameDesc,
@@ -88,7 +97,6 @@ const gameInfo: Record<string, GameInfo> = {
     state: LegoGameState,
     provider: LegoGameStateProvider
   },
-  // Add other games here as they are implemented
   'template-game': {
     game: TemplateGame,
     desc: TemplateGameDesc,
