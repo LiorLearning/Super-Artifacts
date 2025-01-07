@@ -11,10 +11,7 @@ export const Counter: React.FC<CounterProps> = ({ onIncrement, onDecrement }) =>
   const { gameStateRef } = useGameState();
   return (
     <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
-      <div className="flex">
-        <Button variant="link" onClick={onDecrement} className="text-purple-500 text-2xl" id="decrement-button">
-          <Minus size={24} strokeWidth={6} />
-        </Button>
+      <div className="flex items-center ml-10">
         <p className="text-2xl px-4 mx-8 font-bold border-2 border-purple-500 bg-white text-purple-500">
           count
         </p>
