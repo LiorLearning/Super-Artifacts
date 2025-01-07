@@ -65,5 +65,4 @@ const Header: React.FC<HeaderProps> = (({ fraction1, fraction2, type, version })
 });
 
 
-
 export default Header;
