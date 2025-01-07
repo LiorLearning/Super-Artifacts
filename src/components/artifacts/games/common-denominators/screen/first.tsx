@@ -2,9 +2,10 @@ import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps, COLORS } from '../utils/types';
 import { StepModule } from '../components/stepHeader';
-import { Button } from '@/components/custom_ui/button';
 import KnifeGame from '../components/knife-game';
+import ProceedButton from '../components/proceed-button';
 import { goToStep } from '../utils/helper';
+
 
 export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -20,16 +21,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       <KnifeGame fraction={fraction1} />
 
       {step >= 2 && 
-        <div className="flex flex-col items-center justify-center m-8 mb-16">
-          <Button
-            onClick={() => {
-              goToStep('first', setGameStateRef, 3);
-            }}
-            className="bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90"
-          >
-            PROCEED
-          </Button>
-        </div>
+        <ProceedButton onClick={() => goToStep('first', setGameStateRef, 3)} />
       }
 
       {step >= 3 && 
@@ -41,17 +33,8 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
         </>
       }
 
-      {step >= 5 &&
-        <div className="flex flex-col items-center justify-center m-8 mb-16">
-          <Button
-            onClick={() => {
-              goToStep('first', setGameStateRef, 6);
-            }}
-            className="bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90"
-          >
-            PROCEED
-          </Button>
-        </div>
+      {step >= 4 &&
+        <ProceedButton onClick={() => goToStep('first', setGameStateRef, 5)} />
       }
     </div>
   );

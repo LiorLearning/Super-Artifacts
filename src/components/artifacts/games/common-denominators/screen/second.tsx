@@ -1,14 +1,15 @@
-import { useState } from 'react';
 import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps, COLORS } from '../utils/types';
 import { StepModule } from '../components/stepHeader';
 import { ChocolateBar } from '../components/chocolate-bar';
 import { Fraction } from '../game-state';
+import { goToScreen, goToStep } from '../utils/helper';
+import ProceedButton from '../components/proceed-button';
 
 function SelectableChocolateBars({ fraction, selected, onSelect, id }: { fraction: Fraction, selected: boolean, onSelect: () => void, id: number }) {
   return (
-    <div id={id.toString()} key={id} className="flex items-center justify-center gap-8 w-full">
+    <div key={`chocolate-bar-${id}`} id={id.toString()} className="flex items-center justify-center gap-8 w-full">
       <div className="w-16"></div>
       <div className="w-[480px]">
         <ChocolateBar 
@@ -27,6 +28,7 @@ function SelectableChocolateBars({ fraction, selected, onSelect, id }: { fractio
     </div>
   )
 }
+
 
 export default function SecondScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -51,11 +53,10 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
         }
       };
     });
-    console.log(selectedChocolate, chocolatesWithSameDenominator);
 
     chocolatesWithSameDenominator.forEach(index => {
       if (selectedChocolate[index]) {
-        console.log(`Selected chocolate at index ${index}`);
+        goToStep('second', setGameStateRef, 1);
       }
     });
   }
@@ -74,6 +75,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
       <div className="w-full flex flex-col items-center gap-16">
         {chocolateFractions.map((fraction, index) => (
           <SelectableChocolateBars 
+            key={`selectable-chocolate-bar-${index}`}
             fraction={fraction} 
             selected={selectedChocolate[index]} 
             onSelect={() => setSelectedChocolate(index)} 
@@ -81,6 +83,10 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
           />
         ))}
       </div>
+
+      {step === 1 && (
+        <ProceedButton onClick={() => goToScreen('third', setGameStateRef)} />
+      )}
     </div>
   );
 }

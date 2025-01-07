@@ -23,6 +23,13 @@ export const goToStep = (
   }
 }
 
+export const goToScreen = (
+  screen: GameScreen, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
+) => {
+  setGameStateRef(prev => ({ ...prev, screen }));
+}
+
 export const prevStep = (
   screen: GameScreen, 
   setGameStateRef: (newState: (prevState: GameState) => GameState) => void,

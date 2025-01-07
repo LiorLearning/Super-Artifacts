@@ -9,7 +9,7 @@ const KnifeGame = ({ fraction }: { fraction: Fraction }) => {
         <span className="text-2xl font-bold">Use the knife to make equivalent fractions from {fraction.numerator}/{fraction.denominator}.</span>
       </div>
 
-      <div className="w-full flex flex-col items-center gap-16">
+      <div className="w-full flex flex-col items-center gap-16 m-8">
         {/* Original 1/2 */}
         <div className="flex items-center justify-center gap-8 w-full">
           <div className="w-16"></div>

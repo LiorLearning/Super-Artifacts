@@ -1,6 +1,6 @@
 export const desc = ``;
 
-export type GameScreen = 'first' | 'second';
+export type GameScreen = 'first' | 'second' | 'third' | 'fourth' | 'fifth';
 
 export interface Fraction {
   numerator: string;
