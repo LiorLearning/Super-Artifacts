@@ -2,7 +2,7 @@ import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps, COLORS } from '../utils/types';
 import { StepModule } from '../components/stepHeader';
-import { ChocolateBar } from '../components/chocolate-bar';
+import { ChocolateBar, ChocolateBarWithFraction } from '../components/chocolate-bar';
 import { Fraction } from '../game-state';
 import { goToScreen, goToStep } from '../utils/helper';
 import ProceedButton from '../components/proceed-button';
@@ -11,20 +11,7 @@ function SelectableChocolateBars({ fraction, selected, onSelect, id }: { fractio
   return (
     <div key={`chocolate-bar-${id}`} id={id.toString()} className="flex items-center justify-center gap-8 w-full">
       <div className="w-16"></div>
-      <div className="w-[480px]">
-        <ChocolateBar 
-          pieces={parseInt(fraction.denominator)} 
-          filledPieces={parseInt(fraction.numerator)} 
-          selectable
-          selected={selected}
-          onSelect={onSelect}
-        />
-      </div>
-      <div className="flex flex-col items-center w-12">
-        <div className="text-2xl font-bold">{fraction.numerator}</div>
-        <div className="border-t-2 border-black w-8"></div>
-        <div className="text-2xl font-bold">{fraction.denominator}</div>
-      </div>
+      <ChocolateBarWithFraction fraction={fraction} />
     </div>
   )
 }

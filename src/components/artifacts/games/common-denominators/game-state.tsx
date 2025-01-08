@@ -31,10 +31,16 @@ interface State3 {
 
 interface State4 {
   step: number;
+  fraction1: Fraction;
+  fraction2: Fraction;
+  lcd: number; // Least Common Denominator
+  ecd: number; // Easiest Common Denominator
 }
 
 interface State5 {
   step: number;
+  fraction1: Fraction;
+  fraction2: Fraction;
 }
 
 export interface GameState {
@@ -46,7 +52,7 @@ export interface GameState {
   state5: State5;
 }
 export const initialGameState: GameState = {
-  screen: 'third',
+  screen: 'fourth',
   state1: {
     step: 0,
     fraction1: { numerator: '1', denominator: '2' },
@@ -73,8 +79,14 @@ export const initialGameState: GameState = {
   },
   state4: {
     step: 0,
+    fraction1: { numerator: '1', denominator: '2' },
+    fraction2: { numerator: '1', denominator: '4' },
+    lcd: 4,
+    ecd: 8,
   },
   state5: {
     step: 0,
+    fraction1: { numerator: '1', denominator: '3' },
+    fraction2: { numerator: '1', denominator: '5' },
   }
 };
