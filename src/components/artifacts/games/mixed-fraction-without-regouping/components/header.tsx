@@ -8,11 +8,9 @@ interface HeaderProps {
     fraction2: MixedFractionProps;
 }
 
-const Header: React.FC<HeaderProps> = memo(({ fraction1, fraction2 }) => {
-  const { gameStateRef } = useGameState();
-  
+const HeaderAddition: React.FC<HeaderProps> = memo(({ fraction1, fraction2 }) => {
   return (
-    <div className="bg-[#e3f261] flex justify-center items-center p-2 border-b-4 border-blue-600 gap-6">
+    <div className="w-full bg-[#e3f261] flex justify-center items-center p-2 border-b-4 border-blue-600 gap-6">
       <div className='bg-white px-2 pr-4 '>
         <MixedFraction 
           whole={fraction1.whole} 
@@ -34,6 +32,31 @@ const Header: React.FC<HeaderProps> = memo(({ fraction1, fraction2 }) => {
   );
 });
 
-Header.displayName = 'Header';
+const HeaderSubtraction: React.FC<HeaderProps> = memo(({ fraction1, fraction2 }) => {
+    return (
+      <div className="w-full bg-[#e3f261] flex justify-center items-center p-2 border-b-4 border-blue-600 gap-6">
+        <div className='bg-white px-2 pr-4 '>
+          <MixedFraction 
+            whole={fraction1.whole} 
+            numerator={fraction1.numerator} 
+            denominator={fraction1.denominator} 
+            className='text-3xl font-extrabold'
+          />
+        </div>
+        <span className="text-3xl font-bold">-</span>
+        <div className='bg-white px-2 pr-4 '>
+          <MixedFraction 
+            whole={fraction2.whole} 
+            numerator={fraction2.numerator} 
+            denominator={fraction2.denominator} 
+            className='text-3xl font-extrabold'
+          />
+        </div>
+      </div>
+    );
+  });
 
-export default Header;
+HeaderAddition.displayName = 'HeaderAddition';
+HeaderSubtraction.displayName = 'HeaderSubtraction';
+
+export { HeaderAddition, HeaderSubtraction };
