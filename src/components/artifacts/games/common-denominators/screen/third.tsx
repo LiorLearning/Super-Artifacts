@@ -58,6 +58,35 @@ const TotalPieceGame = ({ fraction, rows }: { fraction: Fraction, rows: number }
 }
 
 
+const Question = () => {
+  const { setGameStateRef } = useGameState();
+  return (
+    <div className="flex flex-col items-center justify-center" style={{
+        backgroundColor: COLORS.pinkLight
+      }}>
+      <div className="text-center text-2xl mt-16 mb-8">
+        <p>How did we find the common denominator?</p>
+      </div>
+      <div className="flex flex-col items-center justify-center mb-4">
+        <Button
+          onClick={() => nextStep('third', setGameStateRef)}
+          className="bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90 shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] rounded-none"
+        >
+          Split each chocolate until the denominators matched.
+        </Button>
+      </div>
+      <div className="flex flex-col items-center justify-center mb-16">
+        <Button
+          onClick={() => {}}
+          className="bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90 shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] rounded-none"
+        >
+          Picked the greater of the two denominators.
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 
 export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -87,30 +116,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       }
       {step >= 5 && 
         <>
-          <div className="flex flex-col items-center justify-center" style={{
-            backgroundColor: COLORS.pinkLight
-          }}>
-
-            <div className="text-center text-2xl mt-16 mb-8">
-              <p>How did we find the common denominator?</p>
-            </div>
-            <div className="flex flex-col items-center justify-center mb-4">
-              <Button
-                onClick={() => nextStep('third', setGameStateRef)}
-                className="bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90 shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] rounded-none"
-              >
-                Split each chocolate until the denominators matched.
-              </Button>
-            </div>
-            <div className="flex flex-col items-center justify-center mb-16">
-              <Button
-                onClick={() => {}}
-                className="bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90 shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] rounded-none"
-              >
-                Picked the greater of the two denominators.
-              </Button>
-            </div>
-          </div>
+          <Question />
           {step >= 6 && <ProceedButton onClick={() => goToScreen('fourth', setGameStateRef)} />} 
         </>
       }
