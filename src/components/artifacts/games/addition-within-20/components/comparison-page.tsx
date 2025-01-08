@@ -1,12 +1,11 @@
 import * as Matter from "matter-js";
 import { useGameState } from "../state-utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/custom_ui/button";
-import { GameProps } from "./types";
 import { Catapult } from "./catapult";
 import { COLORS } from "../utils/constants";
 
-export default function ComparisonPage({ sendAdminMessage }: GameProps) {
+export default function ComparisonPage({}) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { maxGreenMarbles, maxBlueMarbles } = gameStateRef.current;
 
