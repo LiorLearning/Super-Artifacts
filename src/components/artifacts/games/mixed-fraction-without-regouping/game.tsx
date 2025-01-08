@@ -42,7 +42,6 @@ const DevHelper = () => {
   );
 };
 
-
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
