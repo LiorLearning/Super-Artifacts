@@ -1,3 +1,5 @@
+import FourthScreen from './screen/forth';
+import ThirdScreen from './screen/third';
 import FirstScreen from './screen/first';
 import SecondScreen from './screen/second';
 import { useGameState } from './state-utils';
@@ -10,6 +12,7 @@ const DevHelper = () => {
   const { screen } = gameStateRef.current;
   const { step: step1 } = gameStateRef.current.state1;
   const { step: step2 } = gameStateRef.current.state2;
+  const { step: step4 } = gameStateRef.current.state4;
 
   return (
     <div className="flex justify-between mt-4">
@@ -27,6 +30,8 @@ const DevHelper = () => {
           <SelectContent>
             <SelectItem value="1">First Screen</SelectItem>
             <SelectItem value="2">Second Screen</SelectItem>
+            <SelectItem value="3">Third Screen</SelectItem>
+            <SelectItem value="4">Fourth Screen</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -52,9 +57,9 @@ export default function MixedFractionGame({sendAdminMessage}: GameProps) {
       {/* Game screens */}
       {screen === 1 && <FirstScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 2 && <SecondScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 3 && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 4 && <FourthScreen sendAdminMessage={sendAdminMessage} />}
 
-      
-      {/* Select font */}
       <style jsx global>{`
           @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');
           .font-jersey {
