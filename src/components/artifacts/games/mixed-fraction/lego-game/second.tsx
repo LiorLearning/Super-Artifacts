@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { useGameState } from '../state-utils';
 import { COLORS } from './utils/constants';
 import { createHolder as createLegoHolder } from './utils/holderFactory';
+import { createText } from './utils/textFactory';
 
 interface CreatePieceProps {
   scene: THREE.Scene | null;
@@ -21,6 +22,7 @@ const LegoGame = () => {
   const [holders, setHolders] = React.useState<THREE.Group[]>([]);
   const { gameStateRef } = useGameState();
   const { step, fraction, denomOptions } = gameStateRef.current.state2;
+  const textsRef = React.useRef<THREE.Group[]>([]);
 
   const createHolder = (scene: THREE.Scene | null, position: [number, number, number], count: number) => {
     if (!scene) return null;
@@ -59,11 +61,32 @@ const LegoGame = () => {
     });
   }
 
+  const cleanUpTexts = (scene: THREE.Scene | null) => {
+    if (!scene) return;
+    textsRef.current.forEach(text => {
+      scene.remove(text);
+    });
+  }
+
 
   useEffect(() => {
     if (step === 0) {
       createHolder(scene, [0, 0, 0], fraction.denominator);
+
+      for (let i = 0; i < fraction.denominator; i++) {
+        const fractionalText = createText(scene!, [-0.2, 1.9, 1 + i * (fraction.denominator/2)], `1/${fraction.denominator}`, {
+          textColor: COLORS.MAGENTA,
+          orientation: 'orthogonal',
+          centered: true,
+        });
+        if (fractionalText) {
+          scene?.add(fractionalText);
+          textsRef.current = [...textsRef.current, fractionalText];
+        }
+      }
+      
     } else if (step === 1) {
+      cleanUpTexts(scene!);
       cleanUpPieces(scene!, pieces);
       setPieces([]);
       cleanUpHolders(scene!, holders);

@@ -6,7 +6,7 @@ import { Button } from '@/components/custom_ui/button';
 import { useState } from 'react';
 import { CorrectAnswer, FinalAnswer, StepModule } from './components/first';
 
-const STEPS_WITH_PROCEED = [0, 1, 11];
+const STEPS_WITH_PROCEED = [0, 1, 11, 12];
 
 const MainContent = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -73,7 +73,7 @@ const MainContent = () => {
           </div>
         </div>
       )}
-      {step === 13 && (
+      {step === 14 && (
         <CorrectAnswer numerator={numerator} denominator={denominator} large={true} nextScreen={nextScreen} />
       )}
     </div>
@@ -129,7 +129,7 @@ const Footer = () => {
           </Button>
         </div>
       )}
-      {step === 12 && (
+      {step === 13 && (
         <FinalAnswer numerator={numerator} nextStep={nextStep} />
       )}
     </div>
@@ -145,7 +145,7 @@ export default function FirstScreen() {
       <div className="mx-auto">
         <Header fraction={fraction} />
         <MainContent />
-        {step <= 12 && (
+        {step <= 13 && (
           <div className="flex items-center justify-center">
             <LegoGame />
           </div>
