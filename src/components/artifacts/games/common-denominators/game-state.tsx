@@ -1,6 +1,6 @@
 export const desc = ``;
 
-export type GameScreen = 'first' | 'second' | 'third' | 'fourth' | 'fifth';
+export type GameScreen = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth';
 
 export interface Fraction {
   numerator: string;
@@ -41,6 +41,16 @@ interface State5 {
   step: number;
   fraction1: Fraction;
   fraction2: Fraction;
+  lcd: number;
+  ecd: number;
+}
+
+interface State6 {
+  step: number;
+  fraction1: Fraction;
+  fraction2: Fraction;
+  lcd: number;
+  ecd: number;
 }
 
 export interface GameState {
@@ -50,9 +60,10 @@ export interface GameState {
   state3: State3;
   state4: State4;
   state5: State5;
+  state6: State6;
 }
 export const initialGameState: GameState = {
-  screen: 'fourth',
+  screen: 'fifth',
   state1: {
     step: 0,
     fraction1: { numerator: '1', denominator: '2' },
@@ -87,6 +98,15 @@ export const initialGameState: GameState = {
   state5: {
     step: 0,
     fraction1: { numerator: '1', denominator: '3' },
-    fraction2: { numerator: '1', denominator: '5' },
+    fraction2: { numerator: '1', denominator: '6' },
+    lcd: 6,
+    ecd: 18,
+  },
+  state6: {
+    step: 0,
+    fraction1: { numerator: '1', denominator: '4' },
+    fraction2: { numerator: '1', denominator: '8' },
+    lcd: 8,
+    ecd: 32,
   }
 };

@@ -14,6 +14,8 @@ export const nextStep = (
     setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: prev.state4.step + 1 } }));
   } else if (screen === 'fifth') {
     setGameStateRef(prev => ({ ...prev, state5: { ...prev.state5, step: prev.state5.step + 1 } }));
+  } else if (screen === 'sixth') {
+    setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: prev.state6.step + 1 } }));
   }
 }
 
@@ -32,6 +34,8 @@ export const goToStep = (
     setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: step } }));
   } else if (screen === 'fifth') {
     setGameStateRef(prev => ({ ...prev, state5: { ...prev.state5, step: step } }));
+  } else if (screen === 'sixth') {
+    setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: step } }));
   }
 }
 
@@ -56,5 +60,7 @@ export const prevStep = (
     setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: Math.max(prev.state4.step - 1, 0) } }));
   } else if (screen === 'fifth') {
     setGameStateRef(prev => ({ ...prev, state5: { ...prev.state5, step: Math.max(prev.state5.step - 1, 0) } }));
+  } else if (screen === 'sixth') {
+    setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: Math.max(prev.state6.step - 1, 0) } }));
   }
 }

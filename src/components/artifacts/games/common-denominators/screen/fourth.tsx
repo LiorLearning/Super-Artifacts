@@ -2,47 +2,11 @@ import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps, COLORS } from '../utils/types';
 import { StepModule } from '../components/stepHeader';
-import { ChocolateBar, ChocolateBarWithFraction } from '../components/chocolate-bar';
-import { Fraction } from '../game-state';
-import { useState } from 'react';
+import { ChocolateBarWithFraction } from '../components/chocolate-bar';
 import { goToStep, goToScreen, nextStep } from '../utils/helper';
 import ProceedButton from '../components/proceed-button';
 import MultiplesGrid from '../components/multiple-grids';
-import KnifeRow from '../components/knife-row';
 import { Button } from '@/components/custom_ui/button';
-
-
-const TotalPieceGame = ({ fraction, rows }: { fraction: Fraction, rows: number }) => {
-  const [multiplier, setMultiplier] = useState(1)
-  const { setGameStateRef } = useGameState();
-
-  const handleSelectMultiplier = (multiplier: number) => {
-    setMultiplier(multiplier)
-    if (multiplier === rows) {
-      nextStep('third', setGameStateRef);
-    }
-  }
-
-  return (
-    <div>
-      <div className="w-full flex flex-col items-center gap-16 mt-8">
-        <ChocolateBarWithFraction fraction={fraction} />
-
-      </div>
-      <div className="flex flex-col items-center gap-4 mt-8">
-        {Array.from({ length: rows }, (_, index) => (
-          <KnifeRow 
-            key={index} 
-            fraction={fraction} 
-            index={index + 1} 
-            input={index === 0 ? 'none' : index < rows / 2 ? 'one' : 'two'} 
-            onSelectMultiplier={handleSelectMultiplier}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
 
 
 

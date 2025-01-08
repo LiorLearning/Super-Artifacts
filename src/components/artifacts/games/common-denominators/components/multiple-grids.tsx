@@ -112,6 +112,7 @@ export default function MultiplesGrid({ number1, number2, onSelectCommonMultiple
         <div className="flex" style={{ marginLeft: '9.4rem' }}>
           {Array.from({ length: maxMultiple }, (_, index) => index + 1).map((multiplier) => (
             <Button 
+              key={multiplier} // Added key prop
               className={`mx-2 w-12 h-12 rounded-lg flex items-center justify-center`}
               style={{
                 backgroundColor: COLORS.gray,
@@ -134,7 +135,7 @@ export default function MultiplesGrid({ number1, number2, onSelectCommonMultiple
         <div className="flex gap-4">
           {getMultiples(number1).map((multiple, index) => (
             <Button
-              key={index}
+              key={multiple} // Added key prop
               className={`w-12 h-12 rounded-md border-2 flex items-center justify-center`}
               style={{
                 backgroundColor: getColor(multiple, selectedMultiple!)
@@ -157,7 +158,7 @@ export default function MultiplesGrid({ number1, number2, onSelectCommonMultiple
         <div className="flex gap-4">
           {getMultiples(number2).map((multiple, index) => (
             <Button
-              key={index}
+              key={multiple} // Added key prop
               className={`w-12 h-12 rounded-md border-2 flex items-center justify-center`}
               style={{
                 backgroundColor: getColor(multiple, selectedMultiple!)
@@ -173,4 +174,4 @@ export default function MultiplesGrid({ number1, number2, onSelectCommonMultiple
       {renderAnswerInput()}
     </div>
   );
-};
+}

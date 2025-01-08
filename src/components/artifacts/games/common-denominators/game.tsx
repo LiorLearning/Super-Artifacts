@@ -3,7 +3,8 @@ import FirstScreen from './screen/first';
 import SecondScreen from './screen/second';
 import ThirdScreen from './screen/third';
 import FourthScreen from './screen/fourth';
-// import FifthScreen from './screen/fifth';
+import FifthScreen from './screen/fifth';
+import SixthScreen from './screen/sixth';
 import { useGameState } from './state-utils';
 import { prevStep, nextStep } from './utils/helper';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ const DevHelper = () => {
   const { step: step3 } = gameStateRef.current.state3;
   const { step: step4 } = gameStateRef.current.state4;
   const { step: step5 } = gameStateRef.current.state5;
+  const { step: step6 } = gameStateRef.current.state6;
 
   return (
     <div className="flex justify-between mt-4">
@@ -37,6 +39,7 @@ const DevHelper = () => {
             <SelectItem value="third">Third Screen</SelectItem>
             <SelectItem value="fourth">Fourth Screen</SelectItem>
             <SelectItem value="fifth">Fifth Screen</SelectItem>
+            <SelectItem value="sixth">Sixth Screen</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -45,6 +48,7 @@ const DevHelper = () => {
       {screen === 'third' && <span>Step: {step3}</span>}
       {screen === 'fourth' && <span>Step: {step4}</span>}
       {screen === 'fifth' && <span>Step: {step5}</span>}
+      {screen === 'sixth' && <span>Step: {step6}</span>}
       <Button className='m-2' onClick={() => nextStep(screen, setGameStateRef)}>Next Step</Button>
     </div>
   );
@@ -67,8 +71,8 @@ export default function Game({sendAdminMessage}: GameProps) {
       {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'fourth' && <FourthScreen sendAdminMessage={sendAdminMessage} />}
-      {/* {screen === 'fifth' && <FifthScreen sendAdminMessage={sendAdminMessage} />} */}
-
+      {screen === 'fifth' && <FifthScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 'sixth' && <SixthScreen sendAdminMessage={sendAdminMessage} />}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');
         .font-jersey {
