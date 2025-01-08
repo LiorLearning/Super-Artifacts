@@ -154,18 +154,29 @@ export default function Second({ sendAdminMessage }: GameProps) {
                 {blackMarblesCount === 10 ? (
                     <div className='flex flex-col gap-1'>
                       <div className="flex gap-1">
-                        <div className="border-2 border-black rounded-full p-2 flex gap-1 -mt-2">
-                          {Array.from({ length: 10 }).map((_, i) => (
-                            <div key={`black-${i}`} className="w-8 h-8 rounded-full border-2 border-black bg-black" />
-                          ))}
+                        <div>
+                          <div className="border-2 border-black rounded-full p-2 flex gap-1 -mt-2">
+                            {Array.from({ length: 10 }).map((_, i) => (
+                              <div key={`black-${i}`} className="w-8 h-8 rounded-full border-2 border-black bg-black" />
+                            ))}
+                          </div>
+                          <div className='w-full text-center text-4xl font-bold mt-2'>
+                            10
+                          </div>
                         </div>
-                        <span className="text-2xl mx-2">+</span>
-                        {Array.from({ length: totalMarbles - 10 }).map((_, i) => (
-                          <div key={`remaining-${i}`} className="w-8 h-8 rounded-full border-2 border-black bg-blue-500" />
-                        ))}
-                      </div>
-                      <div className='w-full text-center text-4xl font-bold m-4 mt-8'>
-                        10 + {totalMarbles - 10}
+                        <span className="text-5xl mx-2" style={{
+                          marginTop: '2.7rem'
+                        }}>+</span>
+                        <div>
+                          <div className="flex gap-1">
+                            {Array.from({ length: totalMarbles - 10 }).map((_, i) => (
+                              <div key={`remaining-${i}`} className="w-8 h-8 rounded-full border-2 border-black bg-blue-500" />
+                            ))}
+                          </div>
+                          <div className='w-full text-center text-4xl font-bold mt-4'>
+                            {totalMarbles - 10}
+                          </div>
+                        </div>
                       </div>
                     </div>
                 ) : (

@@ -4,7 +4,7 @@ import { useSoundEffects } from "./utils/sound";
 import { useEffect, useRef, useState } from "react";
 import { Cross } from "lucide-react";
 import { Button } from "@/components/custom_ui/button";
-import { Position, Vector, GameProps } from "./components/types";
+import { Position, Vector } from "./components/types";
 import { Catapult } from "./components/catapult";
 import { Counter } from "./components/counter";
 import { ShootButton } from "./components/shoot-button";
@@ -839,7 +839,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         }
       }));
       if (!gameStartedRef.current) {
-        sendAdminMessage('agent', `Let's play a game to solve this? Imagine like this you have ${maxGreenMarbles} green, ${maxBlueMarbles} blue marbles and slingshots!!`);
+        sendAdminMessage('agent', `Let's play a game to solve this, imagine you have ${maxGreenMarbles} green marbles, ${maxBlueMarbles} blue marbles and slingshots. Click on proceed to move forward`);
         gameStartedRef.current = true;
       }
 
@@ -894,7 +894,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       sendAdminMessage('agent', `Oops! The container is full. Let's count how many marbles we have now`);
 
     } else if (step === 5) {
-      sendAdminMessage('agent', 'Look we made it easy');
+      sendAdminMessage('agent', `Look we made it easy. ${maxGreenMarbles} + ${maxBlueMarbles} is same as 10+${maxGreenMarbles + maxBlueMarbles - 10}`);
       Matter.Composite.remove(worldRef.current!, leftPlatformRef1.current!);
       Matter.Composite.remove(worldRef.current!, leftPlatformRef2.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef2.current!);
@@ -1086,7 +1086,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         }
 
         { currentStep === 8 && (
-          <div className="absolute h-10 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
+          <div className="absolute h-24 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
             <Counter onIncrement={() => handlefinalCount(1)} onDecrement={() => handlefinalCount(-1)} />
           </div>
         )}

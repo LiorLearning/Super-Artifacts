@@ -26,7 +26,7 @@ function Game({ sendAdminMessage }: GameProps) {
                   backgroundColor: COLORS.white
                 }}>
                   <div className="h-full w-full">
-                    <ComparisonPage sendAdminMessage={sendAdminMessage} />
+                    <ComparisonPage />
                   </div>
                 </div>
               )}
