@@ -22,7 +22,9 @@ function Game({ sendAdminMessage }: GameProps) {
             <>
               <First sendAdminMessage={sendAdminMessage} visible={true} />
               {gameStateRef.current.state1.currentStep === 5 && (
-                <div className="w-full absolute inset-0 z-10 bg-white rounded-lg shadow-lg">
+                <div className="w-full absolute inset-0 z-10 rounded-lg shadow-lg mt-8" style={{
+                  backgroundColor: COLORS.white
+                }}>
                   <div className="h-full w-full">
                     <ComparisonPage sendAdminMessage={sendAdminMessage} />
                   </div>
@@ -36,15 +38,16 @@ function Game({ sendAdminMessage }: GameProps) {
         </div>
         <style jsx global>{`
           @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Jersey+20&family=Jersey+25&display=swap');
+          
           .font-gaegu {
             font-family: 'Gaegu', cursive;
           }
-          @import url('https://fonts.googleapis.com/css2?family=Jersey+20&display=swap');
-          .font-jersey {
-            font-family: "Jersey 20", serif !important;
-            font-style: normal !important;
-          }
 
+          /* Update Jersey class to use proper specificity */
+          .font-jersey {
+            font-family: 'Jersey 20', sans-serif !important;
+          }
         `}</style>
       </div>
     </div>

@@ -839,7 +839,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         }
       }));
       if (!gameStartedRef.current) {
-        sendAdminMessage('agent', `Let's play a game to solve this? Imagine this like you have ${maxGreenMarbles} green, ${maxBlueMarbles} blue marbles and slingshots!!`);
+        sendAdminMessage('agent', `Let's play a game to solve this? Imagine like this you have ${maxGreenMarbles} green, ${maxBlueMarbles} blue marbles and slingshots!!`);
         gameStartedRef.current = true;
       }
 
@@ -970,11 +970,10 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
             {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
           </h3>
         </div>
-        <div className={`w-2/3 mx-auto text-2xl border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
-          fontSize: 26,
+        <div className={`w-2/3 mx-auto text-3xl border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
           backgroundColor: currentStep === 4 ? COLORS.blue : COLORS.white
         }}>
-        <p className={`font-bold text-center font-jersey`} style={{
+        <p className={`text-center font-jersey`} style={{
           color: currentStep === 4 ? COLORS.white : COLORS.blue
         }}>
           {(() => {

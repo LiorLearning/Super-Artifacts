@@ -349,13 +349,17 @@ export default function ComparisonPage({ sendAdminMessage }: GameProps) {
   return (
     <div className="relative w-[800px] mx-auto ">
       <section className="mt-16 h-52 flex flex-col justify-center">
-        <h3 className="text-5xl font-bold text-center pb-10">
-          {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
-        </h3>
-        <div className={`w-2/3 mx-auto text-2xl border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
+        <div className="text-5xl font-bold text-center pb-10">
+          <h3 className="border-2 border-black shadow-[-5px_5px_0_0] w-[40%] mx-auto" style={{
+            backgroundColor: COLORS.white,
+          }}>
+            {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
+          </h3>
+        </div>
+        <div className={`w-2/3 mx-auto text-3xl border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
           backgroundColor: COLORS.white
         }}>
-          <p className={`font-bold text-center font-jersey`} style={{
+          <p className={`text-center font-jersey`} style={{
             color: COLORS.blue
           }}>
             {`Look! ${maxGreenMarbles} + ${maxBlueMarbles} is same as 10+${maxGreenMarbles + maxBlueMarbles - 10}`}
@@ -365,20 +369,28 @@ export default function ComparisonPage({ sendAdminMessage }: GameProps) {
 
       <div className="relative w-full">
         <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500" style={{
-          top: slingPosition[1].y - 50,
-          left: slingPosition[1].x - 420
+          top: slingPosition[1].y + 100,
+          left: slingPosition[1].x - 200
         }}>
           {maxGreenMarbles}
         </div>
+
+        <div className="absolute text-5xl font-bold px-4 py-2 z-10 text-black transform rotate-90 origin-center" style={{
+          top: slingPosition[1].y + 100,
+          left: slingPosition[1].x - 100
+        }}>
+          +
+        </div>
+
         <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500" style={{
-          top: slingPosition[1].y - 50,
-          left: slingPosition[1].x + 220
+          top: slingPosition[1].y + 100,
+          left: slingPosition[1].x
         }}>
           {maxBlueMarbles}
         </div>
 
         <div className="absolute text-5xl font-bold px-4 py-2 z-10 text-black transform rotate-90 origin-center" style={{
-          top: slingPosition[1].y + 200,
+          top: slingPosition[1].y + 220,
           left: slingPosition[1].x - 100
         }}>
           &gt;&gt;
