@@ -2,6 +2,7 @@ import { MixedFractionProps } from './utils/types';
 
 export const desc = ``;
 
+export type GameScreen = 1 | 2 | 3 | 4;
 
 export interface screen1 {
   step: number;
