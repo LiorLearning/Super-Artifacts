@@ -5,7 +5,7 @@ import { StepModule } from '../components/stepHeader';
 import { useEffect, useState } from 'react';
 import ProceedButton from '../components/proceed-button';
 import { Input } from '@/components/custom_ui/input';
-import { goToStep, nextStep } from '../utils/helper';
+import { goToStep, goToScreen } from '../utils/helper';
 
 export default function FifthScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -157,7 +157,7 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
             </div>
 
             {/* Proceed Button */}
-            {step === 2 &&<ProceedButton onClick={() => nextStep('sixth', setGameStateRef)} />}
+            {step === 2 &&<ProceedButton onClick={() => goToScreen('sixth', setGameStateRef)} />}
           </div>
         </>
       }

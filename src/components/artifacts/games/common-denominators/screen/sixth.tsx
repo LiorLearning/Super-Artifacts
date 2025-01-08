@@ -81,7 +81,7 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
         </div>
       </div>
       
-      {step >= 2 &&
+      {step >= 1 &&
         <>
           {/* Step 2 - LCD Section */}
           <div className="flex flex-col items-center justify-center m-4 mt-8">

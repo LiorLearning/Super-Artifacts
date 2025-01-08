@@ -32,13 +32,16 @@ export const ChocolateBar = ({
   </div>
 ); 
 
-export const ChocolateBarWithFraction = ({ fraction, size = 'large' }: { fraction: Fraction, size?: 'large' | 'small' }) => {
+export const ChocolateBarWithFraction = ({ fraction, size = 'large', selectable = false, selected = false, onSelect = () => {} }: { fraction: Fraction, size?: 'large' | 'small', selectable?: boolean, selected?: boolean, onSelect?: () => void }) => {
   return (
     <>
       <div className={`w-[${size === 'large' ? '480px' : '240px'}]`}>
         <ChocolateBar 
           pieces={parseInt(fraction.denominator)} 
           filledPieces={parseInt(fraction.numerator)} 
+          selectable={selectable}
+          selected={selected}
+          onSelect={onSelect}
         />
       </div>
       <div className={`flex flex-col items-center ${size === 'large' ? 'w-12' : 'w-8'}`}>

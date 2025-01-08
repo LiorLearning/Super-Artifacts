@@ -63,7 +63,7 @@ export interface GameState {
   state6: State6;
 }
 export const initialGameState: GameState = {
-  screen: 'fifth',
+  screen: 'first',
   state1: {
     step: 0,
     fraction1: { numerator: '1', denominator: '2' },
