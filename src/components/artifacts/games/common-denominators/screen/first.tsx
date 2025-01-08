@@ -4,7 +4,7 @@ import { BaseProps, COLORS } from '../utils/types';
 import { StepModule } from '../components/stepHeader';
 import KnifeGame from '../components/knife-game';
 import ProceedButton from '../components/proceed-button';
-import { goToStep } from '../utils/helper';
+import { goToScreen, goToStep } from '../utils/helper';
 
 
 export default function FirstScreen({ sendAdminMessage }: BaseProps) {
@@ -34,7 +34,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       }
 
       {step >= 4 &&
-        <ProceedButton onClick={() => goToStep('first', setGameStateRef, 5)} />
+        <ProceedButton onClick={() => goToScreen('second', setGameStateRef)} />
       }
     </div>
   );

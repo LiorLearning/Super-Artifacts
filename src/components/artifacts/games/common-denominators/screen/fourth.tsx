@@ -49,7 +49,7 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
             </div>
             <div className="flex flex-col items-center justify-center mb-4">
               <Button
-                onClick={() => nextStep('third', setGameStateRef)}
+                onClick={() => nextStep('fourth', setGameStateRef)}
                 className="bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90 shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] rounded-none"
               >
                 Multiply denominators directly to get ECD
@@ -57,7 +57,7 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
             </div>
             <div className="flex flex-col items-center justify-center mb-16">
               <Button
-                onClick={() => {}}
+                onClick={() => nextStep('fourth', setGameStateRef)}
                 className="bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90 shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] rounded-none"
               >
                 Find multiples of each number to get the LCD

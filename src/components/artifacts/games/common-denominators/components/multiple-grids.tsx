@@ -18,7 +18,6 @@ interface MultiplesGridProps {
 
 export default function MultiplesGrid({ number1, number2, onSelectCommonMultiple, gcd, lcd, ecd, onSuccess }: MultiplesGridProps) {
   const maxMultiple = Math.max(number1, number2);
-  const { setGameStateRef } = useGameState();
   const getMultiples = (num: number) => Array.from({ length: maxMultiple }, (_, i) => num * (i + 1));
   const [selectedMultiple, setSelectedMultiple] = useState<number | null>(null);
   const [answer, setAnswer] = useState<string>('');
@@ -52,7 +51,7 @@ export default function MultiplesGrid({ number1, number2, onSelectCommonMultiple
   }, [answer]);
 
   useEffect(() => {
-    if (answers.lcd === lcd!.toString() && answers.ecd === ecd!.toString()) {
+    if (answers.lcd === lcd?.toString() && answers.ecd === ecd?.toString()) {
       onSuccess();
     }
   }, [answers]);
