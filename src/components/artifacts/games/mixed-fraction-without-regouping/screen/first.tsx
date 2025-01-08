@@ -250,8 +250,8 @@ const Step3 = () => {
             denominator: fraction2.denominator,
             color: 'yellow',
           }
-        ].map((pizza) => (
-          <div className='flex items-center mt-4 gap-4'>
+        ].map((pizza, index) => (
+          <div key={index} className='flex items-center mt-4 gap-4'>
             <span className='text-xl font-bold'>
               {pizza.pizzaName}
             </span>
@@ -305,8 +305,8 @@ const Step3 = () => {
                   whole: fraction2.whole,
                   color: 'yellow',
                 }
-              ].map((pizza) => (
-                <div className='flex gap-2'>
+              ].map((pizza, index) => (
+                <div key={index} className='flex gap-2'>
                   {Array.from({ length: pizza.whole }).map((_, index) => (
                     <div key={index} className={`flex flex-col items-center justify-center w-16 h-16 rounded-full border-2 border-${pizza.color}-800 bg-${pizza.color}-500`}>
                     <div className={`w-14 h-14 bg-${pizza.color}-600 border-2 border-${pizza.color}-800 rounded-full`} />
@@ -331,7 +331,7 @@ const Step3 = () => {
                   name="whole"
                   value={wholeInputs.input}
                   onChange={handleWholeChange}
-                  className={getInputStyle(wholeInputs.isCorrect, fraction1.color)}
+                  className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
                   placeholder="?"
                 />
                 <div className='text-3xl font-bold'>Wholes</div>
