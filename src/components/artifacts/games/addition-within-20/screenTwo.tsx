@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useGameState } from "./state-utils";
 import { Input } from "@/components/custom_ui/input";
 import { GameProps } from "./components/types";
+import { COLORS } from "./utils/constants";
 
 export default function Second({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -81,10 +82,13 @@ export default function Second({ sendAdminMessage }: GameProps) {
         {maxGreenMarbles} + {maxBlueMarbles} = ?
       </div>
 
-      <div className={`mx-auto text-xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-10`} style={{
-        fontSize: 26
+      <div className={`mx-auto text-xl border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-10`} style={{
+        fontSize: 26,
+        backgroundColor: COLORS.white
       }}>
-        <p className={`font-bold text-center text-purple-600`}>
+        <p className={`font-bold text-center font-jersey`} style={{
+          color: COLORS.blue
+        }}>
           Select {maxGreenMarbles} green and {maxBlueMarbles} blue marbles
         </p>
       </div>

@@ -67,7 +67,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  screen: 'first',
+  screen: 'second',
   maxGreenMarbles: MAX_GREEN_MARBLES,
   maxBlueMarbles: MAX_BLUE_MARBLES,
   maxBlackMarbles: MAX_BLACK_MARBLES,
@@ -78,7 +78,7 @@ export const initialGameState: GameState = {
     containerScore: 0,
     activePhase: 'left',
     clickDisabled: false,
-    currentStep: 0,
+    currentStep: 4,
     finalAnswer: 0,
     showAddButton: false,
     additionStarted: false

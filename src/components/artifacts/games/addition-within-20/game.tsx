@@ -4,17 +4,18 @@ import Second from './screenTwo';
 import ComparisonPage from './components/comparison-page';
 import { useGameState } from './state-utils';
 import { GameProps } from './components/types';
+import { COLORS } from './utils/constants';
 
 function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef } = useGameState();
   
   return (
     <div className="h-full w-full bg-white">
-      <div className="flex flex-col pb-96 h-full w-full justify-center items-center font-gaegu bg-[#BFF0FF] relative">
+      <div className="flex flex-col pb-96 h-full w-full justify-center items-center font-gaegu relative" style={{ backgroundColor: COLORS.lightBlue }}>
         <img 
-          src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/cloud-bg.png" 
+          src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/clouds.png" 
           alt="Game background" 
-          className="absolute inset-0 w-full h-full object-cover opacity-100 z-0 right-[80px]"
+          className="absolute inset-0 w-full object-cover opacity-100 z-1 right-[120px] mt-16"
         />
         <div className="relative z-10">
           {gameStateRef.current.screen === 'first' && (
@@ -38,6 +39,12 @@ function Game({ sendAdminMessage }: GameProps) {
           .font-gaegu {
             font-family: 'Gaegu', cursive;
           }
+          @import url('https://fonts.googleapis.com/css2?family=Jersey+20&display=swap');
+          .font-jersey {
+            font-family: "Jersey 20", serif !important;
+            font-style: normal !important;
+          }
+
         `}</style>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/custom_ui/button";
 import { GameProps } from "./types";
 import { Catapult } from "./catapult";
+import { COLORS } from "../utils/constants";
 
 export default function ComparisonPage({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -351,8 +352,12 @@ export default function ComparisonPage({ sendAdminMessage }: GameProps) {
         <h3 className="text-5xl font-bold text-center pb-10">
           {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
         </h3>
-        <div className={`w-2/3 mx-auto text-2xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`}>
-          <p className={`font-bold text-center text-purple-600`}>
+        <div className={`w-2/3 mx-auto text-2xl border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
+          backgroundColor: COLORS.white
+        }}>
+          <p className={`font-bold text-center font-jersey`} style={{
+            color: COLORS.blue
+          }}>
             {`Look! ${maxGreenMarbles} + ${maxBlueMarbles} is same as 10+${maxGreenMarbles + maxBlueMarbles - 10}`}
           </p>
         </div>
@@ -410,14 +415,20 @@ export default function ComparisonPage({ sendAdminMessage }: GameProps) {
           className="w-[800px] h-[600px] z-30 mx-auto rounded-lg bg-transparent"
         />
 
-        <div className="absolute right-5">
-          <Button 
-            onClick={() => handleProceed()} 
-            className="text-2xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 text-purple-600 rounded-none"
-          >
-            Proceed &gt;&gt;
-          </Button>
-        </div>
+      </div>
+      <div className="absolute right-0 top-0">
+        <Button 
+          onClick={() => handleProceed()} 
+          className="text-lg border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 rounded-none"
+          style={{
+            backgroundColor: COLORS.white,
+            color: COLORS.blue
+          }}
+        >
+          <p className="font-bold font-jersey" style={{
+            color: COLORS.blue
+          }}>Proceed &gt;&gt;</p>
+        </Button>
       </div>
     </div>  
   );

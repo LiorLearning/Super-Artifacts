@@ -8,6 +8,7 @@ import { Position, Vector, GameProps } from "./components/types";
 import { Catapult } from "./components/catapult";
 import { Counter } from "./components/counter";
 import { ShootButton } from "./components/shoot-button";
+import { COLORS } from "./utils/constants";
 
 interface FirstProps {
   sendAdminMessage: (agent: string, message: string) => void;
@@ -962,13 +963,20 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
   return (
     <div className="relative w-[800px] mx-auto ">
       <section className="mt-16 h-52 flex flex-col justify-center">
-        <h3 className="text-5xl font-bold text-center pb-10">
-          {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
-        </h3>
-        <div className={`w-2/3 mx-auto text-2xl ${currentStep===4? 'bg-purple-600' : 'bg-purple-100'} border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
-          fontSize: 26
+        <div className="text-5xl font-bold text-center pb-10">
+          <h3 className="border-2 border-black shadow-[-5px_5px_0_0] w-[40%] mx-auto" style={{
+            backgroundColor: COLORS.white,
+          }}>
+            {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
+          </h3>
+        </div>
+        <div className={`w-2/3 mx-auto text-2xl border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
+          fontSize: 26,
+          backgroundColor: currentStep === 4 ? COLORS.blue : COLORS.white
         }}>
-        <p className={`font-bold text-center ${currentStep===4? 'text-purple-100' : ' text-purple-600'}`}>
+        <p className={`font-bold text-center font-jersey`} style={{
+          color: currentStep === 4 ? COLORS.white : COLORS.blue
+        }}>
           {(() => {
             switch (currentStep) {
               case 0:
@@ -1096,19 +1104,24 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
           </div>
         )}
 
-        {STEPS_WITH_PROCEED.includes(currentStep) && (
-          <>
-            <div className="absolute right-5">
-              <Button 
-                onClick={() => handleProceed(currentStep)} 
-                className="text-2xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 mb-5 text-purple-600 rounded-none"
-              >
-                Proceed &gt;&gt;
-              </Button>
-            </div>
-          </>
-        )}
       </div>
-    </div>  
+      {STEPS_WITH_PROCEED.includes(currentStep) && (
+        <>
+          <div className="absolute right-0 top-0">
+            <Button 
+              onClick={() => handleProceed(currentStep)} 
+              className="text-lg bg-purple-100 border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 mb-5 rounded-none"
+              style={{
+                backgroundColor: COLORS.white,
+              }}
+            >
+              <p className="font-bold font-jersey" style={{
+                color: COLORS.blue
+              }}>Proceed &gt;&gt;</p>
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
