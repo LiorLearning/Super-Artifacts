@@ -5,10 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card } from "@/components/ui/card"
-import { ArrowLeft, ArrowRight, Trash2, Star, Lightbulb } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Trash2, Lightbulb } from 'lucide-react'
 import NumberLine  from "./NumberLine"
-import GameContainer from '@/components/GameContainer'
 
 export const desc = `Steps to Play the Game:`
 
@@ -128,12 +126,7 @@ export default function NumberLineGame({ sendAdminMessage }: NumberLineGameProps
   }
 
   return (
-    <GameContainer
-      title="Number Line Adventure"
-      score={score}
-      instructions={instructions}
-    >
-
+    <div>
       <div className="flex flex-wrap justify-center gap-4 mb-4">
         {question && <div className="text-3xl font-bold text-blue-600">{question}</div>}
       </div>
@@ -235,6 +228,6 @@ export default function NumberLineGame({ sendAdminMessage }: NumberLineGameProps
           </Button>
         )}
       </div>
-    </GameContainer>
+    </div>
   )
 }

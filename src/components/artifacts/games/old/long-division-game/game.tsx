@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
-import GameContainer from '@/components/GameContainer';
 
 export const desc = `Steps to Play the Game:`
 
@@ -126,11 +125,6 @@ const InteractiveLongDivisionGame: React.FC = () => {
   };
 
   return (
-  <GameContainer
-    title="Visual Long Division"
-    score={score}
-    instructions='Divide the given number by the divisor and enter the next digit of the quotient.'
-  >
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-200 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardContent className="p-6">
@@ -222,7 +216,6 @@ const InteractiveLongDivisionGame: React.FC = () => {
         </CardContent>
       </Card>
     </div>
-  </GameContainer>
   );
 };
 

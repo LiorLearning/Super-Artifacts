@@ -10,6 +10,7 @@ type WebSocketContextType = {
   addToChat: (message: Message ) => void;
   toggleAudio: (message: Message) => void;
   isConnected: boolean;
+  reconnectWebSocket: () => void;
 };
 
 // Create the WebSocket context
@@ -41,8 +42,6 @@ class WebSocketManager {
     this.setMessages = setMessages;
     this.handlePlayAudio = handlePlayAudio;
   }
-
-
 
   connect() {
     if (this.ws?.readyState === WebSocket.OPEN) return;
@@ -183,6 +182,13 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ url, child
     }
   }, []);
 
+  const reconnectWebSocket = useCallback(() => {
+    if (wsRef.current) {
+      wsRef.current.disconnect();
+      wsRef.current.connect();
+    }
+  }, []);
+
   useEffect(() => {
     if (messageContext) {
       wsRef.current = new WebSocketManager({ 
@@ -219,8 +225,9 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ url, child
     sendLog,
     addToChat,
     toggleAudio,
-    isConnected
-  }), [sendLog, addToChat, toggleAudio, isConnected]);
+    isConnected,
+    reconnectWebSocket
+  }), [sendLog, addToChat, toggleAudio, isConnected, reconnectWebSocket]);
 
   return (
     <WebSocketContext.Provider value={contextValue}>
