@@ -1,6 +1,6 @@
 import * as Matter from "matter-js";
 import { useGameState } from "./state-utils";
-import { useSoundEffects } from "./sounds";
+import { useSoundEffects } from "./utils/sound";
 import { useEffect, useRef, useState } from "react";
 import { Cross } from "lucide-react";
 import { Button } from "@/components/custom_ui/button";
@@ -9,8 +9,12 @@ import { Catapult } from "./components/catapult";
 import { Counter } from "./components/counter";
 import { ShootButton } from "./components/shoot-button";
 
+interface FirstProps {
+  sendAdminMessage: (agent: string, message: string) => void;
+  visible: boolean;
+}
 
-export default function First({ sendAdminMessage }: GameProps) {
+export default function First({ sendAdminMessage, visible }: FirstProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const soundEffects = useSoundEffects();
   const { greenScore, blueScore, containerScore, activePhase, currentStep, finalAnswer, clickDisabled, showAddButton, additionStarted } = gameStateRef.current.state1;
@@ -29,13 +33,15 @@ export default function First({ sendAdminMessage }: GameProps) {
   const rightContainerBallsRef = useRef<Matter.Body[]>([]);
   const activeBallLeftRef = useRef<Matter.Body | null>(null);
   const activeBallRightRef = useRef<Matter.Body | null>(null);
+  const gameStartedRef = useRef(false);
 
   const [slingPosition, setSlingPosition] = useState<Position[]>([
       { x: 200, y: 68 },
       { x: 480, y: 68 }
   ]);
 
-  const duration = 5000;
+  const STEPS_WITH_PROCEED = [0, 1, 4, 5];
+  // const STEPS_WITH_PROCEED = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const setCurrentStep = (step: number) => {
     setGameStateRef(prev => ({ 
@@ -199,12 +205,19 @@ export default function First({ sendAdminMessage }: GameProps) {
     });
   }, [containerScore]);
 
+  useEffect(() => {
+    if (currentStep === 6) {
+      sendAdminMessage('agent', `Let us empty the marbles in one place to add them`);
+    }
+  }, [currentStep])
+
   const createFinalContainer = () => {
-    const containerWidth = 400;  
-    const containerHeight = 100;
-    const containerPosition = { x: 500, y: 500 };
+    const containerWidth = 440;  
+    const containerHeight = 50;
+    const containerPosition = { x: 460, y: 450 };
 
     const containerComposite = Matter.Composite.create();
+    console.log("createFinalContainer");
 
     const colors = {
       front: "#E8F8FF",    // Light blue for front face
@@ -239,7 +252,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       // Back face
       Matter.Bodies.rectangle(
         containerPosition.x,
-        containerPosition.y,
+        containerPosition.y+30,
         containerWidth,
         containerHeight,
         {
@@ -260,7 +273,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       // Left face
       Matter.Bodies.fromVertices(
         containerPosition.x - containerWidth / 2 - 10,
-        containerPosition.y + 10,
+        containerPosition.y + 40,
         leftFaceVertices,
         {
           isStatic: true,
@@ -280,7 +293,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       // Bottom face
       Matter.Bodies.fromVertices(
         containerPosition.x - 10,
-        containerPosition.y + containerHeight / 2 + 10,
+        containerPosition.y + containerHeight / 2 + 40,
         bottomFaceVertices,
         {
           isStatic: true,
@@ -299,7 +312,7 @@ export default function First({ sendAdminMessage }: GameProps) {
        // Right face
        Matter.Bodies.fromVertices(
         containerPosition.x + containerWidth / 2 - 10,
-        containerPosition.y + 10,
+        containerPosition.y + 40,
         rightFaceVertices,
         {
           isStatic: true,
@@ -319,7 +332,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       // Front face (semi-transparent)
       Matter.Bodies.rectangle(
         containerPosition.x - 20,
-        containerPosition.y + 20, // Slight offset for 3D effect
+        containerPosition.y + 50, // Slight offset for 3D effect
         containerWidth,
         containerHeight,
         {
@@ -341,7 +354,7 @@ export default function First({ sendAdminMessage }: GameProps) {
 
     const parts = [
       // Left invisible border
-      Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y - containerHeight/2 + 50, 1, containerHeight, {
+      Matter.Bodies.rectangle(containerPosition.x - containerWidth / 2 - 10, containerPosition.y - containerHeight/2 + 50, 4, containerHeight, {
         isStatic: true,
         render: {
           visible: false
@@ -350,7 +363,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       }),
 
       // Right invisible border
-      Matter.Bodies.rectangle(containerPosition.x + containerWidth / 2 - 10, containerPosition.y - containerHeight/2 + 50, 1, containerHeight, {
+      Matter.Bodies.rectangle(containerPosition.x + containerWidth / 2 - 10, containerPosition.y - containerHeight/2 + 50, 4, containerHeight, {
         isStatic: true,
         render: {
           visible: false
@@ -359,7 +372,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       }),
 
       // Bottom invisible border
-      Matter.Bodies.rectangle(containerPosition.x - 10, containerPosition.y + 50, containerWidth, 1, {
+      Matter.Bodies.rectangle(containerPosition.x - 10, containerPosition.y + 50, containerWidth, 4, {
         isStatic: true,
         render: {
           visible: false
@@ -521,7 +534,7 @@ export default function First({ sendAdminMessage }: GameProps) {
   const createContainerBalls = (startX: number, color: string, count: number) => {
     const balls = [];
     const spacing = 20;
-    const startY = 160; 
+    const startY = 160;
 
     for (let i = 0; i < count; i++) { 
       const ball = Matter.Bodies.circle(
@@ -529,13 +542,13 @@ export default function First({ sendAdminMessage }: GameProps) {
         startY - Math.floor(i / 4) * spacing,
         8,
         {
-        restitution: 0.1,
-        render: {
-          fillStyle: color,
-          strokeStyle: "transparent",
-          lineWidth: 15,
-        },
-        label: "ball"
+          restitution: 0.1,
+          render: {
+            fillStyle: color,
+            strokeStyle: "transparent",
+            lineWidth: 15,
+          },
+          label: "ball"
       });
       balls.push(ball);
     }
@@ -749,16 +762,30 @@ export default function First({ sendAdminMessage }: GameProps) {
       }, 1500);
     }
   }
+
   const handlefinalCount = (i: number) => {
+    const bodies = Matter.Composite.allBodies(worldRef.current!);
     if (i === -1) {
+      const blackBalls = bodies.filter(body => body.label === 'black_ball');
+      if (blackBalls.length > 0) {
+        blackBalls[0].render.fillStyle = 'gray';
+        blackBalls[0].label = 'ball';
+      }
       setGameStateRef(prev => ({ 
         ...prev, 
         state1: { 
           ...prev.state1, 
+          blackScore: Math.max(0, prev.state1.blackScore - 1),
           finalAnswer: Math.max(0, finalAnswer - 1) 
         } 
       }));
     } else {
+      const balls = bodies.filter(body => body.label === 'ball');
+      const firstNonBlackBall = balls.find(ball => ball.label !== 'black');
+      if (firstNonBlackBall) {
+        firstNonBlackBall.render.fillStyle = 'black';
+        firstNonBlackBall.label = 'black_ball';
+      }
       setGameStateRef(prev => {
         const newAnswer = finalAnswer + 1;
         if (newAnswer === (maxGreenMarbles + maxBlueMarbles)) {
@@ -768,7 +795,7 @@ export default function First({ sendAdminMessage }: GameProps) {
             progressStep(9);
           }, 500);
         }
-        return { ...prev, state1: { ...prev.state1, finalAnswer: newAnswer } };
+        return { ...prev, state1: { ...prev.state1, finalAnswer: newAnswer, blackScore: Math.max(0, prev.state1.blackScore - 1) } };
       });
     }
   };
@@ -791,6 +818,11 @@ export default function First({ sendAdminMessage }: GameProps) {
     }, 1000);
   }
 
+  const handleProceed = (currentStep: number) => {
+    setCurrentStep(currentStep+1);
+    progressStep(currentStep+1);
+  }
+
   const progressStep = (step: number = currentStep) => {
     if (step === 0) {
       setGameStateRef(prevState => ({
@@ -805,19 +837,21 @@ export default function First({ sendAdminMessage }: GameProps) {
           activePhase: 'left'
         }
       }));
-      setTimeout(() => {
-        setCurrentStep(1);  
-        progressStep(1);
-      }, duration);
+      if (!gameStartedRef.current) {
+        sendAdminMessage('agent', `Let's play a game to solve this? Imagine this like you have ${maxGreenMarbles} green, ${maxBlueMarbles} blue marbles and slingshots!!`);
+        gameStartedRef.current = true;
+      }
 
     } else if (step === 1) {
       if (!containerRef.current) createMainContainer();
+      sendAdminMessage('agent', `And with that you have a container to collect the marbles after you shoot.`);
+
       setTimeout(() => {
-      setCurrentStep(2);
-      progressStep(2);
-      }, duration);
+        sendAdminMessage('agent', `But remember! The container can only hold 10 marbles at once`);
+      }, 5000);
       
     } else if (step === 2) {
+      sendAdminMessage('agent', `Let's begin! First let's finish shooting the green marbles into the marble holder!`);
       if (!activeBallLeftRef.current) {
         const activeball = leftContainerBallsRef.current[leftContainerBallsRef.current.length - 1];
         activeBallLeftRef.current = activeball;
@@ -837,6 +871,7 @@ export default function First({ sendAdminMessage }: GameProps) {
       }
 
     } else if (step === 3) {
+      sendAdminMessage('agent', `Awesome! We have filled all ${maxGreenMarbles} green ones. Step 2 : Let's fill the blue ones.`);
       if (!activeBallRightRef.current) {
         const activeball = rightContainerBallsRef.current[rightContainerBallsRef.current.length - 1];
         activeBallRightRef.current = activeball;
@@ -855,21 +890,15 @@ export default function First({ sendAdminMessage }: GameProps) {
         }
       }
     } else if (step === 4) {
-      setTimeout(() => {
-        setCurrentStep(5);
-        progressStep(5);
-      }, duration);
+      sendAdminMessage('agent', `Oops! The container is full. Let's count how many marbles we have now`);
 
     } else if (step === 5) {
+      sendAdminMessage('agent', 'Look we made it easy');
       Matter.Composite.remove(worldRef.current!, leftPlatformRef1.current!);
       Matter.Composite.remove(worldRef.current!, leftPlatformRef2.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef2.current!);
-      // leftPlatformRef1.current
+      progressStep(6);
 
-      setTimeout(() => {
-        setCurrentStep(6);
-        progressStep(6);
-      }, duration);
     } else if (step === 6) {
       const bodies = Matter.Composite.allBodies(worldRef.current!);
       const balls = bodies.filter(body => body.label === 'ball');
@@ -883,6 +912,7 @@ export default function First({ sendAdminMessage }: GameProps) {
 
       worldRef.current = Matter.World.add(worldRef.current, balls);
     } else if (step === 8) {
+      
       Matter.Composite.remove(worldRef.current!, containerRef.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef1.current!);
     } else if (step === 9) {
@@ -927,6 +957,7 @@ export default function First({ sendAdminMessage }: GameProps) {
     }
   }, [containerScore]);
 
+  if (!visible) return null;
 
   return (
     <div className="relative w-[800px] mx-auto ">
@@ -934,7 +965,9 @@ export default function First({ sendAdminMessage }: GameProps) {
         <h3 className="text-5xl font-bold text-center pb-10">
           {`${maxGreenMarbles} + ${maxBlueMarbles} = ?`}
         </h3>
-        <div className={`w-2/3 mx-auto text-2xl ${currentStep===4? 'bg-purple-600' : 'bg-purple-100'} border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`}>
+        <div className={`w-2/3 mx-auto text-2xl ${currentStep===4? 'bg-purple-600' : 'bg-purple-100'} border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
+          fontSize: 26
+        }}>
         <p className={`font-bold text-center ${currentStep===4? 'text-purple-100' : ' text-purple-600'}`}>
           {(() => {
             switch (currentStep) {
@@ -1038,7 +1071,7 @@ export default function First({ sendAdminMessage }: GameProps) {
           <Button
             onClick={handleAddition}
             disabled={currentStep != 6}
-            className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 
+            className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 rounded-none
               ${currentStep != 6 ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             Empty
@@ -1059,8 +1092,21 @@ export default function First({ sendAdminMessage }: GameProps) {
             <p className="text-7xl text-center font-bold text-black">
               great job! <br/> correct answer
             </p>
-            <Button onClick={() => setGameStateRef(prevState => ({...prevState, currentScreen: 'second'}))} className="text-2xl bg-purple-500 text-white">Next</Button>
+            <Button onClick={() => setGameStateRef(prevState => ({...prevState, screen: 'second'}))} className="text-2xl bg-purple-500 text-white">Next</Button>
           </div>
+        )}
+
+        {STEPS_WITH_PROCEED.includes(currentStep) && (
+          <>
+            <div className="absolute right-5">
+              <Button 
+                onClick={() => handleProceed(currentStep)} 
+                className="text-2xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 mb-5 text-purple-600 rounded-none"
+              >
+                Proceed &gt;&gt;
+              </Button>
+            </div>
+          </>
         )}
       </div>
     </div>  

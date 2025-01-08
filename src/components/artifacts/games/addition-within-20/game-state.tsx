@@ -34,9 +34,12 @@ Learning Objectives:
 - Practice counting and tracking marbles
 `;
 
+export type GameScreen = 'first' | 'second';
+
 export interface GameState1 {
   greenScore: number;
   blueScore: number;
+  blackScore: number;
   containerScore: number;
   activePhase: 'left' | 'right';
   currentStep: number;
@@ -55,7 +58,7 @@ export interface GameState2 {
 }
 
 export interface GameState {
-  currentScreen: 'first' | 'second';
+  screen: GameScreen;
   maxGreenMarbles: number;
   maxBlueMarbles: number;
   maxBlackMarbles: number;
@@ -64,13 +67,14 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  currentScreen: 'first',
+  screen: 'first',
   maxGreenMarbles: MAX_GREEN_MARBLES,
   maxBlueMarbles: MAX_BLUE_MARBLES,
   maxBlackMarbles: MAX_BLACK_MARBLES,
   state1: {
     greenScore: MAX_GREEN_MARBLES,
     blueScore: MAX_BLUE_MARBLES,
+    blackScore: 0,
     containerScore: 0,
     activePhase: 'left',
     clickDisabled: false,

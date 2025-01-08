@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useGameState } from "./state-utils";
 import { Input } from "@/components/custom_ui/input";
 import { GameProps } from "./components/types";
@@ -11,6 +11,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
   const { maxGreenMarbles, maxBlueMarbles, maxBlackMarbles } = gameStateRef.current;
   const totalMarbles = maxGreenMarbles + maxBlueMarbles;
   const [answer, setAnswer] = useState('');
+  const hasGameStarted = useRef(false);
 
   const handleMarbleClick = (color: 'green' | 'blue') => {
     setGameStateRef(prev => ({
@@ -40,22 +41,49 @@ export default function Second({ sendAdminMessage }: GameProps) {
   };
 
   useEffect(() => {
+    if (!hasGameStarted.current) {
+      sendAdminMessage('agent', "Great job on the last question! Let us do another one");
+      hasGameStarted.current = true;
+
+      setTimeout(() => {
+        sendAdminMessage('agent', "See the question, and select the number of marbles");
+      }, 2000);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (greenMarblesCount === maxGreenMarbles && blueMarblesCount === maxBlueMarbles) {
+      sendAdminMessage('agent', "Great! Now to add these. Let us put these in the 10 container");
+    }
+  }, [greenMarblesCount, blueMarblesCount])
+
+  useEffect(() => {
+    if (blackMarblesCount === 10) {
+      sendAdminMessage('agent', "Great, you made a group of 10. Now add the remaining marbles to get to the answer");
+    }
+  }, [blackMarblesCount])
+
+  useEffect(() => {
     if (answer === totalMarbles.toString()) {
       setGameStateRef(prev => ({
         ...prev,
         showFinalAnswer: true
       }));
-      sendAdminMessage('agent', `Correct! ${maxGreenMarbles} + ${maxBlueMarbles} = ${totalMarbles}`);
+      sendAdminMessage('agent', "You did great! That is the correct answer");
+    } else {
+      sendAdminMessage('agent', "Try counting all the marbles");
     }
   }, [answer])
 
   return (
       <>
-      <div className="text-3xl font-bold text-center py-8">
+      <div className="text-3xl font-bold text-center py-8 pb-80">
         {maxGreenMarbles} + {maxBlueMarbles} = ?
       </div>
 
-      <div className={`mx-auto text-xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-10`}>
+      <div className={`mx-auto text-xl bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-10`} style={{
+        fontSize: 26
+      }}>
         <p className={`font-bold text-center text-purple-600`}>
           Select {maxGreenMarbles} green and {maxBlueMarbles} blue marbles
         </p>
@@ -94,7 +122,9 @@ export default function Second({ sendAdminMessage }: GameProps) {
 
         {(greenMarblesCount > 0 || blueMarblesCount > 0) && (
           <>
-          <div className={`mx-auto text-lg bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mt-16 mb-10`}>
+          <div className={`mx-auto text-lg bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-4 mt-16 mb-10`} style={{
+          fontSize: 26
+        }}>
             <p className={`font-bold text-center text-purple-600`}>              
               Select 10 marbles here to fill the container
             </p>
@@ -104,10 +134,12 @@ export default function Second({ sendAdminMessage }: GameProps) {
                 {blackMarblesCount === 10 ? (
                     <div className='flex flex-col gap-1'>
                       <div className="flex gap-1">
-                        {Array.from({ length: 10 }).map((_, i) => (
-                          <div key={`black-${i}`} className="w-6 h-6 rounded-full bg-black" />
-                        ))}
-                        <span className="text-2xl">+</span>
+                        <div className="border-2 border-black rounded-full p-2 flex gap-1 -mt-2">
+                          {Array.from({ length: 10 }).map((_, i) => (
+                            <div key={`black-${i}`} className="w-6 h-6 rounded-full bg-black" />
+                          ))}
+                         </div>
+                        <span className="text-2xl mx-2">+</span>
                         {Array.from({ length: totalMarbles - 10 }).map((_, i) => (
                           <div key={`remaining-${i}`} className="w-6 h-6 rounded-full bg-blue-500" />
                         ))}
