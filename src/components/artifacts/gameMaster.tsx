@@ -162,6 +162,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
       } as AdminRequestMessage)
     } else if (role == 'agent') {
       addToChat({
+        messageId: crypto.randomUUID(),
         type: 'agent',
         timestamp: new Date().toISOString(),
         content: content,
