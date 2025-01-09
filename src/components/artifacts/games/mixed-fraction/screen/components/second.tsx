@@ -99,7 +99,7 @@ export const CreateBlocks = () => {
   const verifyMixedFraction = () => {
     const answerNumerator = parseInt(answer.count) * parseInt(answer.numerator);
     const answerDenominator = parseInt(answer.denominator);
-    if (answerNumerator === numerator && answerDenominator === denominator) {
+    if (answerNumerator === numerator && answerDenominator === denominator && answerNumerator < answerDenominator) {
       setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
     }
   };

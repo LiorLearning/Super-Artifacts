@@ -73,11 +73,6 @@ export const firstScreenFooterTexts = (numerator: number, denominator: number): 
     },
     { lines: [] },
     { lines: [] },
-    { 
-      lines: [
-        { text: `Correct Answer:`, color: 'green' },
-        { text: `PROCEED` }
-      ]
-    },
+    { lines: [] },
     { lines: [] },
 ];
