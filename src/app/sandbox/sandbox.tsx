@@ -34,6 +34,7 @@ export default function SandboxPage() {
         } as AdminRequestMessage)
       } else if (role == 'agent') {
         addToChat({
+          messageId: crypto.randomUUID(),
           type: 'agent',
           timestamp: new Date().toISOString(),
           content: content,
