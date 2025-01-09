@@ -912,8 +912,10 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       worldRef.current = Matter.World.add(worldRef.current!, finalContainer);
 
       worldRef.current = Matter.World.add(worldRef.current, balls);
+    } else if (step === 7) {
+      sendAdminMessage('agent', `Let us empty the marbles in one place to add them`);
     } else if (step === 8) {
-      
+      sendAdminMessage('agent', `Click on plus to count the number of marbles we have collected`);
       Matter.Composite.remove(worldRef.current!, containerRef.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef1.current!);
     } else if (step === 9) {
@@ -1106,7 +1108,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       </div>
       {STEPS_WITH_PROCEED.includes(currentStep) && (
         <>
-          <div className="absolute right-0 top-0">
+          <div className="absolute right-[-40px] top-[-24px]">
             <Button 
               onClick={() => handleProceed(currentStep)} 
               className="text-lg bg-purple-100 border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 mb-5 rounded-none"

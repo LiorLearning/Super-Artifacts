@@ -427,7 +427,7 @@ export default function ComparisonPage({}) {
         />
 
       </div>
-      <div className="absolute right-0 top-0">
+      <div className="absolute right-[-40px] top-[-56px]">
         <Button 
           onClick={() => handleProceed()} 
           className="text-lg border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 rounded-none"
