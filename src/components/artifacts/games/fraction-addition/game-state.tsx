@@ -54,12 +54,17 @@ interface Fraction {
 }
 
 export interface GameState {
-  fractionProblem: {
+  started : boolean;
+
+  question1: {
     fraction1: Fraction;
     fraction2: Fraction;
   };
-  chocolateBarPieces: number;
-  correctAnswer: Fraction;
+  question2: {
+    fraction1: Fraction;
+    fraction2: Fraction;
+  };
+
   currentScreen: 'chocolate' | 'denominator';
   chocolateBarScreen: {
     selectedPieces: number[];
@@ -83,12 +88,15 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  fractionProblem: {
-    fraction1: { numerator: 1, denominator: 3 },
-    fraction2: { numerator: 1, denominator: 3 },
+  started: false,
+  question1: {
+    fraction1: { numerator: 2, denominator: 5 },
+    fraction2: { numerator: 1, denominator: 5 },
   },
-  chocolateBarPieces: 3,
-  correctAnswer: { numerator: 2, denominator: 3 },
+  question2: {
+    fraction1: { numerator: 2, denominator: 4 },
+    fraction2: { numerator: 1, denominator: 4 },
+  },
   currentScreen: 'chocolate',
   chocolateBarScreen: {
     selectedPieces: [],
