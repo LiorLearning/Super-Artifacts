@@ -10,26 +10,21 @@ interface DenominatorScreenProps {
 export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) {
   const { gameStateRef, setGameStateRef } = useGameState()
   const gameState = gameStateRef.current
-  const { fractionProblem, correctAnswer, denominatorScreen } = gameState
-  const { fraction1, fraction2 } = fractionProblem
+  const { question2, denominatorScreen } = gameState
+  const { fraction1, fraction2 } = question2
   const {
     denominatorOption,
     numeratorOption,
     answerNumerator,
     answerDenominator,
     showStep2,
-    showStep3,
     isAnswerCorrect,
   } = denominatorScreen
 
-  useEffect(() => {
-    setGameStateRef({
-      denominatorScreen: {
-        ...denominatorScreen,
-        showStep2: denominatorOption === 0,
-      },
-    })
-  }, [denominatorOption])
+  const correctAnswer = {
+    numerator : fraction1.numerator + fraction2.numerator,
+    denominator: fraction1.denominator 
+  }
 
   useEffect(() => {
     setGameStateRef({
@@ -40,20 +35,16 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
     })
   }, [showStep2, numeratorOption])
 
-  useEffect(() => {
-    const correct = answerNumerator === correctAnswer.numerator.toString() && answerDenominator === correctAnswer.denominator.toString()
-    setGameStateRef({
-      denominatorScreen: {
-        ...denominatorScreen,
-        isAnswerCorrect: correct,
-      },
-    })
-    if (correct) {
-      sendAdminMessage('agent', `Awesome, you indeed have ${correctAnswer.numerator} pieces of size 1/${correctAnswer.denominator}th!`);
-    }
-  }, [answerNumerator, answerDenominator, correctAnswer])
-
   const handleDenominatorOptionClick = (option: number) => {
+    if (option === 0){
+      
+      setGameStateRef({
+        denominatorScreen: {
+          ...denominatorScreen,
+          showStep2: true,
+        },
+      })
+    }
     setGameStateRef({
       denominatorScreen: {
         ...denominatorScreen,
@@ -63,6 +54,14 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
   }
 
   const handleNumeratorOptionClick = (option: number) => {
+    if (option === 0){
+      setGameStateRef({
+        denominatorScreen: {
+          ...denominatorScreen,
+          showStep3: true,
+        },
+      })
+    } 
     setGameStateRef({
       denominatorScreen: {
         ...denominatorScreen,
@@ -72,6 +71,14 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
   }
 
   const handleAnswerNumeratorChange = (value: string) => {
+    if (value === correctAnswer.numerator.toString() && answerDenominator === correctAnswer.denominator.toString()){
+      setGameStateRef({
+        denominatorScreen: {
+          ...denominatorScreen,
+          isAnswerCorrect: true,
+        },
+      })
+    }
     setGameStateRef({
       denominatorScreen: {
         ...denominatorScreen,
@@ -81,12 +88,22 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
   }
 
   const handleAnswerDenominatorChange = (value: string) => {
+
+    if (answerNumerator === correctAnswer.numerator.toString() && value === correctAnswer.denominator.toString()){
+      setGameStateRef({
+        denominatorScreen: {
+          ...denominatorScreen,
+          isAnswerCorrect: true,
+        },
+      })
+    }
     setGameStateRef({
       denominatorScreen: {
         ...denominatorScreen,
         answerDenominator: value,
       },
     })
+
   }
 
   return (
@@ -121,7 +138,6 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
               onClick={() => handleDenominatorOptionClick(0)}
               className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
                 ${denominatorOption === 0 ? 'bg-[#66CDAA] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
-                ${denominatorOption === null ? 'border-2 border-blue-400' : ''}
               `}
             >
               <p>The denominator (bottom number) will remain the same.</p>
@@ -130,8 +146,7 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
               onClick={() => handleDenominatorOptionClick(1)}
               className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
                 ${denominatorOption === 1 ? 'bg-[#F08080] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
-                ${denominatorOption === null ? 'border border-gray-300' : ''}
-              `}
+            `}
             >
               <p>The denominators (bottom numbers) will be added together.</p>
             </button>
@@ -139,90 +154,86 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
         </div>
 
         {/* Step 2 */}
-        <div className={`space-y-4 transition-all duration-500 ease-in-out transform origin-top
-          ${showStep2 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 hidden'}
-        `}>
-          <p>
-            <span className="font-bold">Step 2:</span> Select the right options for the numerator.
-          </p>
+        {denominatorOption === 0 &&
+          <div className={`space-y-4 transition-all duration-500 ease-in-out transform origin-top opacity-100 translate-y-0 block`} >
+            <p>
+              <span className="font-bold">Step 2:</span> Select the right options for the numerator.
+            </p>
 
-          <div className="space-y-4">
-            <button
-              onClick={() => handleNumeratorOptionClick(0)}
-              className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
-                ${numeratorOption === 0 ? 'bg-[#66CDAA] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
-                ${numeratorOption === null ? 'border-2 border-blue-400' : ''}
-              `}
-            >
-              <p>The numerators (top numbers) will be added together.</p>
-            </button>
-            <button
-              onClick={() => handleNumeratorOptionClick(1)}
-              className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
-                ${numeratorOption === 1 ? 'bg-[#F08080] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
-                ${numeratorOption === null ? 'border border-gray-300' : ''}
-              `}
-            >
-              <p>The numerator (top number) will remain the same.</p>
-            </button>
+            <div className="space-y-4">
+              <button
+                onClick={() => handleNumeratorOptionClick(0)}
+                className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
+                  ${numeratorOption === 0 ? 'bg-[#66CDAA] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
+                `}
+              >
+                <p>The numerators (top numbers) will be added together.</p>
+              </button>
+              <button
+                onClick={() => handleNumeratorOptionClick(1)}
+                className={`w-full p-4 rounded-lg text-left transition-all duration-300 ease-in-out transform
+                  ${numeratorOption === 1 ? 'bg-[#F08080] text-black scale-100' : 'bg-[#E6E6FA] hover:scale-[1.02]'}
+                `}
+              >
+                <p>The numerator (top number) will remain the same.</p>
+              </button>
+            </div>
           </div>
-        </div>
+
+        }
 
         {/* Step 3 */}
-        <div className={`space-y-4 transition-all duration-500 ease-in-out transform origin-top
-          ${showStep3 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 hidden'}
-        `}>
-          <p className="font-bold">Step 3</p>
-
-          <div className="flex items-center justify-center gap-2 text-2xl">
-            <div className="flex flex-col items-center">
-              <span>{fraction1.numerator}</span>
-              <div className="border-t border-black w-4"></div>
-              <span>{fraction1.denominator}</span>
-            </div>
-            <span className="mx-2">+</span>
-            <div className="flex flex-col items-center">
-              <span>{fraction2.numerator}</span>
-              <div className="border-t border-black w-4"></div>
-              <span>{fraction2.denominator}</span>
-            </div>
-            <span className="mx-2">=</span>
-            <div className="flex flex-col items-center">
-              <input
-                type="text"
-                value={answerNumerator}
-                onChange={(e) => handleAnswerNumeratorChange(e.target.value)}
-                className={`w-8 h-8 border-2 text-center rounded-md transition-colors duration-300
-                  ${answerNumerator === correctAnswer.numerator.toString() ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
-                `}
-                maxLength={2}
-              />
-              <div className="border-t border-black w-4 my-1"></div>
-              <input
-                type="text"
-                value={answerDenominator}
-                onChange={(e) => handleAnswerDenominatorChange(e.target.value)}
-                className={`w-8 h-8 border-2 text-center rounded-md transition-colors duration-300
-                  ${answerDenominator === correctAnswer.denominator.toString() ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
-                `}
-                maxLength={2}
-              />
-            </div>
-            <div className="w-12 h-12 rounded-full ml-2 flex items-center justify-center">
-              <span role="img" aria-label="party popper" className="text-2xl">🎉</span>
+        {numeratorOption === 0 &&
+          <div className={`space-y-4 transition-all duration-500 ease-in-out transform origin-top opacity-100 translate-y-0`}>
+            <p className="font-bold">Step 3</p>
+            <div className="flex items-center justify-center gap-2 text-2xl">
+              <div className="flex flex-col items-center">
+                <span>{fraction1.numerator}</span>
+                <div className="border-t border-black w-4"></div>
+                <span>{fraction1.denominator}</span>
+              </div>
+              <span className="mx-2">+</span>
+              <div className="flex flex-col items-center">
+                <span>{fraction2.numerator}</span>
+                <div className="border-t border-black w-4"></div>
+                <span>{fraction2.denominator}</span>
+              </div>
+              <span className="mx-2">=</span>
+              <div className="flex flex-col items-center">
+                <input
+                  type="text"
+                  value={answerNumerator}
+                  onChange={(e) => handleAnswerNumeratorChange(e.target.value)}
+                  className={`w-8 h-8 border-2 text-center rounded-md transition-colors duration-300
+                    ${answerNumerator === correctAnswer.numerator.toString() ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
+                  `}
+                  maxLength={2}
+                />
+                <div className="border-t border-black w-4 my-1"></div>
+                <input
+                  type="text"
+                  value={answerDenominator}
+                  onChange={(e) => handleAnswerDenominatorChange(e.target.value)}
+                  className={`w-8 h-8 border-2 text-center rounded-md transition-colors duration-300
+                    ${answerDenominator === correctAnswer.denominator.toString() ? 'bg-[#66CDAA] border-[#66CDAA]' : 'border-gray-300'}
+                  `}
+                  maxLength={2}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
 
       {/* Footer */}
-      {isAnswerCorrect && (
-        <div className={`absolute bottom-0 left-0 right-0 bg-[#66CDAA] transition-all duration-500 ease-in-out transform`}>
+      {answerNumerator === correctAnswer.numerator.toString() && answerDenominator === correctAnswer.denominator.toString() && (
+        <div className={`bg-[#66CDAA] w-full mt-8`}>
           <div className="max-w-2xl mx-auto flex items-center p-4">
             <p className="text-xl font-medium">Correct! 🎉</p>
           </div>
         </div>
-      )}
+      )} 
+
     </div>
   )
 }

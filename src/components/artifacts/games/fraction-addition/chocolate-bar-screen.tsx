@@ -12,8 +12,8 @@ interface ChocolateBarScreenProps {
 export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBarScreenProps) {
   const { gameStateRef, setGameStateRef } = useGameState()
   const gameState = gameStateRef.current
-  const { fractionProblem, chocolateBarPieces, correctAnswer, chocolateBarScreen } = gameState
-  const { fraction1, fraction2 } = fractionProblem
+  const { question1, chocolateBarScreen } = gameState
+  const { fraction1, fraction2 } = question1
   const {
     selectedPieces,
     step2Pieces,
@@ -25,6 +25,12 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
     showFooter,
   } = chocolateBarScreen
 
+  const chocolateBarPieces = fraction1.denominator
+  const correctAnswer = {
+    numerator: fraction1.numerator + fraction2.numerator,
+    denominator: fraction1.denominator,
+  }
+
   useEffect(() => {
     const isCorrect = selectedPieces.length === fraction1.numerator
     setGameStateRef((prevState) => ({
@@ -35,7 +41,7 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
       },
     }))
     if (isCorrect) {
-      sendAdminMessage('agent', `Great! Now imagine you get ${fraction2.numerator} more pieces from a friend. Try selecting the pieces you have now.`);
+      sendAdminMessage('agent', `Great! Now imagine you get ${fraction2.numerator} more ${fraction2.numerator <= 1 ? 'piece' : 'pieces'} from a friend. Try selecting the pieces you have now.`);
     }
   }, [selectedPieces, fraction1.numerator])
 
@@ -165,7 +171,7 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
             </div>
 
             <div className="flex flex-col items-center text-2xl">
-              <span>{fraction1.numerator}</span>
+              <span>{selectedPieces.length}</span>
               <div className="border-t border-black w-4"></div>
               <span>{fraction1.denominator}</span>
             </div>
@@ -211,7 +217,7 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
                 <span className="font-bold">Step 2:</span> Select the pieces you now have.
               </p>
 
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-4 mb-4 items-center">
                 <div className="flex">
                   {[...Array(chocolateBarPieces)].map((_, index) => (
                     <button
@@ -239,6 +245,7 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
                     placeholder={step2Pieces.length === correctAnswer.numerator ? '?' : ''}
                     maxLength={2}
                   />
+
                   <div className="border-t border-black w-4"></div>
                   <input
                     type="text"
@@ -288,9 +295,8 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
         )}
       </div>
 
-      {/* Footer */}
       {showFooter && (
-        <div className="absolute bottom-0 left-0 right-0 bg-[#66CDAA] p-4">
+        <div className="bg-[#66CDAA] p-4 mt-4">
           <div className="max-w-2xl mx-auto flex justify-between items-center">
             <p className="text-xl font-medium">Correct! 🎉</p>
             <Button 
@@ -303,6 +309,8 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
           </div>
         </div>
       )}
+
+      
     </div>
   )
 }
