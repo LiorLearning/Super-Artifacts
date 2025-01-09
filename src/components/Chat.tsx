@@ -20,10 +20,12 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({ desc, gameState, componentRef }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { messages, setMessages } = useMessageContext();
-  const { sendLog } = useWebSocketLogger();
+  const { sendLog, handleStopAudio } = useWebSocketLogger();
   const [inputMessage, setInputMessage] = useState('');
 
-  const handleRecordingStart = () => {}
+  const handleRecordingStart = () => {
+    handleStopAudio();
+  }
 
   const handleRecordingStop = async (blob: Blob) => {
     sendLog(blob);
