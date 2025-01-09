@@ -5,11 +5,12 @@ import { StepForwardIcon } from "lucide-react";
 
 interface FinalAnswerProps {
   numerator: number;
+  denominator: number;
   nextStep: () => void;
 }
 
 
-export const FinalAnswer = ({ numerator, nextStep }: FinalAnswerProps) => {
+export const FinalAnswer = ({ numerator, denominator, nextStep }: FinalAnswerProps) => {
   const [mixedFraction, setMixedFraction] = useState({integer: '', numerator: '', denominator: ''});
 
   const handleIntegerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +30,9 @@ export const FinalAnswer = ({ numerator, nextStep }: FinalAnswerProps) => {
 
   const verifyMixedFraction = () => {
     if (parseInt(mixedFraction.integer) * parseInt(mixedFraction.denominator) + parseInt(mixedFraction.numerator) === numerator) {
-      nextStep();
+      if (parseInt(mixedFraction.denominator) === denominator) {
+        nextStep();
+      }
     }
   };
 

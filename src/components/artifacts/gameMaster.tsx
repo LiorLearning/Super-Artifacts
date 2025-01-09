@@ -135,11 +135,12 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const gameParam = searchParams.get('game') as GameKey;
   const [currentGame, setCurrentGame] = useState<GameKey>('template-game');
   const [loading, setLoading] = useState(false);
-  const { sendLog, addToChat, isConnected } = useWebSocketLogger()
+  const { sendLog, addToChat, isConnected, reconnectWebSocket } = useWebSocketLogger()
 
   useEffect(() => {
     setIsClient(true);
-    if (gameParam) {
+    if (gameParam !== currentGame) {
+      reconnectWebSocket();
       setCurrentGame(gameParam);
     }
   }, [gameParam]);
@@ -161,6 +162,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
       } as AdminRequestMessage)
     } else if (role == 'agent') {
       addToChat({
+        messageId: crypto.randomUUID(),
         type: 'agent',
         timestamp: new Date().toISOString(),
         content: content,

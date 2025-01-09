@@ -18,8 +18,8 @@ const LegoGame = () => {
   const mountRef = React.useRef<HTMLDivElement>(null);
   const hasInitialized = React.useRef(false);
   const { scene, camera, renderer } = useThreeSetup(mountRef, hasInitialized);
-  const [pieces, setPieces] = React.useState<THREE.Mesh[]>([]);
-  const [holders, setHolders] = React.useState<THREE.Group[]>([]);
+  // const [pieces, setPieces] = React.useState<THREE.Group[]>([]);
+  // const [holders, setHolders] = React.useState<THREE.Group[]>([]);
   const { gameStateRef } = useGameState();
   const { step, fraction } = gameStateRef.current.state3;
 
@@ -27,7 +27,7 @@ const LegoGame = () => {
     if (!scene) return null;
     const holder = createLegoHolder(scene, position, count);
     scene.add(holder.group);
-    setHolders(prev => [...prev, holder.group]);
+    // setHolders(prev => [...prev, holder.group]);
     return holder;
   }
 
@@ -36,7 +36,7 @@ const LegoGame = () => {
     const piece = createLegoPiece(color, 4/fraction.denominator);
     piece.position.set(...position);
     scene.add(piece);
-    setPieces(prev => [...prev, piece]);
+    // setPieces(prev => [...prev, piece]);
     return piece;
   }
 

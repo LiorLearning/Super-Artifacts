@@ -79,7 +79,7 @@ const DivisionSteps = () => {
             </div>
             <div className="flex flex-col items-center justify-center mt-4 space-y-4">
               <div className="flex items-center space-x-4">
-                <label className="text-3xl mb-2">Number of Lego Pieces</label>
+                <label className="text-3xl mb-2">Number of Divisions</label>
                 <Input 
                   type="text" 
                   placeholder="?"
@@ -130,7 +130,7 @@ const DivisionSteps = () => {
             </div>
           </div>
           <div className="flex justify-center my-16">
-            <FinalAnswer numerator={fraction.numerator} nextStep={nextStep} />
+            <FinalAnswer numerator={fraction.numerator} denominator={fraction.denominator} nextStep={nextStep} />
           </div>
         </>
       )}

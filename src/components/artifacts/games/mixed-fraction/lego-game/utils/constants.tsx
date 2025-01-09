@@ -21,6 +21,7 @@ export const COLORS = {
   PINK: 0xff69b4,
   BLUE: 0x1e90ff,
   PURPLE: 0x800080,
+  BLACK: 0x000000,
   GREEN: 0x66cc66, // Slightly muted green
   BROWN: 0xA0522D, // Sienna brown
   RED: 0xFF0000,

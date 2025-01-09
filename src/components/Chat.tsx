@@ -1,15 +1,15 @@
 'use client'
 
-import React, { useContext, useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { LogMessage, MessageContext, AssistanceResponseMessage, AssistanceRequestMessage, Message as MessageType } from './MessageContext'
+import { AssistanceRequestMessage, useMessageContext } from './MessageContext'
 import { useWebSocketLogger, WebSocketStatus } from './websocket'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import SpeechToText from './utils/speech_to_text'
-import { Pause, Volume2, Send } from 'lucide-react'
-import { AudioContext } from './utils/audio_stream'
+import { Send } from 'lucide-react'
 import { handleScreenshot } from './artifacts/utils/utils'
+import Message from './utils/Message'
 
 interface ChatProps {
   desc: string;
@@ -17,15 +17,10 @@ interface ChatProps {
   componentRef: React.RefObject<HTMLDivElement>;
 }
 
-const MAX_MESSAGES = 10;
-
 const Chat: React.FC<ChatProps> = ({ desc, gameState, componentRef }) => {
-  const audioContext = useContext(AudioContext);
-  if (!audioContext) throw new Error('MessageCard must be used within an AudioProvider');
-
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const messageContext = useContext(MessageContext);
-  const { sendLog, toggleAudio } = useWebSocketLogger();
+  const { messages, setMessages } = useMessageContext();
+  const { sendLog } = useWebSocketLogger();
   const [inputMessage, setInputMessage] = useState('');
 
   const handleRecordingStart = () => {}
@@ -43,7 +38,7 @@ const Chat: React.FC<ChatProps> = ({ desc, gameState, componentRef }) => {
   };
 
   const onSendTextMessage = async () => {
-    if (!messageContext || !inputMessage.trim()) return;
+    if (!inputMessage.trim()) return;
     
     const image = await handleScreenshot(componentRef);
     const newMessage: AssistanceRequestMessage = {
@@ -55,7 +50,7 @@ const Chat: React.FC<ChatProps> = ({ desc, gameState, componentRef }) => {
       gameState: JSON.stringify(gameState, null, 0),
     };
 
-    messageContext.setMessages(prev => [...prev, newMessage]);
+    setMessages(prev => [...prev, newMessage]);
     sendLog({
       ...newMessage,
       image,
@@ -80,46 +75,7 @@ const Chat: React.FC<ChatProps> = ({ desc, gameState, componentRef }) => {
     observer.observe(scrollArea, { childList: true, subtree: true });
 
     return () => observer.disconnect();
-  }, [messageContext?.messages]);
-
-  const renderMessage = (message: MessageType) => {
-    switch (message.type) {
-      case 'log':
-        return (
-          <div className="flex justify-center my-2">
-            <div className="bg-card text-card-foreground text-xs py-2 px-4 md:px-10 rounded-lg shadow-sm border border-border w-[70%]">
-              <p className="text-sm">{(message as LogMessage).componentName} {(message as LogMessage).event} {(message as LogMessage).id} - {(message as LogMessage).value}</p>
-            </div>
-          </div>
-        );
-      case 'assistance':
-        return (
-          <div className="flex justify-end mb-4">
-            <div className="max-w-[70%] p-3 rounded-2xl bg-primary text-primary-foreground">
-              {(message as AssistanceRequestMessage).content}
-            </div>
-          </div>
-        );
-      case 'agent':
-        return (
-          <div className="flex justify-start mb-4">
-            <div className="max-w-[70%] p-3 rounded-2xl bg-secondary text-secondary-foreground">
-              {(message as AssistanceResponseMessage).content}
-              <div className="mt-2 flex justify-end">
-                <Button 
-                  size="sm"
-                  variant="outline"
-                  className="rounded-xl"
-                  onClick={() => toggleAudio(message)}
-                >
-                  {message.isPlaying ? <Pause className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-          </div>
-        );
-    }
-  };
+  }, [messages]);
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -129,11 +85,7 @@ const Chat: React.FC<ChatProps> = ({ desc, gameState, componentRef }) => {
       </div>
       
       <ScrollArea className="flex-1" ref={scrollAreaRef}>
-        <div className="p-4 space-y-4">
-          {messageContext?.messages.slice(-MAX_MESSAGES).map((message, index) => (
-            <div key={index}>{renderMessage(message)}</div>
-          ))}
-        </div>
+        <Message /> 
       </ScrollArea>
 
       <div className="border-t p-4">

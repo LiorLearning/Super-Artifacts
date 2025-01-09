@@ -9,6 +9,7 @@ import { useGameState } from '../state-utils';
 import { COLORS, HOLDER_POSITION } from './utils/constants';
 import { animateCamera, animatePiece } from './utils/animation';
 import { createText } from './utils/textFactory';
+import { createVectorArrow } from './utils/vectorFactory';
 
 interface CreatePieceProps {
   scene: THREE.Scene | null;
@@ -21,14 +22,15 @@ const LegoGame = () => {
   const hasInitialized = React.useRef(false);
   const { scene, camera, renderer, orbitControls } = useThreeSetup(mountRef, hasInitialized);
   
-  const [pieces, setPieces] = React.useState<THREE.Mesh[]>([]);
+  const [pieces, setPieces] = React.useState<THREE.Group[]>([]);
   const textsRef = React.useRef<THREE.Group[]>([]);
-  const dragObjectsRef = React.useRef<THREE.Mesh[]>([]);
+  const vectorRef = React.useRef<THREE.Group | null>(null);
+  const dragObjectsRef = React.useRef<THREE.Group[]>([]);
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step, fraction } = gameStateRef.current.state1;
 
-  const containerAssignmentsRef = useRef<Array<THREE.Mesh | null>>(
+  const containerAssignmentsRef = useRef<Array<THREE.Group | null>>(
     new Array(11).fill(null)
   );
 
@@ -69,13 +71,17 @@ const LegoGame = () => {
     return piece;
   }
   
-  const cleanUpPieces = (scene: THREE.Scene | null, pieces: THREE.Mesh[]) => {
+  const cleanUpPieces = (scene: THREE.Scene | null, pieces: THREE.Group[]) => {
     if (!scene) return;
     pieces.forEach(piece => {
       scene.remove(piece);
       dragObjectsRef.current = dragObjectsRef.current.filter(p => p !== piece);
-      piece.geometry.dispose();
-      (piece.material as THREE.Material).dispose();
+      piece.children.forEach(child => {
+        if (child instanceof THREE.Mesh) {
+          child.geometry.dispose();
+          (child.material as THREE.Material).dispose();
+        }
+      });
     });
   }
 
@@ -87,14 +93,46 @@ const LegoGame = () => {
     textsRef.current = [];
   }
 
+  const createVector = (start: THREE.Vector3, end: THREE.Vector3, options: {
+    color?: number;
+    arrowHeadSize?: number;
+    thickness?: number;
+    curvature?: number;
+    linewidth?: number;
+    label?: string;
+  } = {}) => {
+    const vectorArrow = createVectorArrow(start, end, {
+      color: options.color || COLORS.BLACK,
+      arrowHeadSize: options.arrowHeadSize || 0.5,
+      thickness: options.thickness || 0.1,
+      curvature: options.curvature || 2,
+      linewidth: options.linewidth || 0.5,
+    });
+    if (vectorArrow) {
+      vectorRef.current = vectorArrow;
+      scene?.add(vectorArrow);
+    }
+  }
+
+  const clearVector = () => {
+    if (vectorRef.current) {
+      scene?.remove(vectorRef.current);
+      vectorRef.current = null;
+    }
+  }
+
   const animateAllPieces = (yPos: number) => {
-    const newPieces: THREE.Mesh[] = [];
+    const newPieces: THREE.Group[] = [];
     pieces.forEach(piece => {
       if (Math.abs(piece.position.y - yPos) <= 0.1) {
         // Update piece position
         animatePiece(piece, new THREE.Vector3(piece.position.x-2.5, piece.position.y - 0.5, piece.position.z + 2), 1);
 
-        piece.material = new THREE.MeshPhongMaterial({ color: COLORS.MAGENTA });
+        piece.children.forEach(child => {
+          if (child instanceof THREE.Mesh && child.name === 'LegoPieceBody') {
+            child.material = new THREE.MeshPhongMaterial({ color: COLORS.MAGENTA });
+          }
+        });
         
         // Update containerAssignmentsRef
         const prevIndex = piece.userData.containerIndex;
@@ -153,6 +191,9 @@ const LegoGame = () => {
         textsRef.current = [...textsRef.current, pieceText];
       }
 
+      // createVector(new THREE.Vector3(-1.5, 3.5, 2.5), new THREE.Vector3(-2, 1.5, 1));
+      // createVector(new THREE.Vector3(5, 2, 4), new THREE.Vector3(3, 0.5, 1));
+
     } else if (step === 1) {
       cleanUpPieces(scene!, pieces);
       setPieces([]);
@@ -162,7 +203,7 @@ const LegoGame = () => {
       // toggleTextVisibilityOfHolder(true);
 
       // Create the pieces
-      const newPieces: THREE.Mesh[] = [];
+      const newPieces: THREE.Group[] = [];
       for (let i = 0; i < fraction.numerator; i++) {
         const piece = createPiece({ scene: scene!, position: [-1.9, 0.1, 0], color: COLORS.GREEN });
         if (piece) {
@@ -190,7 +231,6 @@ const LegoGame = () => {
         if (fractionalText) {
           textsRef.current = [...textsRef.current, fractionalText];
         }
-
       }
 
     } else if (step === 2) {
@@ -218,6 +258,7 @@ const LegoGame = () => {
       goToStep(10);
 
     } else if (step === 10) {
+      animateCamera(camera!, new THREE.Vector3(6, 10, 8), 1);
       // Add 1 whole block text
       const wholeBlockText = createText(scene!, [-4.5, 3, 4], "1 Whole Block", {
         textColor: COLORS.MAGENTA,
@@ -231,10 +272,10 @@ const LegoGame = () => {
     } else if (step === 11) {
       cleanUpTexts(scene!);
       animateAllPieces(-0.4);
-      animateCamera(camera!, new THREE.Vector3(-0, 5, 7.7), 1);
+      animateCamera(camera!, new THREE.Vector3(0, 5, 7.7), 1);
       setEnableDragging(false);
 
-      const text1 = createText(scene!, [-7, 1, 6], "1", {
+      const text1 = createText(scene!, [-8, 1, 5], "1 Whole Block", {
         size: 0.3,
         textColor: COLORS.MAGENTA,
         orientation: 'orthogonal',
@@ -244,7 +285,28 @@ const LegoGame = () => {
         textsRef.current = [...textsRef.current, text1];
       }
 
-      const text2 = createText(scene!, [-2.5, 2, 2], "3/4", {
+      const text2 = createText(scene!, [-2.5, 4, 2], "means 7 ÷ 4", {
+        textColor: COLORS.BLACK,
+        size: 0.3,
+        orientation: 'orthogonal',
+        centered: true,
+      });
+      if (text2) {
+        textsRef.current = [...textsRef.current, text2];
+      }
+    } else if (step === 12) {
+      cleanUpTexts(scene!);
+      const text1 = createText(scene!, [-8, 1, 5], "1 Whole Block", {
+        size: 0.3,
+        textColor: COLORS.MAGENTA,
+        orientation: 'orthogonal',
+        centered: true,
+      });
+      if (text1) {
+        textsRef.current = [...textsRef.current, text1];
+      }
+
+      const text2 = createText(scene!, [-1.35, 3.9, 2.1], "3", {
         textColor: COLORS.GREEN,
         size: 0.3,
         orientation: 'orthogonal',
@@ -252,6 +314,46 @@ const LegoGame = () => {
       });
       if (text2) {
         textsRef.current = [...textsRef.current, text2];
+      }
+
+      const text3 = createText(scene!, [-1, 4, 2], "/4", {
+        textColor: COLORS.BLACK,
+        size: 0.3,
+        orientation: 'orthogonal',
+        centered: true,
+      });
+      if (text3) {
+        textsRef.current = [...textsRef.current, text3];
+      }
+
+      const text4 = createText(scene!, [-4, 4, 3], "7 ÷ 4", {
+        textColor: COLORS.BLACK,
+        size: 0.3,
+        orientation: 'orthogonal',
+        centered: true,
+      });
+      if (text4) {
+        textsRef.current = [...textsRef.current, text4];
+      }
+
+      const text5 = createText(scene!, [-8, 1, 3], "Quotient", {
+        textColor: COLORS.MAGENTA,
+        size: 0.2,
+        orientation: 'orthogonal',
+        centered: true,
+      });
+      if (text5) {
+        textsRef.current = [...textsRef.current, text5];
+      }
+
+      const text6 = createText(scene!, [-2.5, 3.9, 1.3], "Remainder", {
+        textColor: COLORS.GREEN,
+        size: 0.2,
+        orientation: 'orthogonal',
+        centered: true,
+      });
+      if (text6) {
+        textsRef.current = [...textsRef.current, text6];
       }
     }
 
