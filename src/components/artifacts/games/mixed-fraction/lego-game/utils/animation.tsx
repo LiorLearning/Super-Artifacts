@@ -19,7 +19,7 @@ export const animateCamera = (camera: THREE.OrthographicCamera, targetPosition: 
   requestAnimationFrame(animateCamera);
 }
 
-export const animatePiece = (piece: THREE.Mesh, targetPosition: THREE.Vector3, duration: number) => {
+export const animatePiece = (piece: THREE.Group, targetPosition: THREE.Vector3, duration: number) => {
   if (!piece) return;
   const startPosition = piece.position.clone();
   const startTime = performance.now();

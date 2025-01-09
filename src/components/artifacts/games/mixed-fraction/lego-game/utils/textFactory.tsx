@@ -34,14 +34,14 @@ export const createText = (
       bevelSegments: 8,
       bevelSize: 0.005, // Reduced from 0.015
       bevelThickness: 0.005, // Reduced from 0.015
-      height: 0.02 // Reduced from 0.04
+      height: 0.01 // Reduced from 0.04
     },
     medium: {
       curveSegments: 8,
       bevelSegments: 6,
       bevelSize: 0.003, // Reduced from 0.01
       bevelThickness: 0.003, // Reduced from 0.01
-      height: 0.015 // Reduced from 0.03
+      height: 0.01 // Reduced from 0.03
     },
     low: {
       curveSegments: 5,
@@ -55,10 +55,10 @@ export const createText = (
   const fontLoader = new FontLoader();
   
 
-  // const jersey = 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/fonts/Jersey+25+Regular.json';
-  const k2d = 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/fonts/K2D+SemiBold+Regular.json'
+  const jersey = 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/fonts/Jersey+25+Regular.json';
+  // const k2d = 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/fonts/K2D+SemiBold+Regular.json'
   // const droid = 'https://threejs.org/examples/fonts/droid/droid_sans_regular.typeface.json'
-  fontLoader.load(k2d, (font) => {
+  fontLoader.load(jersey, (font) => {
     const settings = qualitySettings[quality];
     const textGeom = new TextGeometry(value, {
       font: font,
@@ -92,8 +92,6 @@ export const createText = (
       textMat.normalScale.set(0.5, 0.5);
 
       const textMesh = new THREE.Mesh(textGeom, textMat);
-      textMesh.castShadow = true;
-      textMesh.receiveShadow = true;
       
       textMesh.position.set(position[0], position[1], position[2]);
       
@@ -137,19 +135,17 @@ export const createText = (
       
       const bgGeom = new THREE.BoxGeometry(bgWidth, bgHeight, bgDepth);
       const bgMesh = new THREE.Mesh(bgGeom, bgMat);
-      bgMesh.castShadow = true;
-      bgMesh.receiveShadow = true;
+      // Removed castShadow and receiveShadow
 
       // Enhanced border with rounded edges
       const borderWidth = bgWidth + 0.04; // Reduced border width
       const borderHeight = bgHeight + 0.04; // Reduced border height
       const borderGeom = new THREE.BoxGeometry(borderWidth, borderHeight, bgDepth - 0.01);
       const borderMesh = new THREE.Mesh(borderGeom, borderMat);
-      borderMesh.castShadow = true;
-      borderMesh.receiveShadow = true;
+      // Removed castShadow and receiveShadow
 
       const textMesh = new THREE.Mesh(textGeom, textMat);
-      textMesh.castShadow = true;
+      // Removed castShadow
 
       const finalPosition = [
         position[0] + (options.offset?.[0] || 0),
@@ -190,8 +186,7 @@ export const createText = (
       });
       
       const textMesh = new THREE.Mesh(textGeom, textMat);
-      textMesh.castShadow = true;
-      textMesh.receiveShadow = true;
+      // Removed castShadow and receiveShadow
       textMesh.position.set(position[0], position[1], position[2]);
       
       if (selectedOrientation === 'orthogonal') {

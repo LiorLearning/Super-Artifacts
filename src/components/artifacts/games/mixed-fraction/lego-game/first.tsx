@@ -22,15 +22,15 @@ const LegoGame = () => {
   const hasInitialized = React.useRef(false);
   const { scene, camera, renderer, orbitControls } = useThreeSetup(mountRef, hasInitialized);
   
-  const [pieces, setPieces] = React.useState<THREE.Mesh[]>([]);
+  const [pieces, setPieces] = React.useState<THREE.Group[]>([]);
   const textsRef = React.useRef<THREE.Group[]>([]);
   const vectorRef = React.useRef<THREE.Group | null>(null);
-  const dragObjectsRef = React.useRef<THREE.Mesh[]>([]);
+  const dragObjectsRef = React.useRef<THREE.Group[]>([]);
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step, fraction } = gameStateRef.current.state1;
 
-  const containerAssignmentsRef = useRef<Array<THREE.Mesh | null>>(
+  const containerAssignmentsRef = useRef<Array<THREE.Group | null>>(
     new Array(11).fill(null)
   );
 
@@ -71,13 +71,17 @@ const LegoGame = () => {
     return piece;
   }
   
-  const cleanUpPieces = (scene: THREE.Scene | null, pieces: THREE.Mesh[]) => {
+  const cleanUpPieces = (scene: THREE.Scene | null, pieces: THREE.Group[]) => {
     if (!scene) return;
     pieces.forEach(piece => {
       scene.remove(piece);
       dragObjectsRef.current = dragObjectsRef.current.filter(p => p !== piece);
-      piece.geometry.dispose();
-      (piece.material as THREE.Material).dispose();
+      piece.children.forEach(child => {
+        if (child instanceof THREE.Mesh) {
+          child.geometry.dispose();
+          (child.material as THREE.Material).dispose();
+        }
+      });
     });
   }
 
@@ -118,13 +122,17 @@ const LegoGame = () => {
   }
 
   const animateAllPieces = (yPos: number) => {
-    const newPieces: THREE.Mesh[] = [];
+    const newPieces: THREE.Group[] = [];
     pieces.forEach(piece => {
       if (Math.abs(piece.position.y - yPos) <= 0.1) {
         // Update piece position
         animatePiece(piece, new THREE.Vector3(piece.position.x-2.5, piece.position.y - 0.5, piece.position.z + 2), 1);
 
-        piece.material = new THREE.MeshPhongMaterial({ color: COLORS.MAGENTA });
+        piece.children.forEach(child => {
+          if (child instanceof THREE.Mesh && child.name === 'LegoPieceBody') {
+            child.material = new THREE.MeshPhongMaterial({ color: COLORS.MAGENTA });
+          }
+        });
         
         // Update containerAssignmentsRef
         const prevIndex = piece.userData.containerIndex;
@@ -195,7 +203,7 @@ const LegoGame = () => {
       // toggleTextVisibilityOfHolder(true);
 
       // Create the pieces
-      const newPieces: THREE.Mesh[] = [];
+      const newPieces: THREE.Group[] = [];
       for (let i = 0; i < fraction.numerator; i++) {
         const piece = createPiece({ scene: scene!, position: [-1.9, 0.1, 0], color: COLORS.GREEN });
         if (piece) {

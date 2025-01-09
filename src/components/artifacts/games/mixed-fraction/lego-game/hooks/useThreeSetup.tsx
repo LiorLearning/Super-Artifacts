@@ -43,7 +43,7 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
       antialias: true,
       powerPreference: 'high-performance'
     });
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(window.devicePixelRatio*2);
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Higher quality shadows

@@ -45,7 +45,7 @@ const Footer = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step, fraction } = gameStateRef.current.state2;
   const numerator = fraction.numerator;
-
+  const denominator = fraction.denominator;
   const nextStep = () => {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
   };
@@ -76,7 +76,7 @@ const Footer = () => {
             </div>
           </div>
           <div className="flex justify-center my-16">
-            <FinalAnswer numerator={numerator} nextStep={nextStep} />
+            <FinalAnswer numerator={numerator} denominator={denominator} nextStep={nextStep} />
           </div>
         </>
       )}

@@ -130,7 +130,7 @@ const Footer = () => {
         </div>
       )}
       {step === 13 && (
-        <FinalAnswer numerator={numerator} nextStep={nextStep} />
+        <FinalAnswer numerator={numerator} denominator={denominator} nextStep={nextStep} />
       )}
     </div>
   );
