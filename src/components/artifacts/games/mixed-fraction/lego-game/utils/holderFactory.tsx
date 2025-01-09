@@ -11,10 +11,14 @@ export const createHolder = (scene: THREE.Scene, position: [number, number, numb
   const baseMat = new THREE.MeshPhongMaterial({
     color: COLORS.HOLDER_BASE,
     transparent: false,
-    shininess: 30
+    shininess: 100,
+    specular: 0x111111,
+    reflectivity: 0.5
   });
   const baseMesh = new THREE.Mesh(baseGeom, baseMat);
   baseMesh.position.set(position[0], position[1]-0.5, position[2]+1.5);
+  baseMesh.castShadow = true;
+  baseMesh.receiveShadow = true;
   group.add(baseMesh);
 
   // Create back holder
@@ -22,10 +26,14 @@ export const createHolder = (scene: THREE.Scene, position: [number, number, numb
   const backMat = new THREE.MeshPhongMaterial({
     color: COLORS.HOLDER_BACK,
     transparent: false,
-    shininess: 70
+    shininess: 100,
+    specular: 0x111111,
+    reflectivity: 0.5
   });
   const backMesh = new THREE.Mesh(backGeom, backMat);
   backMesh.position.set(position[0]-0.5, position[1], position[2]+1.5);
+  backMesh.castShadow = true;
+  backMesh.receiveShadow = true;
   group.add(backMesh);
 
   // Create walls
@@ -34,7 +42,9 @@ export const createHolder = (scene: THREE.Scene, position: [number, number, numb
     const cellMat = new THREE.MeshPhongMaterial({
       color: COLORS.HOLDER_CELL,
       transparent: false,
-      shininess: 50,
+      shininess: 100,
+      specular: 0x111111,
+      reflectivity: 0.5
     });
 
     const cellMesh = new THREE.Mesh(cellGeom, cellMat);
@@ -46,6 +56,8 @@ export const createHolder = (scene: THREE.Scene, position: [number, number, numb
     const edges = new THREE.LineSegments(edgeGeometry, edgeMaterial);
     cellMesh.add(edges);
 
+    cellMesh.castShadow = true;
+    cellMesh.receiveShadow = true;
     group.add(cellMesh);
   }
 

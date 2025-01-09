@@ -18,7 +18,7 @@ const LegoGame = () => {
   const mountRef = React.useRef<HTMLDivElement>(null);
   const hasInitialized = React.useRef(false);
   const { scene, camera, renderer } = useThreeSetup(mountRef, hasInitialized);
-  const [pieces, setPieces] = React.useState<THREE.Mesh[]>([]);
+  const [pieces, setPieces] = React.useState<THREE.Group[]>([]);
   const [holders, setHolders] = React.useState<THREE.Group[]>([]);
   const { gameStateRef } = useGameState();
   const { step, fraction, denomOptions } = gameStateRef.current.state2;
@@ -52,12 +52,16 @@ const LegoGame = () => {
     return piece;
   }
   
-  const cleanUpPieces = (scene: THREE.Scene | null, pieces: THREE.Mesh[]) => {
+  const cleanUpPieces = (scene: THREE.Scene | null, pieces: THREE.Group[]) => {
     if (!scene) return;
     pieces.forEach(piece => {
       scene.remove(piece);
-      piece.geometry.dispose();
-      (piece.material as THREE.Material).dispose();
+      piece.children.forEach(child => {
+        if (child instanceof THREE.Mesh) {
+          child.geometry.dispose();
+          child.material.dispose();
+        }
+      });
     });
   }
 

@@ -9,9 +9,9 @@ interface DragControlsProps {
   camera: THREE.OrthographicCamera | null;
   renderer: THREE.WebGLRenderer | null;
   /** The Meshes we want to make draggable. */
-  dragObjects: THREE.Mesh[];
+  dragObjects: THREE.Group[];
   /** Tracks which piece (if any) is occupying each container index. */
-  containerAssignmentsRef: React.MutableRefObject<Array<THREE.Mesh | null>>;
+  containerAssignmentsRef: React.MutableRefObject<Array<THREE.Group | null>>;
   /** The OrbitControls in your scene. */
   orbitControls: OrbitControls | null;
   /**
@@ -41,6 +41,7 @@ export const useDragControls = ({
 
     // Create the DragControls instance
     const controls = new DragControls(dragObjects, camera, renderer.domElement);
+    controls.transformGroup = true;
     dragControlsRef.current = controls;
 
     // Initialize userData on each piece if needed
@@ -53,7 +54,7 @@ export const useDragControls = ({
     /**
      * Helper: Clear a container slot if it is currently occupied by this piece.
      */
-    const clearContainerSlot = (mesh: THREE.Mesh) => {
+    const clearContainerSlot = (mesh: THREE.Group) => {
       const prevIndex = mesh.userData.containerIndex;
       if (
         typeof prevIndex === 'number' &&
@@ -71,7 +72,7 @@ export const useDragControls = ({
     /**
      * Helper: Assign this piece to a container slot (index).
      */
-    const occupyContainerSlot = (mesh: THREE.Mesh, index: number) => {
+    const occupyContainerSlot = (mesh: THREE.Group, index: number) => {
       // Clear any previous occupant
       clearContainerSlot(mesh);
 
@@ -88,7 +89,7 @@ export const useDragControls = ({
      * Attempt to snap the piece to the nearest available container slot.
      * If the best slot is within snapThreshold, snap and assign. Otherwise, fallback.
      */
-    const handleSnap = (mesh: THREE.Mesh) => {
+    const handleSnap = (mesh: THREE.Group) => {
       const piecePos = mesh.position.clone();
       piecePos.y = HOLDER_POSITION[1] + 0.5; // Slightly above the holder plane
 
@@ -123,7 +124,7 @@ export const useDragControls = ({
      * Fallback if we fail to snap to the ideal location.
      * This is where you can define your "default" or "lowest index" approach.
      */
-    const handleFallback = (mesh: THREE.Mesh) => {
+    const handleFallback = (mesh: THREE.Group) => {
       // Attempt to find the first free slot
       const fallbackIndex = containerAssignmentsRef.current.findIndex((occupant) => occupant === null);
       if (fallbackIndex !== -1) {
@@ -141,8 +142,9 @@ export const useDragControls = ({
     const onDragStart = (event: THREE.Event) => {
       if (!orbitControls) return;
       orbitControls.enabled = false; // Disable orbiting while dragging
-      const mesh = (event as unknown as { object: THREE.Object3D }).object as THREE.Mesh;
-      const mat = mesh.material as THREE.MeshPhongMaterial;
+      const mesh = (event as unknown as { object: THREE.Object3D }).object as THREE.Group;
+      const pieceBody = mesh.children.find(child => child.name === 'LegoPieceBody') as THREE.Mesh;
+      const mat = pieceBody.material as THREE.MeshStandardMaterial;
       mat.opacity = 0.6;
 
       // Clear old slot assignment if this piece was occupying a slot
@@ -158,8 +160,9 @@ export const useDragControls = ({
     const onDragEndInternal = (event: THREE.Event) => {
       if (!orbitControls) return;
       orbitControls.enabled = true;
-      const mesh = (event as unknown as { object: THREE.Object3D }).object as THREE.Mesh;
-      const mat = mesh.material as THREE.MeshPhongMaterial;
+      const mesh = (event as unknown as { object: THREE.Object3D }).object as THREE.Group;
+      const pieceBody = mesh.children.find(child => child.name === 'LegoPieceBody') as THREE.Mesh;
+      const mat = pieceBody.material as THREE.MeshStandardMaterial;
       mat.opacity = 1.0;
 
       // Attempt to snap
