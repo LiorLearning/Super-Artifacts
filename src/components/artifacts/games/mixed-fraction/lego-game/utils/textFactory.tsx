@@ -19,13 +19,12 @@ export const createText = (
     size?: number;
     offset?: [number, number, number];
     centered?: boolean;
-    quality?: 'high' | 'medium' | 'low';
   } = {}
 ) => {
   if (!scene) return null;
 
   const textGroup = new THREE.Group();
-  const quality = options.quality || 'high';
+  const quality = 'high';
 
   // Quality presets
   const qualitySettings = {
@@ -33,23 +32,9 @@ export const createText = (
       curveSegments: 12,
       bevelSegments: 8,
       bevelSize: 0.005, // Reduced from 0.015
-      bevelThickness: 0.005, // Reduced from 0.015
+      bevelThickness: 0.001, // Reduced from 0.015
       height: 0.01 // Reduced from 0.04
     },
-    medium: {
-      curveSegments: 8,
-      bevelSegments: 6,
-      bevelSize: 0.003, // Reduced from 0.01
-      bevelThickness: 0.003, // Reduced from 0.01
-      height: 0.01 // Reduced from 0.03
-    },
-    low: {
-      curveSegments: 5,
-      bevelSegments: 4,
-      bevelSize: 0.002, // Reduced from 0.008
-      bevelThickness: 0.002, // Reduced from 0.008
-      height: 0.01 // Reduced from 0.02
-    }
   };
 
   const fontLoader = new FontLoader();
