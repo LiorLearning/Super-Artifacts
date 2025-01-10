@@ -29,10 +29,10 @@ export const FinalAnswer = ({ numerator, denominator, nextStep }: FinalAnswerPro
   };
 
   const verifyMixedFraction = () => {
-    if (parseInt(mixedFraction.integer) * parseInt(mixedFraction.denominator) + parseInt(mixedFraction.numerator) === numerator) {
-      if (parseInt(mixedFraction.denominator) === denominator) {
-        nextStep();
-      }
+    const expectedNumerator = parseInt(mixedFraction.integer) * parseInt(mixedFraction.denominator) + parseInt(mixedFraction.numerator);
+    const expectedDenominator = parseInt(mixedFraction.denominator);
+    if (expectedNumerator === numerator && expectedDenominator === denominator && expectedNumerator < expectedDenominator) {
+      nextStep();
     }
   };
 

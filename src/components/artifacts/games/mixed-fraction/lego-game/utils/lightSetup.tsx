@@ -5,7 +5,7 @@ export const setupLights = (scene: THREE.Scene) => {
 
   // Bright white directional light with very high intensity for shiny objects
   const mainLight = new THREE.DirectionalLight(0xffffff, 3);
-  mainLight.position.set(2, 50, 2);
+  mainLight.position.set(10, 20, -10);
   mainLight.castShadow = true;
   mainLight.intensity = 4; // Significantly increased intensity for extra brightness
   lights.add(mainLight);
