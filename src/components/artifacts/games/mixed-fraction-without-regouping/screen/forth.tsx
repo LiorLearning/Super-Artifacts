@@ -1,5 +1,5 @@
 import { useGameState } from '../state-utils';
-import { HeaderSubtraction } from '../components/header';
+import Header from '../components/header';
 import { BaseProps } from '../utils/types';
 import { CombineFractionInput } from './second';
 import Intro from '../components/intro';
@@ -88,7 +88,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
   return (
     <div className="w-full">
-      <HeaderSubtraction fraction1={fraction1} fraction2={fraction2} />
+      <Header fraction1={fraction1} fraction2={fraction2} version={1} type='subtraction' />
       <div className="flex flex-col gap-8 items-center">
         <Intro text="Now that you know how to add, you can easily subtract as well..." />
         <div className="flex flex-col gap-8 items-center w-full bg-lime-100 p-8 ">
