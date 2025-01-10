@@ -1,12 +1,12 @@
 'use client'
 
-import { Button } from "@/components/custom_ui/button"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useGameState } from './state-utils'
 import { StepHeader } from './components/StepHeader'
 import { FractionDisplay } from './components/FractionDisplay'
 import { useEffect, useRef } from 'react'
 import { useSoundEffects } from './sounds'
-import SuccessAnimation from '@/components/artifacts/utils/success-animate'
 
 interface FractionSubtractionProps {
   sendAdminMessage: (role: string, content: string) => void
@@ -19,8 +19,7 @@ const STEPS = [
   { id: 3, title: 'ANSWER' }
 ];
 
-
-export default function Screen2({ sendAdminMessage }: FractionSubtractionProps) {
+export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {
     currentStep,
@@ -35,7 +34,7 @@ export default function Screen2({ sendAdminMessage }: FractionSubtractionProps) 
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    sendAdminMessage('agent', `Great, here's another question for you!`);
+    sendAdminMessage('agent', `Great, here's another question for you?`);
   },[]);
   
   const handleDenominatorAnswer = (answer: string) => {
@@ -53,6 +52,7 @@ export default function Screen2({ sendAdminMessage }: FractionSubtractionProps) 
       }));
     } else {
       soundEffects.wrong.play();
+      sendAdminMessage('agent', 'Ah, not quite. What do you think the denominator was before and after subtraction?')
       setGameStateRef(prev => ({
         ...prev,
         screen2State: {
@@ -78,6 +78,7 @@ export default function Screen2({ sendAdminMessage }: FractionSubtractionProps) 
       }));
     } else {
       soundEffects.wrong.play();
+      sendAdminMessage('agent', 'Ah, not quite. What do you think the numerator was before and after subtraction?')
       setGameStateRef(prev => ({
         ...prev,
         screen2State: {
@@ -94,7 +95,7 @@ export default function Screen2({ sendAdminMessage }: FractionSubtractionProps) 
     
     if (isCorrect && !isStep3Correct) {
       soundEffects.correct.play();
-      sendAdminMessage('agent', `Correct!`);
+      sendAdminMessage('agent', `Great job, you're really getting a hang of fraction subtraction!`);
     } else if (value !== '' && !isCorrect && isStep3Correct) {
       soundEffects.wrong.play();
     }
@@ -229,18 +230,28 @@ export default function Screen2({ sendAdminMessage }: FractionSubtractionProps) 
                 </>
               )}
               {step.id === 3 && (
-                <>
-                    <div className="flex flex-col items-center gap-2">
-                      <input
-                        type="text"
-                        value={finalAnswer}
-                        onChange={(e) => handleFinalAnswerChange(e.target.value)}
-                        className="w-16 h-16 text-2xl font-bold text-center border-2 border-black"
-                      />
-                      <div className="w-16 border-t-2 border-black"></div>
-                      <div className="text-2xl font-bold">{fraction1.denominator}</div>
-                    </div>
-                </>
+                <div className="flex items-center gap-4">
+                  <FractionDisplay
+                    numerator={fraction1.numerator}
+                    denominator={fraction1.denominator}
+                  />
+                  <span className="text-4xl font-bold">-</span>
+                  <FractionDisplay
+                    numerator={fraction2.numerator}
+                    denominator={fraction2.denominator}
+                  />
+                  <span className="text-4xl font-bold">=</span>
+                  <div className="flex flex-col items-center gap-2">
+                    <input
+                      type="text"
+                      value={finalAnswer}
+                      onChange={(e) => handleFinalAnswerChange(e.target.value)}
+                      className="w-16 h-16 text-2xl font-bold text-center border-2 border-black"
+                    />
+                    <div className="w-16 border-t-2 border-black"></div>
+                    <div className="text-2xl font-bold">{fraction1.denominator}</div>
+                  </div>
+                </div>
               )}
             </div>
           )
@@ -253,7 +264,24 @@ export default function Screen2({ sendAdminMessage }: FractionSubtractionProps) 
           >
             Correct 🎉
           </div>
-          <SuccessAnimation />
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div className="relative overflow-hidden w-full h-full">
+              {[...Array(50)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute animate-fall"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `-${Math.random() * 20 + 10}%`,
+                    animation: `fall ${Math.random() * 3 + 2}s linear infinite`,
+                    backgroundColor: ['#FFD700', '#FF6347', '#00CED1', '#FF69B4'][Math.floor(Math.random() * 4)],
+                    width: '10px',
+                    height: '10px',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
         )}
       </div>
@@ -262,14 +290,11 @@ export default function Screen2({ sendAdminMessage }: FractionSubtractionProps) 
         @keyframes fall {
           0% { transform: translateY(0) rotate(0deg); }
           100% { transform: translateY(200vh) rotate(360deg); }
-          100% { transform: translateY(200vh) rotate(360deg); }
         }
         .animate-fall {
-          animation: fall 6s linear infinite;
           animation: fall 6s linear infinite;
         }
       `}</style>
     </div>
   )
 }
-
