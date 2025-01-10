@@ -82,3 +82,17 @@ export default function Game({sendAdminMessage}: GameProps) {
     </div>
   )
 }
+
+
+/*
+•⁠  ⁠2nd screen redesigned on Figma for clarity [ DONE ]
+
+Figma misalignments:
+•⁠  ⁠⁠3rd screen, step 1 and 2: wording for each line should be different (as per figma, eg, "3 pieces, split into 2 each, give...")
+•⁠  ⁠⁠Feedback loop on MCQs on all screens (screen 3 etc) should be similar to subtract fractions (try again, red color and so on; green color for correct)
+•⁠  ⁠⁠Step 3: answer should be colored as in figma
+•⁠  ⁠⁠Screen 4 step 1 is wrong: make it as per Figma (boxes empty; clicking hammer splits pieces; read comments)
+•⁠  ⁠⁠Step 2: add both as the right option (make it green on selecting) in MCQ
+
+•⁠  ⁠⁠Add conversation
+*/

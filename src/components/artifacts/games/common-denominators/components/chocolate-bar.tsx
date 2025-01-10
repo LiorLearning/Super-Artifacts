@@ -1,5 +1,5 @@
 import { Fraction } from "../game-state";
-
+import { FractionComponent } from "./fraction";
 interface ChocolateBarProps {
   pieces: number;
   filledPieces?: number;
@@ -44,11 +44,7 @@ export const ChocolateBarWithFraction = ({ fraction, size = 'large', selectable 
           onSelect={onSelect}
         />
       </div>
-      <div className={`flex flex-col items-center ${size === 'large' ? 'w-12' : 'w-8'}`}>
-        <div className="text-2xl font-bold">{fraction.numerator}</div>
-        <div className="border-t-2 border-black w-8"></div>
-        <div className="text-2xl font-bold">{fraction.denominator}</div>
-      </div>
+      <FractionComponent fraction={fraction} />
     </>
   );
 };
