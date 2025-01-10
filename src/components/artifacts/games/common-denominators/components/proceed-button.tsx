@@ -1,7 +1,7 @@
 import { Button } from "@/components/custom_ui/button";
 
 interface ProceedButtonProps {
-  text: string;
+  text?: string;
   onClick: () => void;
 }
 

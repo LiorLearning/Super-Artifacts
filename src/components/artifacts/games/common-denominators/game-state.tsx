@@ -64,14 +64,14 @@ export interface GameState {
   state6: State6;
 }
 export const initialGameState: GameState = {
-  screen: 'second',
+  screen: 'third',
   state1: {
     step: 0,
     fraction1: { numerator: '1', denominator: '2' },
     fraction2: { numerator: '1', denominator: '3' }
   },
   state2: {
-    step: 2,
+    step: 0,
     fraction1: { numerator: '1', denominator: '2' },
     fraction2: { numerator: '1', denominator: '3' },
     lcd: 6,
@@ -95,7 +95,7 @@ export const initialGameState: GameState = {
     chocolatesWithSameDenominator: [1, 2]
   },
   state3: {
-    step: 0,
+    step: 5,
     fraction1: { numerator: '1', denominator: '3' },
     fraction2: { numerator: '1', denominator: '5' },
     gcd: 15

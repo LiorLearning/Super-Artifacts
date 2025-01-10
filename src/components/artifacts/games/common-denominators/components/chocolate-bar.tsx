@@ -32,13 +32,22 @@ export const ChocolateBar = ({
   </div>
 ); 
 
-export const ChocolateBarWithFraction = ({ fraction, size = 'large', selectable = false, selected = false, onSelect = () => {} }: { fraction: Fraction, size?: 'large' | 'small', selectable?: boolean, selected?: boolean, onSelect?: () => void }) => {
+interface ChocolateBarWithFractionProps {
+  fraction: Fraction;
+  size?: 'large' | 'small';
+  multiplier?: number;
+  selectable?: boolean;
+  selected?: boolean;
+  onSelect?: () => void;
+}
+
+export const ChocolateBarWithFraction = ({ fraction, size = 'large', multiplier = 1, selectable = false, selected = false, onSelect = () => {} }: ChocolateBarWithFractionProps) => {
   return (
     <>
       <div className={`w-[${size === 'large' ? '480px' : '240px'}]`}>
         <ChocolateBar 
-          pieces={parseInt(fraction.denominator)} 
-          filledPieces={parseInt(fraction.numerator)} 
+          pieces={parseInt(fraction.denominator) * multiplier} 
+          filledPieces={parseInt(fraction.numerator) * multiplier} 
           selectable={selectable}
           selected={selected}
           onSelect={onSelect}

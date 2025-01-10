@@ -1,4 +1,4 @@
-import { ChocolateBar, ChocolateBarWithFraction } from "./chocolate-bar";
+import { ChocolateBarWithFraction } from "./chocolate-bar";
 import { ChocolateRow } from "./chocolate-row";
 import { Fraction } from "../game-state";
 

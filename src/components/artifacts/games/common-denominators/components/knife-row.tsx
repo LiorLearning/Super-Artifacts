@@ -1,9 +1,21 @@
 import { Fraction } from '../game-state';
 import { Button } from '@/components/custom_ui/button';
 import { Input } from '@/components/custom_ui/input';
-import { PocketKnife } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { COLORS } from '../utils/types';
+
+
+const InputBox = ({ value, setValue }: { value: string, setValue: (value: string) => void }) => {
+  return (
+    <Input
+      type="text"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      className="w-12 h-12 text-center text-xl font-bold border border-black"
+      maxLength={3}
+    />
+  )
+}
 
 
 interface KnifeRowProps {
@@ -36,18 +48,15 @@ export default function KnifeRow({fraction, index, input, onSelectMultiplier} : 
           onSelectMultiplier(index)
         }}
       >
-        <PocketKnife className="w-6 h-6" /> {index}
+        🔪 {index}
       </Button>
       {input === 'one' ? (
         <div className="flex items-center gap-2 text-xl p-4">
           <div className="flex items-center gap-2 text-xl">
-            <span>{fraction.denominator} pieces, not split any further, give {fraction.denominator} X {index} =</span>
-            <Input
-              type="text"
+            <span>{fraction.denominator} pieces, split into {index} each, give {fraction.denominator} X {index} =</span>
+            <InputBox
               value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              className="w-16 h-12 text-center text-xl font-bold"
-              maxLength={3}
+              setValue={setAnswer}
             />
             <span>total pieces</span>
           </div>
@@ -55,21 +64,15 @@ export default function KnifeRow({fraction, index, input, onSelectMultiplier} : 
       ) : input === 'two' ? (
         <div className="flex items-center gap-2 text-xl p-4">
           <div className="flex items-center gap-2 text-xl">
-            <span>{fraction.denominator} pieces, not split any further, give {fraction.denominator} X</span>
-            <Input
-              type="text"
+            <span>{fraction.denominator} pieces, split into {index} each, give {fraction.denominator} X</span>
+            <InputBox
               value={factor}
-              onChange={(e) => setFactor(e.target.value)}
-              className="w-16 h-12 text-center text-xl font-bold"
-              maxLength={3}
+              setValue={setFactor}
             />
             <span>=</span>
-            <Input
-              type="text"
+            <InputBox
               value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              className="w-16 h-12 text-center text-xl font-bold"
-              maxLength={3}
+              setValue={setAnswer}
             />
             <span>total pieces</span>
           </div>
