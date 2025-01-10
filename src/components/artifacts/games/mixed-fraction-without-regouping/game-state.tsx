@@ -4,14 +4,29 @@ export const desc = ``;
 
 export type GameScreen = 1 | 2 | 3 | 4;
 
+interface QuestionDescription{
+  showFirstRow: boolean;
+  showSecondRow: boolean;
+  showThirdRow: boolean;
+
+  inputWhole: string;
+  inputNumerator: string;
+  inputDenominator: string;
+}
+
 export interface screen1 {
   step: number;
   step2Substep: number;
+
+  question1description: QuestionDescription;
+  question2description: QuestionDescription;
 }
 
 export interface screen2 {
   step: number;
   substep: number;
+  question1description: QuestionDescription;
+  question2description: QuestionDescription;
 }
 
 export interface screen3 {
@@ -59,11 +74,43 @@ export const initialGameState: GameState = {
   state1: {
     step: 1,
     step2Substep: 0,
+    question1description: {
+      showFirstRow: true,
+      showSecondRow: false,
+      showThirdRow: false,
+      inputWhole: '',
+      inputNumerator: '',
+      inputDenominator: '',
+    },
+    question2description: {
+      showFirstRow: false,
+      showSecondRow: false,
+      showThirdRow: false,
+      inputWhole: '',
+      inputNumerator: '',
+      inputDenominator: '',
+    },
   },
 
   state2: {
     step: 0,
     substep: 0,
+    question1description: {
+      showFirstRow: true,
+      showSecondRow: false,
+      showThirdRow: false,
+      inputWhole: '',
+      inputNumerator: '',
+      inputDenominator: '',
+    },
+    question2description: {
+      showFirstRow: false,
+      showSecondRow: false,
+      showThirdRow: false,
+      inputWhole: '',
+      inputNumerator: '',
+      inputDenominator: '',
+    },
   },
 
   state3: {

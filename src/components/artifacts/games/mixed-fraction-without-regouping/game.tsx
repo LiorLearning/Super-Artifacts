@@ -51,7 +51,7 @@ export default function MixedFractionGame({sendAdminMessage}: GameProps) {
   const { screen } = gameStateRef.current;
 
   return (
-    <div className="mx-auto game-container">
+    <div className="mx-auto game-container font-Jost">
       <DevHelper />
       {/* Game screens */}
       {screen === 1 && <FirstScreen sendAdminMessage={sendAdminMessage} />}
@@ -60,11 +60,15 @@ export default function MixedFractionGame({sendAdminMessage}: GameProps) {
       {screen === 4 && <FourthScreen sendAdminMessage={sendAdminMessage} />}
 
       <style jsx global>{`
-          @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');
-          .font-jersey {
-            font-family: 'Jersey 25', cursive;
+        @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+          .font-Jost {
+            font-family: 'Jost', sans-serif;
           }
-        `}</style>
+        `}
+      </style>
+
+
+
     </div>
   )
 }
