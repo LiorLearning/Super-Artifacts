@@ -1,8 +1,10 @@
-import { ChocolateBar, ChocolateBarWithFraction } from "./chocolate-bar";
+import { ChocolateBarWithFraction } from "./chocolate-bar";
 import { ChocolateRow } from "./chocolate-row";
 import { Fraction } from "../game-state";
+import { useState } from "react";
 
-const KnifeGame = ({ fraction }: { fraction: Fraction }) => {
+const KnifeGame = ({ fraction, onCorrect }: { fraction: Fraction, onCorrect: () => void }) => {
+  const [ firstCorrect, setFirstCorrect ] = useState(false);
   return (
     <>
       <div className="flex flex-col items-center justify-center m-8">
@@ -18,12 +20,14 @@ const KnifeGame = ({ fraction }: { fraction: Fraction }) => {
         <ChocolateRow
           multiplier={2}
           originalFraction={fraction}
+          onCorrect={() => setFirstCorrect(true)}
         />
 
         <ChocolateRow
           multiplier={3}
-            originalFraction={fraction}
-          />
+          originalFraction={fraction}
+          onCorrect={() => {if (firstCorrect) {onCorrect();}}}
+        />
       </div>
     </>
   )

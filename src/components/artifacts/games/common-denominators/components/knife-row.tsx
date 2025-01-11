@@ -1,9 +1,10 @@
 import { Fraction } from '../game-state';
 import { Button } from '@/components/custom_ui/button';
 import { Input } from '@/components/custom_ui/input';
-import { PocketKnife } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { COLORS } from '../utils/types';
+import { getInputColor } from '../utils/helper';
+
 
 
 interface KnifeRowProps {
@@ -17,11 +18,12 @@ export default function KnifeRow({fraction, index, input, onSelectMultiplier} : 
   const [factor, setFactor] = useState('')
   const [answer, setAnswer] = useState('')
 
+
   useEffect(() => {
     if (parseInt(fraction.denominator) * index === parseInt(answer)) {
       onSelectMultiplier(index)
     }
-  }, [factor, answer])
+  }, [answer])
 
   return (
     <div className="flex items-center gap-4 rounded-lg w-full max-w-3xl" style={{
@@ -36,17 +38,18 @@ export default function KnifeRow({fraction, index, input, onSelectMultiplier} : 
           onSelectMultiplier(index)
         }}
       >
-        <PocketKnife className="w-6 h-6" /> {index}
+        <span className="text-2xl">🔪</span> {index}
       </Button>
       {input === 'one' ? (
         <div className="flex items-center gap-2 text-xl p-4">
           <div className="flex items-center gap-2 text-xl">
-            <span>{fraction.denominator} pieces, not split any further, give {fraction.denominator} X {index} =</span>
+            <span>{fraction.denominator} pieces, split into {index} each, give {fraction.denominator} X {index} =</span>
             <Input
               type="text"
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
-              className="w-16 h-12 text-center text-xl font-bold"
+              className="w-12 h-12 text-center text-xl font-bold border border-black"
+              style={{ backgroundColor: getInputColor(answer, (index * parseInt(fraction.denominator)).toString()) }}
               maxLength={3}
             />
             <span>total pieces</span>
@@ -55,12 +58,13 @@ export default function KnifeRow({fraction, index, input, onSelectMultiplier} : 
       ) : input === 'two' ? (
         <div className="flex items-center gap-2 text-xl p-4">
           <div className="flex items-center gap-2 text-xl">
-            <span>{fraction.denominator} pieces, not split any further, give {fraction.denominator} X</span>
+            <span>{fraction.denominator} pieces, split into {index} each, give {fraction.denominator} X</span>
             <Input
               type="text"
               value={factor}
               onChange={(e) => setFactor(e.target.value)}
-              className="w-16 h-12 text-center text-xl font-bold"
+              className="w-12 h-12 text-center text-xl font-bold border border-black"
+              style={{ backgroundColor: getInputColor(factor, index.toString()) }}
               maxLength={3}
             />
             <span>=</span>
@@ -68,7 +72,8 @@ export default function KnifeRow({fraction, index, input, onSelectMultiplier} : 
               type="text"
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
-              className="w-16 h-12 text-center text-xl font-bold"
+              className="w-12 h-12 text-center text-xl font-bold border border-black"
+              style={{ backgroundColor: getInputColor(answer, (parseInt(factor) * parseInt(fraction.denominator)).toString()) }}
               maxLength={3}
             />
             <span>total pieces</span>

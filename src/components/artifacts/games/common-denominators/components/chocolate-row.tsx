@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { PocketKnifeIcon as Knife } from 'lucide-react';
 import { FractionInput } from './fraction-input';
 import { ChocolateBar } from './chocolate-bar';
 import { Fraction } from '../game-state';
@@ -10,9 +9,10 @@ import { useGameState } from '../state-utils';
 interface ChocolateRowProps {
   multiplier: number;
   originalFraction: Fraction;
+  onCorrect: () => void;
 }
 
-export const ChocolateRow = ({ multiplier, originalFraction }: ChocolateRowProps) => {
+export const ChocolateRow = ({ multiplier, originalFraction, onCorrect }: ChocolateRowProps) => {
   const { setGameStateRef } = useGameState();
   
   const [denominatorWasFocused, setDenominatorWasFocused] = useState(false);
@@ -66,7 +66,7 @@ export const ChocolateRow = ({ multiplier, originalFraction }: ChocolateRowProps
       inputFraction.numerator === correctFraction.numerator && 
       inputFraction.denominator === correctFraction.denominator
     ) {
-      nextStep('first', setGameStateRef);
+      onCorrect();
     }
   }, [inputFraction]);
 
@@ -77,12 +77,12 @@ export const ChocolateRow = ({ multiplier, originalFraction }: ChocolateRowProps
       <Button
         onClick={handleMultiplierClick}
         className={`rounded-lg w-16 h-16 flex items-center justify-center ${
-          multiplierSelected ? 'bg-[#2EA500]' : 'bg-gray-500'
-        } hover:${multiplierSelected ? 'bg-[#2EA500]/90' : 'bg-gray-700'}`}
+          multiplierSelected ? 'bg-[#2EA500]' : 'bg-[#DDDDDD]'
+        } hover:${multiplierSelected ? 'bg-[#2EA500]/90' : 'bg-[#DDDDDD]/90'}`}
       >
         <div className="flex items-center gap-1">
-          <Knife className="w-6 h-6" />
-          <span className="text-xl font-bold">{multiplier}</span>
+          <span className="text-2xl">🔪</span>
+          <span className="text-xl text-black mb-4">{multiplier}</span>
         </div>
       </Button>
       

@@ -3,6 +3,7 @@ import { StepModule } from '../components/stepHeader';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/custom_ui/input';
 import { Fraction } from '../game-state';
+import { getInputColor } from '../utils/helper';
 
 
 interface LCDSectionProps {
@@ -64,6 +65,9 @@ export const LCDSection = ({ fraction1, fraction2, lcd, onSuccess, showHelp = fa
                     value={value}
                     onChange={(e) => handleLcdChange(1, index, e.target.value)}
                     className="w-12 h-12 border-2 border-gray-300 rounded text-center"
+                    style={{
+                      backgroundColor: getInputColor(value, (parseInt(fraction1.denominator) * (index + 1)).toString())
+                    }}
                   />
                   {showHelp && <span className="text-sm text-gray-500">{fraction1.denominator} x {index + 1}</span>}
                 </div>
@@ -89,6 +93,9 @@ export const LCDSection = ({ fraction1, fraction2, lcd, onSuccess, showHelp = fa
                     value={value}
                     onChange={(e) => handleLcdChange(2, index, e.target.value)}
                     className="w-12 h-12 border-2 border-gray-300 rounded text-center"
+                    style={{
+                      backgroundColor: getInputColor(value, (parseInt(fraction2.denominator) * (index + 1)).toString())
+                    }}
                   />
                   {showHelp && <span className="text-sm text-gray-500">{fraction2.denominator} x {index + 1}</span>}
                 </div>
@@ -105,6 +112,9 @@ export const LCDSection = ({ fraction1, fraction2, lcd, onSuccess, showHelp = fa
             value={lcdInputs.result}
             onChange={(e) => setLcdInputs(prev => ({ ...prev, result: e.target.value }))}
             className="w-12 h-12 border-2 border-gray-300 rounded text-center text-xl"
+            style={{
+              backgroundColor: getInputColor(lcdInputs.result, lcd.toString())
+            }}
           />
         </div>
       </div>

@@ -17,8 +17,9 @@ interface State2 {
   step: number;
   fraction1: Fraction;
   fraction2: Fraction;
-  chocolateFractions: Fraction[];
-  selectedChocolate: boolean[];
+  lcd: number;
+  chocolateFractions1: Fraction[];
+  chocolateFractions2: Fraction[];
   chocolatesWithSameDenominator: number[];
 }
 
@@ -73,13 +74,24 @@ export const initialGameState: GameState = {
     step: 0,
     fraction1: { numerator: '1', denominator: '2' },
     fraction2: { numerator: '1', denominator: '3' },
-    chocolateFractions: [
+    lcd: 6,
+    // We need to make sure that among these three options, 
+    // there is exactly one option that is common to both 
+    // fraction1 and fraction2
+
+    // Equivalent fractions for fraction1
+    chocolateFractions1: [
+      { numerator: '1', denominator: '2' },
       { numerator: '2', denominator: '4' },
       { numerator: '3', denominator: '6' },
+    ],
+    // Equivalent fractions for fraction2
+    chocolateFractions2: [
+      { numerator: '1', denominator: '3' },
       { numerator: '2', denominator: '6' },
       { numerator: '3', denominator: '9' }
     ],
-    selectedChocolate: [false, false, false, false],
+    // Indices of chocolates with same denominator
     chocolatesWithSameDenominator: [1, 2]
   },
   state3: {
