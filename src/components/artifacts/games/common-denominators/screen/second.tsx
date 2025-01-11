@@ -108,6 +108,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
 
   const [selectedChocolate1, setSelectedChocolate1] = useState<boolean[]>([ false, false, false ]);
   const [selectedChocolate2, setSelectedChocolate2] = useState<boolean[]>([ false, false, false ]);
+  const [incorrect, setIncorrect] = useState(false);
 
   const verifySelections = () => {
     const selected1 = selectedChocolate1.filter(Boolean);
@@ -118,15 +119,22 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
       const idx2 = selectedChocolate2.findIndex(Boolean);
 
       if (chocolateFractions1[idx1].denominator === chocolateFractions2[idx2].denominator) {
+        setIncorrect(false);
         goToStep('second', setGameStateRef, 1);
+      } else {
+        setIncorrect(true);
+        sendAdminMessage('admin', "Diagnose socratically and ask user where did they go wrong and tell them to find the frations with the same denominator");
       }
+    } else {
+      setIncorrect(true);
+      sendAdminMessage('admin', "Diagnose socratically and ask user where did they go wrong and tell them to find the frations with the same denominator");
     }
   }
 
   useEffect(() => {
     if (!hasGameStarted.current) {
       hasGameStarted.current = true;
-      sendAdminMessage('agent', `We've created versions of ${fraction1.numerator}/${fraction1.denominator} and ${fraction2.numerator}/${fraction2.denominator}. Which of these versions have the same denominator (bottom number)?`)
+      sendAdminMessage('agent', `We've created versions of ${fraction1.numerator}/${fraction1.denominator} and ${fraction2.numerator}/${fraction2.denominator}. Which of these versions have the same denominator?`)
     }
   }, []);
   
@@ -174,7 +182,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
         />
       </div>
 
-      <ProceedButton text="VERIFY" onClick={verifySelections} />
+      <ProceedButton text="VERIFY" onClick={verifySelections} color={incorrect ? COLORS.red : COLORS.pink} />
 
       {step >= 1 && (
         <AnswerForm />

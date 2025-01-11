@@ -1,4 +1,3 @@
-import { GameScreen } from './game-state';
 import FirstScreen from './screen/first';
 import SecondScreen from './screen/second';
 import ThirdScreen from './screen/third';
@@ -7,6 +6,7 @@ import FifthScreen from './screen/fifth';
 import SixthScreen from './screen/sixth';
 import { useGameState } from './state-utils';
 import { DevHelper } from './utils/helper';
+import { useEffect, useRef } from 'react';
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -15,6 +15,20 @@ interface GameProps {
 export default function Game({sendAdminMessage}: GameProps) {
   const { gameStateRef } = useGameState();
   const { screen } = gameStateRef.current;
+  const { step: step1 } = gameStateRef.current.state1;
+  const { step: step2 } = gameStateRef.current.state2;
+  const { step: step3 } = gameStateRef.current.state3;
+  const { step: step4 } = gameStateRef.current.state4;
+  const { step: step5 } = gameStateRef.current.state5;
+  const { step: step6 } = gameStateRef.current.state6;
+
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [step1, step2, step3, step4, step5, step6]);
 
   return (
     <div className="mx-auto game font-jersey">
@@ -32,20 +46,19 @@ export default function Game({sendAdminMessage}: GameProps) {
           font-family: 'Jersey 25', cursive;
         }
       `}</style>
+      <div ref={bottomRef} style={{ height: 0 }} />
     </div>
   )
 }
 
 
 /*
-•⁠  [DONE] ⁠2nd screen redesigned on Figma for clarity
+"2nd review:
 
-Figma misalignments:
-•⁠  [DONE] ⁠⁠3rd screen, step 1 and 2: wording for each line should be different (as per figma, eg, "3 pieces, split into 2 each, give...")
-•⁠  ⁠⁠[DONE] Feedback loop on MCQs on all screens (screen 3 etc) should be similar to subtract fractions (try again, red color and so on; green color for correct)
-•⁠  [DONE] ⁠⁠Step 3: answer should be colored as in figma
-•⁠  ⁠⁠Screen 4 step 1 is wrong: make it as per Figma (boxes empty; clicking hammer splits pieces; read comments)
-•⁠  [DONE] ⁠⁠Step 2: add both as the right option (make it green on selecting) in MCQ
+- AI Conversation, throughout
+    - Try with slower paced AI voice, current voice feels overwhelmingly fast.
+    - AI should customise response as per current game state, not give general instructions
 
-•⁠  ⁠⁠Add conversation
+- Screen 3
+    [TD] - Text changes to “ 5 pieces, split into 2 each, give __ total pieces”
 */

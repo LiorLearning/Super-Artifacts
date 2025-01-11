@@ -145,17 +145,35 @@ export const prevStep = (
   }
 }
 
-export const getInputColor = (input: string, actual: string) => {
-  if (input === '' || actual === '') {
-    return COLORS.white;
-  }
-  if (input.length === actual.length) {
-    if (input === actual) {
-      return COLORS.light2Green;
-    } else {
-      return COLORS.lightRed;
+export const NOT_ATTEMPTED = 'not_attempted';
+export const ATTEMPTED = 'attempted';
+export const CORRECT = 'correct';
+export const INCORRECT = 'incorrect';
+
+export const getState = (input: string, actual: string) => {
+  if (input === '') {
+    return NOT_ATTEMPTED;
+  } else {
+    if (input.length === actual.length) {
+      if (input === actual) {
+        return CORRECT;
+      } else {
+        return INCORRECT;
+      }
+    } else if (input.length > actual.length) {
+      return INCORRECT;
     }
-  } else if (input.length > actual.length) {
+  }
+  return ATTEMPTED;
+}
+
+export const getInputColor = (input: string, actual: string) => {
+  const state = getState(input, actual);
+  if (state === NOT_ATTEMPTED) {
+    return COLORS.white;
+  } else if (state === CORRECT) {
+    return COLORS.light2Green;
+  } else if (state === INCORRECT) {
     return COLORS.lightRed;
   }
   return COLORS.white;

@@ -33,7 +33,10 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
       {/* Step 2 - LCD Section */}
       {/* Incorrect response: "You're entering the Xth multiple of 4. What is 4 times X" */}
       {step >= 1 &&
-        <LCDSection fraction1={fraction1} fraction2={fraction2} lcd={lcd} onSuccess={() => goToStep('sixth', setGameStateRef, 2)} />
+        <LCDSection fraction1={fraction1} fraction2={fraction2} lcd={lcd} onSuccess={() => {
+          goToStep('sixth', setGameStateRef, 2)
+          sendAdminMessage('agent', "Awesome, you're a master at finding common denominators now!")
+        }} />
       }
       {/* Proceed Button */}
       {step >= 2 && <SuccessAnimation />}

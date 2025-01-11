@@ -17,9 +17,10 @@ interface TotalPieceGameProps {
   multiplier: number;
   setMultiplier: (multiplier: number) => void;
   onCorrect: () => void;
+  hard?: boolean;
 }
 
-const TotalPieceGame = ({ fraction, rows, multiplier, setMultiplier, onCorrect }: TotalPieceGameProps) => {
+const TotalPieceGame = ({ fraction, rows, multiplier, setMultiplier, onCorrect, hard=false }: TotalPieceGameProps) => {
   const handleSelectMultiplier = (multiplier: number) => {
     setMultiplier(multiplier)
     if (multiplier === rows) {
@@ -54,6 +55,7 @@ const TotalPieceGame = ({ fraction, rows, multiplier, setMultiplier, onCorrect }
             index={index + 1} 
             input={index === 0 ? 'none' : index < rows / 2 ? 'one' : 'two'} 
             onSelectMultiplier={handleSelectMultiplier}
+            hard={hard}
           />
         ))}
       </div>
@@ -115,6 +117,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
             goToStep('third', setGameStateRef, 3)
             sendAdminMessage('agent', "Great job, let's move to step 3")
           }}
+          hard={true}
         />
       )}
       {step > 2 && <ProceedButton onClick={() => {
@@ -144,6 +147,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
               sendAdminMessage('agent', "Great, let's try another one!")
             }} 
             onSelectKnife={(multiplier) => setMultiplier(multiplier)}
+            sendAdminMessage={sendAdminMessage}
           />
         </div>
       }
