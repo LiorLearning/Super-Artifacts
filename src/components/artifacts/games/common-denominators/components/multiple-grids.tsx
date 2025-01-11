@@ -193,18 +193,6 @@ const MultiplesInputRow: React.FC<{
 }> = ({ number, maxMultiple, lcd, ecd, onSuccess, showColor }) => {
   const [multiples, setMultiples] = useState<string[]>(Array(maxMultiple).fill(''));
 
-  const states: string[] = Array(maxMultiple).fill(null);
-  for (let i = 0; i < maxMultiple; i++) {
-    states[i] = getState(multiples[i], (number * (i + 1)).toString());
-  }
-
-  useEffect(() => {
-    const allCorrect = multiples.every((multiple, index) => multiple === (number * (index + 1)).toString());  
-    if (allCorrect) {
-      onSuccess();
-    }
-  }, [multiples]);
-
   const getInputColor = (multiple: string, index: number) => {
     const answer = number * (index + 1);
     
@@ -226,6 +214,13 @@ const MultiplesInputRow: React.FC<{
     
     return COLORS.gray;
   };
+
+  useEffect(() => {
+    const allCorrect = multiples.every((multiple, index) => multiple === (number * (index + 1)).toString());  
+    if (allCorrect) {
+      onSuccess();
+    }
+  }, [multiples]);
 
   return (
     <div className="flex items-center gap-4 w-full">
