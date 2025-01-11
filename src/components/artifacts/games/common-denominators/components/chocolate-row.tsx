@@ -77,12 +77,12 @@ export const ChocolateRow = ({ multiplier, originalFraction, onCorrect }: Chocol
       <Button
         onClick={handleMultiplierClick}
         className={`rounded-lg w-16 h-16 flex items-center justify-center ${
-          multiplierSelected ? 'bg-[#2EA500]' : 'bg-[#D3EA00]'
-        } hover:${multiplierSelected ? 'bg-[#2EA500]/90' : 'bg-[#D3EA00]/90'}`}
+          multiplierSelected ? 'bg-[#2EA500]' : 'bg-[#DDDDDD]'
+        } hover:${multiplierSelected ? 'bg-[#2EA500]/90' : 'bg-[#DDDDDD]/90'}`}
       >
         <div className="flex items-center gap-1">
           <span className="text-2xl">🔪</span>
-          <span className="text-xl font-bold text-black">{multiplier}</span>
+          <span className="text-xl text-black mb-4">{multiplier}</span>
         </div>
       </Button>
       
