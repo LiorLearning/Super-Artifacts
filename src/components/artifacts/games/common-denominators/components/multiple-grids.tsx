@@ -180,7 +180,11 @@ const MultiplesInputRow: React.FC<{
   }, [multiples]);
 
   const getInputColor = (multiple: string, index: number) => {
-    if (number * (index + 1) !== parseInt(multiple) && multiple !== '') {
+    const answer = number * (index + 1);
+    if (multiple === '' || answer.toString().length !== multiple.length) {
+      return COLORS.white;
+    }
+    if (answer !== parseInt(multiple)) {
       return COLORS.lightRed;
     }
     if (multiple === lcd.toString()) {

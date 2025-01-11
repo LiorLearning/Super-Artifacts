@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useGameState } from '../state-utils';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { COLORS } from './types';
 
 export const DevHelper = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -142,4 +143,20 @@ export const prevStep = (
   } else if (screen === 'sixth') {
     setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: Math.max(prev.state6.step - 1, 0) } }));
   }
+}
+
+export const getInputColor = (input: string, actual: string) => {
+  if (input === '' || actual === '') {
+    return COLORS.white;
+  }
+  if (input.length === actual.length) {
+    if (input === actual) {
+      return COLORS.light2Green;
+    } else {
+      return COLORS.lightRed;
+    }
+  } else if (input.length > actual.length) {
+    return COLORS.lightRed;
+  }
+  return COLORS.white;
 }

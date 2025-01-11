@@ -4,7 +4,7 @@ import { BaseProps, COLORS } from '../utils/types';
 import { StepModule } from '../components/stepHeader';
 import { ChocolateBarWithFraction } from '../components/chocolate-bar';
 import { Fraction } from '../game-state';
-import { goToScreen, goToStep } from '../utils/helper';
+import { getInputColor, goToScreen, goToStep } from '../utils/helper';
 import ProceedButton from '../components/proceed-button'
 import { FractionComponent } from '../components/fraction';
 import { useState, useRef, useEffect } from 'react';
@@ -82,6 +82,7 @@ function AnswerForm() {
           <Input 
             type="text" 
             className={`w-16 h-16 text-center border border-black ${answer === lcd.toString() ? 'bg-green-200' : ''}`}
+            style={{ backgroundColor: getInputColor(answer, lcd.toString()) }}
             value={answer} 
             onChange={(e) => setAnswer(e.target.value)} 
           />

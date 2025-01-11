@@ -16,11 +16,10 @@ interface TotalPieceGameProps {
   rows: number;
   multiplier: number;
   setMultiplier: (multiplier: number) => void;
-  onIncorrect: () => void;
   onCorrect: () => void;
 }
 
-const TotalPieceGame = ({ fraction, rows, multiplier, setMultiplier, onIncorrect, onCorrect }: TotalPieceGameProps) => {
+const TotalPieceGame = ({ fraction, rows, multiplier, setMultiplier, onCorrect }: TotalPieceGameProps) => {
   const handleSelectMultiplier = (multiplier: number) => {
     setMultiplier(multiplier)
     if (multiplier === rows) {
@@ -55,7 +54,6 @@ const TotalPieceGame = ({ fraction, rows, multiplier, setMultiplier, onIncorrect
             index={index + 1} 
             input={index === 0 ? 'none' : index < rows / 2 ? 'one' : 'two'} 
             onSelectMultiplier={handleSelectMultiplier}
-            onIncorrect={onIncorrect}
           />
         ))}
       </div>
@@ -69,10 +67,6 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const [multiplier, setMultiplier] = useState(1)
   const { step, fraction1, fraction2, gcd } = gameStateRef.current.state3;
   const hasGameStarted = useRef(false);
-
-  const incorrectResponse = () => {
-    sendAdminMessage('agent', "Oops, try visualising using the knife button")
-  }
 
   useEffect(() => {
     if (!hasGameStarted.current) {
@@ -101,7 +95,6 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
           rows={parseInt(fraction2.denominator)} 
           multiplier={multiplier} 
           setMultiplier={setMultiplier} 
-          onIncorrect={incorrectResponse} 
           onCorrect={() => {
             goToStep('third', setGameStateRef, 1)
             sendAdminMessage('agent', "Great job, let's move to step 2")
@@ -118,7 +111,6 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
           rows={parseInt(fraction1.denominator)} 
           multiplier={multiplier} 
           setMultiplier={setMultiplier} 
-          onIncorrect={incorrectResponse} 
           onCorrect={() => {
             goToStep('third', setGameStateRef, 3)
             sendAdminMessage('agent', "Great job, let's move to step 3")

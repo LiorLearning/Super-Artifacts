@@ -3,9 +3,11 @@ export const COLORS = {
   blue: '#0099FF',
   purple: '#C800FF',
   gray: '#DDDDDD',
+  white: '#FFFFFF',
   lightRed: '#FFCCCC',
   pinkLight: '#FCF0FF',
   lightGreen: '#99F6E4',
+  light2Green: '#BFF0E1',
   lightYellow: '#F6FFB7',
   lightPurple: '#DDD6FE',
 }
