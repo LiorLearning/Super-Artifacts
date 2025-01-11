@@ -23,15 +23,18 @@ interface KnifeRowProps {
   index: number;
   input: 'none' | 'one' | 'two';
   onSelectMultiplier: (multiplier: number) => void;
+  onIncorrect: () => void;
 }
 
-export default function KnifeRow({fraction, index, input, onSelectMultiplier} : KnifeRowProps) {
+export default function KnifeRow({fraction, index, input, onSelectMultiplier, onIncorrect} : KnifeRowProps) {
   const [factor, setFactor] = useState('')
   const [answer, setAnswer] = useState('')
 
   useEffect(() => {
     if (parseInt(fraction.denominator) * index === parseInt(answer)) {
       onSelectMultiplier(index)
+    } else if (factor !== '' && answer !== '') {
+      // onIncorrect()
     }
   }, [factor, answer])
 
@@ -48,7 +51,7 @@ export default function KnifeRow({fraction, index, input, onSelectMultiplier} : 
           onSelectMultiplier(index)
         }}
       >
-        🔪 {index}
+        <span className="text-2xl">🔪</span> {index}
       </Button>
       {input === 'one' ? (
         <div className="flex items-center gap-2 text-xl p-4">

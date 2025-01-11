@@ -7,7 +7,7 @@ import { Fraction } from '../game-state';
 import { goToScreen, goToStep } from '../utils/helper';
 import ProceedButton from '../components/proceed-button'
 import { FractionComponent } from '../components/fraction';
-import { useEffect, useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/custom_ui/input';
 
 function SelectableChocolateBars({ fraction, selected, onSelect, id }: { fraction: Fraction, selected: boolean, onSelect: () => void, id: number }) {
@@ -103,6 +103,8 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
     chocolateFractions2,
   } = gameStateRef.current.state2;
 
+  const hasGameStarted = useRef(false);
+
   const [selectedChocolate1, setSelectedChocolate1] = useState<boolean[]>([ false, false, false ]);
   const [selectedChocolate2, setSelectedChocolate2] = useState<boolean[]>([ false, false, false ]);
 
@@ -119,6 +121,14 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
       }
     }
   }
+
+  useEffect(() => {
+    if (!hasGameStarted.current) {
+      hasGameStarted.current = true;
+      sendAdminMessage('agent', `We've created versions of ${fraction1.numerator}/${fraction1.denominator} and ${fraction2.numerator}/${fraction2.denominator}. Which of these versions have the same denominator (bottom number)?`)
+    }
+  }, []);
+  
 
   return (
     <div className="mx-auto">

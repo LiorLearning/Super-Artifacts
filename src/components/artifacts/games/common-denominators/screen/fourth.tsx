@@ -7,13 +7,21 @@ import { goToStep, goToScreen, nextStep } from '../utils/helper';
 import ProceedButton from '../components/proceed-button';
 import MultiplesGrid from '../components/multiple-grids';
 import { Question } from '../components/question';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 
 export default function FourthScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step, fraction1, fraction2, lcd, ecd } = gameStateRef.current.state4;
   const [multiplier, setMultiplier] = useState(1);
+  const hasGameStarted = useRef(false);
+
+  useEffect(() => {
+    if (!hasGameStarted.current) {
+      hasGameStarted.current = true;
+      sendAdminMessage('agent', `Awesome, let's move to a new question! Our goal is to get the same denominator for ${fraction1.numerator}/${fraction1.denominator} and ${fraction2.numerator}/${fraction2.denominator}. Click the knife and fill in the boxes.`)
+    }
+  }, []);
   
   return (
     <div className="mx-auto pb-48">
@@ -33,12 +41,20 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
       <div className="flex flex-col items-center justify-center mb-8" style={{
         backgroundColor: COLORS.pinkLight
       }}>
+        {/* Notice that we found 2 common denominators. Which is the least one? */}
         <MultiplesGrid 
           number1={parseInt(fraction1.denominator)} 
           number2={parseInt(fraction2.denominator)} 
           lcd={lcd} 
           ecd={ecd} 
-          onSuccess={() => goToStep('fourth', setGameStateRef, 1)} 
+          onSuccess={() => {
+            goToStep('fourth', setGameStateRef, 1)
+            sendAdminMessage('agent', 
+              `Great, ${ecd} here is the easiest common denominator. Why? ` +
+              `Because you get the easiest common denominator just by multiplying your initial bottom numbers ` +
+              `(so here, ${fraction1.denominator} times ${fraction2.denominator} = ${ecd}, and ${ecd} is the ECD)`
+            )
+          }} 
           onSelectKnife={(multiplier) => setMultiplier(multiplier)}
         />
       </div>

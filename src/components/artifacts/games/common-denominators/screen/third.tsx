@@ -4,20 +4,27 @@ import { BaseProps, COLORS } from '../utils/types';
 import { StepModule } from '../components/stepHeader';
 import { ChocolateBar } from '../components/chocolate-bar';
 import { Fraction } from '../game-state';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { goToStep, goToScreen, nextStep } from '../utils/helper';
 import ProceedButton from '../components/proceed-button';
 import MultiplesGrid from '../components/multiple-grids';
 import KnifeRow from '../components/knife-row';
 import { Question } from '../components/question';
 
-const TotalPieceGame = ({ fraction, rows, multiplier, setMultiplier }: { fraction: Fraction, rows: number, multiplier: number, setMultiplier: (multiplier: number) => void }) => {
-  const { setGameStateRef } = useGameState();
+interface TotalPieceGameProps {
+  fraction: Fraction;
+  rows: number;
+  multiplier: number;
+  setMultiplier: (multiplier: number) => void;
+  onIncorrect: () => void;
+  onCorrect: () => void;
+}
 
+const TotalPieceGame = ({ fraction, rows, multiplier, setMultiplier, onIncorrect, onCorrect }: TotalPieceGameProps) => {
   const handleSelectMultiplier = (multiplier: number) => {
     setMultiplier(multiplier)
     if (multiplier === rows) {
-      nextStep('third', setGameStateRef);
+      onCorrect()
     }
   }
 
@@ -48,6 +55,7 @@ const TotalPieceGame = ({ fraction, rows, multiplier, setMultiplier }: { fractio
             index={index + 1} 
             input={index === 0 ? 'none' : index < rows / 2 ? 'one' : 'two'} 
             onSelectMultiplier={handleSelectMultiplier}
+            onIncorrect={onIncorrect}
           />
         ))}
       </div>
@@ -60,6 +68,25 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const [multiplier, setMultiplier] = useState(1)
   const { step, fraction1, fraction2, gcd } = gameStateRef.current.state3;
+  const hasGameStarted = useRef(false);
+
+  const incorrectResponse = () => {
+    sendAdminMessage('agent', "Oops, try visualising using the knife button")
+  }
+
+  useEffect(() => {
+    if (!hasGameStarted.current) {
+      hasGameStarted.current = true;
+      const fraction1Str = `${fraction1.numerator}/${fraction1.denominator}`;
+      const fraction2Str = `${fraction2.numerator}/${fraction2.denominator}`;
+      sendAdminMessage('agent', 
+        `Awesome, let's move to a new question! ` +
+        `Our goal is to get the same denominator for ${fraction1Str} and ${fraction2Str}. ` +
+        `Let's start by finding different denominators for ${fraction1Str}. ` +
+        'Click the knife and fill in the boxes.'
+      )
+    }
+  }, []);
 
   return (
     <div className="mx-auto pb-48">
@@ -68,15 +95,45 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
         <StepModule color={COLORS.pink} stepNumber={step < 2 ? 1 : 2} stepText="FIND THE TOTAL PIECES" />
       </div>
 
-      {step <= 1 && <TotalPieceGame fraction={fraction1} rows={parseInt(fraction2.denominator)} multiplier={multiplier} setMultiplier={setMultiplier} />}
-      {step == 1 && <ProceedButton onClick={() => {
+      {step <= 1 && (
+        <TotalPieceGame 
+          fraction={fraction1} 
+          rows={parseInt(fraction2.denominator)} 
+          multiplier={multiplier} 
+          setMultiplier={setMultiplier} 
+          onIncorrect={incorrectResponse} 
+          onCorrect={() => {
+            goToStep('third', setGameStateRef, 1)
+            sendAdminMessage('agent', "Great job, let's move to step 2")
+          }}
+        />
+      )}
+      {step === 1 && <ProceedButton onClick={() => {
         goToStep('third', setGameStateRef, 2)
         setMultiplier(1)
       }} />}
-      {step > 1 && <TotalPieceGame fraction={fraction2} rows={parseInt(fraction1.denominator)} multiplier={multiplier} setMultiplier={setMultiplier} />}
+      {step > 1 && (
+        <TotalPieceGame 
+          fraction={fraction2} 
+          rows={parseInt(fraction1.denominator)} 
+          multiplier={multiplier} 
+          setMultiplier={setMultiplier} 
+          onIncorrect={incorrectResponse} 
+          onCorrect={() => {
+            goToStep('third', setGameStateRef, 3)
+            sendAdminMessage('agent', "Great job, let's move to step 3")
+          }}
+        />
+      )}
       {step > 2 && <ProceedButton onClick={() => {
         goToStep('third', setGameStateRef, 4)
         setMultiplier(1)
+        sendAdminMessage('agent', 
+          `Here is a summary of all different denominators we got. ` +
+          `Multiples of ${fraction1.denominator} give us the different denominators we got for ${fraction1.numerator}/${fraction1.denominator}, ` +
+          `and multiples of ${fraction2.denominator} give us the different denominators we got for ${fraction2.numerator}/${fraction2.denominator}. ` +
+          `Which one is the common denominator?`
+        )
       }} />}
       {step > 3 && 
         <div className="flex flex-col items-center justify-center mb-8" style={{
@@ -90,7 +147,10 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
             number1={parseInt(fraction1.denominator)} 
             number2={parseInt(fraction2.denominator)} 
             gcd={gcd} 
-            onSuccess={() => goToStep('third', setGameStateRef, 5)} 
+            onSuccess={() => {
+              goToStep('third', setGameStateRef, 5)
+              sendAdminMessage('agent', "Great, let's try another one!")
+            }} 
             onSelectKnife={(multiplier) => setMultiplier(multiplier)}
           />
         </div>

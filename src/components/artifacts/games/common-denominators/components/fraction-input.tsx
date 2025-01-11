@@ -46,7 +46,7 @@ export const FractionInput = ({
         type="text"
         value={numerator}
         onChange={(e) => onNumeratorChange(e.target.value)}
-        className="w-12 h-12 text-center text-2xl font-bold"
+        className="w-12 h-12 text-center text-2xl font-bold border rounded-lg"
         maxLength={1}
         autoFocus={focusNumerator}
       />
@@ -55,7 +55,7 @@ export const FractionInput = ({
         type="text"
         value={denominator}
         onChange={(e) => onDenominatorChange(e.target.value)}
-        className="w-12 h-12 text-center text-2xl font-bold"
+        className="w-12 h-12 text-center text-2xl font-bold border rounded-lg"
         maxLength={2}
         autoFocus={focusDenominator}
       />

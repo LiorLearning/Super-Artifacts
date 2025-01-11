@@ -112,7 +112,7 @@ const renderKnifeRow = (maxMultiple: number, onSelectKnife?: (index: number) => 
           style={{ backgroundColor: COLORS.gray }}
           onClick={() => onSelectKnife?.(multiplier)}
         >
-          🔪 {multiplier}
+          <span className="text-2xl">🔪</span> {multiplier}
         </Button>
       ))}
     </div>
