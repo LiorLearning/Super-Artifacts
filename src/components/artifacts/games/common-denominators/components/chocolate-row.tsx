@@ -3,22 +3,17 @@ import { Button } from "@/components/ui/button";
 import { FractionInput } from './fraction-input';
 import { ChocolateBar } from './chocolate-bar';
 import { Fraction } from '../game-state';
-import { nextStep } from '../utils/helper';
-import { useGameState } from '../state-utils';
 
 interface ChocolateRowProps {
   multiplier: number;
   originalFraction: Fraction;
   onCorrect: () => void;
+  sendAdminMessage: (role: string, content: string) => void;
 }
 
-export const ChocolateRow = ({ multiplier, originalFraction, onCorrect }: ChocolateRowProps) => {
-  const { setGameStateRef } = useGameState();
-  
-  const [denominatorWasFocused, setDenominatorWasFocused] = useState(false);
-  const [numeratorWasFocused, setNumeratorWasFocused] = useState(false);
+export const ChocolateRow = ({ multiplier, originalFraction, onCorrect, sendAdminMessage }: ChocolateRowProps) => {
   const [multiplierSelected, setMultiplierSelected] = useState(false);
-  
+  const [incorrect, setIncorrect] = useState(false);
   const multipliedPieces = parseInt(originalFraction.denominator) * multiplier;
   const multipliedFilled = parseInt(originalFraction.numerator) * multiplier;
   
@@ -34,32 +29,24 @@ export const ChocolateRow = ({ multiplier, originalFraction, onCorrect }: Chocol
 
   const handleDenominatorChange = (value: string) => {
     setInputFraction(prev => ({ ...prev, denominator: value }));
-    if (value !== '' && inputFraction.numerator === '') {
-      setNumeratorWasFocused(false);
-    }
   };
 
   const handleNumeratorChange = (value: string) => {
     setInputFraction(prev => ({ ...prev, numerator: value }));
-    if (value !== '' && inputFraction.denominator === '') {
-      setDenominatorWasFocused(false);
-    }
   };
+
+  const handleIncorrect = () => {
+    setIncorrect(true);
+    sendAdminMessage('admin', "Diagnose socratically and ask the user to check the numerator or denominator and try using the knife");
+  }
 
   const updatedFraction = {
     ...inputFraction,
-    focusDenominator: multiplierSelected && !denominatorWasFocused && inputFraction.numerator !== '',
-    focusNumerator: multiplierSelected && !numeratorWasFocused && inputFraction.denominator !== '',
     onDenominatorChange: handleDenominatorChange,
-    onNumeratorChange: handleNumeratorChange
+    onNumeratorChange: handleNumeratorChange,
+    correctValues: correctFraction,
+    onIncorrect: handleIncorrect
   };
-
-  useEffect(() => {
-    if (!multiplierSelected) {
-      setDenominatorWasFocused(false);
-      setNumeratorWasFocused(false);
-    }
-  }, [multiplierSelected]);
 
   useEffect(() => {
     if (

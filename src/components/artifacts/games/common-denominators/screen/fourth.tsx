@@ -50,11 +50,11 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
           onSuccess={() => {
             goToStep('fourth', setGameStateRef, 1)
             sendAdminMessage('agent', 
-              `Great, ${ecd} here is the easiest common denominator. Why? ` +
-              `Because you get the easiest common denominator just by multiplying your initial bottom numbers ` +
-              `(so here, ${fraction1.denominator} times ${fraction2.denominator} = ${ecd}, and ${ecd} is the ECD)`
+              `Great, ${ecd} here is the easiest common denominator. Why? Because you get ${ecd} ` + 
+              `by simply multiplying your denominators ${fraction1.denominator} and ${fraction2.denominator}.`
             )
           }} 
+          sendAdminMessage={sendAdminMessage}
           onSelectKnife={(multiplier) => setMultiplier(multiplier)}
         />
       </div>

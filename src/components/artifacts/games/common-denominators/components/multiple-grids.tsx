@@ -1,6 +1,7 @@
 import { COLORS } from '../utils/types';
 import { Button } from '@/components/custom_ui/button';
 import { useEffect, useState } from 'react';
+import { CORRECT, getInputColor, getState, INCORRECT } from '../utils/helper';
 
 interface BaseMultiplesGridProps {
   number1: number;
@@ -11,17 +12,20 @@ interface BaseMultiplesGridProps {
 
 interface GCDMultiplesGridProps extends BaseMultiplesGridProps {
   gcd: number;
+  sendAdminMessage: (role: string, message: string) => void;
 }
 
 interface LCDECDMultiplesGridProps extends BaseMultiplesGridProps {
   lcd: number;
   ecd: number;
+  sendAdminMessage: (role: string, message: string) => void;
 }
 
 const renderMultiplesRow = (
   number: number, 
   getMultiples: (num: number) => number[], 
   selectedMultiple: number[],
+  showColor: boolean = true
 ) => (
   <div className="flex items-center gap-4 w-full">
     <div className="w-36 text-white px-4 py-2 text-center" style={{
@@ -35,7 +39,7 @@ const renderMultiplesRow = (
           key={multiple}
           className={`w-12 h-12 rounded-md border-2 flex items-center justify-center`}
           style={{
-            backgroundColor: getColor(multiple, selectedMultiple)
+            backgroundColor: showColor ? getColor(multiple, selectedMultiple) : COLORS.gray
           }}
         >
           {multiple}
@@ -57,23 +61,28 @@ const getColor = (multiple: number, selectedMultiple: number[]) => {
   return COLORS.gray;
 };
 
-const GCDMultiplesGrid = ({ number1, number2, gcd, onSuccess, onSelectKnife }: GCDMultiplesGridProps) => {
+const GCDMultiplesGrid = ({ number1, number2, gcd, onSuccess, onSelectKnife, sendAdminMessage }: GCDMultiplesGridProps) => {
   const maxMultiple = Math.max(number1, number2);
   const getMultiples = (num: number) => Array.from({ length: maxMultiple }, (_, i) => num * (i + 1));
   const selectedMultiple = [number1 * number2];
   const [answer, setAnswer] = useState<string>('');
 
+  const color = getInputColor(answer, gcd.toString())
+  const state = getState(answer, gcd.toString())
+
   useEffect(() => {
-    if (parseInt(answer) === gcd) {
+    if (state === CORRECT) {
       onSuccess();
+    } else if (state === INCORRECT) {
+      sendAdminMessage('admin', "Diagnose socratically, ask user to look at the multiples and try again.")
     }
-  }, [answer]);
+  }, [state]);
 
   return (
     <div className="flex flex-col items-center gap-4 max-w-xl mx-auto m-4">
       {renderKnifeRow(maxMultiple, onSelectKnife)}
-      {renderMultiplesRow(number1, getMultiples, selectedMultiple)}
-      {renderMultiplesRow(number2, getMultiples, selectedMultiple)}
+      {renderMultiplesRow(number1, getMultiples, selectedMultiple, false)}
+      {renderMultiplesRow(number2, getMultiples, selectedMultiple, false)}
       <div className="flex items-center gap-2 mt-4">
         <span className="text-2xl">Common denominator is</span>
         <input
@@ -81,13 +90,14 @@ const GCDMultiplesGrid = ({ number1, number2, gcd, onSuccess, onSelectKnife }: G
           className="w-16 h-12 border-2 rounded-md text-center text-lg"
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
+          style={{ backgroundColor: color }}
         />
       </div>
     </div>
   );
 };
 
-const LCDECDMultiplesGrid = ({ number1, number2, lcd, ecd, onSuccess, onSelectKnife }: LCDECDMultiplesGridProps) => {
+const LCDECDMultiplesGrid = ({ number1, number2, lcd, ecd, onSuccess, onSelectKnife, sendAdminMessage }: LCDECDMultiplesGridProps) => {
   const maxMultiple = Math.max(number1, number2);
   const [answers, setAnswers] = useState({
     lcd: '',
@@ -105,11 +115,21 @@ const LCDECDMultiplesGrid = ({ number1, number2, lcd, ecd, onSuccess, onSelectKn
 
   return (
     <div className="flex flex-col items-center gap-4 max-w-xl mx-auto m-4">
-      {renderKnifeRow(maxMultiple, onSelectKnife)}
-      <MultiplesInputRow number={number1} maxMultiple={maxMultiple} lcd={lcd} ecd={ecd} onSuccess={() => setShowSecondRow(true)} />
-      {showSecondRow && <MultiplesInputRow number={number2} maxMultiple={maxMultiple} lcd={lcd} ecd={ecd} onSuccess={() => setShowQuestion(true)} />}
+      {showSecondRow ? <div className="h-12"></div> : renderKnifeRow(maxMultiple, onSelectKnife) }
+      <MultiplesInputRow number={number1} maxMultiple={maxMultiple} lcd={lcd} ecd={ecd} onSuccess={() => setShowSecondRow(true)} showColor={showQuestion} />
+      {showSecondRow && (
+        <MultiplesInputRow 
+        number={number2} 
+        maxMultiple={maxMultiple} 
+        lcd={lcd} 
+        ecd={ecd} 
+        onSuccess={() => {
+          sendAdminMessage('agent', "Notice that we found 2 common denominators. Which is the least one?")
+          setShowQuestion(true)
+        }} 
+        showColor={showQuestion} />)}
       {showQuestion && (
-        <div className="flex flex-col gap-4 mt-4">
+        <div className="flex flex-col gap-4 mt-4 w-[120%] justify-center items-center">
           <div className="flex flex-col items-center justify-center text-2xl">
             Common denominators:
           </div>
@@ -119,7 +139,7 @@ const LCDECDMultiplesGrid = ({ number1, number2, lcd, ecd, onSuccess, onSelectKn
               type="text"
               className="w-16 h-12 border-2 rounded-md text-center text-lg"
               style={{
-                backgroundColor: answers.lcd === lcd.toString() ? COLORS.lightGreen : COLORS.gray
+                backgroundColor: answers.lcd === lcd.toString() ? COLORS.lightPurple : COLORS.gray
               }}
               value={answers.lcd}
               onChange={(e) => setAnswers(prev => ({ ...prev, lcd: e.target.value }))}
@@ -127,12 +147,12 @@ const LCDECDMultiplesGrid = ({ number1, number2, lcd, ecd, onSuccess, onSelectKn
           </div>
           {showSecondRow && (
             <div className="flex items-center gap-2">
-              <span className="text-2xl">Easiest common denominator (ECD) = product of {number1} and {number2}</span>
+              <span className="text-2xl">Easiest common denominator (ECD) = product of {number1} and {number2} = </span>
               <input
                 type="text"
                 className="w-16 h-12 border-2 rounded-md text-center text-lg"
                 style={{
-                  backgroundColor: answers.ecd === ecd.toString() ? COLORS.lightPurple : COLORS.gray
+                  backgroundColor: answers.ecd === ecd.toString() ? COLORS.lightGreen : COLORS.gray
                 }}
                 value={answers.ecd}
                 onChange={(e) => setAnswers(prev => ({ ...prev, ecd: e.target.value }))}
@@ -168,9 +188,15 @@ const MultiplesInputRow: React.FC<{
   maxMultiple: number,
   lcd: number,
   ecd: number,
-  onSuccess: () => void
-}> = ({ number, maxMultiple, lcd, ecd, onSuccess }) => {
+  onSuccess: () => void,
+  showColor: boolean
+}> = ({ number, maxMultiple, lcd, ecd, onSuccess, showColor }) => {
   const [multiples, setMultiples] = useState<string[]>(Array(maxMultiple).fill(''));
+
+  const states: string[] = Array(maxMultiple).fill(null);
+  for (let i = 0; i < maxMultiple; i++) {
+    states[i] = getState(multiples[i], (number * (i + 1)).toString());
+  }
 
   useEffect(() => {
     const allCorrect = multiples.every((multiple, index) => multiple === (number * (index + 1)).toString());  
@@ -181,17 +207,23 @@ const MultiplesInputRow: React.FC<{
 
   const getInputColor = (multiple: string, index: number) => {
     const answer = number * (index + 1);
+    
     if (multiple === '' || answer.toString().length !== multiple.length) {
       return COLORS.white;
     }
+    
     if (answer !== parseInt(multiple)) {
       return COLORS.lightRed;
     }
+    
     if (multiple === lcd.toString()) {
       return COLORS.lightPurple;
-    } else if (multiple === ecd.toString()) {
+    }
+    
+    if (multiple === ecd.toString()) {
       return COLORS.lightGreen;
     }
+    
     return COLORS.gray;
   };
 
@@ -210,7 +242,7 @@ const MultiplesInputRow: React.FC<{
             className="w-12 h-12 rounded-md border-2 text-center"
             value={multiple}
             style={{
-              backgroundColor: getInputColor(multiple, index)
+              backgroundColor: showColor ? getInputColor(multiple, index) : COLORS.gray
             }}
             onChange={(e) => {
               setMultiples(prev => {

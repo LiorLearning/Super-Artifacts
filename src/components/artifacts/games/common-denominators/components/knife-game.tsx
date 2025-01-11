@@ -3,15 +3,21 @@ import { ChocolateRow } from "./chocolate-row";
 import { Fraction } from "../game-state";
 import { useState } from "react";
 
-const KnifeGame = ({ fraction, onCorrect }: { fraction: Fraction, onCorrect: () => void }) => {
+interface KnifeGameProps {
+  fraction: Fraction;
+  onCorrect: () => void;
+  sendAdminMessage: (role: string, content: string) => void;
+}
+
+const KnifeGame = ({ fraction, onCorrect, sendAdminMessage }: KnifeGameProps) => {
   const [ firstCorrect, setFirstCorrect ] = useState(false);
   return (
     <>
-      <div className="flex flex-col items-center justify-center m-8">
+      <div className="flex flex-col items-center justify-center my-8">
         <span className="text-2xl font-bold">Use the knife to make equivalent fractions from {fraction.numerator}/{fraction.denominator}.</span>
       </div>
 
-      <div className="w-full flex flex-col items-center gap-16 m-8">
+      <div className="w-full flex flex-col items-center gap-16 my-8">
         {/* Original 1/2 */}
         <div className="flex flex-col items-center justify-center gap-8">
           <ChocolateBarWithFraction fraction={fraction} />
@@ -21,12 +27,14 @@ const KnifeGame = ({ fraction, onCorrect }: { fraction: Fraction, onCorrect: () 
           multiplier={2}
           originalFraction={fraction}
           onCorrect={() => setFirstCorrect(true)}
+          sendAdminMessage={sendAdminMessage}
         />
 
         <ChocolateRow
           multiplier={3}
           originalFraction={fraction}
           onCorrect={() => {if (firstCorrect) {onCorrect();}}}
+          sendAdminMessage={sendAdminMessage}
         />
       </div>
     </>
