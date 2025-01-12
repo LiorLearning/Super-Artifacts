@@ -1,14 +1,14 @@
 import { Input } from "@/components/custom_ui/input"
 import { Check } from 'lucide-react'
 import { useEffect } from "react";
+import { getInputColor, getState, INCORRECT } from '../utils/helper';
 
 interface FractionInputProps {
   numerator: string;
   denominator: string;
   onNumeratorChange: (value: string) => void;
   onDenominatorChange: (value: string) => void;
-  focusNumerator: boolean;
-  focusDenominator: boolean;
+  onIncorrect: () => void;
   correctValues?: {
     numerator: string;
     denominator: string;
@@ -20,25 +20,23 @@ export const FractionInput = ({
   denominator,
   onNumeratorChange,
   onDenominatorChange,
-  focusNumerator,
-  focusDenominator,
+  onIncorrect,
   correctValues
 }: FractionInputProps) => {
   const isCorrect = correctValues &&
     numerator === correctValues.numerator &&
     denominator === correctValues.denominator;
   
-  useEffect(() => {
-    if (numerator === '') {
-      focusNumerator
-    }
-  }, [denominator])
+  const numeratorColor = getInputColor(numerator, correctValues?.numerator || '');
+  const denominatorColor = getInputColor(denominator, correctValues?.denominator || '');
+  const numeratorState = getState(numerator, correctValues?.numerator || '');
+  const denominatorState = getState(denominator, correctValues?.denominator || '');
 
   useEffect(() => {
-    if (denominator === '') {
-      focusDenominator && onDenominatorChange('')
+    if (numeratorState === INCORRECT || denominatorState === INCORRECT) {
+      onIncorrect();
     }
-  }, [numerator])
+  }, [numeratorState, denominatorState]);
 
   return (
     <div className="relative flex flex-col items-center gap-2">
@@ -46,18 +44,18 @@ export const FractionInput = ({
         type="text"
         value={numerator}
         onChange={(e) => onNumeratorChange(e.target.value)}
-        className="w-12 h-12 text-center text-2xl font-bold"
+        className={`w-12 h-12 text-center text-2xl font-bold border rounded-lg`}
+        style={{ backgroundColor: numeratorColor }}
         maxLength={1}
-        autoFocus={focusNumerator}
       />
       <div className="border-t-2 border-black w-8"></div>
       <Input
         type="text"
         value={denominator}
         onChange={(e) => onDenominatorChange(e.target.value)}
-        className="w-12 h-12 text-center text-2xl font-bold"
+        className={`w-12 h-12 text-center text-2xl font-bold border rounded-lg`}
+        style={{ backgroundColor: denominatorColor }}
         maxLength={2}
-        autoFocus={focusDenominator}
       />
       {isCorrect && (
         <Check className="left-full absolute w-6 h-6 text-green-500" />

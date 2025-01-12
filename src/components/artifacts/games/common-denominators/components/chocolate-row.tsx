@@ -1,24 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { PocketKnifeIcon as Knife } from 'lucide-react';
 import { FractionInput } from './fraction-input';
 import { ChocolateBar } from './chocolate-bar';
 import { Fraction } from '../game-state';
-import { nextStep } from '../utils/helper';
-import { useGameState } from '../state-utils';
 
 interface ChocolateRowProps {
   multiplier: number;
   originalFraction: Fraction;
+  onCorrect: () => void;
+  sendAdminMessage: (role: string, content: string) => void;
 }
 
-export const ChocolateRow = ({ multiplier, originalFraction }: ChocolateRowProps) => {
-  const { setGameStateRef } = useGameState();
-  
-  const [denominatorWasFocused, setDenominatorWasFocused] = useState(false);
-  const [numeratorWasFocused, setNumeratorWasFocused] = useState(false);
+export const ChocolateRow = ({ multiplier, originalFraction, onCorrect, sendAdminMessage }: ChocolateRowProps) => {
   const [multiplierSelected, setMultiplierSelected] = useState(false);
-  
+  const [incorrect, setIncorrect] = useState(false);
   const multipliedPieces = parseInt(originalFraction.denominator) * multiplier;
   const multipliedFilled = parseInt(originalFraction.numerator) * multiplier;
   
@@ -34,39 +29,31 @@ export const ChocolateRow = ({ multiplier, originalFraction }: ChocolateRowProps
 
   const handleDenominatorChange = (value: string) => {
     setInputFraction(prev => ({ ...prev, denominator: value }));
-    if (value !== '' && inputFraction.numerator === '') {
-      setNumeratorWasFocused(false);
-    }
   };
 
   const handleNumeratorChange = (value: string) => {
     setInputFraction(prev => ({ ...prev, numerator: value }));
-    if (value !== '' && inputFraction.denominator === '') {
-      setDenominatorWasFocused(false);
-    }
   };
+
+  const handleIncorrect = () => {
+    setIncorrect(true);
+    sendAdminMessage('admin', "Diagnose socratically and ask the user to check the numerator or denominator and try using the knife");
+  }
 
   const updatedFraction = {
     ...inputFraction,
-    focusDenominator: multiplierSelected && !denominatorWasFocused && inputFraction.numerator !== '',
-    focusNumerator: multiplierSelected && !numeratorWasFocused && inputFraction.denominator !== '',
     onDenominatorChange: handleDenominatorChange,
-    onNumeratorChange: handleNumeratorChange
+    onNumeratorChange: handleNumeratorChange,
+    correctValues: correctFraction,
+    onIncorrect: handleIncorrect
   };
-
-  useEffect(() => {
-    if (!multiplierSelected) {
-      setDenominatorWasFocused(false);
-      setNumeratorWasFocused(false);
-    }
-  }, [multiplierSelected]);
 
   useEffect(() => {
     if (
       inputFraction.numerator === correctFraction.numerator && 
       inputFraction.denominator === correctFraction.denominator
     ) {
-      nextStep('first', setGameStateRef);
+      onCorrect();
     }
   }, [inputFraction]);
 
@@ -77,12 +64,12 @@ export const ChocolateRow = ({ multiplier, originalFraction }: ChocolateRowProps
       <Button
         onClick={handleMultiplierClick}
         className={`rounded-lg w-16 h-16 flex items-center justify-center ${
-          multiplierSelected ? 'bg-[#2EA500]' : 'bg-gray-500'
-        } hover:${multiplierSelected ? 'bg-[#2EA500]/90' : 'bg-gray-700'}`}
+          multiplierSelected ? 'bg-[#2EA500]' : 'bg-[#DDDDDD]'
+        } hover:${multiplierSelected ? 'bg-[#2EA500]/90' : 'bg-[#DDDDDD]/90'}`}
       >
         <div className="flex items-center gap-1">
-          <Knife className="w-6 h-6" />
-          <span className="text-xl font-bold">{multiplier}</span>
+          <span className="text-2xl">🔪</span>
+          <span className="text-xl text-black mb-4">{multiplier}</span>
         </div>
       </Button>
       
