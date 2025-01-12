@@ -8,11 +8,11 @@ const Bar = ({numerator, denominator, handlePieceClick}: {numerator: number, den
       {[...Array(denominator)].map((_, index) => (
         <div
           key={index}
-          className={`w-full h-24 relative cursor-pointer border-[3px] border-[#906547] ${index < selectedPieces && !isPieceDropped(index)
+          className={`w-full h-24 relative cursor-pointer border-[3px] border-[#906547] ${index < selectedPieces
             ? 'bg-gradient-to-br from-[#5B361B] to-[#432611]'
             : 'bg-gradient-to-br from-[#906547] to-[#785339]'
             }`}
-          onClick={() => handlePieceClick(index)}
+          onClick={() => handlePieceClick(index+1 )}
         >
           {/* 3D effect borders */}
           <div className="absolute inset-0 border-l-4 border-t-4 border-[#FFFFFF20]"></div>
