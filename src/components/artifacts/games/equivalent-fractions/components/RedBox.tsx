@@ -6,7 +6,7 @@ interface RedBoxProps {
 
 const RedBox: React.FC<RedBoxProps> = ({ children }) => {
   return (
-    <div className="bg-white border-8 text-red-500 border-red-500 font-bold p-4 m-2">
+    <div className="bg-white h-full border-8 text-red-500 border-red-500 font-bold p-4 m-2">
       {children}
     </div>
   );

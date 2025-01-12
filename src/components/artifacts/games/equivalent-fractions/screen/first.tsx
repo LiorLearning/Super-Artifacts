@@ -1,7 +1,7 @@
 import { BaseProps } from "../utils/types";
 import { useGameState } from "../state-utils";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "../components/header";
 import Intro from "../components/intro";
 import Bar from "../components/bar";
@@ -36,6 +36,8 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
   const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;  
   const { step, selectedKnife, selectedPieces } = gameStateRef.current.screen1
 
+  const start = useRef(false);
+
   const handlePieceClick = (index: number) => {
     setGameStateRef({
       ...gameStateRef.current,
@@ -46,7 +48,22 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
     });
   };
 
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage('agent', "Let's solve this visually! Imagine you have 2 out of 3 big chunks, but we need 9 smaller sized bites. We need to use a suitable knife to divide the chocolate into 9 pieces!");
+      start.current = true;
+    }
+  }, []);
 
+  useEffect(() => {
+    if (selectedKnife) {
+      if (selectedKnife * denominator1 === denominator2) {
+        sendAdminMessage('agent', `Boom—now we've got ${denominator2} pieces! Let's figure out how many you get from these ${denominator2}. Let's go!`);
+      } else {
+        sendAdminMessage('agent', `Hmm, right now, you've used the knife labeled ${selectedKnife}, and that gave us ${selectedKnife * denominator1} pieces, but we need 9 pieces. Can you figure out which knife we should use?`);
+      }
+    }
+  }, [selectedKnife]);
 
   return (
       <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
@@ -115,7 +132,10 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const [step2subpart, setStep2subpart] = useState(0);
   const [answer, setAnswer] = useState('');
 
+  const start = useRef(false);
+
   const handlePieceClick = (index: number) => {
+    console.log(index)
     setGameStateRef({
       ...gameStateRef.current,
       screen1: {
@@ -124,6 +144,13 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
       }
     });
   };
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage('agent', "Can you pick the same amount of chocolate as before? No sneaky extra bites! ");
+      start.current = true;
+    }
+  }, []);
 
   return (
       <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
@@ -149,19 +176,20 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             )}
 
             <div className="flex justify-center relative">
-              <Bar numerator={0} denominator={denominator2} handlePieceClick={handlePieceClick} />
+              <Bar numerator={selectedPieces} denominator={denominator2} handlePieceClick={handlePieceClick} />
               {correct && (
                 <div className="flex flex-col gap-2 ml-2 absolute top-0 left-full">
                   <Input 
                     type="text"
-                  value={numerator.toString() === '0' ? '' : numerator.toString()}
-                  placeholder="?"
-                  onChange={(e) => setNumerator(parseInt(e.target.value))}
-                  className={`
-                    p-2 w-12 border-2 font-extrabold text-center
-                    ${numerator == numerator1 * denominator2 / denominator1 ? 'border-green-500 text-green-500' : 'border-black'}
-                  `}
-                />
+                    value={numerator.toString() === '0' ? '' : numerator.toString()}
+                    placeholder="?"
+                    onChange={(e) => setNumerator(parseInt(e.target.value))}
+                    className={`
+                      p-2 w-12 border-2 font-extrabold text-center
+                      ${numerator == numerator1 * denominator2 / denominator1 ? 'border-green-500 text-green-500' : 'border-black'}
+                    `}
+                  />
+                
                 
                 <span className="border-b-2 border-black w-12" />
                 <Input 

@@ -154,7 +154,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
           </div>
 
           {substep === 0 ? (
-            <p className="text-2xl text-center w-full mb-4">
+            <p className="text-2xl text-center w-full mb-4 mt-2">
               <span className="font-bold bg-white border-2 mr-2 border-orange-500 text-orange-500 px-2 py-1">
                 {selectedKnife ? selectedKnife*denominator1 : denominator1}
               </span>

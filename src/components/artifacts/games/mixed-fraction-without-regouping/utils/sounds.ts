@@ -9,4 +9,5 @@ export const sounds = {
   correct: () => playSound('correct'),
   wrong: () => playSound('wrong'),
   button: () => playSound('button'),
+  celebration: () => playSound('celebration'),
 }; 
