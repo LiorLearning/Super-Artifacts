@@ -8,30 +8,47 @@ import Bar from "../components/bar";
 import { ArrowBigDown, ArrowDown } from "lucide-react";
 import Fraction from "../components/Fraction";
 import Proceed from "../components/proceed";
+import { Input } from "@/components/custom_ui/input";
+import KnifeSelector from "../components/knifeselector";
 
 
-export default function FirstScreen({ sendAdminMessage }: BaseProps) {
+export default function Level1({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const {numerator1, denominator1, denominator2} = gameStateRef.current.state1.question;  
-  const { step, selectedKnife, selectedPieces } = gameStateRef.current;
-
-  const handlePieceClick = (index: number) => {
-    setGameStateRef({
-      ...gameStateRef.current,
-      selectedPieces: index
-    });
-  };
+  const { step } = gameStateRef.current.screen1;
+  const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;
 
   return (
     <div className="w-full space-y-8 mb-12">
-      <Header 
-        numerator1={numerator1}
-        denominator1={denominator1}
+    <Header 
+      numerator1={numerator1}
+      denominator1={denominator1}
         denominator2={denominator2}
         step={step}
         level={1}
       />
+      {step.id === 1 ? <Step1 sendAdminMessage={sendAdminMessage} /> : <Step2 sendAdminMessage={sendAdminMessage} />}
+    </div>
+  )
+}
 
+const Step1 = ({ sendAdminMessage }: BaseProps) => {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;  
+  const { step, selectedKnife, selectedPieces } = gameStateRef.current.screen1
+
+  const handlePieceClick = (index: number) => {
+    setGameStateRef({
+      ...gameStateRef.current,
+      screen1: {
+        ...gameStateRef.current.screen1,
+        selectedPieces: index
+      }
+    });
+  };
+
+
+
+  return (
       <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
         <div className="flex flex-col gap-4 w-full">
           <p className="text-xl">Let's split this chocolate into {denominator2} pieces.</p>
@@ -49,21 +66,13 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
             <div className="flex justify-center relative">
               <Bar numerator={0} denominator={selectedKnife ? selectedKnife * denominator1 : denominator1} handlePieceClick={handlePieceClick} />
               <div className="flex flex-col gap-2 ml-2 absolute top-0 left-full">
-                {[2,3,4,5].map((pieces) => (
-                  <button
-                    key={pieces}
-                    onClick={() => setGameStateRef({
-                      ...gameStateRef.current,
-                      selectedKnife: pieces
-                    })}
-                    className={`flex items-center gap-2 px-4 py-2 rounded ${
-                      selectedKnife === pieces ? 'bg-red-500' : 'bg-red-200'
-                    }`}
-                  >
-                    <span className="text-lg">{pieces}</span>
-                    <div className="w-8 h-1 bg-gray-800 transform -rotate-45" />
-                  </button>
-                ))}
+                <KnifeSelector options={[2,3,4,5]} selectedKnife={selectedKnife} setSelectedKnife={(value: number) => setGameStateRef({
+                  ...gameStateRef.current,
+                  screen1: {
+                    ...gameStateRef.current.screen1,
+                    selectedKnife: value
+                  }
+                })} />
               </div>
           </div>
           <span className="text-xl flex items-center justify-center font-bold">
@@ -81,14 +90,136 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
             <Proceed onComplete={() => {
               setGameStateRef({
                 ...gameStateRef.current,
-                step: {
-                  id: 2,
-                  text: 'Create equivalent fractions'
+                screen1: {
+                  ...gameStateRef.current.screen1,
+                  step: {
+                    id: 2,
+                    text: 'Create equivalent fractions'
+                  }
                 }
               })
             }} />
           )}
       </div>
-    </div>
+  );
+}
+
+
+const Step2 = ({ sendAdminMessage }: BaseProps) => {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;  
+  const { step, selectedKnife, selectedPieces } = gameStateRef.current.screen1;
+  const [correct, setCorrect] = useState(false);
+  const [numerator, setNumerator] = useState(0);
+  const [denominator, setDenominator] = useState(0);
+  const [step2subpart, setStep2subpart] = useState(0);
+  const [answer, setAnswer] = useState('');
+
+  const handlePieceClick = (index: number) => {
+    setGameStateRef({
+      ...gameStateRef.current,
+      screen1: {
+        ...gameStateRef.current.screen1,
+        selectedPieces: index
+      }
+    });
+  };
+
+  return (
+      <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
+        <div className="flex flex-col gap-4 w-full">
+
+          {!step2subpart && <p className="text-xl">Let's split this chocolate into {denominator2} pieces.</p>}
+
+            <div className="flex justify-center relative">
+              <Bar numerator={numerator1} denominator={denominator1} handlePieceClick={() => {}} />
+              <Fraction numerator={numerator1} denominator={denominator1} className="text-xl font-bold ml-4 absolute top-0 left-full" />
+            </div>
+
+            {!step2subpart && (
+              <div className="flex justify-center">
+                <ArrowDown className="w-16 h-16 text-black fill-black"/>
+              </div>
+            )}
+
+            {!step2subpart && (
+              <p className="text-xl">
+                Select pieces to get the same amount of chocolate
+              </p>
+            )}
+
+            <div className="flex justify-center relative">
+              <Bar numerator={0} denominator={denominator2} handlePieceClick={handlePieceClick} />
+              {correct && (
+                <div className="flex flex-col gap-2 ml-2 absolute top-0 left-full">
+                  <Input 
+                    type="text"
+                  value={numerator.toString() === '0' ? '' : numerator.toString()}
+                  placeholder="?"
+                  onChange={(e) => setNumerator(parseInt(e.target.value))}
+                  className={`
+                    p-2 w-12 border-2 font-extrabold text-center
+                    ${numerator == numerator1 * denominator2 / denominator1 ? 'border-green-500 text-green-500' : 'border-black'}
+                  `}
+                />
+                
+                <span className="border-b-2 border-black w-12" />
+                <Input 
+                  type="text"
+                  value={denominator.toString() === '0' ? '' : denominator.toString()}
+                  placeholder="?"
+                  onChange={(e) => setDenominator(parseInt(e.target.value))}
+                    className={`
+                      p-2 w-12 border-2 font-extrabold text-center
+                      ${denominator == denominator2 ? 'border-green-500 text-green-500' : 'border-black'}
+                    `}
+                  />
+                </div>
+              )}
+           </div>
+        </div>
+        {!step2subpart ? ( 
+          numerator === numerator1 * denominator2 / denominator1 && denominator === denominator2 ? (
+            <Proceed
+              onComplete={() => {setStep2subpart(1)}}
+            />
+          ) : (
+            <div 
+              className={`text-xl cursor-pointer bg-red-500 text-white shadow-[-3px_3px_0px_#000000] px-8 py-2 font-bold ${correct && 'bg-gray-500'}`}
+              onClick={() => { 
+                if (!correct && selectedPieces === 6) { setCorrect(true) } else { setCorrect(false) };
+                console.log(correct)   
+              }}
+            >
+              Check
+            </div>
+          )
+        ) : (
+          <div className="flex justify-center items-center max-w-lg mx-auto text-3xl font-bold">
+            <Fraction numerator={numerator1} denominator={denominator1} className="font-extrabold" />
+            <span className="mx-4">=</span>
+            <div className="flex space-y-1 items-center justify-center flex-col">
+              <Input
+                type="text"
+                value={answer ? answer : ''}
+                placeholder="?"
+                onChange={(e) => setAnswer(e.target.value)}
+                className={`p-2 w-12 border-2 font-extrabold text-center border-black`}
+              />
+              <span className="border-b-2 border-black w-12" />
+              <span className="text-3xl">{denominator2}</span>
+            </div>
+          </div>
+        )}
+
+        {step2subpart && parseInt(answer) === numerator1 * denominator2 / denominator1 && (
+          <Proceed
+            onComplete={() => {setGameStateRef({
+              ...gameStateRef.current,
+              level: 2
+            })}}
+          />
+        )}
+      </div>
   );
 }
