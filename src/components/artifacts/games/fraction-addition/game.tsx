@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { ChocolateBarScreen } from './chocolate-bar-screen'
 import { DenominatorScreen } from './denominator-screen'
 import { useGameState } from './state-utils'
@@ -11,16 +11,16 @@ interface GameProps {
 
 export default function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState()
-  const started = gameStateRef.current.started
+  const startedRef = useRef(false);
 
   const handleProceed = () => {
     setGameStateRef({ currentScreen: 'denominator' })
   }
 
   useEffect(() => {
-    if (started === false) {
+    if (startedRef.current === false) {
       sendAdminMessage('agent', "Let's select pieces to give you 3/8th of the chocolate bar")
-      setGameStateRef({ started: true })
+      startedRef.current = true
     }
   }, [])
 

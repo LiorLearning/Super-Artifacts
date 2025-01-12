@@ -22,24 +22,25 @@ export default function Level3({ sendAdminMessage }: BaseProps) {
         ...prev,
         screen3: {
           ...prev.screen3,
-          step: 2
+          step: prev.screen3.step + 1
         }
-      }))
+      }));
     }
-  }, [numerator])
+  }, [numerator]);
 
   useEffect(() => {
-    console.log(multiplier1_numerator, multiplier1_denominator, denominator2/denominator1)
-    if (multiplier1_numerator && multiplier1_denominator && multiplier1_numerator === denominator2/denominator1 && multiplier1_denominator === multiplier2_numerator) {
+    if (multiplier1_numerator && multiplier1_denominator && 
+        multiplier1_numerator === denominator2/denominator1 && 
+        multiplier1_denominator === multiplier2_numerator) {
       setGameStateRef(prev => ({
         ...prev,
         screen3: {
           ...prev.screen3,
-          step: 3
+          step: prev.screen3.step + 1
         }
-      }))
+      }));
     }
-  }, [multiplier1_numerator, multiplier1_denominator])
+  }, [multiplier1_numerator, multiplier1_denominator]);
 
   return (
     <div className="w-full space-y-8 mb-12">
@@ -108,7 +109,7 @@ export default function Level3({ sendAdminMessage }: BaseProps) {
               className=""
             />
             <div>
-              <img src='/img/curvearrow.svg' className="h-12" />
+              <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-12" />
             </div>
           </div>
           )}
@@ -143,7 +144,7 @@ export default function Level3({ sendAdminMessage }: BaseProps) {
           {step ==2 && (
             <div className="flex flex-col w-full">
               <div className="flex justify-center items-center">
-                <img src='/img/curvearrow.svg' className="h-12 -scale-x-100 rotate-180" />
+                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-12 -scale-x-100 rotate-180" />
               </div>    
               <Input 
                 type="number"

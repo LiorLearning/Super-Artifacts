@@ -72,24 +72,18 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
 const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction1, fraction2 } = gameStateRef.current.questions.question1;
-  const complete = gameStateRef.current.state1.step2Substep
-  const {question1description, question2description} = gameStateRef.current.state1;
-
-  const setComplete = (value: number) => {
-    console.log('setComplete', value)
-    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step2Substep: value } }));
-  }
+  const {question1description, question2description, step2Substep} = gameStateRef.current.state1;
 
   useEffect(() => {
-    console.log('completedd', complete)
-  }, [complete])
-
-  return (
-    <div className="flex p-8 gap-8 flex-col w-full">
+    console.log(gameStateRef.current.state1.step2Substep)
+  }, [gameStateRef.current.state1.step2Substep])
+  return (    
+  
+  <div className="flex p-8 gap-8 flex-col w-full">
 
 
     {/* explaining inital pizzas */}
-    { complete >= 0 &&
+      {step2Substep >= 0 &&
         <QuestionDescription 
           showFirstRow={question1description.showFirstRow}
           setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, showFirstRow: value } } }))}
@@ -112,16 +106,12 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           color='pink' 
 
           onComplete={() => { 
-            console.log('complete2')
-            sendAdminMessage('agent', "Awesome! The pepperoni pizza order is complete, let's revise the mushroom pizza order too");
-            setTimeout(() => {
-              console.log('complete3')
-              setComplete(1)
-            }, 1000)
-          }} 
+              sendAdminMessage('agent', "Awesome! The pepperoni pizza order is complete, let's revise the mushroom pizza order too");
+              setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step2Substep: 1 } }))
+            }} 
         />
     }
-    { complete >= 1 &&
+    { step2Substep >= 1 &&
         <QuestionDescription 
           showFirstRow={question2description.showFirstRow}
           setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showFirstRow: value } } }))}
@@ -144,15 +134,14 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           color='yellow' 
 
           onComplete={() => {
-            console.log('complete3')
             sendAdminMessage('agent', "That is done! You have revised the order, now click on next to move to the most important step");
             setTimeout(() => {
-              setComplete(2)
+              setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step2Substep: 2 } }))
             }, 1000)
           }} 
         />
     }
-    { complete >= 2 && 
+    { step2Substep >= 2 && 
       <div className='flex flex-col gap-4 max-w-3xl mx-auto'>
           <p className='text-xl font-bold'>
             Perfect, let's rearrange the wholes and slices to add them together

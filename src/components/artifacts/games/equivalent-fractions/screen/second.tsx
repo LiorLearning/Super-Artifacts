@@ -32,25 +32,33 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if(selectedKnife && selectedKnife*denominator1 === denominator2){
-      setGameStateRef({
-        ...gameStateRef.current,
+      setGameStateRef(prev => ({
+        ...prev,
         screen2: {
-          ...gameStateRef.current.screen2,
-          substep: 1  
+          ...prev.screen2,
+          step: {
+            ...prev.screen2.step,
+            id: prev.screen2.step.id + 1
+          },
+          substep: 1
         }
-      });
+      }));
     }
   }, [selectedKnife]);
 
   useEffect(() => {
     if(selectedHoney && denominator1/selectedHoney === denominator3){
-      setGameStateRef({
-        ...gameStateRef.current,
+      setGameStateRef(prev => ({
+        ...prev,
         screen2: {
-          ...gameStateRef.current.screen2,
-          substep: 3
+          ...prev.screen2,
+          step: {
+            ...prev.screen2.step,
+            id: prev.screen2.step.id + 1
+          },
+          substep: 2
         }
-      });
+      }));
     }
   }, [selectedHoney]);
 
