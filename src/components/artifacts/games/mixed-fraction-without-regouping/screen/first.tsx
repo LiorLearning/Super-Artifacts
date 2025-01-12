@@ -91,7 +91,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
   return (
     <div className="flex p-8 gap-8 flex-col w-full">
     {/* explaining inital pizzas */}
-    { complete >= 0 &&
+      {step2Substep >= 0 &&
         <QuestionDescription 
           showFirstRow={question1description.showFirstRow}
           setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, showFirstRow: value } } }))}
@@ -119,7 +119,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           }} 
         />
     }
-    { complete >= 1 &&
+    { step2Substep >= 1 &&
         <QuestionDescription 
           showFirstRow={question2description.showFirstRow}
           setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showFirstRow: value } } }))}
@@ -144,7 +144,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           onComplete={() => setComplete(2)} 
         />
     }
-    { complete >= 2 && 
+    { step2Substep >= 2 && 
       <div className='flex flex-col gap-4 max-w-3xl mx-auto'>
           <p className='text-xl font-bold'>
             Perfect, let's rearrange the wholes and slices to add them together
