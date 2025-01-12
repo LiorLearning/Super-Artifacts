@@ -3,8 +3,3 @@ export interface BaseProps {
 }
 
   
-export interface MixedFractionProps {
-  whole: number;
-  numerator: number;
-  denominator: number;
-}

@@ -1,65 +1,50 @@
 import React from 'react';
-import MixedFraction from './mixedFraction';
-import { MixedFractionProps } from '../utils/types';
+import MixedFraction from './Fraction';
+import { colors } from '../colors';
+import { cn } from '@/lib/utils';
+import Fraction from './Fraction';
+import RedBox from './RedBox';
 
 interface HeaderProps {
-    fraction1: MixedFractionProps;
-    fraction2: MixedFractionProps;
-    version: number;
-    type: 'addition' | 'subtraction';
+    numerator1: number;
+    denominator1: number;
+    denominator2: number; 
+    step: {
+      id: number,
+      text: string
+    },
+    level: number;
 }
 
-const Header: React.FC<HeaderProps> = (({ fraction1, fraction2, type, version }) => {
+const Header: React.FC<HeaderProps> = (({ numerator1, denominator1, denominator2, step, level }) => {
   return (
-    <div className='w-full sticky top-0 bg-white flex flex-col'>
-      <div className="w-full bg-[#d3ea00] flex justify-center items-center p-2 border-b-4 border-blue-600 gap-6">
-        <div className='bg-white px-2 pr-4 '>
-          <MixedFraction 
-          whole={fraction1.whole} 
-          numerator={fraction1.numerator} 
-          denominator={fraction1.denominator} 
-          className='text-3xl font-extrabold'
-        />
-      </div>
-      <span className="text-3xl font-bold">
-        {type === 'addition' ? '+' : '-'}
-      </span>
-      <div className='bg-white px-2 pr-4 '>
-        <MixedFraction 
-          whole={fraction2.whole} 
-          numerator={fraction2.numerator} 
-          denominator={fraction2.denominator} 
-          className='text-3xl font-extrabold'
-          />
-        </div>
-      </div>
-      {version === 2 &&
-        <div className="flex items-center justify-center gap-4 p-4 border-b-2 border-gray-400">
-          <div className="flex items-center gap-2 border-2 border-black rounded-lg">
-              <div className="flex items-center bg-pink-200 p-3 rounded-l-lg">
-                <MixedFraction
-                  whole={fraction1.whole}
-                  numerator={fraction1.numerator}
-                  denominator={fraction1.denominator}
-                  className='font-bold'
-                />
-              </div>
-              <span className="ml-2 mr-4 font-bold">Pepperoni Pizza</span>
-          </div>
-          <span className="text-2xl font-bold">+</span>
-          <div className="flex items-center gap-2 border-2 border-black rounded-lg">
-            <div className="flex items-center bg-yellow-200 p-3 rounded-l-lg">
-              <MixedFraction
-              whole={fraction2.whole}
-              numerator={fraction2.numerator}
-              denominator={fraction2.denominator}
-              className='font-bold'
-              />
+    <div className='w-full space-y-16 flex flex-col'>
+      <div className={cn('flex justify-center items-center gap-4 bg-[#F9F871] p-4 shadow-[0_5px_1px_rgba(0,0,0,1)]')}>
+
+        <span className='w-full'/>
+        <p className='flex w-full items-center gap-2 text-2xl font-bold'>
+          Equivalent Fractions
+          {step && (
+            <div className='flex text-2xl items-center gap-2 font-bold'>
+              : <Fraction numerator={numerator1} denominator={denominator1} />
+              = <Fraction numerator={"?"} denominator={denominator2} />
             </div>
-            <span className="ml-2 mr-4 font-bold">Mushroom Pizza</span>
-          </div>
+          )}
+        </p>
+        <div className='w-full flex justify-end'>
+          {level && <RedBox>Level {level}</RedBox>}
         </div>
-      }
+
+      </div>
+
+      <div className='flex justify-center items-center gap-4'>
+        <div className="flex items-center gap-4">
+          <RedBox>Step {step.id}</RedBox>
+          <p className='text-xl bg-red-500 font-bold text-white px-4 py-6'>
+            {step.text}
+          </p>
+        </div>
+      </div>
     </div>
   );
 });
