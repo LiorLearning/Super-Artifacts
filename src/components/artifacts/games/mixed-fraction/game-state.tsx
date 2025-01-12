@@ -12,6 +12,7 @@ export interface Fraction {
 export interface GameState1 {
     step: number;
     fraction: Fraction;
+    denomOptions: number[];
     piecesAtYOne: number;
 }
 
@@ -43,6 +44,7 @@ export const initialGameState: GameState = {
             denominator: 4,
         },
         piecesAtYOne: 0,
+        denomOptions: [6, 3, 4],
     },
     state2: {
         step: 0,

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useGameState } from "../../state-utils";
 import { Input } from "@/components/custom_ui/input";
 import { Button } from "@/components/custom_ui/button";
+import { ChooseHolder } from "../../components/choose-holder";
 
 
 // Footer components
@@ -53,40 +54,40 @@ export const VerifyPiecesAndDivisions = () => {
   )
 }
 
-export const ChooseHolder = () => {
-  const { gameStateRef, setGameStateRef } = useGameState();
-  const { denomOptions, fraction } = gameStateRef.current.state2;
+// export const ChooseHolder = () => {
+//   const { gameStateRef, setGameStateRef } = useGameState();
+//   const { denomOptions, fraction } = gameStateRef.current.state2;
 
 
-  const handleDenomOptionClick = (option: number) => {
-    if (option === fraction.denominator) {
-      setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
-    } else {
-      // TODO: Show error message
-    }
-  };
+//   const handleDenomOptionClick = (option: number) => {
+//     if (option === fraction.denominator) {
+//       setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
+//     } else {
+//       // TODO: Show error message
+//     }
+//   };
 
 
-  return (
-    <div className="flex flex-col items-center justify-center mt-4 space-y-2">
-      <div className="flex justify-center space-x-4">
-        {denomOptions.map((option, index) => (
-          <Button 
-            key={index} 
-            className="bg-blue-500 text-white px-4 py-2 text-xl rounded-lg hover:bg-blue-600 transition-colors duration-300 shadow-md"
-            onClick={() => handleDenomOptionClick(option)}
-          >
-            {option}
-          </Button>
-        ))}
-      </div>
-      <div className="text-center">
-        <span className="text-3xl font-bold block mb-2">Now choose the holder</span>
-        <span className="text-2xl text-gray-600">Hint: Number of Divisions should be same as denominator</span>
-      </div>
-    </div>
-  )
-}
+//   return (
+//     <div className="flex flex-col items-center justify-center mt-4 space-y-2">
+//       <div className="flex justify-center space-x-4">
+//         {denomOptions.map((option, index) => (
+//           <Button 
+//             key={index} 
+//             className="bg-blue-500 text-white px-4 py-2 text-xl rounded-lg hover:bg-blue-600 transition-colors duration-300 shadow-md"
+//             onClick={() => handleDenomOptionClick(option)}
+//           >
+//             {option}
+//           </Button>
+//         ))}
+//       </div>
+//       <div className="text-center">
+//         <span className="text-3xl font-bold block mb-2">Now choose the holder</span>
+//         <span className="text-2xl text-gray-600">Hint: Number of Divisions should be same as denominator</span>
+//       </div>
+//     </div>
+//   )
+// }
 
 export const CreateBlocks = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -99,7 +100,7 @@ export const CreateBlocks = () => {
   const verifyMixedFraction = () => {
     const answerNumerator = parseInt(answer.count) * parseInt(answer.numerator);
     const answerDenominator = parseInt(answer.denominator);
-    if (answerNumerator === numerator && answerDenominator === denominator && answerNumerator < answerDenominator) {
+    if (answerNumerator === numerator && answerDenominator === denominator) {
       setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
     }
   };
