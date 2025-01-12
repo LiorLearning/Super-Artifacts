@@ -31,51 +31,56 @@ export const FinalAnswer = ({ numerator, denominator, nextStep }: FinalAnswerPro
   const verifyMixedFraction = () => {
     const expectedNumerator = parseInt(mixedFraction.integer) * parseInt(mixedFraction.denominator) + parseInt(mixedFraction.numerator);
     const expectedDenominator = parseInt(mixedFraction.denominator);
-    if (expectedNumerator === numerator && expectedDenominator === denominator && expectedNumerator < expectedDenominator) {
+    if (
+      expectedNumerator === numerator && 
+      expectedDenominator === denominator && 
+      parseInt(mixedFraction.numerator) < parseInt(mixedFraction.denominator)
+    ) {
       nextStep();
     }
   };
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex justify-center mt-4">
-        <div className="flex items-center justify-center h-full">
-          <div className="text-3xl font-bold text-center my-8">
-            <div className="border-4 border-purple-500 px-1 py-1 rounded-lg">
-              <Input 
-                type="text" 
-                value={mixedFraction.integer} 
-                placeholder="?"
-                onChange={handleIntegerChange} 
-                className="w-12 text-center text-purple-500"
-              />
-            </div>
-          </div>
+      <div className="flex justify-center gap-4 mt-4">
+        <div className="border-4 border-purple-500 p-4 rounded-lg flex flex-col items-center justify-center shadow-[-3px_3px_0px_black]">
+          <Input 
+            type="text" 
+            value={mixedFraction.integer} 
+            placeholder="?"
+            onChange={handleIntegerChange} 
+            className="w-12 h-12 text-center text-purple-500 text-3xl mb-2 border-4 shadow-[-3px_3px_0px_black] border-purple-500 rounded-md"
+          />
+          <div className="text-xl font-bold">Wholes</div>
         </div>
-        <div className="text-3xl font-bold text-center mx-2">
-          <div className="border-4 border-green-500 px-1 py-1 rounded-lg">
+
+        <div className="border-4 border-green-500 p-4 rounded-lg shadow-[-3px_3px_0px_black]">
+          <div className="flex flex-col items-center">
             <Input 
               type="text" 
               value={mixedFraction.numerator} 
               placeholder="?"
               onChange={handleNumeratorChange} 
-              className="w-12 text-center text-green-500"
+              className="w-12 h-12 text-center text-green-500 text-3xl border-4 shadow-[-3px_3px_0px_black] border-green-500 rounded-md"
             />
-          </div>
-          <div className="w-full h-px bg-black my-2" />
-          <div className="border-4 border-gray-600 px-1 py-1 rounded-lg">
+            <div className="w-full h-1 bg-black my-2" />
             <Input 
               type="text" 
               value={mixedFraction.denominator} 
               placeholder="?"
               onChange={handleDenominatorChange} 
-              className="w-12 text-center text-gray-600"
+              className="w-12 h-12 text-center text-green-500 text-3xl border-4 shadow-[-3px_3px_0px_black] border-green-500 rounded-md"
             />
+            <div className="text-xl font-bold">Fraction</div>
           </div>
         </div>
       </div>
+
       <div className="flex justify-center mt-8">
-        <Button className="bg-blue-500 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={verifyMixedFraction}>
+        <Button 
+          className="bg-blue-500 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" 
+          onClick={verifyMixedFraction}
+        >
           Verify
         </Button>
       </div>

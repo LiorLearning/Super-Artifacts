@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { prevStep, nextStep } from './utils/helper';
 import { GameScreen } from './game-state';
+import { useEffect } from 'react';
+import { useRef } from 'react';
+import { GameProps } from './utils/types';
 
 
 const DevHelper = () => {
@@ -41,15 +44,27 @@ const DevHelper = () => {
   );
 };
 
-export default function Game() {
+export default function Game({sendAdminMessage}: GameProps) {
   const { gameStateRef } = useGameState();
   const { screen } = gameStateRef.current;
+
+  const { step: step1 } = gameStateRef.current.state1;
+  const { step: step2 } = gameStateRef.current.state2;
+  const { step: step3 } = gameStateRef.current.state3;
+  
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [step1, step2, step3]);
 
   return (
     <div className="mx-auto game font-jersey">
       <DevHelper />
-      {screen === 'first' && <FirstScreen />}
-      {screen === 'second' && <SecondScreen />}
+      {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'third' && <ThirdScreen />}
       
       <style jsx global>{`
@@ -58,6 +73,7 @@ export default function Game() {
             font-family: 'Jersey 25', cursive;
           }
         `}</style>
+      <div ref={bottomRef} style={{ height: 0 }} />
     </div>
   )
 }

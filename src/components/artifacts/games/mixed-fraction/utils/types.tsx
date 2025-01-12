@@ -1,3 +1,3 @@
-export interface BaseProps {
-    sendAdminMessage: (role: string, content: string) => void;
+export interface GameProps {
+  sendAdminMessage: (role: string, content: string) => void;
 }

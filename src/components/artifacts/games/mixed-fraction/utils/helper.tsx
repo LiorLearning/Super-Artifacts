@@ -26,3 +26,26 @@ export const prevStep = (
     setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: Math.max(prev.state3.step - 1, 0) } }));
   }
 }
+
+
+
+export const goToStep = (
+  screen: GameScreen, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
+  step: number
+) => {
+  if (screen === 'first') {
+    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: step } }));
+  } else if (screen === 'second') {
+    setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: step } }));
+  } else if (screen === 'third') {
+    setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: step } }));
+  }
+}
+
+export const goToScreen = (
+  screen: GameScreen, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
+) => {
+  setGameStateRef(prev => ({ ...prev, screen }));
+}

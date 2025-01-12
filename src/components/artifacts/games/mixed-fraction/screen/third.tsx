@@ -1,5 +1,5 @@
 import LegoGame from '../lego-game/third';
-import Header from '../components/header';
+import Header from '../components/header2';
 import { useGameState } from '../state-utils';
 import { CorrectAnswer, FinalAnswer, StepModule } from './components/first';
 import { Input } from '@/components/custom_ui/input';
