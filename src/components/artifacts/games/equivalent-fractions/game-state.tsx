@@ -36,7 +36,7 @@ export interface Screen2 {
 }
 
 export interface Screen3 {
-  step: 0
+  step: number,
   fraction1: {
     numerator: number
     denominator: number
@@ -55,6 +55,28 @@ export interface Screen3 {
     denominator2: number
     denominator3: number
   }
+
+  answers: {
+    numerator: number
+    multiplier1_numerator: number
+    multiplier1_denominator: number
+    multiplier2_numerator: number
+    multiplier2_denominator: number
+  }
+}
+
+export interface Screen4 {
+  step: number,
+  question1:{
+    numerator1: number
+    denominator1: number
+    denominator2: number
+  },
+  question2:{
+    numerator1: number
+    numerator2: number
+    denominator2: number
+  }
 }
 
 export interface GameState {
@@ -62,10 +84,11 @@ export interface GameState {
   screen1: Screen1,
   screen2: Screen2,
   screen3: Screen3,
+  screen4: Screen4,
 }
 
 export const initialGameState: GameState = {
-  level: 3,
+  level: 0,
   screen1: {
     step: {
       id: 1,
@@ -97,7 +120,7 @@ export const initialGameState: GameState = {
     }
   },
   screen3: {
-    step: 0,
+    step: 1,
     fraction1: {
       numerator: 4,
       denominator: 6
@@ -115,6 +138,26 @@ export const initialGameState: GameState = {
       denominator1: 6,
       denominator2: 12,
       denominator3: 18
+    },
+    answers: {
+      numerator: 0,
+      multiplier1_numerator: 0,
+      multiplier1_denominator: 0,
+      multiplier2_numerator: 0,
+      multiplier2_denominator: 0
+    }
+  },
+  screen4: {
+    step: 1,
+    question1: {
+      numerator1: 2,
+      denominator1: 3,
+      denominator2: 15
+    },
+    question2: {
+      numerator1: 2,
+      numerator2: 8,
+      denominator2: 12
     }
   }
 };
