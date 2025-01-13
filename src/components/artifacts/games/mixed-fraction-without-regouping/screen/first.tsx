@@ -77,7 +77,6 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const {question1description, question2description} = gameStateRef.current.state1;
 
   const setComplete = (value: number) => {
-    console.log('setComplete', value)
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step2Substep: value } }));
   }
 
@@ -91,9 +90,6 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
 
   return (
     <div className="flex p-8 gap-8 flex-col w-full">
-      {complete}
-
-
     {/* explaining inital pizzas */}
     { complete >= 0 &&
         <QuestionDescription 
