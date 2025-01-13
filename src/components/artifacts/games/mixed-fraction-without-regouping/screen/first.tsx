@@ -74,7 +74,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction1, fraction2 } = gameStateRef.current.questions.question1;
   const complete = gameStateRef.current.state1.step2Substep
-  const {question1description, question2description} = gameStateRef.current.state1;
+  const {question1description, question2description, step2Substep} = gameStateRef.current.state1;
 
   const setComplete = (value: number) => {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step2Substep: value } }));
