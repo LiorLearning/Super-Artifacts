@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { getInputColor, getState, INCORRECT } from '../utils/helper';
 
 interface FractionInputProps {
+  multiplier: number;
   numerator: string;
   denominator: string;
   onNumeratorChange: (value: string) => void;
@@ -16,6 +17,7 @@ interface FractionInputProps {
 }
 
 export const FractionInput = ({
+  multiplier,
   numerator,
   denominator,
   onNumeratorChange,
@@ -41,6 +43,7 @@ export const FractionInput = ({
   return (
     <div className="relative flex flex-col items-center gap-2">
       <Input
+        id={`${multiplier}-numerator-input`}
         type="text"
         value={numerator}
         onChange={(e) => onNumeratorChange(e.target.value)}
@@ -50,6 +53,7 @@ export const FractionInput = ({
       />
       <div className="border-t-2 border-black w-8"></div>
       <Input
+        id={`${multiplier}-denominator-input`}
         type="text"
         value={denominator}
         onChange={(e) => onDenominatorChange(e.target.value)}

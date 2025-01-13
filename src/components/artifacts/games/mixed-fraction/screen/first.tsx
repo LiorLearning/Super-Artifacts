@@ -113,6 +113,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
       goToStep('first', setGameStateRef, 3);
     } else {
       setIsIncorrect(true);
+      sendAdminMessage('agent', "Hmmm, let's give that another try!");
       sendAdminMessage('admin', "Diagnosis socratically and ask user to drag more or less blocks as needed");
     }
   };

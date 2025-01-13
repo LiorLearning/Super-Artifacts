@@ -74,6 +74,7 @@ const GCDMultiplesGrid = ({ number1, number2, gcd, onSuccess, onSelectKnife, sen
     if (state === CORRECT) {
       onSuccess();
     } else if (state === INCORRECT) {
+      sendAdminMessage('agent', "Hmmm, let's give that another try!");
       sendAdminMessage('admin', "Diagnose socratically, ask user to look at the multiples and try again.")
     }
   }, [state]);
