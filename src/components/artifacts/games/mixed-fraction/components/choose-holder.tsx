@@ -12,6 +12,7 @@ export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage
     if (option === answer) {
       onSuccess();
     } else {
+      sendAdminMessage('agent', "Hmmm, let's give that another try!");
       sendAdminMessage('admin', "Diagnosis socratically and ask user to select the correct holder");
     }
   };

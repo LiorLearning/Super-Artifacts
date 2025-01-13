@@ -123,10 +123,12 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
         goToStep('second', setGameStateRef, 1);
       } else {
         setIncorrect(true);
+        sendAdminMessage('agent', "Hmmm, let's give that another try!");
         sendAdminMessage('admin', "Diagnose socratically and ask user where did they go wrong and tell them to find the frations with the same denominator");
       }
     } else {
       setIncorrect(true);
+      sendAdminMessage('agent', "Hmmm, let's give that another try!");
       sendAdminMessage('admin', "Diagnose socratically and ask user where did they go wrong and tell them to find the frations with the same denominator");
     }
   }

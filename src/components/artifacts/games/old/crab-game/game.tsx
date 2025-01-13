@@ -152,7 +152,6 @@ export default function CrabGame({ sendAdminMessage }: CrabGameProps) {
   const handleVisualize = () => {
     setStep(1);
     setShowHint(false);
-    // sendAdminMessage('admin', 'User is moving to step 2 to visualize the game.');
   }
 
   const addFishtank = () => {

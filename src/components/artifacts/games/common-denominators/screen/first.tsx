@@ -35,7 +35,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       <KnifeGame fraction={fraction1} onCorrect={() => {
         sendAdminMessage('agent', "You're doing great! Each time we split the chocolate, we're creating fractions with different denominators, but the amount of chocolate stays the same.")
         goToStep('first', setGameStateRef, 1)
-      }} sendAdminMessage={sendAdminMessage} />
+      }} showKnife={true} sendAdminMessage={sendAdminMessage} />
 
       {step >= 1 && 
         <ProceedButton onClick={() => {
@@ -51,7 +51,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
           </div>
           <KnifeGame fraction={fraction2} onCorrect={() => {
             goToStep('first', setGameStateRef, 3)
-          }} sendAdminMessage={sendAdminMessage} />
+          }} showKnife={false} sendAdminMessage={sendAdminMessage} />
         </>
       }
 
