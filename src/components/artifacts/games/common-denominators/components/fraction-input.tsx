@@ -61,9 +61,6 @@ export const FractionInput = ({
         style={{ backgroundColor: denominatorColor }}
         maxLength={2}
       />
-      {isCorrect && (
-        <Check className="left-full absolute w-6 h-6 text-green-500" />
-      )}
     </div>
   );
 }; 

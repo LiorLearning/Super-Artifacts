@@ -2,14 +2,15 @@ import { ChocolateBarWithFraction } from "./chocolate-bar";
 import { ChocolateRow } from "./chocolate-row";
 import { Fraction } from "../game-state";
 import { useState } from "react";
+import { BaseProps } from "../utils/types";
 
-interface KnifeGameProps {
+interface KnifeGameProps extends BaseProps {
   fraction: Fraction;
   onCorrect: () => void;
-  sendAdminMessage: (role: string, content: string) => void;
+  showKnife: boolean;
 }
 
-const KnifeGame = ({ fraction, onCorrect, sendAdminMessage }: KnifeGameProps) => {
+const KnifeGame = ({ fraction, onCorrect, showKnife, sendAdminMessage }: KnifeGameProps) => {
   const [ firstCorrect, setFirstCorrect ] = useState(false);
   return (
     <>
@@ -28,6 +29,7 @@ const KnifeGame = ({ fraction, onCorrect, sendAdminMessage }: KnifeGameProps) =>
           originalFraction={fraction}
           onCorrect={() => setFirstCorrect(true)}
           sendAdminMessage={sendAdminMessage}
+          showKnife={showKnife}
         />
 
         <ChocolateRow
@@ -35,6 +37,7 @@ const KnifeGame = ({ fraction, onCorrect, sendAdminMessage }: KnifeGameProps) =>
           originalFraction={fraction}
           onCorrect={() => {if (firstCorrect) {onCorrect();}}}
           sendAdminMessage={sendAdminMessage}
+          showKnife={showKnife}
         />
       </div>
     </>

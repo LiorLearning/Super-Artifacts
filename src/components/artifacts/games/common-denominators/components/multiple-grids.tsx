@@ -2,10 +2,11 @@ import { COLORS } from '../utils/types';
 import { Button } from '@/components/custom_ui/button';
 import { useEffect, useState } from 'react';
 import { CORRECT, getInputColor, getState, INCORRECT } from '../utils/helper';
+import { Fraction } from '../game-state';
 
 interface BaseMultiplesGridProps {
-  number1: number;
-  number2: number;
+  fraction1: Fraction;
+  fraction2: Fraction;
   onSuccess: () => void;
   onSelectKnife?: (index: number) => void;
 }
@@ -22,19 +23,26 @@ interface LCDECDMultiplesGridProps extends BaseMultiplesGridProps {
 }
 
 const renderMultiplesRow = (
-  number: number, 
+  fraction: Fraction,
   getMultiples: (num: number) => number[], 
   selectedMultiple: number[],
   showColor: boolean = true
 ) => (
   <div className="flex items-center gap-4 w-full">
-    <div className="w-36 text-white px-4 py-2 text-center" style={{
-      backgroundColor: COLORS.pink
-    }}>
-      Multiples of {number}
+    <div className="flex items-center gap-4">
+      <div className="text-black px-3 py-1 inline-flex flex-col items-center">
+        <span>{fraction.numerator}</span>
+        <div className="w-3 h-px bg-black" />
+        <span>{fraction.denominator}</span>
+      </div>
+      <div className="w-36 text-white px-4 py-2 text-center" style={{
+        backgroundColor: COLORS.pink
+      }}>
+        Multiples of {fraction.denominator}
+      </div>
     </div>
     <div className="flex gap-4">
-      {getMultiples(number).map((multiple) => (
+      {getMultiples(parseInt(fraction.denominator)).map((multiple) => (
         <Button
           key={multiple}
           className={`w-12 h-12 rounded-md border-2 flex items-center justify-center`}
@@ -61,10 +69,10 @@ const getColor = (multiple: number, selectedMultiple: number[]) => {
   return COLORS.gray;
 };
 
-const GCDMultiplesGrid = ({ number1, number2, gcd, onSuccess, onSelectKnife, sendAdminMessage }: GCDMultiplesGridProps) => {
-  const maxMultiple = Math.max(number1, number2);
+const GCDMultiplesGrid = ({ fraction1, fraction2, gcd, onSuccess, onSelectKnife, sendAdminMessage }: GCDMultiplesGridProps) => {
+  const maxMultiple = Math.max(parseInt(fraction1.denominator), parseInt(fraction2.denominator));
   const getMultiples = (num: number) => Array.from({ length: maxMultiple }, (_, i) => num * (i + 1));
-  const selectedMultiple = [number1 * number2];
+  const selectedMultiple = [parseInt(fraction1.denominator) * parseInt(fraction2.denominator)];
   const [answer, setAnswer] = useState<string>('');
 
   const color = getInputColor(answer, gcd.toString())
@@ -82,8 +90,8 @@ const GCDMultiplesGrid = ({ number1, number2, gcd, onSuccess, onSelectKnife, sen
   return (
     <div className="flex flex-col items-center gap-4 max-w-xl mx-auto m-4">
       {renderKnifeRow(maxMultiple, onSelectKnife)}
-      {renderMultiplesRow(number1, getMultiples, selectedMultiple, false)}
-      {renderMultiplesRow(number2, getMultiples, selectedMultiple, false)}
+      {renderMultiplesRow(fraction1, getMultiples, selectedMultiple, false)}
+      {renderMultiplesRow(fraction2, getMultiples, selectedMultiple, false)}
       <div className="flex items-center gap-2 mt-4">
         <span className="text-2xl">Common denominator is</span>
         <input
@@ -98,8 +106,8 @@ const GCDMultiplesGrid = ({ number1, number2, gcd, onSuccess, onSelectKnife, sen
   );
 };
 
-const LCDECDMultiplesGrid = ({ number1, number2, lcd, ecd, onSuccess, onSelectKnife, sendAdminMessage }: LCDECDMultiplesGridProps) => {
-  const maxMultiple = Math.max(number1, number2);
+const LCDECDMultiplesGrid = ({ fraction1, fraction2, lcd, ecd, onSuccess, onSelectKnife, sendAdminMessage }: LCDECDMultiplesGridProps) => {
+  const maxMultiple = Math.max(parseInt(fraction1.denominator), parseInt(fraction2.denominator));
   const [answers, setAnswers] = useState({
     lcd: '',
     ecd: ''
@@ -117,10 +125,10 @@ const LCDECDMultiplesGrid = ({ number1, number2, lcd, ecd, onSuccess, onSelectKn
   return (
     <div className="flex flex-col items-center gap-4 max-w-xl mx-auto m-4">
       {showSecondRow ? <div className="h-12"></div> : renderKnifeRow(maxMultiple, onSelectKnife) }
-      <MultiplesInputRow number={number1} maxMultiple={maxMultiple} lcd={lcd} ecd={ecd} onSuccess={() => setShowSecondRow(true)} showColor={showQuestion} />
+      <MultiplesInputRow fraction={fraction1} maxMultiple={maxMultiple} lcd={lcd} ecd={ecd} onSuccess={() => setShowSecondRow(true)} showColor={showQuestion} />
       {showSecondRow && (
         <MultiplesInputRow 
-        number={number2} 
+        fraction={fraction2} 
         maxMultiple={maxMultiple} 
         lcd={lcd} 
         ecd={ecd} 
@@ -148,7 +156,7 @@ const LCDECDMultiplesGrid = ({ number1, number2, lcd, ecd, onSuccess, onSelectKn
           </div>
           {showSecondRow && (
             <div className="flex items-center gap-2">
-              <span className="text-2xl">Easiest common denominator (ECD) = product of {number1} and {number2} = </span>
+              <span className="text-2xl">Easiest common denominator (ECD) = product of {fraction1.denominator} and {fraction2.denominator} = </span>
               <input
                 type="text"
                 className="w-16 h-12 border-2 rounded-md text-center text-lg"
@@ -169,7 +177,7 @@ const LCDECDMultiplesGrid = ({ number1, number2, lcd, ecd, onSuccess, onSelectKn
 // Helper functions for rendering common UI elements
 const renderKnifeRow = (maxMultiple: number, onSelectKnife?: (index: number) => void) => (
   <div className="flex items-center gap-4 w-full">
-    <div className="flex" style={{ marginLeft: '9.4rem' }}>
+    <div className="flex" style={{ marginLeft: '12.8rem' }}>
       {Array.from({ length: maxMultiple }, (_, index) => index + 1).map((multiplier) => (
         <Button 
           key={multiplier}
@@ -185,17 +193,17 @@ const renderKnifeRow = (maxMultiple: number, onSelectKnife?: (index: number) => 
 );
 
 const MultiplesInputRow: React.FC<{
-  number: number, 
+  fraction: Fraction, 
   maxMultiple: number,
   lcd: number,
   ecd: number,
   onSuccess: () => void,
   showColor: boolean
-}> = ({ number, maxMultiple, lcd, ecd, onSuccess, showColor }) => {
+}> = ({ fraction, maxMultiple, lcd, ecd, onSuccess, showColor }) => {
   const [multiples, setMultiples] = useState<string[]>(Array(maxMultiple).fill(''));
 
   const getInputColor = (multiple: string, index: number) => {
-    const answer = number * (index + 1);
+    const answer = parseInt(fraction.denominator) * (index + 1);
     
     if (multiple === '' || answer.toString().length !== multiple.length) {
       return COLORS.white;
@@ -217,7 +225,7 @@ const MultiplesInputRow: React.FC<{
   };
 
   useEffect(() => {
-    const allCorrect = multiples.every((multiple, index) => multiple === (number * (index + 1)).toString());  
+    const allCorrect = multiples.every((multiple, index) => multiple === (parseInt(fraction.denominator) * (index + 1)).toString());  
     if (allCorrect) {
       onSuccess();
     }
@@ -225,10 +233,17 @@ const MultiplesInputRow: React.FC<{
 
   return (
     <div className="flex items-center gap-4 w-full">
-      <div className="w-36 text-white px-4 py-2 text-center" style={{
-        backgroundColor: COLORS.pink
-      }}>
-        Multiples of {number}
+      <div className="flex items-center gap-4">
+        <div className="text-black px-3 py-1 inline-flex flex-col items-center">
+          <span>{fraction.numerator}</span>
+          <div className="w-3 h-px bg-black" />
+          <span>{fraction.denominator}</span>
+        </div>
+        <div className="w-36 text-white px-4 py-2 text-center" style={{
+          backgroundColor: COLORS.pink
+        }}>
+          Multiples of {fraction.denominator}
+        </div>
       </div>
       {multiples.map((multiple, index) => (
         <div className="flex flex-col items-center" key={`mult1-${index}`}>
