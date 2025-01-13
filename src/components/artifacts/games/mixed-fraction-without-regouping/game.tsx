@@ -6,6 +6,7 @@ import { useGameState } from './state-utils';
 import { prevStep, nextStep } from './utils/helper';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { GameScreen } from './game-state';
 
 const DevHelper = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -16,7 +17,7 @@ const DevHelper = () => {
 
   return (
     <div className="flex justify-between mt-4">
-      <Button className='m-2' onClick={() => prevStep(screen, setGameStateRef)}>Previous Step</Button>
+      <Button className='m-2' onClick={() => prevStep(screen as GameScreen, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
         <Select 
           value={screen.toString()} 
@@ -37,7 +38,7 @@ const DevHelper = () => {
       </div>
       {screen === 1 && <span>Step: {step1}</span>}
       {screen === 2 && <span>Step: {step2}</span>}
-      <Button className='m-2' onClick={() => nextStep(screen, setGameStateRef)}>Next Step</Button>
+      <Button className='m-2' onClick={() => nextStep(screen as GameScreen, setGameStateRef)}>Next Step</Button>
     </div>
   );
 };

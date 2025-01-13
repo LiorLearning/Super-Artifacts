@@ -78,18 +78,10 @@ const QuestionDescription = ({
       !isNaN(inputNumerator) && 
       !isNaN(inputDenominator)
     ) {
-      console.log('complete');
-
-      setTimeout(() => {
-        setShowFirstRow(false);
-        setShowSecondRow(false);
-        setShowThirdRow(true);
-      }, 1000);
-
-      setTimeout(() => {
-        console.log('complete1');
-        onComplete();
-      }, 1500);
+      setShowFirstRow(false);
+      setShowSecondRow(false);
+      setShowThirdRow(true);
+      onComplete();
     }
   }
 

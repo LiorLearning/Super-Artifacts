@@ -8,6 +8,7 @@ import QuestionDescription from '../components/questionDescription';
 import Intro from '../components/intro';
 import Proceed from '../components/proceed';
 import DragDropPizza from '../components/dragDropPizza';
+import { goToStep, nextStep } from '../utils/helper';
 
 export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -64,7 +65,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
           </div>
         </div>
       </div>
-      <Button onClick={() => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: 2 } }))} className='m-2 mx-auto bg-lime-500 hover:bg-lime-600 max-w-3xl'>Next Step</Button>
+      <Button onClick={() => goToStep(1, setGameStateRef, 2)} className='m-2 mx-auto bg-lime-500 hover:bg-lime-600 max-w-3xl'>Next Step</Button>
     </div>
   );
 };
@@ -81,11 +82,16 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
   }
 
   useEffect(() => {
-    console.log('completedd', complete)
+    if (complete === 1) {
+      sendAdminMessage('agent', "Awesome! The pepperoni pizza order is complete, let's revise the mushroom pizza order too");
+    } else if (complete === 2) {
+      sendAdminMessage('agent', "That is done! You have revised the order, now click on next to move to the most important step");
+    }
   }, [complete])
 
   return (
     <div className="flex p-8 gap-8 flex-col w-full">
+      {complete}
 
 
     {/* explaining inital pizzas */}
@@ -111,13 +117,9 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           pizzaName='pepperoni' 
           color='pink' 
 
-          onComplete={() => { 
-            console.log('complete2')
-            sendAdminMessage('agent', "Awesome! The pepperoni pizza order is complete, let's revise the mushroom pizza order too");
-            setTimeout(() => {
-              console.log('complete3')
-              setComplete(1)
-            }, 1000)
+          onComplete={() => {
+            setComplete(1)
+            setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showFirstRow: true } } }))
           }} 
         />
     }
@@ -143,13 +145,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           pizzaName='mushroom' 
           color='yellow' 
 
-          onComplete={() => {
-            console.log('complete3')
-            sendAdminMessage('agent', "That is done! You have revised the order, now click on next to move to the most important step");
-            setTimeout(() => {
-              setComplete(2)
-            }, 1000)
-          }} 
+          onComplete={() => setComplete(2)} 
         />
     }
     { complete >= 2 && 
@@ -158,7 +154,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             Perfect, let's rearrange the wholes and slices to add them together
           </p>
           <Button 
-            onClick={() => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: 3 } }))}
+            onClick={() => goToStep(1, setGameStateRef, 3)}
             className='bg-lime-500 text-white font-bold w-16 mx-auto hover:bg-lime-600'
         >
           Next

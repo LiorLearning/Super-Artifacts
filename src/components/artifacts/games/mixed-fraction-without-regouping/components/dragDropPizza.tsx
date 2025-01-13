@@ -201,7 +201,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
       </div>
 
       {/* Drop Zones Container */}
-      <div className='bg-orange-500 p-8 px-16 flex flex-col gap-8'>
+      <div className='bg-orange-500 mt-36 p-8 px-16 flex flex-col gap-8'>
 
         {/* Instruction Banner */}
         <div className='bg-white border-2 border-black mx-auto p-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'>
