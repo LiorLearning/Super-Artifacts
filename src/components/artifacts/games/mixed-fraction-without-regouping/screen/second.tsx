@@ -25,7 +25,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
           <Step3 sendAdminMessage={sendAdminMessage} />
         : null
       }
-    </div>
+    </div>  
   );
 }
 
