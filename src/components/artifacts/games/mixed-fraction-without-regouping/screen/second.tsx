@@ -97,6 +97,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           inputDenominator={question1description.inputDenominator}
           setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, inputDenominator: value } } }))}
 
+
           whole={fraction1.whole} 
           numerator={fraction1.numerator} 
           denominator={fraction1.denominator} 
@@ -125,6 +126,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           setInputNumerator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, inputNumerator: value } } }))}
           inputDenominator={question2description.inputDenominator}
           setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, inputDenominator: value } } }))}
+
 
           whole={fraction2.whole} 
           numerator={fraction2.numerator} 
