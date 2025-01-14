@@ -139,8 +139,8 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
           </div>
 
           <MultiplesGrid 
-            number1={parseInt(fraction1.denominator)} 
-            number2={parseInt(fraction2.denominator)} 
+            fraction1={fraction1} 
+            fraction2={fraction2} 
             gcd={gcd} 
             onSuccess={() => {
               goToStep('third', setGameStateRef, 5)

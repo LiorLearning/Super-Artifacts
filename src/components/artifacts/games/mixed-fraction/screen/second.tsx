@@ -1,9 +1,15 @@
 import LegoGame from '../lego-game/second';
-import Header from '../components/header';
+import Header from '../components/header2';
 import { useGameState } from '../state-utils';
-import { VerifyPiecesAndDivisions, ChooseHolder, CreateBlocks } from './components/second';
+import { VerifyPiecesAndDivisions, CreateBlocks } from './components/second';
+import { ChooseHolder } from '../components/choose-holder';
 import { FinalAnswer, CorrectAnswer, StepModule } from './components/first';
 import { COLORS } from './constants';
+import { nextStep } from '../utils/helper';
+import { GameProps } from '../utils/types';
+import { userAgent } from 'next/server';
+import { useEffect } from 'react';
+import { use } from 'react';
 
 const MainContent = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -41,14 +47,11 @@ const MainContent = () => {
 };
 
 
-const Footer = () => {
+const Footer = ({sendAdminMessage}: GameProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step, fraction } = gameStateRef.current.state2;
+  const { step, fraction, denomOptions } = gameStateRef.current.state2;
   const numerator = fraction.numerator;
   const denominator = fraction.denominator;
-  const nextStep = () => {
-    setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
-  };
 
   return (
     <div className="relative">
@@ -56,7 +59,18 @@ const Footer = () => {
         <CreateBlocks />
       )}
       {step === 1 && (
-        <ChooseHolder />
+        <>
+          <ChooseHolder 
+            answer={fraction.denominator} 
+            denomOptions={denomOptions} 
+            onSuccess={() => {nextStep('second', setGameStateRef)}} 
+            sendAdminMessage={sendAdminMessage}
+          />
+          <div className="text-center mt-4">
+            <span className="text-3xl font-bold block mb-2">Now choose the holder</span>
+            <span className="text-2xl text-gray-600">Hint: Number of Divisions should be same as denominator</span>
+          </div>
+        </>
       )}
       {step === 2 && (
         <VerifyPiecesAndDivisions />
@@ -76,7 +90,7 @@ const Footer = () => {
             </div>
           </div>
           <div className="flex justify-center my-16">
-            <FinalAnswer numerator={numerator} denominator={denominator} nextStep={nextStep} />
+            <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep('second', setGameStateRef)} />
           </div>
         </>
       )}
@@ -85,9 +99,15 @@ const Footer = () => {
 };
 
 
-export default function SecondScreen() {
+export default function SecondScreen({sendAdminMessage}: GameProps) {
     const { gameStateRef } = useGameState();
     const { fraction, step } = gameStateRef.current.state2;
+
+    useEffect(() => {
+      if (step === 0) {
+        sendAdminMessage('agent', "Numerator is the number of legos needed, and denominator is the size of the legos");
+      }
+    }, [step]);
 
     return (
       <div className="mx-auto">
@@ -98,7 +118,7 @@ export default function SecondScreen() {
             <LegoGame />
           </div>
         )}
-        <Footer />
+        <Footer sendAdminMessage={sendAdminMessage} />
       </div>
     )
   }

@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/custom_ui/button";
 import { FractionInput } from './fraction-input';
 import { ChocolateBar } from './chocolate-bar';
 import { Fraction } from '../game-state';
+import { BaseProps } from '../utils/types';
 
-interface ChocolateRowProps {
+interface ChocolateRowProps extends BaseProps {
   multiplier: number;
   originalFraction: Fraction;
   onCorrect: () => void;
-  sendAdminMessage: (role: string, content: string) => void;
+  showKnife: boolean;
 }
 
-export const ChocolateRow = ({ multiplier, originalFraction, onCorrect, sendAdminMessage }: ChocolateRowProps) => {
+export const ChocolateRow = ({ multiplier, originalFraction, onCorrect, showKnife, sendAdminMessage }: ChocolateRowProps) => {
   const [multiplierSelected, setMultiplierSelected] = useState(false);
   const [incorrect, setIncorrect] = useState(false);
   const multipliedPieces = parseInt(originalFraction.denominator) * multiplier;
@@ -37,11 +38,13 @@ export const ChocolateRow = ({ multiplier, originalFraction, onCorrect, sendAdmi
 
   const handleIncorrect = () => {
     setIncorrect(true);
-    sendAdminMessage('admin', "Diagnose socratically and ask the user to check the numerator or denominator and try using the knife");
+    sendAdminMessage('agent', "Hmmm, let's give that another try!");
+    sendAdminMessage('admin', "The user has answered incorrectly. Using the image, user actions and game description, identify the correct current state and diagnose socratically with a response highly contextual to the game. Avoid giving general responses. Instead, ask the user to perform an action in the game.");
   }
 
   const updatedFraction = {
     ...inputFraction,
+    multiplier: multiplier,
     onDenominatorChange: handleDenominatorChange,
     onNumeratorChange: handleNumeratorChange,
     correctValues: correctFraction,
@@ -61,17 +64,22 @@ export const ChocolateRow = ({ multiplier, originalFraction, onCorrect, sendAdmi
 
   return (
     <div className="flex items-center justify-center gap-8">
-      <Button
-        onClick={handleMultiplierClick}
-        className={`rounded-lg w-16 h-16 flex items-center justify-center ${
-          multiplierSelected ? 'bg-[#2EA500]' : 'bg-[#DDDDDD]'
-        } hover:${multiplierSelected ? 'bg-[#2EA500]/90' : 'bg-[#DDDDDD]/90'}`}
-      >
-        <div className="flex items-center gap-1">
-          <span className="text-2xl">🔪</span>
-          <span className="text-xl text-black mb-4">{multiplier}</span>
-        </div>
-      </Button>
+      {showKnife || incorrect ? (
+        <Button
+          id={`${multiplier}-knife-button`}
+          onClick={handleMultiplierClick}
+          className={`rounded-lg w-16 h-16 flex items-center justify-center ${
+            multiplierSelected ? 'bg-[#2EA500]' : 'bg-[#DDDDDD]'
+          } hover:${multiplierSelected ? 'bg-[#2EA500]/90' : 'bg-[#DDDDDD]/90'}`}
+        >
+          <div className="flex items-center gap-1">
+            <span className="text-2xl">🔪</span>
+            <span className="text-xl text-black mb-4">{multiplier}</span>
+          </div>
+        </Button>
+      ) : (
+        <div className="w-16 h-16 rounded-lg"></div>
+      )}
       
       <div className="w-[480px]">
         {!multiplierSelected ? (

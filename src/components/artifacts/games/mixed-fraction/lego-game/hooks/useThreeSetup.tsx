@@ -26,9 +26,9 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
 
-    // // Grid setup for visual reference and alignment
-    // const gridHelper = new THREE.GridHelper(12, 12, 0x888888, 0xcccccc);
-    // scene.add(gridHelper);
+    // Grid setup for visual reference and alignment
+    const gridHelper = new THREE.GridHelper(12, 12, 0x888888, 0xcccccc);
+    scene.add(gridHelper);
 
     // Camera setup with higher pixel ratio for better resolution
     const camera = new THREE.OrthographicCamera(
@@ -43,7 +43,7 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
       antialias: true,
       powerPreference: 'high-performance'
     });
-    renderer.setPixelRatio(window.devicePixelRatio*2);
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Higher quality shadows

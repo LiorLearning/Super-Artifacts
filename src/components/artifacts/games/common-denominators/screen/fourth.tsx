@@ -43,8 +43,8 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
       }}>
         {/* Notice that we found 2 common denominators. Which is the least one? */}
         <MultiplesGrid 
-          number1={parseInt(fraction1.denominator)} 
-          number2={parseInt(fraction2.denominator)} 
+          fraction1={fraction1}
+          fraction2={fraction2}
           lcd={lcd} 
           ecd={ecd} 
           onSuccess={() => {
