@@ -1122,7 +1122,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
 
       {/* Fixed proceed button at bottom */}
       {STEPS_WITH_PROCEED.includes(currentStep) && (
-        <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 flex justify-center items-center">
+        <div className="fixed bottom-5 left-2/3 transform -translate-x-1/2 z-50 flex justify-center items-center">
           <Button 
             onClick={() => handleProceed(currentStep)} 
             className="text-lg bg-purple-100 border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 rounded-none"
