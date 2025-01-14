@@ -104,7 +104,7 @@ export const initialGameState: GameState = {
       inputDenominator: '',
     },
     question2description: {
-      showFirstRow: false,
+      showFirstRow: true,
       showSecondRow: false,
       showThirdRow: false,
       inputWhole: '',

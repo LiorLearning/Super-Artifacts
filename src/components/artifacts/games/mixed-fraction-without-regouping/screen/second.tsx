@@ -84,18 +84,18 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
       { substep >= 0 &&
         <QuestionDescription 
           showFirstRow={question1description.showFirstRow}
-          setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, showFirstRow: value } } }))}
+          setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, showFirstRow: value } } }))}
           showSecondRow={question1description.showSecondRow}
-          setShowSecondRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, showSecondRow: value } } }))}
+          setShowSecondRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, showSecondRow: value } } }))}
           showThirdRow={question1description.showThirdRow}
-          setShowThirdRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, showThirdRow: value } } }))}
+          setShowThirdRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, showThirdRow: value } } }))}
 
           inputWhole={question1description.inputWhole}
-          setInputWhole={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, inputWhole: value } } }))}
+          setInputWhole={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, inputWhole: value } } }))}
           inputNumerator={question1description.inputNumerator}
-          setInputNumerator={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, inputNumerator: value } } }))}
+          setInputNumerator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, inputNumerator: value } } }))}
           inputDenominator={question1description.inputDenominator}
-          setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, inputDenominator: value } } }))}
+          setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, inputDenominator: value } } }))}
 
           whole={fraction1.whole} 
           numerator={fraction1.numerator} 
@@ -113,18 +113,18 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
       { substep >= 1 &&
         <QuestionDescription 
           showFirstRow={question2description.showFirstRow}
-          setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showFirstRow: value } } }))}
+          setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, showFirstRow: value } } }))}
           showSecondRow={question2description.showSecondRow}
-          setShowSecondRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showSecondRow: value } } }))}
+          setShowSecondRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, showSecondRow: value } } }))}
           showThirdRow={question2description.showThirdRow}
-          setShowThirdRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showThirdRow: value } } }))}
+          setShowThirdRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, showThirdRow: value } } }))}
 
           inputWhole={question2description.inputWhole}
-          setInputWhole={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, inputWhole: value } } }))}
+          setInputWhole={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, inputWhole: value } } }))}
           inputNumerator={question2description.inputNumerator}
-          setInputNumerator={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, inputNumerator: value } } }))}
+          setInputNumerator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, inputNumerator: value } } }))}
           inputDenominator={question2description.inputDenominator}
-          setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, inputDenominator: value } } }))}
+          setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, inputDenominator: value } } }))}
 
           whole={fraction2.whole} 
           numerator={fraction2.numerator} 
