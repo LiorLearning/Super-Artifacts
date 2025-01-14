@@ -18,8 +18,20 @@ interface FirstProps {
 export default function First({ sendAdminMessage, visible }: FirstProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const soundEffects = useSoundEffects();
-  const { greenScore, blueScore, containerScore, activePhase, currentStep, finalAnswer, clickDisabled, showAddButton, additionStarted } = gameStateRef.current.state1;
-  const { maxGreenMarbles, maxBlueMarbles } = gameStateRef.current;
+  const { 
+    greenScore, 
+    blueScore, 
+    containerScore, 
+    activePhase, 
+    currentStep, 
+    finalAnswer, 
+    clickDisabled, 
+    showAddButton, 
+    additionStarted,
+    maxGreenMarbles, 
+    maxBlueMarbles, 
+    maxBlackMarbles 
+  } = gameStateRef.current.state1;
 
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
