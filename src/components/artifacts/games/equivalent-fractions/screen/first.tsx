@@ -183,10 +183,10 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
                     type="text"
                     value={numerator.toString() === '0' ? '' : numerator.toString()}
                     placeholder="?"
-                    onChange={(e) => setNumerator(parseInt(e.target.value))}
+                    onChange={(e) => setNumerator(parseInt(e.target.value || '0'))}
                     className={`
-                      p-2 w-12 border-2 font-extrabold text-center
-                      ${numerator == numerator1 * denominator2 / denominator1 ? 'border-green-500 text-green-500' : 'border-black'}
+                      p-2 w-12 border-2 font-extrabold text-center rounded-lg
+                      ${numerator == numerator1 * denominator2 / denominator1 ? 'border-green-500 bg-green-500 text-white' : 'border-black'}
                     `}
                   />
                 
@@ -196,10 +196,10 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
                   type="text"
                   value={denominator.toString() === '0' ? '' : denominator.toString()}
                   placeholder="?"
-                  onChange={(e) => setDenominator(parseInt(e.target.value))}
+                  onChange={(e) => setDenominator(parseInt(e.target.value || '0'))}
                     className={`
-                      p-2 w-12 border-2 font-extrabold text-center
-                      ${denominator == denominator2 ? 'border-green-500 text-green-500' : 'border-black'}
+                      p-2 w-12 border-2 font-extrabold text-center rounded-lg
+                      ${denominator == denominator2 ? 'border-green-500 bg-green-500 text-white' : 'border-black'}
                     `}
                   />
                 </div>

@@ -47,18 +47,17 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
   }, [selectedKnife]);
 
   useEffect(() => {
-    if(selectedHoney && denominator1/selectedHoney === denominator3){
+    if (!selectedHoney) return;
+    console.log(denominator3,denominator1/selectedHoney)
+    if(denominator1/selectedHoney === denominator3){
       setGameStateRef(prev => ({
         ...prev,
         screen2: {
           ...prev.screen2,
-          step: {
-            ...prev.screen2.step,
-            id: prev.screen2.step.id + 1
-          },
-          substep: 2
+          substep: prev.screen2.substep + 1
         }
       }));
+      console.log(selectedHoney, denominator1/selectedHoney, denominator3, substep)
     }
   }, [selectedHoney]);
 
@@ -103,13 +102,9 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
       <div className="flex flex-col max-w-screen-sm mx-auto items-center justify-center">
         <div className="flex flex-col gap-8  items-center justify-center">
 
-          {substep === 0 && (
-            <>
-              <p className="text-2xl text-left w-full mb-4">
-                Use a knife to split the chocolate into the required number of pieces.
-              </p>
-            </>
-          )}
+          <p className="text-2xl text-left w-full mb-4">
+          {substep === 0 && ("Use a knife to split the chocolate into the required number of pieces.")}
+          </p>
 
           <div className="flex w-full relative items-center justify-center">
             <Bar 
@@ -208,7 +203,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
 
             <div className="absolute top-0 right-full text-center text-2xl mx-4 font-bold ml-6">
               <HoneySelector 
-                options={[2,3,4]}
+                options={[2,3,6]}
                 selectedHoney={selectedHoney}
                 setSelectedHoney={(index) => {
                   setGameStateRef({
@@ -225,7 +220,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
           </div>
 
           {substep === 2 ?(
-            <p className="text-2xl text-center w-full mb-4">
+            <p className="text-2xl text-center w-full my-4">
               <span className="font-bold bg-white border-2 mr-2 border-orange-500 text-orange-500 px-2 py-1">
                 {selectedHoney ? denominator1/selectedHoney : denominator1}
               </span>

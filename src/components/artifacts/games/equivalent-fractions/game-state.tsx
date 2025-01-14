@@ -58,10 +58,9 @@ export interface Screen3 {
 
   answers: {
     numerator: number
-    multiplier1_numerator: number
-    multiplier1_denominator: number
-    multiplier2_numerator: number
-    multiplier2_denominator: number
+    multiplier1: number
+    multiplier2: number
+    multiplier3: number
   }
 }
 
@@ -141,10 +140,9 @@ export const initialGameState: GameState = {
     },
     answers: {
       numerator: 0,
-      multiplier1_numerator: 0,
-      multiplier1_denominator: 0,
-      multiplier2_numerator: 0,
-      multiplier2_denominator: 0
+      multiplier1: 3,
+      multiplier2: 2,
+      multiplier3: 3
     }
   },
   screen4: {
