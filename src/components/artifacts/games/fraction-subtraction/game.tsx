@@ -3,7 +3,8 @@
 import Screen1 from './Screen1';
 import Screen2 from './Screen2';
 import { useGameState } from './state-utils';
-import { useEffect } from 'react';
+import { Card } from '@/components/ui/card'; // Add Card import
+import { useEffect, useState } from 'react';
 
 
 interface EquationProps {
@@ -27,15 +28,12 @@ export default function DifferentNumeratorDenominator({ sendAdminMessage }: Equa
     case 2:
       return <Screen2 onProceed={() => handleNext(3)} sendAdminMessage={sendAdminMessage} />;
     default:
-      return <div>Invalid Frame</div>;
+      return <Card>Invalid Frame</Card>;
   }
 }
 
 
 
-
-
-
-
-
-
+// - “⁠Awesome, it's time to answer our original question?” - no question mark at the end
+// - ⁠chocolate state gets changed if i click previous from screen 2 (it should 6/8 instead of 7)
+// - ⁠Conversation should be exactly as in figma, some parts are different. Really changes the experience.

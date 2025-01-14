@@ -1,139 +1,161 @@
-/**
- * Game State Management for Equivalent Fractions Game
- * 
- * The game progresses through 3 main screens:
- * - First Screen: Introduction to equivalent fractions with basic bar splitting
- * - Second Screen: Practice with multiplying fractions (appears twice with different values)
- * - Third Screen: Final challenge combining previous concepts
- *
- * Each screen maintains its own state with:
- * - equation: Tracks input fraction, multiplier, and output fraction
- * - bars: Visual chocolate bar representations that users interact with
- * - step tracking: Guides users through the learning process
- */
+export const desc = ``;
 
-export const desc = `
-Welcome to the Equivalent Fractions Game! Learn about fraction equivalence through interactive chocolate bars.
+export type GameScreen = 1 | 2 | 3 | 4;
 
-Detailed Gameplay:
-
-First Screen - Introduction
-1. You'll see a chocolate bar divided into equal parts
-2. Choose a knife (2, 3, or 5 parts) to split each piece further
-3. Click pieces to select them and form your target fraction
-4. Fill in the equation to show how the fractions are equivalent
-
-Second Screen - Practice (appears twice)
-1. Start with a given fraction shown as selected pieces on a chocolate bar
-2. Determine how many pieces each part needs to be split into
-3. Fill in the multiplier (both numerator and denominator)
-4. Calculate the equivalent fraction's numerator
-5. Verify your answer by seeing the chocolate pieces align
-
-Third Screen - Final Challenge
-1. Apply what you've learned to solve a more complex equivalent fraction
-2. Split the pieces correctly and fill in all equation parts
-3. Demonstrate mastery of equivalent fraction concepts
-
-Tips:
-- Watch for visual feedback as you split and select pieces
-- Use the chocolate bars to help visualize the fractions
-- Pay attention to how multiplying both top and bottom by the same number creates equivalent fractions
-`
-
-export interface Fractions {
-  numerator: number;
-  denominator: number;
+export interface Screen1 {
+  step: {
+    id: number,
+    text: string
+  },
+  question:{
+    numerator1: number
+    denominator1: number
+    denominator2: number
+  },
+  selectedKnife: number | null,
+  selectedPieces: number,
 }
 
-// Equation interface tracks the three parts of equivalent fraction equations:
-// input fraction × multiplier = output fraction
-export interface Equation {
-  input: Fractions;
-  multiplier: Fractions;
-  output: Fractions;
+export interface Screen2 {
+  step: {
+    id: number,
+    text: string
+  },
+  substep: number,
+  selectedKnife: number | null,
+  selectedHoney: number | null,
+  selectedPieces1: number,
+  selectedPieces2: number,
+
+  question: {
+    numerator1: number
+    denominator1: number
+    denominator2: number
+    denominator3: number
+  },
 }
 
-// Each screen's state includes bars represented as nested arrays
-// where inner arrays represent split pieces and numbers represent selection (0=unselected, 1=selected)
-export interface FirstScreenState {
-  equation: Equation;
-  firstBar: number[][];  // Original bar
-  secondBar: number[][]; // Bar after splitting
-  selectedKnife: number | null;
-  isCorrect: boolean;
-  currentStep: number;
-  barNumerator: string;
-  showCorrect: boolean;
-  canProceed: boolean;
+export interface Screen3 {
+  step: number,
+  fraction1: {
+    numerator: number
+    denominator: number
+  }
+  fraction2: {
+    numerator: number
+    denominator: number
+  }
+  fraction3: {
+    numerator: number
+    denominator: number
+  }
+  question: {
+    numerator1: number
+    denominator1: number
+    denominator2: number
+    denominator3: number
+  }
+
+  answers: {
+    numerator: number
+    multiplier1: number
+    multiplier2: number
+    multiplier3: number
+  }
 }
 
-export interface SecondScreenState {
-  equation: Equation;
-  firstBar: number[][];  // Shows initial fraction
-  secondBar: number[][]; // Shows equivalent fraction after splitting
-  currentStep: number;
-  showCorrect: boolean;
-  isCorrect: boolean;
-  selectedPieces: number[];
+export interface Screen4 {
+  step: number,
+  question1:{
+    numerator1: number
+    denominator1: number
+    denominator2: number
+  },
+  question2:{
+    numerator1: number
+    numerator2: number
+    denominator2: number
+  }
 }
-
-export interface ThirdScreenState {
-  equation: Equation;
-  firstBar: number[][];
-  secondBar: number[][];
-  isCorrect: boolean;
-  currentStep: number;
-}
-
-export type Screen = 'first' | 'second1' | 'second2' | 'third';
 
 export interface GameState {
-  currentScreen: Screen;
-  firstScreenState: FirstScreenState;
-  secondScreenState: SecondScreenState;
-  thirdScreenState: ThirdScreenState;
+  level: number,
+  screen1: Screen1,
+  screen2: Screen2,
+  screen3: Screen3,
+  screen4: Screen4,
 }
 
 export const initialGameState: GameState = {
-  currentScreen: 'first',
-  firstScreenState: {
-    equation: {
-      input: { numerator: 3, denominator: 4 },
-      multiplier: { numerator: 0, denominator: 0 },
-      output: { numerator: 0, denominator: 12 },
+  level: 0,
+  screen1: {
+    step: {
+      id: 1,
+      text: "CREATE 9 PIECES"
     },
-    firstBar: Array(4).fill(null).map((_, i) => (i < 3 ? [1] : [0])),
-    secondBar: Array(4).fill([0]),
+    question:{
+      numerator1: 2,
+      denominator1: 3,
+      denominator2: 9
+    },
     selectedKnife: null,
-    isCorrect: false,
-    currentStep: 0,
-    barNumerator: '',
-    showCorrect: false,
-    canProceed: false,
+    selectedPieces: 0,
   },
-  secondScreenState: {
-    equation: {
-      input: { numerator: 3, denominator: 4 },
-      multiplier: { numerator: 0, denominator: 0 },
-      output: { numerator: 0, denominator: 8 },
+  screen2: {
+    step: {
+      id: 1,
+      text: "CREATE 9 PIECES"
     },
-    firstBar: Array(4).fill(null).map((_, i) => (i < 3 ? [1] : [0])),
-    secondBar: Array(4).fill([0]),
-    currentStep: 1,
-    showCorrect: false,
-    isCorrect: false,
-    selectedPieces: [],
+    substep: 0,
+    selectedKnife: null,
+    selectedHoney: null,
+    selectedPieces1: 0,
+    selectedPieces2: 0,
+    question: {
+      numerator1: 4,
+      denominator1: 6,
+      denominator2: 12,
+      denominator3: 3
+    }
   },
-  thirdScreenState: {
-    equation: {
-      input: { numerator: 2, denominator: 3 },
-      multiplier: { numerator: 0, denominator: 0 },
-      output: { numerator: 0, denominator: 12 },
+  screen3: {
+    step: 1,
+    fraction1: {
+      numerator: 4,
+      denominator: 6
     },
-    firstBar: Array(3).fill(null).map((_, i) => (i < 2 ? [1] : [0])),
-    secondBar: Array(3).fill([0]),
-    isCorrect: false,
-    currentStep: 1,
+    fraction2: {
+      numerator: 8,
+      denominator: 12
+    },
+    fraction3: {
+      numerator: 2,
+      denominator: 3
+    },
+    question: {
+      numerator1: 4,
+      denominator1: 6,
+      denominator2: 12,
+      denominator3: 18
+    },
+    answers: {
+      numerator: 0,
+      multiplier1: 3,
+      multiplier2: 2,
+      multiplier3: 3
+    }
   },
+  screen4: {
+    step: 1,
+    question1: {
+      numerator1: 2,
+      denominator1: 3,
+      denominator2: 15
+    },
+    question2: {
+      numerator1: 2,
+      numerator2: 8,
+      denominator2: 12
+    }
+  }
 };

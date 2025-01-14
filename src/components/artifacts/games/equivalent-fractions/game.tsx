@@ -1,32 +1,64 @@
-'use client';
 
-import { Card } from "@/components/custom_ui/card";
-import { FirstScreen } from './FirstScreen';
-import { SecondScreen } from './SecondScreen';
-import { ThirdScreen } from './ThirdScreen';
 import { useGameState } from './state-utils';
+import { prevStep, nextStep } from './utils/helper';
+import { Button } from '@/components/ui/button';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
-export const desc = `Steps to Play the Game:
-1. Break the first chocolate bar by clicking the "Split" button.
-2. Select the pieces of the first bar that you want to keep.
-3. Break the second chocolate bar by clicking the "Split" button for the second bar.
-4. Select the pieces of the second bar that you want to keep.
-5. Compare the selected pieces from both bars to determine which fraction is larger.`;
+import Level0 from './screen/zero';
+import Level1 from './screen/first';
+import Level2 from './screen/second';
+import Level3 from './screen/three';
+import Level4 from './screen/four';
 
-interface EquationProps {
+const DevHelper = () => {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const { step } = gameStateRef.current.screen1;
+
+  return (
+    <div className="flex justify-between mt-4">
+      <Button className='m-2' onClick={() => prevStep(step.id, setGameStateRef)}>Previous Step</Button>
+      <Select onValueChange={(value) => setGameStateRef({ level: parseInt(value) })}>
+        <SelectTrigger>
+          <SelectValue placeholder="Select Level" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="0">Level 0</SelectItem>
+          <SelectItem value="1">Level 1</SelectItem>
+          <SelectItem value="2">Level 2</SelectItem>
+          <SelectItem value="3">Level 3</SelectItem>
+          <SelectItem value="4">Level 4</SelectItem>
+        </SelectContent>
+      </Select>
+      <Button className='m-2' onClick={() => nextStep(step.id, setGameStateRef)}>Next Step</Button>
+    </div>
+  );
+};
+
+interface GameProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
 
-export default function EquivalentFractionsGame({ sendAdminMessage }: EquationProps) {
+export default function EquivalentFractionsGame({sendAdminMessage}: GameProps) {
   const { gameStateRef } = useGameState();
-  const { currentScreen } = gameStateRef.current;
+  const { level } = gameStateRef.current;
 
   return (
-    <Card className="h-full w-full p-8 bg-gradient-to-br bg-[#FFF8EE] shadow-2xl">
-      {currentScreen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
-      {currentScreen === 'second1' && <SecondScreen />}
-      {currentScreen === 'second2' && <SecondScreen />}
-      {currentScreen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
-    </Card>
-  );
+    <div className="mx-auto game-container font-Jost">
+      <DevHelper />
+      {level === 0 && <Level0 sendAdminMessage={sendAdminMessage} />}
+      {level === 1 && <Level1 sendAdminMessage={sendAdminMessage} />}
+      {level === 2 && <Level2 sendAdminMessage={sendAdminMessage} />}
+      {level === 3 && <Level3 sendAdminMessage={sendAdminMessage} />}
+      {level === 4 && <Level4 sendAdminMessage={sendAdminMessage} />}
+
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+          .font-Jost {
+            font-family: 'Jost', sans-serif;
+          }
+        `}
+      </style>
+
+    </div>
+  )
 }
