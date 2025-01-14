@@ -3,7 +3,7 @@ import { MessageContext, Message, useMessageContext } from './MessageContext';
 import { WifiOff, Wifi } from 'lucide-react';
 import { AudioContext } from './utils/audio_stream';
 
-const SPEAKOUT = false;
+const SPEAKOUT = true;
 
 type WebSocketContextType = {
   sendLog: (message: Message | Blob) => void;
