@@ -55,12 +55,6 @@ const gameInfo: Record<string, GameInfo> = {
     state: AdditionGameState,
     provider: AdditionGameStateProvider
   },
-  'compare-fractions-with-same-numerator-or-denominator': {
-    game: FractionsGame,
-    desc: FractionsGameDesc,
-    state: FractionsGameState,
-    provider: FractionsGameStateProvider
-  },
   'fraction-subtraction': {
     game: FractionSubtractionGame,
     desc: FractionSubtractionGameDesc,
