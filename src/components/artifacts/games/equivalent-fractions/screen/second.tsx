@@ -96,6 +96,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
           substep: 4  
         }
       });
+      sendAdminMessage('agent', `Awesome, you're now ready for the next level`);
     }
   }, [selectedPieces2]);
 
