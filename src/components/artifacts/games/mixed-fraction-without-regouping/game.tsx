@@ -16,7 +16,7 @@ const DevHelper = () => {
   const { step: step4 } = gameStateRef.current.state4;
 
   return (
-    <div className="flex justify-between mt-4">
+    <div className="flex justify-between mt-4"> 
       <Button className='m-2' onClick={() => prevStep(screen as GameScreen, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
         <Select 

@@ -10,6 +10,7 @@ import Fraction from "../components/Fraction";
 import Proceed from "../components/proceed";
 import { Input } from "@/components/custom_ui/input";
 import KnifeSelector from "../components/knifeselector";
+import Image from "next/image";
 
 
 export default function Level1({ sendAdminMessage }: BaseProps) {
@@ -68,16 +69,16 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
   return (
       <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
         <div className="flex flex-col gap-4 w-full">
-          <p className="text-xl">Let's split this chocolate into {denominator2} pieces.</p>
+          <p className="text-2xl font-medium">Let's split this chocolate into {denominator2} pieces.</p>
             <div className="flex justify-center relative">
               <Bar numerator={numerator1} denominator={denominator1} handlePieceClick={() => {}} />
-              <Fraction numerator={numerator1} denominator={denominator1} className="text-xl font-bold ml-4 absolute top-0 left-full" />
+              <Fraction numerator={numerator1} denominator={denominator1} className="text-3xl font-bold ml-4 absolute top-0 left-full" />
             </div>
             <div className="flex justify-center">
-              <ArrowDown className="w-16 h-16 text-black fill-black"/>
+              <Image src="/img/arrow.svg" className="py-6" alt="Arrow" width={30} height={30} />
             </div>
 
-            <p className="text-xl">
+            <p className="text-2xl font-medium">
               Choose a suitable knife to split the chocolate into {denominator2} pieces
             </p>
             <div className="flex justify-center relative">
@@ -92,7 +93,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
                 })} />
               </div>
           </div>
-          <span className="text-xl flex items-center justify-center font-bold">
+          <span className="text-2xl font-medium flex items-center justify-center">
               <span className={`
                   border-4 bg-white text-2xl px-2 font-extrabold py-1 mr-1
                   ${selectedKnife && selectedKnife * denominator1 === denominator2 ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}
@@ -152,27 +153,34 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (numerator === numerator1 * denominator2 / denominator1 && denominator === denominator2) {
+      sendAdminMessage('agent', "Great job, who knew math could be this sweet?");
+    }
+  }, [numerator, denominator]);
+
+
   return (
       <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
         <div className="flex flex-col gap-4 w-full">
 
-          {!step2subpart && <p className="text-xl">Let's split this chocolate into {denominator2} pieces.</p>}
+          {!step2subpart && <p className="text-2xl font-medium">
+            {correct ? 
+              "What fraction of chocolate do you get?"
+              : 
+              "Select pieces to get the same amount of chocolate"
+            }
+          </p>}
 
             <div className="flex justify-center relative">
               <Bar numerator={numerator1} denominator={denominator1} handlePieceClick={() => {}} />
-              <Fraction numerator={numerator1} denominator={denominator1} className="text-xl font-bold ml-4 absolute top-0 left-full" />
+              <Fraction numerator={numerator1} denominator={denominator1} className="text-3xl font-bold ml-4 absolute top-0 left-full" />
             </div>
 
             {!step2subpart && (
               <div className="flex justify-center">
-                <ArrowDown className="w-16 h-16 text-black fill-black"/>
+                <img src="/img/arrow.svg" className="py-6" alt="Arrow" width={30} height={30} />
               </div>
-            )}
-
-            {!step2subpart && (
-              <p className="text-xl">
-                Select pieces to get the same amount of chocolate
-              </p>
             )}
 
             <div className="flex justify-center relative">
@@ -209,9 +217,12 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
         {!step2subpart ? ( 
           numerator === numerator1 * denominator2 / denominator1 && denominator === denominator2 ? (
             <Proceed
-              onComplete={() => {setStep2subpart(1)}}
+              onComplete={() => {
+                setStep2subpart(1)
+                sendAdminMessage('agent', "Now, let’s fill in the missing number to complete the fraction!");
+              }}
             />
-          ) : (
+          ) : (!correct &&
             <div 
               className={`text-xl cursor-pointer bg-red-500 text-white shadow-[-3px_3px_0px_#000000] px-8 py-2 font-bold ${correct && 'bg-gray-500'}`}
               onClick={() => { 
@@ -232,7 +243,9 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
                 value={answer ? answer : ''}
                 placeholder="?"
                 onChange={(e) => setAnswer(e.target.value)}
-                className={`p-2 w-12 border-2 font-extrabold text-center border-black`}
+                className={`p-2 w-12 border-2 font-extrabold text-center border-black rounded-lg ${
+                  parseInt(answer) === numerator1 * denominator2 / denominator1 && answer !== '' ? 'border-green-500 text-green-500' : 'border-black'
+                }`}
               />
               <span className="border-b-2 border-black w-12" />
               <span className="text-3xl">{denominator2}</span>
@@ -245,7 +258,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             onComplete={() => {setGameStateRef({
               ...gameStateRef.current,
               level: 2
-            })}}
+            });
+          }}
           />
         )}
       </div>

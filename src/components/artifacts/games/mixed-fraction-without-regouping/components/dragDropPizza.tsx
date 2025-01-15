@@ -170,8 +170,8 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
         ].map(({ pizza, name }) => (
           <div key={name} className='flex items-center gap-4'>
             <span className='w-24 text-2xl font-bold'>{name}</span>
-            <div className='flex items-center ml-4 gap-2'>y
-            <div className='flex gap-2'>
+            <div className='flex items-center ml-4 gap-2'>
+            <div className='flex items-center gap-2'>
               {sourcePizzas[name].wholes.map((exists, index) => exists && (
                 <div
                   key={index}

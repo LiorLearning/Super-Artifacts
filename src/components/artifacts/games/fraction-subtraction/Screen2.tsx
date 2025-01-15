@@ -161,7 +161,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                 <>
                   <h3 className="text-xl font-bold text-center">Mark the correct answer</h3>
                   <p className="text-lg font-bold text-center">
-                    How did the denominator (bottom number) change on subtraction?
+                    How will the denominator (bottom number) change on subtraction?
                   </p>
                   <div className="flex gap-4">
                     <Button
@@ -172,7 +172,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                           : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`}
                       disabled={completedSteps.includes(1)}
                     >
-                      Remained the same
+                      Will remain same
                     </Button>
                     <Button
                       onClick={() => handleDenominatorAnswer('subtracted')}
@@ -182,7 +182,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                           : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`}
                       disabled={completedSteps.includes(1)}
                     >
-                      It got subtracted
+                      Will get subtracted
                     </Button>
                   </div>
                   
@@ -197,7 +197,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                 <>
                   <h3 className="text-xl font-bold text-center">Mark the correct answer</h3>
                   <p className="text-lg font-bold text-center">
-                    How did the numerator (top number) change on subtraction?
+                    How will the numerator (top number) change on subtraction?
                   </p>
                   <div className="flex gap-4">
                     <Button
@@ -208,7 +208,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                           : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`}
                       disabled={completedSteps.includes(2)}
                     >
-                      Remained the same
+                      Will remain the same
                     </Button>
                     <Button
                       onClick={() => handleNumeratorAnswer('subtracted')}
@@ -218,7 +218,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                           : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`}
                       disabled={completedSteps.includes(2)}
                     >
-                      It got subtracted
+                      Will get subtracted
                     </Button>
                   </div>
                   

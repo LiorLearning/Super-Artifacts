@@ -185,7 +185,7 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
               <div className="flex items-center gap-4 mb-2">
                 <span className="text-5xl font-medium">+</span>
                 <div className="space-y-1">
-                  <p className="italic text-lg">{fraction2.numerator} more pieces</p>
+                  <p className="italic text-lg">{fraction2.numerator} more piece(s)</p>
                   <p className="italic text-lg">from a friend</p>
                 </div>
               </div>
