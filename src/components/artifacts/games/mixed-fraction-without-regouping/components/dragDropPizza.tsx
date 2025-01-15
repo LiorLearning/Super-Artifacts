@@ -198,6 +198,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
               )}
             </div>
           </div>
+          </div>
         ))}
       </div>
 
