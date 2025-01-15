@@ -43,7 +43,7 @@ export default function EquivalentFractionsGame({sendAdminMessage}: GameProps) {
   const { level } = gameStateRef.current;
 
   return (
-    <div className="mx-auto game-container font-Jost">
+    <div className="mx-auto game-container font-Jost font-medium">
       <DevHelper />
       {level === 0 && <Level0 sendAdminMessage={sendAdminMessage} />}
       {level === 1 && <Level1 sendAdminMessage={sendAdminMessage} />}

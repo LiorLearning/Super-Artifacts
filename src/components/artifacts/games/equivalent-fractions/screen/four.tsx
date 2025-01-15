@@ -6,7 +6,7 @@ import RedBox from "../components/RedBox";
 import { ArrowRight } from "lucide-react";
 import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { use, useEffect } from "react";
+import { use, useEffect, useRef } from "react";
 import Proceed from "../components/proceed";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,15 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
   const [multiplier2_denominator, setmultiplier2_denominator] = useState(0);
   const [hint1, setHint1] = useState(false);
   const [hint2, setHint2] = useState(false);
+
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage('agent', "Fill in the box, and let me know if you need a hint!");
+      start.current = true;
+    }
+  }, []);
   useEffect(() => {
     if (answerNumerator == question1.numerator1*question1.denominator2/question1.denominator1) {
       setGameStateRef({
@@ -48,6 +57,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           step: 4
         }
       });
+      sendAdminMessage('agent', "Woohoo! You've done it, you're now a master at equivalent fractions!");
     }
   }, [answerDenominator]);
 
@@ -69,11 +79,11 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
       <Header 
         level={4}
       />
-      <div className="flex flex-col justify-center items-center gap-8 bg-red-100 p-4 relative">
+      <div className="flex flex-col justify-center items-center gap-8 bg-pink-100 p-4 relative">
         {step <= 2 ? ( 
           
           <div className="max-w-screen-sm flex gap-4 justify-center items-center">
-            <div className="flex flex-col mt-10 py-10 bg-red-100 w-full">
+            <div className="flex flex-col mt-10 py-10 w-full">
             {hint1 && (
               <div className="flex flex-col w-full">
                 <div className="flex justify-center items-center">
@@ -93,7 +103,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
               </div>
               )}
               <div className="flex justify-center items-center gap-4">
-                <Fraction numerator={question1.numerator1} denominator={question1.denominator1} className="text-3xl font-bold" /> 
+                <Fraction numerator={question1.numerator1} denominator={question1.denominator1} className="text-3xl font-bold bg-white rounded px-6 py-6" /> 
                 <span className="text-3xl font-bold">=</span>
                 <div className="flex flex-col gap-2 px-2 bg-white w-24">
                   <span className="text-3xl text-center font-bold flex flex-col justify-end pt-6"> 
@@ -103,7 +113,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
                       value={answerNumerator ? answerNumerator.toString() : ''}
                       placeholder="?"
                       onChange={(e) => setAnswerNumerator(parseInt(e.target.value || '0'))}
-                      className="border-none outline-none text-3xl text-center"
+                      className="outline-none rounded text-3xl text-center border-2 border-black"
                     />
                   </span>
                   <span className="border-b-2 border-black w-full"/>
@@ -122,7 +132,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
                     value={multiplier1_denominator === 0 ? "" : multiplier1_denominator?.toString()}
                     onChange={(e) => setmultiplier1_denominator(Number(e.target.value))}
                     placeholder="?"
-                    className="w-10 text-center mt-2 ml-2 border-2 border-black"
+                    className={`w-10 text-center mt-2 ml-2 border-2 border-black ${multiplier1_denominator === question1.denominator2 / question1.denominator1 ? 'bg-green-500' : ''}`}
                   />
                   
                 </div>
@@ -133,7 +143,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           </div>
         ) : (
           <div className="max-w-screen-sm flex gap-4 justify-center items-center">
-            <div className="flex flex-col mt-10 py-10 bg-red-100 w-full">
+            <div className="flex flex-col mt-10 py-10 bg-pink-100 w-full">
             {hint2 && (
               <div className="flex flex-col w-full">
                 <div className="flex justify-center items-center">
@@ -228,7 +238,7 @@ const Header = ({ level }: { level: number }) => {
       <div className={cn('flex justify-center items-center gap-4 bg-[#F9F871] p-4 shadow-[0_5px_1px_rgba(0,0,0,1)]')}>
 
         <span className='w-full'/>
-        <p className='flex w-full items-center gap-2 text-2xl font-bold'>
+        <p className='flex w-full items-center gap-2 text-4xl font-semibold'>
           Equivalent Fractions
         </p>
         <div className='w-full flex justify-end'>
@@ -239,7 +249,7 @@ const Header = ({ level }: { level: number }) => {
       <div className='flex justify-center items-center gap-4'>
         <div className="flex items-center gap-4">
           <RedBox>Question</RedBox>
-          <p className='text-xl bg-red-500 font-bold text-white px-4 py-6'>
+          <p className='text-xl bg-[#FF497C] font-bold text-white px-4 py-6'>
             Fill the box
           </p>
         </div>
@@ -252,7 +262,7 @@ const Header = ({ level }: { level: number }) => {
 const Hint = ({ setShowHint, className }: { setShowHint: () => void, className: string }) => {
   return (
     <div 
-      className={cn("bg-red-500 shadow-[-4px_4px_0_rgba(0,0,0,1)] font-bold px-4 py-2 text-white", className)}
+      className={cn("bg-[#FF497C] shadow-[-4px_4px_0_rgba(0,0,0,1)] font-bold px-4 py-2 text-white", className)}
       onClick={() => {
         setShowHint();
       }}

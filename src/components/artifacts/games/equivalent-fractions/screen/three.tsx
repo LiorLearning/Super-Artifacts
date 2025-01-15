@@ -29,7 +29,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step } = gameStateRef.current.screen3;
   const {numerator1, denominator1, denominator2, denominator3} = gameStateRef.current.screen3.question;
-  const {numerator, multiplier1} = gameStateRef.current.screen3.answers;
+  const {numerator, multiplier1, multiplier2} = gameStateRef.current.screen3.answers;
   const dropref = useRef<HTMLDivElement>(null);
 
   const [multiplier1_denominator, setmultiplier1_denominator] = useState<number | undefined>();
@@ -63,6 +63,8 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
           step: 4
         }
       }));
+      sendAdminMessage('agent', `You’ve got it! We tripled each piece by multiplying both the total number of pieces (denominator) and the pieces you have (numerator) by ${multiplier1}`);
+
     }
   }, [multiplier1_numerator, multiplier1_denominator]);
 
@@ -105,7 +107,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
         <div className='flex mt-8 justify-center items-center gap-4'>
           <div className="flex items-center gap-4">
             <RedBox>Step 5</RedBox>
-            <p className='text-xl min-w-56 text-center bg-red-600 font-bold text-white px-4 py-6'>
+            <p className='text-xl min-w-56 text-center bg-[#FF497C] font-bold text-white px-4 py-5'>
               Reflex
             </p>
           </div>
@@ -134,12 +136,12 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
             /> */}
             x{denominator2/denominator1}
             <div>
-              <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-12" />
+              <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8" />
             </div>
           </div>
           )}
           <div className="flex justify-center items-center gap-4">
-            <Fraction numerator={numerator1} denominator={denominator1} className="text-3xl font-bold" /> 
+            <Fraction numerator={numerator1} denominator={denominator1} className="text-3xl text-black font-bold" /> 
             <span className="text-3xl font-bold">=</span>
             <div className="text-3xl flex flex-col justify-center font-bold">
               <input
@@ -157,7 +159,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
                     }
                   }))
                 }}
-                className="w-10 text-center border-2 border-black"
+                className={`w-10 text-center mb-2 border-2 border-black ${numerator === numerator1*denominator2/denominator1 ? 'text-[#FF497C] border-[#FF497C]' : ''}`}
                 disabled={step != 1}
               />
               <span className="border-b-2 border-black w-12" />
@@ -170,7 +172,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
           {step >=2 && (
             <div className="flex flex-col w-full">
               <div className="flex justify-center items-center">
-                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-12 -scale-x-100 rotate-180" />
+                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8 -scale-x-100 rotate-180" />
               </div>  
               <div className="flex justify-center items-center">
               {/* <Input 
@@ -200,6 +202,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
         {step == 2 && (
           <div className="flex flex-col">
             <Proceed onComplete={() => {
+              sendAdminMessage('agent', `What would you need to multiply ${denominator1} by to get ${denominator1*multiplier1}?`);
               setGameStateRef(prev => ({
                 ...prev,
                 screen3: {
@@ -209,6 +212,12 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
               }))
             }} />
           </div>
+        )}
+
+        {step >= 3 && (
+          <p className="text-3xl font-bold text-center text-[#FF497C] mt-8">
+            Great! Try this:
+          </p>
         )}
 
 
@@ -257,8 +266,11 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
             </div>
           </div>
         )}
-        <div className="flex justify-center items-center">
           {step == 4 && (
+          <div className="flex flex-col justify-center items-center">
+            <p className="text-3xl font-bold text-center text-green-600 mt-8 mb-16">
+              You've got it!
+            </p>
             <Proceed onComplete={() => {
               setGameStateRef(prev => ({
                 ...prev,
@@ -267,13 +279,13 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
                   step: 5
                 }
               }))
+              sendAdminMessage('agent', `Do you remember how many pieces we got when we merged the chocolate to  ${denominator1/multiplier2} pieces?`);
             }} />
+          </div>
           )}
-        </div>
     </div>
   )
 }
-
 
 
 function Level3_2({ sendAdminMessage }: BaseProps) {
@@ -302,6 +314,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
           step: 6
         }
       }));
+      sendAdminMessage('agent', `When you use honey with a value of ${multiplier2}, you merge every ${multiplier2} pieces into 1. This reduces both the denominator and the numerator by dividing each by ${multiplier2}!`);
     }
   }, [numerator]);
 
@@ -316,6 +329,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
           step: 8
         } 
       }));
+      sendAdminMessage('agent', `We merged ${multiplier3} pieces into 1 by dividing both parts by ${multiplier3}. You're crushing this. Time for the final level!`);
     }
   }, [multiplier1_numerator, multiplier1_denominator]);
 
@@ -358,7 +372,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
         <div className='flex mt-8 justify-center items-center gap-4'>
           <div className="flex items-center gap-4">
             <RedBox>Step 5</RedBox>
-            <p className='text-xl min-w-56 text-center bg-red-600 font-bold text-white px-4 py-6'>
+            <p className='text-xl min-w-56 text-center bg-[#FF497C] font-bold text-white px-4 py-8'>
               Reflex
             </p>
           </div>
@@ -371,11 +385,11 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
                   type="text"
                   value={numerator ? numerator.toString() : ''}
                   onChange={(e) => setnumerator(Number(e.target.value))}
-                  className="w-10 text-center border-2 border-black"
+                  className="w-10 text-center border-2 mb-2 border-black"
                   disabled={step != 5}
                 />
                 <span className="border-b-2 border-black w-12" />
-                <span className="text-3xl font-bold">
+                <span className="text-3xl text-center font-bold">
                   {denominator1/multiplier2}
                 </span>
 
@@ -399,6 +413,11 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
             }} />
           </div>
         )}
+        {step >= 7 && (
+          <p className="text-3xl font-bold text-center text-[#FF497C] mt-8">
+            Great! Try this:
+          </p>
+        )}
 
 
         </div>
@@ -407,7 +426,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
           <div className="flex flex-col mt-10 py-10 bg-red-100 w-full">
             <div className="flex flex-col w-full">
               <div className="flex justify-center items-center">
-                x
+              ÷
                 <input 
                   type="text"
                   value={multiplier1_numerator?.toString() ?? ''}
@@ -418,7 +437,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
                 
               </div>
               <div className="flex justify-center items-center">
-                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8" />
+                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-6 -scale-x-100" />
               </div>  
             </div>
             <div className="flex justify-center items-center gap-4">
@@ -430,10 +449,10 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
             </div>
             <div className="flex flex-col w-full">
               <div className="flex justify-center items-center">
-                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8 -scale-x-100 rotate-180" />
+                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-6 rotate-180" />
               </div>  
               <div className="flex justify-center items-center">
-                x
+              ÷
                 <input 
                   type="text"
                   value={multiplier1_denominator?.toString() ?? ''}
@@ -446,16 +465,19 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
             </div>
           </div>
         )}
-        <div className="flex justify-center items-center">
-          {step == 8 && (
+        {step == 8 && (
+          <div className="flex flex-col justify-center items-center">
+            <p className="text-3xl font-bold text-center text-green-600 mt-8 mb-16">
+              You've got it!
+            </p>
             <Proceed onComplete={() => {
               setGameStateRef(prev => ({
                 ...prev,
                 level: 4
               }))
             }} />
-          )}
-        </div>
-    </div>
-  )
+          </div>
+        )}
+      </div>
+  );
 }
