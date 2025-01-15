@@ -447,7 +447,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                   {/* First Question */}
                   <div className="w-full flex flex-col items-center gap-4">
                     <p className="text-lg font-bold text-center">
-                      How will the denominator (bottom number) change on subtraction?
+                      How did the denominator (bottom number) change on subtraction?
                     </p>
                     <div className="flex gap-4">
                       <Button
@@ -478,7 +478,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                   {firstAnswer === 'same' && (
                     <div className="w-full flex flex-col items-center gap-4">
                       <p className="text-lg font-bold text-center">
-                        How will the numerator (top number) change on subtraction?
+                        How did the numerator (top number) change on subtraction?
                       </p>
                       <div className="flex gap-4">
                         <Button
