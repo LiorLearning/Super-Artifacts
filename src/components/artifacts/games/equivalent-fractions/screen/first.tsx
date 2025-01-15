@@ -153,6 +153,13 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (numerator === numerator1 * denominator2 / denominator1 && denominator === denominator2) {
+      sendAdminMessage('agent', "Great job, who knew math could be this sweet?");
+    }
+  }, [numerator, denominator]);
+
+
   return (
       <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
         <div className="flex flex-col gap-4 w-full">
@@ -210,9 +217,12 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
         {!step2subpart ? ( 
           numerator === numerator1 * denominator2 / denominator1 && denominator === denominator2 ? (
             <Proceed
-              onComplete={() => {setStep2subpart(1)}}
+              onComplete={() => {
+                setStep2subpart(1)
+                sendAdminMessage('agent', "Now, let’s fill in the missing number to complete the fraction!");
+              }}
             />
-          ) : (
+          ) : (!correct &&
             <div 
               className={`text-xl cursor-pointer bg-red-500 text-white shadow-[-3px_3px_0px_#000000] px-8 py-2 font-bold ${correct && 'bg-gray-500'}`}
               onClick={() => { 
@@ -248,7 +258,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             onComplete={() => {setGameStateRef({
               ...gameStateRef.current,
               level: 2
-            })}}
+            });
+          }}
           />
         )}
       </div>

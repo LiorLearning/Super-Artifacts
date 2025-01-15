@@ -6,7 +6,7 @@ import RedBox from "../components/RedBox";
 import { ArrowRight } from "lucide-react";
 import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { use, useEffect } from "react";
+import { use, useEffect, useRef } from "react";
 import Proceed from "../components/proceed";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,15 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
   const [multiplier2_denominator, setmultiplier2_denominator] = useState(0);
   const [hint1, setHint1] = useState(false);
   const [hint2, setHint2] = useState(false);
+
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage('agent', "Fill in the box, and let me know if you need a hint!");
+      start.current = true;
+    }
+  }, []);
   useEffect(() => {
     if (answerNumerator == question1.numerator1*question1.denominator2/question1.denominator1) {
       setGameStateRef({
@@ -48,6 +57,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           step: 4
         }
       });
+      sendAdminMessage('agent', "Woohoo! You've done it, you're now a master at equivalent fractions!");
     }
   }, [answerDenominator]);
 

@@ -1,7 +1,7 @@
 import { BaseProps } from "../utils/types";
 import { useGameState } from "../state-utils";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "../components/header";
 import Intro from "../components/intro";
 import Bar from "../components/bar";
@@ -14,11 +14,21 @@ import KnifeSelector from "../components/knifeselector";
 import HoneySelector from "../components/honeyselctor";
 
 
+
 export default function Level2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {numerator1, denominator1, denominator2, denominator3 } = gameStateRef.current.screen2.question;  
   const { step, selectedKnife, selectedPieces1, selectedPieces2, substep, selectedHoney } = gameStateRef.current.screen2;
   const [answer1, setAnswer1] = useState('');
+
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage('agent', "Alright, let's try finding another equivalent fraction for 2/3​! This time, we need to divide the chocolate into 12 equal pieces.");
+      start.current = true;
+    }
+  }, []);
 
   const handlePieceClick = (index: number) => {
     setGameStateRef({
@@ -43,6 +53,9 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
           substep: 1
         }
       }));
+      sendAdminMessage('agent', `Time for you to grab the same amount of chocolate again!`);
+    } else if (selectedKnife) {
+      sendAdminMessage('agent', `Hmm, right now, you've used the knife labeled ${selectedKnife}, and that gave us ${selectedKnife*denominator1} pieces, but we need ${denominator2} pieces. Can you figure out which knife will get us to ${denominator2}?`);
     }
   }, [selectedKnife]);
 
@@ -70,6 +83,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
           substep: 2  
         }
       });
+      sendAdminMessage('agent', `Great, let's try another one! This time, let's use honey to merge the chocolate into ${denominator3} pieces`);
     }
   }, [selectedPieces1]);
 

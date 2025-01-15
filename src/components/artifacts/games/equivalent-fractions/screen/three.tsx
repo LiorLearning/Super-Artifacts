@@ -29,7 +29,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step } = gameStateRef.current.screen3;
   const {numerator1, denominator1, denominator2, denominator3} = gameStateRef.current.screen3.question;
-  const {numerator, multiplier1} = gameStateRef.current.screen3.answers;
+  const {numerator, multiplier1, multiplier2} = gameStateRef.current.screen3.answers;
   const dropref = useRef<HTMLDivElement>(null);
 
   const [multiplier1_denominator, setmultiplier1_denominator] = useState<number | undefined>();
@@ -279,6 +279,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
                   step: 5
                 }
               }))
+              sendAdminMessage('agent', `Do you remember how many pieces we got when we merged the chocolate to  ${denominator1/multiplier2} pieces?`);
             }} />
           </div>
           )}
@@ -313,6 +314,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
           step: 6
         }
       }));
+      sendAdminMessage('agent', `When you use honey with a value of ${multiplier2}, you merge every ${multiplier2} pieces into 1. This reduces both the denominator and the numerator by dividing each by ${multiplier2}!`);
     }
   }, [numerator]);
 
@@ -327,6 +329,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
           step: 8
         } 
       }));
+      sendAdminMessage('agent', `We merged ${multiplier3} pieces into 1 by dividing both parts by ${multiplier3}. You're crushing this. Time for the final level!`);
     }
   }, [multiplier1_numerator, multiplier1_denominator]);
 
