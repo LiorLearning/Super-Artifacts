@@ -113,7 +113,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
               handlePieceClick={() => {}}
             />
             <div className="absolute top-0 left-full text-center text-2xl font-bold ml-6">
-              <Fraction numerator={numerator1} denominator={denominator1} />
+              <Fraction numerator={!numerator1 ? '?' : numerator1} denominator={denominator1} className="text-3xl bg-white p-2 h-full flex items-center" />
             </div>
           </div>
 
@@ -152,7 +152,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
               
               
             <div className="absolute top-0 left-full flex flex-col text-2xl font-bold ml-6">
-              <Fraction numerator={selectedPieces1 ? selectedPieces1 : ''} denominator={denominator2} />
+              <Fraction numerator={selectedPieces1 ? selectedPieces1 : ''} denominator={denominator2} className="text-3xl bg-white p-2 h-full flex items-center" />
             </div>
           </div>
 
@@ -168,11 +168,11 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
               Select pieces to get the same amount of chocolate!            
             </p>
           ) : (
-            <div className="flex flex-col text-center items-center justify-center">
+            <div className="flex font-medium gap-4 flex-col text-center items-center justify-center">
                 <h2 className="text-2xl font-bold">
                   Great, lets try another one!
                 </h2>
-                <p className="text-2xl text-left w-full mb-4">
+                <p className="text-2xl text-center w-full mb-4">
                   This time, let’s use honey to merge the chocolate into the required number of pieces.
                 </p>
             </div>
@@ -227,12 +227,12 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
               pieces, but you need {denominator3} pieces.
             </p>
           ) : (
-            <p className="text-2xl text-left w-full mb-4">
-              Select the number of pieces you need to get the same amount of chocolate!
+            <p className="text-2xl text-left w-full mb-4 mt-4">
+              Select pieces to get the same amount of chocolate!
             </p>
           )}
 
-          {substep === 3 && (
+          {substep === 4 && (
             <Proceed onComplete={() => {
               setGameStateRef({
                 ...gameStateRef.current,
