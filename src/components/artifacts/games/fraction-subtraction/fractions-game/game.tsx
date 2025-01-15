@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import SuccessAnimation from '../../utils/success-animate';
+// import SuccessAnimation from '@/components/utils/
 import { Fraction, BarState, Bar } from './bar';
 import { useGameState } from './state-utils';
 
@@ -232,7 +232,7 @@ const Game = ({sendAdminMessage}: GameProps) => {
         {/* Results */}
         {gameState.showAnswer && (
           <>
-          {gameState.userAnswer === `${gameState.correctAnswer.num}/${gameState.correctAnswer.denom}` && <SuccessAnimation />}
+          {/* {gameState.userAnswer === `${gameState.correctAnswer.num}/${gameState.correctAnswer.denom}` && <SuccessAnimation />} */}
           <div className="mt-8">
             <div className={`rounded-xl p-8 shadow-lg backdrop-blur-sm
               ${gameState.userAnswer === `${gameState.correctAnswer.num}/${gameState.correctAnswer.denom}` ? 'bg-green-200' : 'bg-red-200'}`}>
