@@ -187,7 +187,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
                   Great, lets try another one!
                 </h2>
                 <p className="text-2xl text-center w-full mb-4">
-                  This time, let’s use honey to merge the chocolate into the required number of pieces.
+                  This time, let's use honey to merge the chocolate into the required number of pieces.
                 </p>
             </div>
           )}
@@ -257,8 +257,6 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
           
         </div>
       )}
-
-
     </div>
   );
 }
