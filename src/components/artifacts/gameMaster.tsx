@@ -18,6 +18,7 @@ import EquivalentFractionsGame from './games/equivalent-fractions/game';
 import MixedFractionGame from './games/mixed-fraction-without-regouping/game';
 import LegoGame from './games/mixed-fraction/game';
 import CommonDenominatorGame from './games/common-denominators/game';
+import CompareFractionGame from './games/compare-fraction/game';
 
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
@@ -28,6 +29,7 @@ import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState
 import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/mixed-fraction/state-utils'
 import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState as CommonDenominatorGameState } from './games/common-denominators/state-utils'
 import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/mixed-fraction-without-regouping/state-utils'
+import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fraction/state-utils'
 
 import { desc as TemplateGameDesc } from './games/template/game-state';
 import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
@@ -38,6 +40,7 @@ import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fraction
 import { desc as LegoGameDesc } from './games/mixed-fraction/game-state';
 import { desc as CommonDenominatorGameDesc } from './games/common-denominators/game-state';
 import { desc as MixedFractionGameDesc } from './games/mixed-fraction-without-regouping/game-state';
+import { desc as CompareFractionGameDesc } from './games/compare-fraction/game-state';
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
@@ -97,6 +100,12 @@ const gameInfo: Record<string, GameInfo> = {
     state: TemplateGameState,
     provider: TemplateGameStateProvider
   },
+  'compare-fraction': {
+    game: CompareFractionGame,
+    desc: CompareFractionGameDesc,
+    state: CompareFractionGameState,
+    provider: CompareFractionGameStateProvider
+  }
 };
 
 interface GameComponentProps {
