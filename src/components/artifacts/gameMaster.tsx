@@ -217,9 +217,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               <SelectContent>
                 {Object.keys(gameInfo).map((gameKey) => (
                   <SelectItem key={gameKey} value={gameKey}>
-                    {gameKey.split('-').map(word => 
-                      word.charAt(0).toUpperCase() + word.slice(1)
-                    ).join(' ')}
+                    {gameKey}
                   </SelectItem>
                 ))}
               </SelectContent>
