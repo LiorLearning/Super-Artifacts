@@ -90,7 +90,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
             </div>
           </div>
           <div className="flex justify-center my-16">
-            <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep('second', setGameStateRef)} />
+            <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep('second', setGameStateRef)} sendAdminMessage={sendAdminMessage} />
           </div>
         </>
       )}

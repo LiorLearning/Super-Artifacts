@@ -5,8 +5,9 @@ import { CorrectAnswer, FinalAnswer, StepModule } from './components/first';
 import { Input } from '@/components/custom_ui/input';
 import { useEffect, useState } from 'react';
 import { COLORS } from './constants';
+import { GameProps } from '../utils/types';
 
-const DivisionSteps = () => {
+const DivisionSteps = ({sendAdminMessage}: GameProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction } = gameStateRef.current.state3;
   const [answer, setAnswer] = useState({numerator: '', denominator: ''});
@@ -130,7 +131,7 @@ const DivisionSteps = () => {
             </div>
           </div>
           <div className="flex justify-center my-16">
-            <FinalAnswer numerator={fraction.numerator} denominator={fraction.denominator} nextStep={nextStep} />
+            <FinalAnswer numerator={fraction.numerator} denominator={fraction.denominator} nextStep={nextStep} sendAdminMessage={sendAdminMessage} />
           </div>
         </>
       )}
@@ -139,14 +140,14 @@ const DivisionSteps = () => {
 }
 
 
-const MainContent = () => {
+const MainContent = ({sendAdminMessage}: GameProps) => {
   const { gameStateRef } = useGameState();
   const { fraction, step } = gameStateRef.current.state3;
 
   return (
     <div className="flex flex-col m-4">
       {step === 0 && (
-        <DivisionSteps />
+        <DivisionSteps sendAdminMessage={sendAdminMessage} />
       )}
       {step === 1 && (
         <>
@@ -159,14 +160,14 @@ const MainContent = () => {
 };
 
 
-export default function ThirdScreen() {
+export default function ThirdScreen({sendAdminMessage}: GameProps) {
     const { gameStateRef } = useGameState();
     const { fraction, step } = gameStateRef.current.state3;
 
     return (
       <div className="mx-auto">
         <Header fraction={fraction} />
-        <MainContent />
+        <MainContent sendAdminMessage={sendAdminMessage} />
         {step === 1 && (
           <div className="flex items-center justify-center">
             <LegoGame />

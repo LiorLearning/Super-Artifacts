@@ -2,15 +2,17 @@ import { Input } from "@/components/custom_ui/input";
 import { Button } from "@/components/custom_ui/button";
 import { useState } from "react";
 import { StepForwardIcon } from "lucide-react";
+import { COLORS } from "../constants";
 
 interface FinalAnswerProps {
   numerator: number;
   denominator: number;
   nextStep: () => void;
+  sendAdminMessage: (agent: string, message: string) => void;
 }
 
 
-export const FinalAnswer = ({ numerator, denominator, nextStep }: FinalAnswerProps) => {
+export const FinalAnswer = ({ numerator, denominator, nextStep, sendAdminMessage }: FinalAnswerProps) => {
   const [mixedFraction, setMixedFraction] = useState({integer: '', numerator: '', denominator: ''});
 
   const handleIntegerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,13 +33,18 @@ export const FinalAnswer = ({ numerator, denominator, nextStep }: FinalAnswerPro
   const verifyMixedFraction = () => {
     const expectedNumerator = parseInt(mixedFraction.integer) * parseInt(mixedFraction.denominator) + parseInt(mixedFraction.numerator);
     const expectedDenominator = parseInt(mixedFraction.denominator);
+    const expectedWhole = Math.floor(numerator / denominator);
+    const expectedRemainder = numerator % denominator;
     if (
       expectedNumerator === numerator && 
       expectedDenominator === denominator && 
       parseInt(mixedFraction.numerator) < parseInt(mixedFraction.denominator)
     ) {
-      nextStep();
+      sendAdminMessage('agent', `Wow, you nailed it! Your guess was spot on ${expectedWhole} whole and ${expectedRemainder}/${denominator}ths leftover. Great job!`);
+    } else {
+      sendAdminMessage('agent', `Oops, close call! The right answer is ${expectedWhole} whole and ${expectedRemainder}/${denominator}ths. Better luck next time!`);
     }
+    nextStep();
   };
 
   return (
@@ -76,9 +83,10 @@ export const FinalAnswer = ({ numerator, denominator, nextStep }: FinalAnswerPro
         </div>
       </div>
 
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center mt-8 mb-4">
         <Button 
-          className="bg-blue-500 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" 
+          className="text-white px-6 py-3 mx-2 text-xl rounded-none shadow-[-5px_5px_0px_black]" 
+          style={{ backgroundColor: COLORS.pink }}
           onClick={verifyMixedFraction}
         >
           Verify
