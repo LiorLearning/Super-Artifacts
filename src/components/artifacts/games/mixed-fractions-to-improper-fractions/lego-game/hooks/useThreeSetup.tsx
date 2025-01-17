@@ -27,8 +27,8 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     scene.background = new THREE.Color(0xffffff);
 
     // Grid setup for visual reference and alignment
-    const gridHelper = new THREE.GridHelper(12, 12, 0x888888, 0xcccccc);
-    scene.add(gridHelper);
+    // const gridHelper = new THREE.GridHelper(12, 12, 0x888888, 0xcccccc);
+    // scene.add(gridHelper);
 
     // Camera setup with higher pixel ratio for better resolution
     const camera = new THREE.OrthographicCamera(
