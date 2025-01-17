@@ -114,8 +114,8 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
       />
 
 
-      <div className="flex flex-col max-w-screen-sm mx-auto items-center justify-center">
-        <div className="flex flex-col gap-8  items-center justify-center">
+      <div className="flex flex-col w-full max-w-screen-sm mx-auto items-center justify-center">
+        <div className="flex flex-col gap-8 w-full  items-center justify-center">
 
           <p className="text-2xl text-left w-full mb-4">
           {substep === 0 && ("Use a knife to split the chocolate into the required number of pieces.")}

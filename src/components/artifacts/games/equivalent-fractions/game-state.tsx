@@ -136,7 +136,7 @@ export const initialGameState: GameState = {
       numerator1: 4,
       denominator1: 6,
       denominator2: 12,
-      denominator3: 18
+      denominator3: 3
     },
     answers: {
       numerator: 0,

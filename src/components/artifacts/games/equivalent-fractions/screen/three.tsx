@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { use, useEffect, useRef } from "react";
 import Proceed from "../components/proceed";
 import { useState } from "react";
+import { OnlyDivisor, OnlyMultiplier } from "../components/multiplierFraction";
 
 
 export default function Level3 ({sendAdminMessage}: BaseProps) {
@@ -225,45 +226,15 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
       </div>
       {step >= 3 && step <= 4 && (
           <div className="flex flex-col mt-10 py-10 bg-red-100 w-full">
-            <div className="flex flex-col w-full">
-              <div className="flex justify-center items-center">
-                x
-                <input 
-                  type="text"
-                  value={multiplier1_numerator?.toString() ?? ''}
-                  onChange={(e) => setmultiplier1_numerator(Number(e.target.value))}
-                  placeholder=""
-                  className="w-10 text-center mb-2 ml-2 border-2 border-black"
-                />
-                
-              </div>
-              <div className="flex justify-center items-center">
-                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8" />
-              </div>  
-            </div>
-            <div className="flex justify-center items-center gap-4">
-              <Fraction numerator={numerator1} denominator={denominator1} className="text-3xl font-bold" /> 
-              <span className="text-3xl font-bold">=</span>
-              <div className="text-3xl flex flex-col justify-center font-bold">
-                <Fraction numerator={numerator1*multiplier1} denominator={denominator1*multiplier1} className="text-3xl font-bold" />
-              </div>
-            </div>
-            <div className="flex flex-col w-full">
-              <div className="flex justify-center items-center">
-                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8 -scale-x-100 rotate-180" />
-              </div>  
-              <div className="flex justify-center items-center">
-                x
-                <input 
-                  type="text"
-                  value={multiplier1_denominator?.toString() ?? ''}
-                  onChange={(e) => setmultiplier1_denominator(Number(e.target.value))}
-                  placeholder=""
-                  className="w-10 text-center mt-2 ml-2 border-2 border-black"
-                />
-                
-              </div>
-            </div>
+            <OnlyMultiplier numerator1={numerator1} denominator1={denominator1} multiplier={multiplier1} onComplete={() => {
+              setGameStateRef(prev => ({
+                ...prev,
+                screen3: {
+                  ...prev.screen3,
+                  step: 4
+                }
+              }))
+            }} />
           </div>
         )}
           {step == 4 && (
@@ -424,45 +395,15 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
       </div>
       {step >= 7 && step <= 8 && (
           <div className="flex flex-col mt-10 py-10 bg-red-100 w-full">
-            <div className="flex flex-col w-full">
-              <div className="flex justify-center items-center">
-              ÷
-                <input 
-                  type="text"
-                  value={multiplier1_numerator?.toString() ?? ''}
-                  onChange={(e) => setmultiplier1_numerator(Number(e.target.value))}
-                  placeholder=""
-                  className="w-10 text-center mb-2 ml-2 border-2 border-black"
-                />
-                
-              </div>
-              <div className="flex justify-center items-center">
-                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-6 -scale-x-100" />
-              </div>  
-            </div>
-            <div className="flex justify-center items-center gap-4">
-              <Fraction numerator={numerator1/multiplier2} denominator={denominator1/multiplier2} className="text-3xl font-bold" /> 
-              <span className="text-3xl font-bold">=</span>
-              <div className="text-3xl flex flex-col justify-center font-bold">
-                <Fraction numerator={numerator1*multiplier3/multiplier2} denominator={denominator1*multiplier3/multiplier2} className="text-3xl font-bold" />
-              </div>
-            </div>
-            <div className="flex flex-col w-full">
-              <div className="flex justify-center items-center">
-                <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-6 rotate-180" />
-              </div>  
-              <div className="flex justify-center items-center">
-              ÷
-                <input 
-                  type="text"
-                  value={multiplier1_denominator?.toString() ?? ''}
-                  onChange={(e) => setmultiplier1_denominator(Number(e.target.value))}
-                  placeholder=""
-                  className="w-10 text-center mt-2 ml-2 border-2 border-black"
-                />
-                
-              </div>
-            </div>
+            <OnlyDivisor numerator1={numerator1} denominator1={denominator1} divisor={multiplier3} onComplete={() => {
+              setGameStateRef(prev => ({
+                ...prev,
+                screen3: {
+                  ...prev.screen3,
+                  step: 8
+                }
+              }))
+            }} />
           </div>
         )}
         {step == 8 && (
