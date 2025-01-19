@@ -1,6 +1,4 @@
 import React from 'react';
-import MixedFraction from './Fraction';
-import { colors } from '../colors';
 import { cn } from '@/lib/utils';
 import Fraction from './Fraction';
 import RedBox from './RedBox';
@@ -20,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ numerator1, denominator1, denominator2,
     <div className='w-full space-y-16 flex flex-col'>
       <div className={cn('flex justify-center items-center gap-4 bg-[#F9F871] p-4 shadow-[0_5px_1px_rgba(0,0,0,1)]')}>
         <span className='w-full'/>
-        <p className='flex text-3xl w-full items-center gap-2 font-bold'>
+        <div className='flex text-3xl w-full items-center gap-2 font-bold'>
           Equivalent <br/> Fractions
           {step && (
             <div className='flex text-2xl items-center gap-2 font-bold'>
@@ -28,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ numerator1, denominator1, denominator2,
               = <Fraction numerator={"?"} denominator={denominator2} className='text-3xl bg-white text-black p-2 px-4 h-full flex items-center' />
             </div>
           )}
-        </p>
+        </div>
         <div className='w-full flex justify-end'>
           {level && <RedBox>Level {level}</RedBox>}
         </div>
@@ -45,7 +43,5 @@ const Header: React.FC<HeaderProps> = ({ numerator1, denominator1, denominator2,
     </div>
   );
 };
-
-
 
 export default Header;

@@ -215,7 +215,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
               }}
             />
           ) : (!correct &&
-            <div 
+            <button 
               className={`text-xl cursor-pointer bg-red-500 text-white shadow-[-3px_3px_0px_#000000] px-8 py-2 font-bold ${correct && 'bg-gray-500'}`}
               onClick={() => { 
                 if (!correct && selectedPieces === numerator1 * denominator2 / denominator1) { setCorrect(true) } else { 
@@ -225,7 +225,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
               }}
             >
               Check
-            </div>
+            </button>
           )
         ) : (
           <div className="flex justify-center items-center max-w-lg mx-auto text-3xl font-bold">
@@ -253,15 +253,16 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             </div>
           </div>
         )}
-        {step2subpart && (parseInt(answer) === numerator1 * denominator2 / denominator1 && (
+        {step2subpart !== 0 && parseInt(answer) === numerator1 * denominator2 / denominator1 && (
           <Proceed
-            onComplete={() => {setGameStateRef({
-              ...gameStateRef.current,
-              level: 2
-            });
-          }}
+            onComplete={() => {
+              setGameStateRef(prev => ({
+                ...prev,
+                level: 2
+              }));
+            }}
           />
-        ))}
+        )}
       </div>
   );
 }
