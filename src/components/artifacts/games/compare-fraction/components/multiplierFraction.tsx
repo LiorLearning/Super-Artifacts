@@ -50,6 +50,8 @@ export default function MultiplierFraction({
   useEffect(() => {
     if (multiplerStep === 0 && multiplier1_denominator === denominator2 / denominator1) {
       setMultiplerStep(1);
+    } else if (multiplier1_denominator){
+      sendAdminMessage('admin', `User entered ${multiplier1_denominator} as factor of ${denominator2} and ${denominator1} but it is not a valid factor, diagnose socratically`);
     }
   }, [multiplier1_denominator]);
 
@@ -62,6 +64,8 @@ export default function MultiplierFraction({
   useEffect(() => {
     if (multiplerStep === 1 && multiplier1_numerator === denominator2 / denominator1) {
       setMultiplerStep(2);
+    } else {
+      sendAdminMessage('admin', `User entered ${multiplier1_numerator} as factor for numerator, user already entered ${multiplier1_denominator} as factor of ${denominator2} and ${denominator1}`);
     }
   }, [multiplier1_numerator]);
 
@@ -77,7 +81,7 @@ export default function MultiplierFraction({
             value={multiplier1_numerator ? multiplier1_numerator.toString() : ''}
             onChange={(e) => setmultiplier1_numerator(Number(e.target.value))}
             placeholder={multiplerStep === 1 ? "?" : ""}
-            className={`w-10 text-center mb-2 ml-2 border-2 border-black ${multiplier1_numerator === denominator2 / denominator1 ? 'bg-green-100' : 'bg-white'}`}
+            className={`w-10 text-center mb-2 ml-2 border-2 border-black ${multiplier1_numerator ? (multiplier1_numerator === denominator2 / denominator1 ? 'bg-green-100' : 'bg-red-100') : 'bg-white'} ${multiplerStep >= 1 ? 'opacity-100' : 'opacity-5'}`}
             disabled={multiplerStep !== 1}
             ref={multiplier1_numeratorRef}
           />
@@ -118,13 +122,12 @@ export default function MultiplierFraction({
             value={multiplier1_denominator === 0 ? "" : multiplier1_denominator?.toString()}
             onChange={(e) =>  setmultiplier1_denominator(Number(e.target.value))}
             placeholder={multiplerStep === 0 ? "?" : ""}
-            className={`w-10 text-center my-1 ml-2 border-2 border-black ${multiplier1_denominator === denominator2 / denominator1 ? 'bg-green-100' : 'bg-white'}`}
+            className={`w-10 text-center my-1 ml-2 border-2 border-black ${multiplier1_denominator ? (multiplier1_denominator === denominator2 / denominator1 ? 'bg-green-100' : 'bg-red-100') : 'bg-white'}`}
             disabled={multiplerStep !== 0}
             ref={multiplier1_denominatorRef}
           />
         </div>
       </div>
     </div>
-    {multiplerStep}
   </div>
 )}

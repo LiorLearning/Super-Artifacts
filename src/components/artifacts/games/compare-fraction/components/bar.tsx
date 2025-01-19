@@ -36,7 +36,7 @@ const Bar = (
 
   return (
     <div className="flex max-w-screen-md my-4 mx-auto w-full relative -space-x-[3px] min-w-52">
-      <Fraction numerator={numerator} denominator={denominator} className='text-3xl text-black p-2 px-4 h-full flex items-center' />
+      <Fraction numerator={numerator} denominator={denominator} className='absolute right-[calc(100%+25px)] text-2xl text-black p-2 h-full flex items-center' />
       <div className="flex w-full -space-x-[3px] min-w-52">
         {[...Array(denominator)].map((_, index) => (
           <div
@@ -65,9 +65,14 @@ const Bar = (
         </Button>
         <Button
           id="join-button"
-          className={`${!active ? 'bg-[#d3ea00] hover:bg-[#d3ea00]/80' : 'bg-red-100 hover:bg-red-100/80'} text-black font-bold px-4 py-2 flex items-center rounded-sm gap-2`}
-          onClick={() => handlejoin()}
-          disabled={!active}
+          className={`${!active ? 'bg-[#d3ea00] hover:bg-[#d3ea00]/80' : 'bg-red-100 hover:bg-red-100/80'} text-black font-bold px-4 py-2 flex items-center rounded-sm gap-2 ${denominator === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          onClick={() => {
+            if (denominator === 1) {
+              return;
+            }
+            handlejoin()
+          }}
+          disabled={!active || denominator === 1}
         >
           Join 🍯
         </Button>

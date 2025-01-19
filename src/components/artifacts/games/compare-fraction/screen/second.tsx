@@ -25,7 +25,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage('agent', `This time, let's compare them without the visuals. Choose a strategy that seems right to you!`);
+      sendAdminMessage('agent', `This time, let's compare ${fraction1.numerator}/${fraction1.denominator} and ${fraction2.numerator}/${fraction2.denominator} without the visuals. Before we begin, why don't you take a guess?`);
       start.current = true;
     }
   }, []);
@@ -42,8 +42,8 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
   }
 
   useEffect(() => {
-    if (firstAnswer === 2) {
-      sendAdminMessage('agent', `You're doing great! Each time we split the chocolate, we're creating fractions with different denominators, but the amount of chocolate stays the same.`);
+    if (firstAnswer === fraction1.denominator*fraction2.denominator) {
+      sendAdminMessage('agent', `Great! Let's rewrite the fractions with the common denominator. How many times does ${fraction1.denominator} go into ${fraction1.denominator*fraction2.denominator}?`);
       setGameStateRef(prev => ({
         ...prev,
         state2: {
@@ -51,8 +51,8 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
           step: 2
         }
       }))
-    } else if (firstAnswer === 0) {
-      sendAdminMessage('agent', `umm ...`);
+    } else if (firstAnswer === fraction1.denominator*(fraction2.denominator -1)) {
+      sendAdminMessage('agent', `Does ${fraction1.denominator} go into ${fraction2.denominator}? If not, ${fraction2.denominator} cannot be a common denominator!`);
     }
   }, [firstAnswer]);
 
@@ -102,32 +102,28 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
 
           <div className="w-full flex flex-col py-16 bg-red-50 items-center gap-4">
             <p className="text-2xl font-bold text-center">
-              Which one is bigger?
+              Choose a valid common denominator
             </p>
             <div className="flex gap-4">
               <Button
-                onClick={() => setFirstAnswer((fraction1.numerator*fraction2.denominator) > (fraction2.numerator*fraction1.denominator) ? 2 : 0)}
+                onClick={() => setFirstAnswer(fraction1.denominator*fraction2.denominator)}
                 className={`px-16 py-2 text-lg font-bold text-white rounded-none shadow-[-5px_5px_0_rgba(0,0,0,1)]
-                  ${firstAnswer === 2 && fraction1.numerator*fraction2.denominator > fraction2.numerator*fraction1.denominator 
+                  ${firstAnswer === fraction1.denominator*fraction2.denominator
                     ? 'bg-[#2EA500] hover:bg-[#2EA500]'
                     : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`
                   }
               >
-                {fraction1.numerator}/{fraction1.denominator}
+                {fraction1.denominator*fraction2.denominator}
               </Button>
               <Button
-                onClick={() => setFirstAnswer((fraction1.numerator*fraction2.denominator) < (fraction2.numerator*fraction1.denominator) ? 2 : 0)}
-                className={`px-16 py-2 text-lg font-bold text-white rounded-none shadow-[-5px_5px_0_rgba(0,0,0,1)]
-                  ${firstAnswer === 2 && fraction1.numerator*fraction2.denominator < fraction2.numerator*fraction1.denominator 
-                    ? 'bg-[#2EA500] hover:bg-[#2EA500]'
-                    : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`
-                  }
+                onClick={() => setFirstAnswer(fraction1.denominator*(fraction2.denominator -1))}
+                className={`px-16 py-2 text-lg font-bold text-white rounded-none shadow-[-5px_5px_0_rgba(0,0,0,1)] bg-[#FF497C] hover:bg-[#FF497C]/90`} 
               >
-                {fraction2.numerator}/{fraction2.denominator}
+                {fraction1.denominator*(fraction2.denominator -1)}
               </Button>
             </div>
                       
-            {firstAnswer === 0 && (
+            {firstAnswer === fraction1.denominator*(fraction2.denominator -1) && (
               <div className="mt-4 p-4 bg-red-100 border-2 border-red-300 rounded-lg text-center">
                 <p className="text-red-700 font-bold">Not quite, try again!</p>
               </div>
@@ -141,7 +137,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
               STEP 3
             </RedBox>
             <div className="bg-pink-500 text-white text-center text-xl px-6 py-6 font-bold">
-              REWRITE FRACTION
+              Rewrite Fractions
             </div>
           </div>
       )}
@@ -195,13 +191,17 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
         <ComparisonFractions
           fraction1={fraction1}
           fraction2={fraction2}
-          onComplete={() => setGameStateRef(prev => ({
-            ...prev,
-            state2: {
-              ...prev.state2,
-              step: 5
-            }
-          }))}
+          onComplete={() => {
+            setGameStateRef(prev => ({
+              ...prev,
+              state2: {
+                ...prev.state2,
+                step: 5
+              }
+            }))
+            sendAdminMessage('agent', `Superb, you're almost a master! Time for Level 3`);
+          }}
+          sendAdminMessage={sendAdminMessage}
         />
       )}
 
