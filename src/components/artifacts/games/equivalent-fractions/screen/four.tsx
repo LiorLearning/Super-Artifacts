@@ -95,7 +95,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
                 step: 2
               }
             });
-          }} />
+          }} sendAdminMessage={sendAdminMessage} />
         ) : (
           <STEP3 numerator1={question2.numerator1} numerator2={question2.numerator2} denominator2={question2.denominator2} onComplete={() => {
             setGameStateRef({
@@ -105,7 +105,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
                 step: 4
               }
             });
-          }} />
+          }} sendAdminMessage={sendAdminMessage} />
         )}
       </div>
 
@@ -134,7 +134,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
   )
 }
 
-const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMessage}: {numerator1: number, denominator1: number, denominator2: number, onComplete: () => void, sendAdminMessage: (agent: string, message: string) => void }) => {
+const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMessage}: {numerator1: number, denominator1: number, denominator2: number, onComplete: () => void, sendAdminMessage: (role: string, content: string) => void }) => {
   const [hint, setHint] = useState(0);
   const [multiplier_numerator, setMultiplier_numerator] = useState(0);
   const multiplier_numeratorRef = useRef<HTMLInputElement>(null);
@@ -225,7 +225,7 @@ const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMes
   )
 }
 
-const STEP3 = ({numerator1, numerator2, denominator2, onComplete}: {numerator1: number, numerator2: number, denominator2: number, onComplete: () => void }) => {
+const STEP3 = ({numerator1, numerator2, denominator2, onComplete, sendAdminMessage}: {numerator1: number, numerator2: number, denominator2: number, onComplete: () => void, sendAdminMessage: (role: string, content: string) => void }) => {
   const [hint, setHint] = useState(0);
   const [multiplier_numerator, setMultiplier_numerator] = useState(0);
   const multiplier_numeratorRef = useRef<HTMLInputElement>(null);
@@ -238,6 +238,7 @@ const STEP3 = ({numerator1, numerator2, denominator2, onComplete}: {numerator1: 
   useEffect(() => {
     if (hint === 1 && multiplier_numerator === numerator2/numerator1) {
       setHint(2);
+      sendAdminMessage('agent', `Awesome, so what would you need to multiply ${numerator2} by to keep the same fraction?`);
       multiplier_denominatorRef.current?.focus();
     } else if (hint === 2 && multiplier_denominator === numerator2/numerator1) {
       setHint(3)
