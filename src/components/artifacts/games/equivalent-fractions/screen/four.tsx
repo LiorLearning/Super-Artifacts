@@ -131,7 +131,6 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           <SuccessAnimation />
         </div>
       )}  
-      )}  
     </div>
   )
 }
