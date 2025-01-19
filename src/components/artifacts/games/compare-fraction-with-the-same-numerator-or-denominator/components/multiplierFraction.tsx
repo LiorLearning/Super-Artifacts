@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import Fraction from "../components/Fraction";
+import Fraction from "./Fraction";
 import { BaseProps } from "../utils/types";
 
 export default function MultiplierFraction({
