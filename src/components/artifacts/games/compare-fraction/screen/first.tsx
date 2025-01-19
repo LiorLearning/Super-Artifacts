@@ -5,6 +5,8 @@ import Bar from '../components/bar';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Proceed from '../components/proceed';
+import Fraction from '../components/Fraction';
+import { sounds } from '../../equivalent-fractions/utils/sounds';
 
 interface Fraction {
   numerator: number;
@@ -33,6 +35,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (bar1.numerator === fraction1.numerator && bar1.denominator === fraction1.denominator) {
+      sounds.correct()
       setActive(1)
       setGameStateRef(prev => ({
         ...prev,
@@ -41,12 +44,13 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
           step: 1
         }
       }))
-      sendAdminMessage('agent', `Great! Now that we've made ${fraction1.numerator}/${fraction1.denominator}, let’s move on to creating ${fraction2.numerator}/${fraction2.denominator}. 🍫`);
+      sendAdminMessage('agent', `Great! Now that we've made ${fraction1.numerator}/${fraction1.denominator}, let's move on to creating ${fraction2.numerator}/${fraction2.denominator}. 🍫`);
     }
   }, [bar1]);
 
   useEffect(() => {
     if (bar2.numerator === fraction2.numerator && bar2.denominator === fraction2.denominator) {
+      sounds.correct()
       setActive(2)
       setGameStateRef(prev => ({
         ...prev,
@@ -61,8 +65,10 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (firstAnswer === 0) {
-      sendAdminMessage('agent', `Umm not quite sure about that one... Look carefully!`);
+      sounds.wrong()
+      sendAdminMessage('admin', `When asked to compare ${fraction1.numerator}/${fraction1.denominator} and ${fraction2.numerator}/${fraction2.denominator}, User chose ${fraction1.numerator}/${fraction1.denominator}. Diagnose socratically`);
     } else if (firstAnswer === 2) {
+      sounds.correct()
       setGameStateRef(prev => ({
         ...prev,
         state1: {
@@ -85,14 +91,14 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
         step={{ 
           id: step === 0 ? 1 : 2,
           text: step === 0 
-          ? <> Create <span className="font-bold bg-white flex flex-col ml-2 px-2 justify-center items-center text-black">{fraction1.numerator}/{fraction1.denominator}</span></> 
-          : <> Create <span className="font-bold bg-white flex flex-col ml-2 px-2 justify-center items-center text-black">{fraction2.numerator}/{fraction2.denominator}</span></>
+          ? <> Create <span className="font-bold bg-white flex flex-col -my-2 ml-2 px-2 justify-center items-center text-black"><Fraction className='text-sm' numerator={fraction1.numerator} denominator={fraction1.denominator} /></span></> 
+          : <> Create <span className="font-bold bg-white flex flex-col -my-2 ml-2 px-2 justify-center items-center text-black"><Fraction className='text-sm' numerator={fraction2.numerator} denominator={fraction2.denominator} /></span></>
         }} 
       />
 
       <div className='flex flex-col gap-4 mx-auto my-16'>
         <span 
-          className={`w-full ${active === 0 ? 'bg-green-100' : 'bg-transparent'}`}
+          className={`w-full`}
         >
           <Bar 
             numerator={bar1.numerator} 
@@ -106,7 +112,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
         {step >= 1 && (
         <span
-          className={`w-full ${active === 1 ? 'bg-green-100' : 'bg-transparent'}`}
+          className={`w-full`}
         >
           <Bar 
             numerator={bar2.numerator} 

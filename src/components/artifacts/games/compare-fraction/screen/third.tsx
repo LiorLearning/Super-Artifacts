@@ -9,6 +9,9 @@ import RedBox from '../components/RedBox';
 import MultiplierFraction from '../components/multiplierFraction';
 import ComparisonFractions from '../components/ComparisonFractions';
 import Fraction from '../components/Fraction';
+import { ChevronDown } from 'lucide-react'
+import { sounds } from '../../equivalent-fractions/utils/sounds'
+import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 interface Fraction {
   numerator: number;
@@ -24,8 +27,11 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const [secondFraction, setSecondFraction] = useState<Fraction>({ numerator: 0, denominator: 0 });
   const [answer, setAnswer] = useState('');
   const correctAnswer = fraction1.numerator/fraction1.denominator < fraction2.numerator/fraction2.denominator ? '<' : fraction1.numerator/fraction1.denominator > fraction2.numerator/fraction2.denominator ? '>' : '=';
+  const typing = useRef(false);
 
   const start = useRef(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   function checkmultiple({first,second,third}: {first: number, second: number, third: number}) {
     if (first*second === 0)return false;
@@ -34,23 +40,13 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   }
 
   useEffect(() => {
-    console.log(step);
-  }, [step]);
+    if (start.current) return;
+    sendAdminMessage('agent', `Time for a challenge: let's compare ${fraction1.numerator}/${fraction1.denominator} and ${fraction2.numerator}/${fraction2.denominator}. Since the fractions have different denominators, let's start by finding a common denominator`);
+    start.current = true;
+  }, []);
 
   useEffect(() => {
-    if(answer === correctAnswer) {
-      setGameStateRef(prev => ({
-        ...prev,
-        state3: {
-          ...prev.state3,
-          step: 4
-        }
-      }));
-    }
-  }, [answer]);
-
-
-  useEffect(() => {
+    typing.current = true;
     if (secondFraction.denominator === 0 || firstFraction.denominator === 0) return; 
     else if (firstFraction.denominator === secondFraction.denominator && checkmultiple({first: fraction1.denominator, second: fraction2.denominator, third: firstFraction.denominator})) {
       setGameStateRef(prev => ({
@@ -60,6 +56,19 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
           step: 2
         }
       }));
+      sendAdminMessage('agent', `Great, now that we have the same bottom number, its time to re-write these fractions`);
+    } else {
+      const timer = setTimeout(() => {
+        if (typing.current) {
+          sendAdminMessage('admin', `Which number do both ${fraction1.denominator} and ${fraction2.denominator} go into?`);
+          typing.current = false;
+        }
+      }, 1000); // Wait 1 second after last typing event
+
+      return () => {
+        clearTimeout(timer);
+        typing.current = true;
+      };
     }
   }, [firstFraction, secondFraction]);
 
@@ -75,9 +84,51 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
           step: 3
         }
       }));
+      sendAdminMessage('agent', `Awesome, now enter the right symbol between these fractions!"`);
     }
   }, [firstFraction, secondFraction]);
- 
+
+  useEffect(() => {
+    if(answer === correctAnswer) {
+      setGameStateRef(prev => ({
+        ...prev,
+        state3: {
+          ...prev.state3,
+          step: 4
+        }
+      }));
+    }
+    sendAdminMessage('agent', `You're on a roll - a fraction comparison maestro!`);
+  }, [answer]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const handleSelect = (value: string) => {
+    if (value === correctAnswer) {
+      sounds.correct()
+      setAnswer(value)
+      setGameStateRef(prev => ({
+        ...prev,
+        state3: {
+          ...prev.state3,
+          step: 4
+        }
+      }))
+    } else {
+      sounds.wrong()
+      setAnswer(value)
+      sendAdminMessage('admin', `User entered ${value} as answer when asked which is greater ${fraction1.numerator}/${fraction1.denominator} or ${fraction2.numerator}/${fraction2.denominator}, diagnose socratically`)
+    }
+    setIsOpen(false)
+  }
 
   return (
     <div className="mx-auto flex flex-col gap-4 mb-20">
@@ -119,6 +170,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                   value={firstFraction.denominator ? firstFraction.denominator.toString() : ''}
                   placeholder='?'
                   onChange={(e) => setFirstFraction(prev => ({ ...prev, denominator: parseInt(e.target.value) || 0 }))}
+                  disabled = {step !== 0}
                 />
               </div>
             </div>
@@ -149,6 +201,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                   value={secondFraction.denominator ? secondFraction.denominator.toString() : ''}
                   placeholder='?'
                   onChange={(e) => setSecondFraction(prev => ({ ...prev, denominator: parseInt(e.target.value) || 0 }))}
+                  disabled = {step !== 0}
                 />
               </div>
             </div>
@@ -163,7 +216,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
               STEP 2
             </RedBox>
             <div className="bg-pink-500 text-white text-center text-xl px-6 py-6 font-bold">
-              REWRITE FRACTION
+              Rewrite Fractions
             </div>
           </div>
           <div className='flex flex-col gap-4'>
@@ -230,7 +283,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
       {step >= 3 && (
         <div className='flex flex-col items-center gap-8'>
-            <div className="flex justify-center items-center gap-4 my-8">
+          <div className="flex justify-center items-center gap-4 my-8">
             <RedBox>
               STEP 3
             </RedBox>
@@ -244,15 +297,33 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
               denominator={fraction1.denominator} 
               className="text-3xl font-bold"
             />
-            <input
-              type="text"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="?"
-              className={`w-16 h-16 text-center text-3xl font-bold border-2 border-black ${
-                answer === "<" || answer === ">" || answer === "=" ? ( answer=== correctAnswer ? "bg-green-500 text-white": "bg-red-500 text-white") : "bg-white"
-              }`}
-            />
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className={`w-16 h-16 text-center text-3xl font-bold border-2 border-black flex items-center justify-center
+                  ${answer ? (
+                    answer === correctAnswer 
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
+                  ) : "bg-white"}`}
+              >
+                {answer || "?"}
+              </button>
+
+              {isOpen && (
+                <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded mt-1 z-10">
+                  {["<", "=", ">"].map((option) => (
+                    <div
+                      key={option}
+                      className="text-2xl hover:bg-gray-100 cursor-pointer px-4 py-2 flex items-center justify-center"
+                      onClick={() => handleSelect(option)}
+                    >
+                      {option}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <Fraction 
               numerator={fraction2.numerator} 
               denominator={fraction2.denominator} 
@@ -265,6 +336,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       {step >= 4 && (
           <div className="flex text-3xl justify-center items-center gap-4 my-8 text-white bg-green-500 min-h-32">
             Correct Answer!!!
+            <SuccessAnimation />
           </div>
       )}
     </div>
