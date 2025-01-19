@@ -84,7 +84,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
             <div className="flex justify-center relative">
               <Bar numerator={0} denominator={selectedKnife ? selectedKnife * denominator1 : denominator1} handlePieceClick={handlePieceClick} />
               <div className="flex flex-col gap-2 ml-2 absolute top-0 left-full">
-                <KnifeSelector options={[2,3,4,5]} selectedKnife={selectedKnife} setSelectedKnife={(value: number) => setGameStateRef({
+                <KnifeSelector options={[2,3,4,5]} selectedKnife={selectedKnife} setSelectedKnife={(value: number | null) => setGameStateRef({
                   ...gameStateRef.current,
                   screen1: {
                     ...gameStateRef.current.screen1,
@@ -219,7 +219,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             <Proceed
               onComplete={() => {
                 setStep2subpart(1)
-                sendAdminMessage('agent', "Now, let’s fill in the missing number to complete the fraction!");
+                sendAdminMessage('agent', "Now, let's fill in the missing number to complete the fraction!");
               }}
             />
           ) : (!correct &&
@@ -252,8 +252,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             </div>
           </div>
         )}
-
-        {step2subpart && parseInt(answer) === numerator1 * denominator2 / denominator1 && (
+        {step2subpart && (parseInt(answer) === numerator1 * denominator2 / denominator1 && (
           <Proceed
             onComplete={() => {setGameStateRef({
               ...gameStateRef.current,
@@ -261,7 +260,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             });
           }}
           />
-        )}
+        ))}
       </div>
   );
 }

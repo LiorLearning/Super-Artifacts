@@ -11,6 +11,7 @@ import { animateCamera, animatePiece } from './utils/animation';
 import { createText } from './utils/textFactory';
 import { createVectorArrow } from './utils/vectorFactory';
 import { GameProps } from '../utils/types';
+import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 interface CreatePieceProps {
   scene: THREE.Scene | null;
@@ -29,6 +30,8 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
   const vectorRef = React.useRef<THREE.Group | null>(null);
   const dragObjectsRef = React.useRef<THREE.Group[]>([]);
 
+  const showConfettiRef = React.useRef(false);
+
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step, fraction, denomOptions } = gameStateRef.current.state1;
 
@@ -43,18 +46,14 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
     console.log('count', count);
     if (!fillContainerRef.current) {
       setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, piecesAtYOne: count } }));
-      if (count === 3) {
-        // pass
-      } else if (count === 7) {
-        // pass
-      }
     } else {
       if (count === 3) {
         animateAllPieces(0.1);
         sendAdminMessage('agent', "Wow, that’s 1 whole! It turned purple! Now let’s move to the next holder.");
+        showConfettiRef.current = true;
         setTimeout(() => {
           sendAdminMessage('agent', `We have ${fraction.numerator % fraction.denominator} pieces left. Fill the new holder with these blocks to see what’s next!`);
-        }, 7000);
+        }, 9000);
       }
       if (count === 0) {
         goToStep(6);
@@ -233,22 +232,28 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
         const denom = denomOptions[i];
         const position: [number, number, number] = [-1 + i * 2.2, 0, 2 - i * 2.2];
         createHolder(scene, position, denom);
-
-        for (let j = 0; j < denom; j++) {
-          const fractionalText = createText(
-            scene!, 
-            [position[0], 1.8, position[2] + 0.8 + 0.2*(6./denom) + j * (4./denom)],
-            `1/${denom}`, {
-              textColor: COLORS.MAGENTA,
-              orientation: 'orthogonal',
-              centered: true,
-            }
-          );
-          if (fractionalText) {
-            textsRef.current = [...textsRef.current, fractionalText];
-          }
-        } 
       }
+
+      setTimeout(() => {
+        for (let i = 0; i < denomOptions.length; i++) {
+          const denom = denomOptions[i];
+          const position: [number, number, number] = [-1 + i * 2.2, 0, 2 - i * 2.2];
+          for (let j = 0; j < denom; j++) {
+            const fractionalText = createText(
+              scene!, 
+              [position[0], 1.8, position[2] + 0.8 + 0.2*(6./denom) + j * (4./denom)],
+              `1/${denom}`, {
+                textColor: COLORS.MAGENTA,
+                orientation: 'orthogonal',
+                centered: true,
+              }
+            );
+            if (fractionalText) {
+              textsRef.current = [...textsRef.current, fractionalText];
+            }
+          } 
+        }
+      }, 7000);
 
       // Show the holder
       // toggleTextVisibilityOfHolder(true);
@@ -455,13 +460,16 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
   useWindowResize({ camera: camera as THREE.OrthographicCamera, renderer: renderer as THREE.WebGLRenderer, mountRef });
 
   return (
-    <div 
-      ref={mountRef} 
-      style={{ 
-        width: '800px', 
-        height: '400px',
-      }}
-    />
+    <>
+      {showConfettiRef.current && <SuccessAnimation />}
+      <div 
+        ref={mountRef} 
+        style={{
+          width: '800px', 
+          height: '400px',
+        }}
+      />
+    </>
   );
 };
 

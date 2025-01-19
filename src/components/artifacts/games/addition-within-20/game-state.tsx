@@ -1,7 +1,3 @@
-const MAX_GREEN_MARBLES = 5;
-const MAX_BLUE_MARBLES = 6;
-const MAX_BLACK_MARBLES = 10;
-
 export const desc = `
 Addition Game: Interactive Marble Counting Adventure
 
@@ -11,9 +7,9 @@ This interactive game helps you learn addition by physically moving and combinin
 Detailed Gameplay:
 
 Platform Setup
-- You start with ${MAX_GREEN_MARBLES} green marbles on the left platform
-- You have ${MAX_BLUE_MARBLES} blue marbles on the right platform
-- Total marbles: ${MAX_GREEN_MARBLES + MAX_BLUE_MARBLES} (${MAX_GREEN_MARBLES} green + ${MAX_BLUE_MARBLES} blue)
+- You start with maxGreenMarbles green marbles on the left platform
+- You have maxBlueMarbles blue marbles on the right platform
+- Total marbles: maxGreenMarbles + maxBlueMarbles (maxGreenMarbles green + maxBlueMarbles blue)
 
 Shooting Marbles
 1. Begin by shooting green marbles into the central container
@@ -24,8 +20,8 @@ Shooting Marbles
    - Move all blue marbles from the right platform
 
 Goal
-- Successfully transfer ALL ${MAX_GREEN_MARBLES + MAX_BLUE_MARBLES} marbles into the central container
-- Visualize how ${MAX_GREEN_MARBLES} + ${MAX_BLUE_MARBLES} combines to make ${MAX_GREEN_MARBLES + MAX_BLUE_MARBLES}
+- Successfully transfer ALL maxGreenMarbles + maxBlueMarbles marbles into the central container
+- Visualize how maxGreenMarbles + maxBlueMarbles combines to make maxGreenMarbles + maxBlueMarbles
 - Learn addition through a hands-on, interactive experience
 
 Learning Objectives:
@@ -72,11 +68,14 @@ export interface GameState {
 export const initialGameState: GameState = {
   screen: 'first',
   state1: {
-    maxGreenMarbles: MAX_GREEN_MARBLES,
-    maxBlueMarbles: MAX_BLUE_MARBLES,
-    maxBlackMarbles: MAX_BLACK_MARBLES,
-    greenScore: MAX_GREEN_MARBLES,
-    blueScore: MAX_BLUE_MARBLES,
+    // Defines the game screen 1
+    maxGreenMarbles: 5,
+    maxBlueMarbles: 6,
+    greenScore: 5, // = maxGreenMarbles
+    blueScore: 6, // = maxBlueMarbles
+    
+    // Do not change anything beyond this
+    maxBlackMarbles: 10,
     blackScore: 0,
     containerScore: 0,
     activePhase: 'left',
@@ -87,8 +86,11 @@ export const initialGameState: GameState = {
     additionStarted: false
   },
   state2: {
+    // Defines the game screen 2
     maxGreenMarbles: 7,
     maxBlueMarbles: 8,
+    
+    // Do not change anything beyond this
     maxBlackMarbles: 10,
     greenMarblesCount: 0,
     blueMarblesCount: 0,

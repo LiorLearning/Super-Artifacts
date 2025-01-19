@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { sounds } from '../utils/sounds'
 import { ChevronDown } from 'lucide-react'
 
-export default function KnifeSelector({options, selectedKnife, setSelectedKnife}: {options: number[], selectedKnife: number | null, setSelectedKnife: (value: number) => void}) {
+export default function KnifeSelector({options, selectedKnife, setSelectedKnife}: {options: number[], selectedKnife: number | null, setSelectedKnife: (value: number | null) => void}) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -22,18 +22,35 @@ export default function KnifeSelector({options, selectedKnife, setSelectedKnife}
     setIsOpen(false)
   }
 
+  const handleReset = () => {
+    sounds.button()
+    setSelectedKnife(null)
+    setIsOpen(false)
+  }
+
   return (
     <div className="relative" ref={dropdownRef}>
-      <button
-        className="text-2xl py-4 bg-[#FF497C] flex justify-center items-center outline-none border-none w-full text-left px-4 rounded"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {selectedKnife && selectedKnife}
-        <span>
-        🔪
-        </span>
-        <ChevronDown className="w-6 h-6 right-2 bottom-1" />
-      </button>
+      <div className="flex flex-col-reverse gap-2">
+        <button
+          className="text-2xl py-4 bg-[#FF497C] flex-1 flex justify-center items-center outline-none border-none text-left px-4 rounded"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {selectedKnife && selectedKnife}
+          <span>
+          🔪
+          </span>
+          <ChevronDown className="w-6 h-6 right-2 bottom-1" />
+        </button>
+        {/* {selectedKnife && ( */}
+          <button
+            onClick={handleReset}
+            className="text-md bg-[#FF497C] flex justify-center items-center outline-none border-none px-4 rounded hover:bg-[#FF497C]/80"
+            style={{opacity: selectedKnife ? 1 : 0.5}}
+          >
+            Reset
+          </button>
+
+      </div>
       {isOpen && (
         <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded mt-1">
           {options.map((pieces) => (

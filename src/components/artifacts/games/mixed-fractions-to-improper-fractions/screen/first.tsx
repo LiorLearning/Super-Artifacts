@@ -97,6 +97,8 @@ const Footer = ({sendAdminMessage}: GameProps) => {
   const [answer2, setAnswer2] = useState('');
   const [isVerifiedFalse, setIsVerifiedFalse] = useState(false);
 
+  const showStep6Ans = useRef(false);
+
   const verifyAnswer = () => {
     const integer = Math.floor(numerator / denominator);
     const remainder = numerator - integer * denominator;
@@ -110,18 +112,35 @@ const Footer = ({sendAdminMessage}: GameProps) => {
   const handleDoneClick = () => {
     if (numerator === piecesAtYOne) {
       setIsIncorrect(false);
+      sendAdminMessage('agent', `Woohoo! You built ${numerator}/${denominator}ths perfectly! Now let’s see what happens next!`);
       goToStep('first', setGameStateRef, 3);
     } else {
       setIsIncorrect(true);
-      sendAdminMessage('agent', "Hmmm, let's give that another try!");
-      sendAdminMessage('admin', "Diagnosis socratically and ask user to drag more or less blocks as needed");
+      // sendAdminMessage('agent', "Hmmm, let's give that another try!");
+      sendAdminMessage('admin', `User has dragged ${piecesAtYOne} blocks but we need ${numerator} blocks to make ${fraction.numerator}/${fraction.denominator}ths! Diagnosis socratically to ask how many blocks to drag in or out`);
     }
   };
+
+  useEffect(() => {
+    const integer = Math.floor(numerator / denominator);
+    if (answer1 === integer.toString()) {
+      sendAdminMessage('agent', `And how many green legos will be left over?`);
+    }
+  }, [answer1]);
+
+  useEffect(() => {
+    if (step === 6) {
+      setTimeout(() => {
+        sendAdminMessage('agent', "Now let’s connect the math! Quotient goes in the purple box. Remainder in the green box.");
+        showStep6Ans.current = true;
+      }, 12000);
+    }
+  }, [step])
 
   return (
     <div className="relative">
       {step === 1 && (
-        <>
+        <div className="flex flex-col items-center justify-center">
           <ChooseHolder
             sendAdminMessage={sendAdminMessage}
             answer={denominator}
@@ -131,9 +150,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
           <div className="text-center text-3xl mt-8 space-y-2">
             <span>Which holder can hold groups of {denominator}</span>
           </div>
-        </>
-
-
+        </div>
       )}
       {step === 2 && (
         <>
@@ -202,8 +219,8 @@ const Footer = ({sendAdminMessage}: GameProps) => {
           </div>
           <div className="flex justify-center mt-4 mb-16">
             <Button 
-              className="text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" 
-              style={{ backgroundColor: isVerifiedFalse ? COLORS.red : COLORS.blue }}
+              className="text-white px-6 py-3 mx-2 text-xl rounded-none shadow-[-5px_5px_0px_black]" 
+              style={{ backgroundColor: isVerifiedFalse ? COLORS.red : COLORS.pink }}
               onClick={verifyAnswer}
             >
               Let's verify
@@ -229,7 +246,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
             </div>
             <span className="text-3xl">th</span>
           </div>
-          <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep('first', setGameStateRef)} />
+          {showStep6Ans.current && <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep('first', setGameStateRef)} sendAdminMessage={sendAdminMessage} />}
         </>
       )}
     </div>
@@ -246,24 +263,16 @@ export default function FirstScreen({sendAdminMessage}: GameProps) {
       if (!hasGameStartedRef.current && step === 0) {
         hasGameStartedRef.current = true;
         sendAdminMessage('agent', "Let’s build something fun! We’ll use legos to understand mixed numbers. Ready to start?");
-
-        setTimeout(() => {
-          sendAdminMessage('agent', "Click Start to proceed");
-        }, 7000);
       } else if (step === 1) {
-        sendAdminMessage('agent', `Which holder would you choose to make groups of ${fraction.denominator}?`);
-
-        setTimeout(() => {
-          sendAdminMessage('agent', "A hint: Look at the denominator");
-        }, 7000);
+        sendAdminMessage('agent', `We are going to create ${fraction.numerator}/${fraction.denominator}th legos, but first can you guess which holder can fit ${fraction.denominator} legos completely?`);
       } else if (step === 2) {
-        sendAdminMessage('agent', `Alright, builder! Drag the 1/${fraction.denominator}th sized green block and copy it until you make ${fraction.numerator}/${fraction.denominator}ths! Keep watching the counter at the top`);
+        sendAdminMessage('agent', `Alright, builder! That was correct, let's create fresh legos by copying and dragging the green one. Our mission is to make ${fraction.numerator}/${fraction.denominator}ths!`);
       } else if (step === 4) {
-        sendAdminMessage('agent', `We have ${fraction.numerator}/${fraction.denominator}ths now! How many holders you think you can fill completely?`);
+        sendAdminMessage('agent', `Now that we have ${fraction.numerator}/${fraction.denominator}ths, how many holders can you fill with green legos?`);
       } else if (step === 5) {
-        sendAdminMessage('agent', `Let's drag the legos and drop them in the holder!`);
+        sendAdminMessage('agent', `Let's find out if your guess is correct. Start by dropping the legos in the holder.`);
       } else if (step === 6) {
-        sendAdminMessage('agent', "Now let’s connect the math! Quotient goes in the purple box. Remainder in the green box.");
+        sendAdminMessage('agent', `This is exactly what happens when you divide ${fraction.numerator} by ${fraction.denominator} - ${Math.floor(fraction.numerator / fraction.denominator)} whole and ${fraction.numerator % fraction.denominator}/${fraction.denominator}ths left!`);
       }
     }, [step]);
 
