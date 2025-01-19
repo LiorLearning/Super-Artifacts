@@ -53,7 +53,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
         ...prev,
         state3: {
           ...prev.state3,
-          step: 2
+          step: 1
         }
       }));
       sendAdminMessage('agent', `Great, now that we have the same bottom number, its time to re-write these fractions`);
@@ -74,14 +74,14 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (firstFraction.numerator === 0 || secondFraction.numerator === 0) return;
-    else if (step!==2) {
+    else if (step!==  1) {
       return;
     } else if (firstFraction.numerator === firstFraction.denominator/fraction1.denominator*fraction1.numerator && secondFraction.numerator === secondFraction.denominator/fraction2.denominator*fraction2.numerator) {
       setGameStateRef(prev => ({
         ...prev,
         state3: {
           ...prev.state3,
-          step: 3
+          step: 2
         }
       }));
       sendAdminMessage('agent', `Awesome, now enter the right symbol between these fractions!"`);
@@ -119,7 +119,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
         ...prev,
         state3: {
           ...prev.state3,
-          step: 4
+          step: 3
         }
       }))
     } else {
@@ -130,6 +130,10 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
     setIsOpen(false)
   }
 
+  useEffect(() => {
+    console.log(step);
+  }, [step]);
+
   return (
     <div className="mx-auto flex flex-col gap-4 mb-20">
       <Header 
@@ -139,8 +143,8 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
         denominator2={fraction2.denominator} 
         level={3} 
         step={{ 
-          id: 1,
-          text: "FIND COMMON DENOMINATOR"
+          id: step === 0 ? 1 : 2,
+          text: step === 0 ? "FIND COMMON DENOMINATOR" : "REWRITE FRACTIONS"
         }}
       />
 
@@ -155,10 +159,14 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
               <div className='flex gap-1 flex-col items-center text-4xl'>
                 <input 
                   type="text" 
-                  className='w-12 h-12 border-2 border-black text-center'
-                  value={''}
-                  readOnly
-                  disabled
+                  className={`
+                    w-12 h-12 border-2 border-black text-center text-3xl
+                    ${firstFraction.numerator && ((firstFraction.numerator === firstFraction.denominator/fraction1.denominator*fraction1.numerator) ? 'bg-green-200' : 'bg-red-200')}
+                  `}
+                  value={firstFraction.numerator ? firstFraction.numerator.toString() : ''}
+                  placeholder={step === 1 ? '?' : ''}
+                  disabled={step !== 1}
+                  onChange={(e) => setFirstFraction(prev => ({ ...prev, numerator: parseInt(e.target.value) || 0 }))}
                 />
                 <div className='w-full h-1 bg-black'></div>
                 <input 
@@ -168,7 +176,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                     ${firstFraction.denominator && (checkmultiple({first: fraction1.denominator, second: fraction2.denominator, third: firstFraction.denominator}) ? 'bg-green-200' : 'bg-red-200')}
                   `}
                   value={firstFraction.denominator ? firstFraction.denominator.toString() : ''}
-                  placeholder='?'
+                  placeholder={step === 0 ? '?' : ''}
                   onChange={(e) => setFirstFraction(prev => ({ ...prev, denominator: parseInt(e.target.value) || 0 }))}
                   disabled = {step !== 0}
                 />
@@ -185,11 +193,14 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
               <div className='flex gap-1 flex-col items-center text-4xl'>
                 <input 
                   type="text" 
-                  className='w-12 h-12 border-2 border-black text-center'
-                  value={
-                    ''}
-                  readOnly
-                  disabled
+                  className={`
+                    w-12 h-12 border-2 border-black text-center text-3xl
+                    ${secondFraction.numerator && ((secondFraction.numerator === secondFraction.denominator/fraction2.denominator*fraction2.numerator) ? 'bg-green-200' : 'bg-red-200')}
+                  `} 
+                  value={secondFraction.numerator ? secondFraction.numerator.toString() : ''}
+                  placeholder={step === 1 ? '?' : ''}
+                  onChange={(e) => setSecondFraction(prev => ({ ...prev, numerator: parseInt(e.target.value) || 0 }))}
+                  disabled={step !== 1}
                 />
                 <div className='w-full h-1 bg-black'></div>
                 <input 
@@ -210,78 +221,6 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       )}
 
       {step >= 2 && (
-        <div className='flex flex-col items-center gap-8'>
-          <div className="flex justify-center items-center gap-4 my-8">
-            <RedBox>
-              STEP 2
-            </RedBox>
-            <div className="bg-pink-500 text-white text-center text-xl px-6 py-6 font-bold">
-              Rewrite Fractions
-            </div>
-          </div>
-          <div className='flex flex-col gap-4'>
-            <div className='flex items-center justify-center gap-8'>
-              <div className='flex flex-col items-center text-4xl'>
-                <Fraction numerator={fraction1.numerator} denominator={fraction1.denominator} />
-              </div>
-              <div className='text-4xl'>=</div>
-              <div className='flex gap-1 flex-col items-center text-4xl'>
-                <input 
-                  type="text" 
-                  className={`
-                    w-12 h-12 border-2 border-black text-center text-3xl
-                    ${firstFraction.numerator && ((firstFraction.numerator === firstFraction.denominator/fraction1.denominator*fraction1.numerator) ? 'bg-green-200' : 'bg-red-200')}
-                  `}
-                  value={firstFraction.numerator ? firstFraction.numerator.toString() : ''}
-                  placeholder='?'
-                  onChange={(e) => setFirstFraction(prev => ({ ...prev, numerator: parseInt(e.target.value) || 0 }))}
-                />
-
-                <div className='w-full h-1 bg-black'></div>
-                <input 
-                  type="text" 
-                  className='w-12 h-12 border-2 border-black text-center text-3xl'
-                  value={firstFraction.denominator ? firstFraction.denominator.toString() : ''}
-                  readOnly
-                  disabled                  
-                />
-              </div>
-            </div>
-
-            <div className='flex items-center justify-center gap-8'>
-              <div className='flex flex-col items-center text-4xl'>
-                <div>{fraction2.numerator}</div>
-                <div className='w-8 h-1 bg-black'></div>
-                <div>{fraction2.denominator}</div>
-              </div>
-              <div className='text-4xl'>=</div>
-              <div className='flex gap-1 flex-col items-center text-4xl'>
-                <input 
-                  type="text" 
-                  className={`
-                    w-12 h-12 border-2 border-black text-center text-3xl
-                    ${secondFraction.numerator && ((secondFraction.numerator === secondFraction.denominator/fraction2.denominator*fraction2.numerator) ? 'bg-green-200' : 'bg-red-200')}
-                  `} 
-                  value={secondFraction.numerator ? secondFraction.numerator.toString() : ''}
-                  placeholder='?'
-                  onChange={(e) => setSecondFraction(prev => ({ ...prev, numerator: parseInt(e.target.value) || 0 }))}
-                />
-
-                <div className='w-full h-1 bg-black'></div>
-                <input 
-                  type="text" 
-                  className='w-12 h-12 border-2 border-black text-center text-3xl'
-                  value={secondFraction.denominator ? secondFraction.denominator.toString() : ''}
-                  readOnly
-                  disabled
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step >= 3 && (
         <div className='flex flex-col items-center gap-8'>
           <div className="flex justify-center items-center gap-4 my-8">
             <RedBox>
@@ -333,7 +272,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
         </div>
       )}
 
-      {step >= 4 && (
+      {step >= 3 && (
           <div className="flex text-3xl justify-center items-center gap-4 my-8 text-white bg-green-500 min-h-32">
             Correct Answer!!!
             <SuccessAnimation />
