@@ -65,7 +65,7 @@ export default function Game({sendAdminMessage}: GameProps) {
       <DevHelper />
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'third' && <ThirdScreen />}
+      {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
       
       <style jsx global>{`
           @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');

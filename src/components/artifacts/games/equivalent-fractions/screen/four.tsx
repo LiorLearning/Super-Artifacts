@@ -34,6 +34,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
   const [hint2, setHint2] = useState(false);
 
 
+
   const start = useRef(false);
 
   useEffect(() => {
@@ -129,6 +130,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           Correct!
           <SuccessAnimation />
         </div>
+      )}  
       )}  
     </div>
   )
