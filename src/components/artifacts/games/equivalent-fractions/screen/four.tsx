@@ -130,13 +130,20 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           Correct!
           <SuccessAnimation />
         </div>
-      )}  
-      )}  
+      )}
     </div>
   )
 }
 
-const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMessage}: {numerator1: number, denominator1: number, denominator2: number, onComplete: () => void, sendAdminMessage: (role: string, content: string) => void }) => {
+interface STEP2Props {
+  numerator1: number;
+  denominator1: number;
+  denominator2: number;
+  onComplete: () => void;
+  sendAdminMessage: (role: string, content: string) => void;
+}
+
+const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMessage}: STEP2Props) => {
   const [hint, setHint] = useState(0);
   const [multiplier_numerator, setMultiplier_numerator] = useState(0);
   const multiplier_numeratorRef = useRef<HTMLInputElement>(null);

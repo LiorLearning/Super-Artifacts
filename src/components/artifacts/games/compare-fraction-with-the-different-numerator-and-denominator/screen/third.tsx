@@ -1,15 +1,9 @@
 import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps } from '../utils/types';
-import Bar from '../components/bar';
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import Proceed from '../components/proceed';
 import RedBox from '../components/RedBox';
-import MultiplierFraction from '../components/multiplierFraction';
-import ComparisonFractions from '../components/ComparisonFractions';
 import Fraction from '../components/Fraction';
-import { ChevronDown } from 'lucide-react'
 import { sounds } from '../../equivalent-fractions/utils/sounds'
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
@@ -130,12 +124,8 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
     setIsOpen(false)
   }
 
-  useEffect(() => {
-    console.log(step);
-  }, [step]);
-
   return (
-    <div className="mx-auto flex flex-col gap-4 mb-20">
+    <div className={`mx-auto flex flex-col gap-4 ${step < 3 ? 'mb-20' : ''}`}>
       <Header 
         numerator1={fraction1.numerator} 
         denominator1={fraction1.denominator} 

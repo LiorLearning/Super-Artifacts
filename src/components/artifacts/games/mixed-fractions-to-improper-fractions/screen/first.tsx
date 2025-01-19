@@ -9,7 +9,7 @@ import FirstQuestion from '../components/first-question';
 import { goToStep, nextStep } from '../utils/helper';
 import { Input } from '@/components/custom_ui/input';
 import { ChooseHolder } from '../components/choose-holder';
-import { GameProps } from '../../addition-within-20/components/types';
+import { GameProps } from '../../addition-within-20-using-ten-frames/components/types';
 
 const MainContent = () => {
   const { gameStateRef, setGameStateRef } = useGameState();

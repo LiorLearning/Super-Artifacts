@@ -59,7 +59,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
           step: 2
         }
       }))
-      sendAdminMessage('agent', `"Alright, let's pick the bigger one for ourselves now. Which one would you pick?"`);
+      sendAdminMessage('agent', `Alright, let's pick the bigger one for ourselves now. Which one would you pick?`);
     }
   }, [bar2]);
 

@@ -10,37 +10,37 @@ import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 
 import TemplateGame from './games/template/game';
-import FractionAdditionGame from './games/fraction-addition/game';
-import FractionSubtractionGame from './games/fraction-subtraction/game';
-import AdditionGame from './games/addition-within-20/game';
-import FractionsGame from './games/fractions-game/game';
+import FractionAdditionGame from './games/add-fractions-with-common-denominator/game';
+import FractionSubtractionGame from './games/subtract-fractions-with-common-denominator/game';
+import AdditionGame from './games/addition-within-20-using-ten-frames/game';
+import FractionsGame from './games/compare-fractions-with-same-numerator-or-denominator/game';
 import EquivalentFractionsGame from './games/equivalent-fractions/game';
-import MixedFractionGame from './games/mixed-fraction-without-regouping/game';
+import MixedFractionGame from './games/add-and-subtract-mixed-numbers-without-regouping/game';
 import LegoGame from './games/mixed-fractions-to-improper-fractions/game';
 import CommonDenominatorGame from './games/common-denominators/game';
-import CompareFractionGame from './games/compare-fraction/game';
+import CompareFractionGame from './games/compare-fraction-with-the-different-numerator-and-denominator/game';
 
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
-import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
-import { GameStateProvider as FractionSubtractionGameStateProvider, useGameState as FractionSubtractionGameState } from './games/fraction-subtraction/state-utils'
-import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition-within-20/state-utils'
-import { GameStateProvider as FractionsGameStateProvider, useGameState as FractionsGameState } from './games/fractions-game/state-utils'
+import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/add-fractions-with-common-denominator/state-utils'
+import { GameStateProvider as FractionSubtractionGameStateProvider, useGameState as FractionSubtractionGameState } from './games/subtract-fractions-with-common-denominator/state-utils'
+import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition-within-20-using-ten-frames/state-utils'
+import { GameStateProvider as FractionsGameStateProvider, useGameState as FractionsGameState } from './games/compare-fractions-with-same-numerator-or-denominator/state-utils'
 import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState as EquivalentFractionsGameState } from './games/equivalent-fractions/state-utils'
 import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/mixed-fractions-to-improper-fractions/state-utils'
 import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState as CommonDenominatorGameState } from './games/common-denominators/state-utils'
-import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/mixed-fraction-without-regouping/state-utils'
-import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fraction/state-utils'
+import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/add-and-subtract-mixed-numbers-without-regouping/state-utils'
+import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fraction-with-the-different-numerator-and-denominator/state-utils'
 
 import { desc as TemplateGameDesc } from './games/template/game-state';
-import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
-import { desc as FractionSubtractionGameDesc } from './games/fraction-subtraction/game-state';
-import { desc as AdditionGameDesc } from './games/addition-within-20/game-state';
-import { desc as FractionsGameDesc } from './games/fractions-game/game-state';
+import { desc as FractionAdditionGameDesc } from './games/add-fractions-with-common-denominator/game-state';
+import { desc as FractionSubtractionGameDesc } from './games/subtract-fractions-with-common-denominator/game-state';
+import { desc as AdditionGameDesc } from './games/addition-within-20-using-ten-frames/game-state';
+import { desc as FractionsGameDesc } from './games/compare-fractions-with-same-numerator-or-denominator/game-state';
 import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
 import { desc as LegoGameDesc } from './games/mixed-fractions-to-improper-fractions/game-state';
 import { desc as CommonDenominatorGameDesc } from './games/common-denominators/game-state';
-import { desc as MixedFractionGameDesc } from './games/mixed-fraction-without-regouping/game-state';
-import { desc as CompareFractionGameDesc } from './games/compare-fraction/game-state';
+import { desc as MixedFractionGameDesc } from './games/add-and-subtract-mixed-numbers-without-regouping/game-state';
+import { desc as CompareFractionGameDesc } from './games/compare-fraction-with-the-different-numerator-and-denominator/game-state';
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
@@ -76,7 +76,7 @@ const gameInfo: Record<string, GameInfo> = {
     state: CommonDenominatorGameState,
     provider: CommonDenominatorGameStateProvider
   },
-  'fraction-subtraction-with-common-denominator': {
+  'subtract-fractions-with-common-denominator': {
     game: FractionSubtractionGame,
     desc: FractionSubtractionGameDesc,
     state: FractionSubtractionGameState,
@@ -88,7 +88,7 @@ const gameInfo: Record<string, GameInfo> = {
     state: FractionAdditionGameState,
     provider: FractionAdditionGameStateProvider
   },
-  'mixed-fraction-without-regouping': {
+  'add-and-subtract-mixed-numbers-without-regouping': {
     game: MixedFractionGame,
     desc: MixedFractionGameDesc,
     state: MixedFractionGameState,
@@ -106,7 +106,7 @@ const gameInfo: Record<string, GameInfo> = {
     state: TemplateGameState,
     provider: TemplateGameStateProvider
   },
-  'compare-fraction': {
+  'compare-fractions-with-different-numerator-and-denominator': {
     game: CompareFractionGame,
     desc: CompareFractionGameDesc,
     state: CompareFractionGameState,

@@ -5,8 +5,8 @@ function Fraction({ numerator, denominator, className }: { numerator: any, denom
         <div className={`gap-2 flex items-center ${className}`}>
             <div className="flex flex-col justify-center items-center">
                 <div className=" text-gray-70 ">{numerator}</div>
-                <div className="border-t-2 border-gray-500 w-full"></div>
-                <div className="text-gray-700">{denominator}</div>
+                <div className="border-t-2 border-gray-700 w-full"></div>
+                <div className="text-gray-70">{denominator}</div>
             </div>
         </div>
     );
