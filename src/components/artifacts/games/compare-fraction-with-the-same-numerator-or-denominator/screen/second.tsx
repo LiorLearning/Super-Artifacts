@@ -1,7 +1,6 @@
 import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps } from '../utils/types';
-import Bar from '../components/bar';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Proceed from '../components/proceed';

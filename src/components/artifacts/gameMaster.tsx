@@ -106,7 +106,7 @@ const gameInfo: Record<string, GameInfo> = {
     state: TemplateGameState,
     provider: TemplateGameStateProvider
   },
-  'compare-fraction': {
+  'compare-fractions-with-different-numerator-or-denominator': {
     game: CompareFractionGame,
     desc: CompareFractionGameDesc,
     state: CompareFractionGameState,

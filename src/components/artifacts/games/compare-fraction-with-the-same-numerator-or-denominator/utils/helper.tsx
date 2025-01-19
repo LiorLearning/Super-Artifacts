@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useGameState } from '../state-utils';
 import { Input } from '@/components/custom_ui/input';
 import { useState } from 'react';
-
+import { COLORS } from './types';
 export const DevHelper = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { screen } = gameStateRef.current;
@@ -108,4 +108,41 @@ export const prevStep = (
   } else {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: Math.max(prev.state2.step - 1, 0) } }));
   }
+}
+
+
+export const NOT_ATTEMPTED = 'not_attempted';
+export const ATTEMPTED = 'attempted';
+export const CORRECT = 'correct';
+export const INCORRECT = 'incorrect';
+
+export const getState = (input: string, actual: string) => {
+  console.log(input, actual);
+  console.log("Length", input.length, actual.length);
+  if (input !== '') {
+    if (input.length >= actual.length) {
+      if (input === actual) {
+        return CORRECT;
+      } else {
+        return INCORRECT;
+      }        
+    } else {
+      return ATTEMPTED
+    }
+  }
+  
+  return NOT_ATTEMPTED;
+}
+
+export const getInputColor = (input: string, actual: string) => {
+  console.log(input, actual);
+  const state = getState(input, actual);
+  if (state === NOT_ATTEMPTED) {
+    return COLORS.white;
+  } else if (state === CORRECT) {
+    return COLORS.light2Green;
+  } else if (state === INCORRECT) {
+    return COLORS.lightRed;
+  }
+  return COLORS.white;
 }
