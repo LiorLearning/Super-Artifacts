@@ -77,7 +77,7 @@ export default function MultiplierFraction({
             value={multiplier1_numerator ? multiplier1_numerator.toString() : ''}
             onChange={(e) => setmultiplier1_numerator(Number(e.target.value))}
             placeholder={multiplerStep === 1 ? "?" : ""}
-            className={`w-10 text-center mb-2 ml-2 border-2 border-black ${multiplier1_numerator === denominator2 / denominator1 ? 'bg-green-100' : 'bg-white'}`}
+            className={`w-10 text-center mb-2 ml-2 border-2 border-black ${multiplier1_numerator === denominator2 / denominator1 ? 'bg-green-100' : 'bg-white'} ${multiplerStep < 1 && 'hidden'}`}
             disabled={multiplerStep !== 1}
             ref={multiplier1_numeratorRef}
           />
@@ -98,7 +98,7 @@ export default function MultiplierFraction({
               value={numerator2 ? numerator2.toString() : ''}
               onChange={(e) => setNumerator2(parseInt(e.target.value || '0'))}
               placeholder={multiplerStep === 2 ? "?" : ""}
-              className={`border-none outline-none my-1 text-3xl text-center ${numerator2 === numerator1 * denominator2 / denominator1 ? 'bg-green-100' : 'bg-white'}`}
+              className={`border-none outline-none my-1 text-3xl text-center ${numerator2 === numerator1 * denominator2 / denominator1 ? 'bg-green-100' : 'bg-white'} ${multiplerStep < 2 && 'hidden'}`}
               disabled={multiplerStep !== 2}
               ref={numerator2Ref}
             />
@@ -163,7 +163,7 @@ export const OnlyMultiplier = ({numerator1, denominator1, multiplier, onComplete
           value={multiplier1_numerator === 0 ? "" : multiplier1_numerator?.toString()}
           onChange={(e) => setmultiplier1_numerator(Number(e.target.value))}
           placeholder={multiplierStep === 1 ? "?" : ""}
-          className={`w-10 text-center mb-2 ml-2 border-2 border-black ${multiplier1_numerator === multiplier ? 'bg-green-100' : 'bg-white'}`}
+          className={`w-10 text-center mb-2 ml-2 border-2 border-black ${multiplier1_numerator === multiplier ? 'bg-green-100' : 'bg-white'} ${multiplierStep < 1 && 'opacity-10'}`}
           disabled={multiplierStep !== 1}
           ref={multiplier1_numeratorRef}
         />
@@ -236,7 +236,7 @@ export const OnlyDivisor = ({numerator1, denominator1, divisor, onComplete}: {nu
           value={divisor1_numerator === 0 ? "" : divisor1_numerator?.toString()}
           onChange={(e) => setDivisor1_numerator(Number(e.target.value))}
           placeholder={multiplierStep === 1 ? "?" : ""}
-          className={`w-10 text-center mb-2 mx-2 border-2 border-black ${divisor1_numerator === divisor ? 'bg-green-100' : 'bg-white'}`}
+          className={`w-10 text-center mb-2 mx-2 border-2 border-black ${divisor1_numerator === divisor ? 'bg-green-100' : 'bg-white'} ${multiplierStep < 1 && 'opacity-10'}`}
           disabled={multiplierStep !== 1}
           ref={divisor1_numeratorRef}
         />

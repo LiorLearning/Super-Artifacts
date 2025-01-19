@@ -1,10 +1,11 @@
 import React from 'react'
 import { sounds } from '../utils/sounds';
 
-const Bar = ({numerator, denominator, handlePieceClick}: {numerator: number, denominator: number, handlePieceClick: (index: number) => void}) => {
+const Bar = ({numerator, denominator, handlePieceClick, disabled=false}: {numerator: number, denominator: number, handlePieceClick: (index: number) => void, disabled: boolean}) => {
   const selectedPieces = numerator;
   
   const handleClick = (index: number) => {
+    if (disabled) return;
     sounds.button();
     handlePieceClick(index);
   };
@@ -17,7 +18,7 @@ const Bar = ({numerator, denominator, handlePieceClick}: {numerator: number, den
           className={`w-full h-24 relative cursor-pointer border-[5px] border-[#906547] ${
             index < selectedPieces
               ? 'bg-gradient-to-br from-[#5B361B] to-[#432611]'
-              : 'bg-gradient-to-br from-[#906547] to-[#785339] hover:bg-gradient-to-br hover:from-[#8d532a] hover:to-[#70401e]'
+              : `bg-gradient-to-br from-[#906547] to-[#785339] ${!disabled && 'hover:bg-gradient-to-br hover:from-[#8d532a] hover:to-[#70401e]'}`
           }`}
           onClick={() => handleClick(index + 1)}
         >
