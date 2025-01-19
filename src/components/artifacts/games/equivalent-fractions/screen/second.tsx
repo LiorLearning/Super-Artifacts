@@ -1,15 +1,10 @@
 import { BaseProps } from "../utils/types";
 import { useGameState } from "../state-utils";
-import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/header";
-import Intro from "../components/intro";
 import Bar from "../components/bar";
-import { ArrowBigDown, ArrowDown } from "lucide-react";
 import Fraction from "../components/Fraction";
 import Proceed from "../components/proceed";
-import { Input } from "@/components/custom_ui/input";
-import { ChocolateBar } from "../../different-numerator-denominator/components/ChocolateBar";
 import KnifeSelector from "../components/knifeselector";
 import HoneySelector from "../components/honeyselctor";
 

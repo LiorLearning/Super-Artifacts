@@ -1,12 +1,8 @@
 import { BaseProps } from "../utils/types";
 import { useGameState } from "../state-utils";  
-import Bar from "../components/bar";
 import Fraction from "../components/Fraction";
 import RedBox from "../components/RedBox";
-import { ArrowRight } from "lucide-react";
-import { ArrowLeft } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { use, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Proceed from "../components/proceed";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
