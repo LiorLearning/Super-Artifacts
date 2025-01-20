@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { COLORS } from '../screen/constants';
 import { goToStep } from '../utils/helper';
 import { useGameState } from '../state-utils';
+import { GameProps } from '../utils/types';
 
-interface AnswerContentProps {
+interface AnswerContentProps extends GameProps {
   numerator: number;
   denominator: number;
   showFull: boolean;
@@ -13,6 +14,7 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
   numerator,
   denominator,
   showFull,
+  sendAdminMessage,
 }) => {
   const { setGameStateRef } = useGameState();
   const [whole, setWhole] = useState(showFull ? Math.floor(numerator / denominator).toString() : '');
@@ -22,6 +24,7 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
     const expectedRemainder = numerator % denominator;
     const expectedWhole = Math.floor(numerator / denominator);
     if (parseInt(remainder) === expectedRemainder && parseInt(whole) === expectedWhole) {
+      sendAdminMessage('agent', `Aren't you a math explorer! Correct answer`);
       goToStep('second', setGameStateRef, 6);
     } else {
       goToStep('second', setGameStateRef, 5);

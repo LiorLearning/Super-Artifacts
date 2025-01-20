@@ -16,7 +16,7 @@ export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage
   const handleDenomOptionClick = (option: number) => {
     if (option === answer) {
       onSuccess();
-      sendAdminMessage('agent', `Remember, the denominator is ${answer}. Look for the holder with exactly ${answer} slots!`);
+      sendAdminMessage('agent', `Awesome! The denominator is ${answer}, so this holder is perfect. Let’s move on!`);
     } else {
       sendAdminMessage('admin', `Diagnosis socratically, user has selected ${option} but the answer is ${answer}.`);
     }

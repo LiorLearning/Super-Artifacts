@@ -47,7 +47,7 @@ export const initialGameState: GameState = {
         denomOptions: [6, 3, 4],
     },
     state2: {
-        step: 3,
+        step: 0,
         fraction: {
             numerator: 8,
             denominator: 3,
