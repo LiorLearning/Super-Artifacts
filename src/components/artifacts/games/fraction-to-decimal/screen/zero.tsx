@@ -2,7 +2,7 @@ import React from 'react'
 import Header from '../components/header'
 import Fraction from '../components/Fraction'
 import { cn } from '@/lib/utils'
-import RedBox from '../components/RedBox'
+import RedBox, { RedBox2 } from '../components/RedBox'
 import { Triangle } from 'lucide-react'
 import { useGameState } from '../state-utils'
 
@@ -18,7 +18,7 @@ function Zero() {
 
       <div className='flex justify-center items-center gap-4'>
         <div className="flex items-center gap-4">
-          <RedBox>Question</RedBox>
+          <RedBox2>Question</RedBox2>
           <p className='text-2xl bg-[#FF497C] font-bold text-white px-4 py-2 h-full flex items-center'>
             Convert 
             <Fraction numerator={numerator} denominator={denominator} className='text-3xl bg-white text-black px-2 mx-2 h-full flex items-center' />

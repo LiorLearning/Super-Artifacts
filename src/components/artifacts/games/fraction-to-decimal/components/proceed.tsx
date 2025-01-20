@@ -1,24 +1,25 @@
 import React from 'react';
 // import { sound } from '../utils/sound';
 import { Triangle } from 'lucide-react';
+import { Button } from '@/components/custom_ui/button';
 
 interface ProceedProps {
   onComplete: () => void;
+  text: string;
 }
 
-const Proceed: React.FC<ProceedProps> = ({ onComplete }) => {
+const Proceed: React.FC<ProceedProps> = ({ onComplete, text="Onward" }) => {
   return (
-    <button
+    <Button
       onClick={() => {
         // sounds.button();
         onComplete();
       }}
 
-      className="flex gap-2 font-bold text-2xl justify-center items-center bg-transparent hover:bg-transparent"
+      className="bg-[#ff3971] text-white font-bold text-xl rounded-none px-4 py-2 shadow-[-5px_5px_0px_rgba(0,0,0,1)]"
     >
-      PROCEED
-      <Triangle className="w-8 h-8 text-green-500 fill-green-500 rotate-90" />
-    </button>
+      {text}
+    </Button>
   );
 };
 

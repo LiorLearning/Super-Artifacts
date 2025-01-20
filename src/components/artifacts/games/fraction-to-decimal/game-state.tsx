@@ -38,7 +38,10 @@ interface Question {
     numerator: number;
     denominator: number;
   }
-  question4 : number;
+  question4 : {
+    numerator: number;
+    denominator: number;
+  }
   question5 : {
     numerator: number;
     denominator: number;
@@ -71,10 +74,13 @@ export const initialGameState: GameState = {
       denominator: 10,
     },
     question3: {
-      numerator: 217,
+      numerator: 7,
       denominator: 100,
     },
-    question4: 0.217,
+    question4: {
+      numerator: 23,
+      denominator: 100,
+    },
     question5: {
       numerator: 17,
       denominator: 100,

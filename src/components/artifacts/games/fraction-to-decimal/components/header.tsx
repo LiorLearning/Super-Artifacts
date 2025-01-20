@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import RedBox from './RedBox';
+import { RedBox2 } from './RedBox';
 
 interface HeaderProps {
     title: any;
@@ -17,13 +17,13 @@ const Header: React.FC<HeaderProps> = ({ title, level, leftBox, rightBox }) => {
           {title}
         </p>
         <div className='w-full flex justify-end'>
-          {level && <RedBox>{level}</RedBox>}
+          {level && <RedBox2>{level}</RedBox2>}
         </div>
       </div>
 
       <div className='flex justify-center w-full items-center gap-4'>
         <div className="flex items-center gap-4">
-          <RedBox>{leftBox}</RedBox>
+          <RedBox2>{leftBox}</RedBox2>
           <p className='text-xl bg-[#FF497C] font-bold text-white px-4 py-5 h-full flex items-center'>
             {rightBox}
           </p>
