@@ -8,6 +8,7 @@ interface DragControlsProps {
   scene: THREE.Scene | null;
   camera: THREE.OrthographicCamera | null;
   renderer: THREE.WebGLRenderer | null;
+  fillContainerRef: React.MutableRefObject<boolean>;
   /** The Meshes we want to make draggable. */
   dragObjects: THREE.Group[];
   /** Tracks which piece (if any) is occupying each container index. */
@@ -29,6 +30,7 @@ export const useDragControls = ({
   scene,
   camera,
   renderer,
+  fillContainerRef,
   dragObjects,
   containerAssignmentsRef,
   orbitControls,
@@ -125,16 +127,37 @@ export const useDragControls = ({
      * This is where you can define your "default" or "lowest index" approach.
      */
     const handleFallback = (mesh: THREE.Group) => {
-      // Attempt to find the first free slot
-      const fallbackIndex = containerAssignmentsRef.current.findIndex((occupant) => occupant === null);
+      // Clear any previous container slot first
+      clearContainerSlot(mesh);
+      
+      let fallbackIndex = -1;
+      const startIndex = fillContainerRef.current ? 0 : 4;
+      const endIndex = fillContainerRef.current ? 4 : containerAssignmentsRef.current.length;
+
+      // Find first empty slot in the valid range
+      for (let i = startIndex; i < endIndex; i++) {
+        if (containerAssignmentsRef.current[i] === null) {
+          fallbackIndex = i;
+          break;
+        }
+      }
+
       if (fallbackIndex !== -1) {
         const fallbackPos = SNAPPABLE_POSITIONS[fallbackIndex].clone();
         fallbackPos.y += 0.1;
         mesh.position.copy(fallbackPos);
-        occupyContainerSlot(mesh, fallbackIndex);
+        
+        // Clear any existing assignments for this mesh
+        containerAssignmentsRef.current = containerAssignmentsRef.current.map(slot => 
+          slot === mesh ? null : slot
+        );
+        
+        // Assign to new slot
+        containerAssignmentsRef.current[fallbackIndex] = mesh;
+        mesh.userData.containerIndex = fallbackIndex;
       } else {
-        // If no free slot, do nothing or place it somewhere else
-        console.warn('No fallback slot available. Leaving piece where it is.');
+        // Reset the mesh's container index since it's not in any slot
+        mesh.userData.containerIndex = -1;
       }
     };
 

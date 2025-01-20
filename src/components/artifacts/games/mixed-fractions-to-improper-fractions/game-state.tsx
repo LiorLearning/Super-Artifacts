@@ -36,7 +36,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-    screen: 'second',
+    screen: 'first',
     state1: {
         step: 0,
         fraction: {

@@ -33,7 +33,7 @@ export const createText = (
       bevelSegments: 8,
       bevelSize: 0.005, // Reduced from 0.015
       bevelThickness: 0.001, // Reduced from 0.015
-      height: 0.01 // Reduced from 0.04
+      depth: 0.01 // Reduced from 0.04
     },
   };
 
@@ -48,7 +48,7 @@ export const createText = (
     const textGeom = new TextGeometry(value, {
       font: font,
       size: options.size || 0.25,
-      height: settings.height,
+      depth: settings.depth,
       curveSegments: settings.curveSegments,
       bevelEnabled: true,
       bevelThickness: settings.bevelThickness,
@@ -116,7 +116,7 @@ export const createText = (
       const padding = quality === 'high' ? 0.5 : 0.3; // Reduced padding
       const bgWidth = textWidth + padding;
       const bgHeight = textHeight + padding;
-      const bgDepth = settings.height * 1.2; // Reduced depth
+      const bgDepth = settings.depth * 1.2; // Reduced depth
       
       const bgGeom = new THREE.BoxGeometry(bgWidth, bgHeight, bgDepth);
       const bgMesh = new THREE.Mesh(bgGeom, bgMat);

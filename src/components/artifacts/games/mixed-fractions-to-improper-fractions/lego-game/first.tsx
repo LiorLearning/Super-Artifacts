@@ -43,12 +43,14 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
   const [enableDragging, setEnableDragging] = useState(false);
 
   const onDragEnd = (count: number) => {
-    console.log('count', count);
     if (!fillContainerRef.current) {
       setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, piecesAtYOne: count } }));
     } else {
       if (count === 3) {
         animateAllPieces(0.1);
+        containerAssignmentsRef.current = new Array(11).fill(null).map((_, index) => 
+          index < 4 ? null : containerAssignmentsRef.current[index]
+        );
         sendAdminMessage('agent', "Wow, that’s 1 whole! It turned purple! Now let’s move to the next holder.");
         showConfettiRef.current = true;
         setTimeout(() => {
@@ -165,18 +167,14 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
         
         // Update containerAssignmentsRef
         const prevIndex = piece.userData.containerIndex;
-        console.log('Previous Container Index:', prevIndex);
         if (prevIndex !== -1) {
           containerAssignmentsRef.current[prevIndex] = null;
-          console.log('Cleared previous container index:', prevIndex);
           
           // Find new index based on new position
           const newIndex = containerAssignmentsRef.current.findIndex(item => item === null);
-          console.log('Found new container index:', newIndex);
           if (newIndex !== -1) {
             containerAssignmentsRef.current[newIndex] = piece;
             piece.userData.containerIndex = newIndex;
-            console.log('Updated piece container index to:', newIndex);
           }
         }
       }
@@ -450,6 +448,7 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
     scene,
     camera,
     renderer,
+    fillContainerRef,
     dragObjects: enableDragging ? dragObjectsRef.current : [],
     containerAssignmentsRef: containerAssignmentsRef,
     orbitControls,
