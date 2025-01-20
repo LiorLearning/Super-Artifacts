@@ -19,6 +19,7 @@ import MixedFractionGame from './games/mixed-fraction-without-regouping/game';
 import LegoGame from './games/mixed-fractions-to-improper-fractions/game';
 import CommonDenominatorGame from './games/common-denominators/game';
 import CompareFractionGame from './games/compare-fraction/game';
+import FractionToDecimalGame from './games/fraction-to-decimal/game';
 
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
@@ -30,6 +31,7 @@ import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameSta
 import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState as CommonDenominatorGameState } from './games/common-denominators/state-utils'
 import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/mixed-fraction-without-regouping/state-utils'
 import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fraction/state-utils'
+import { GameStateProvider as FractionToDecimalGameStateProvider, useGameState as FractionToDecimalGameState } from './games/fraction-to-decimal/state-utils'
 
 import { desc as TemplateGameDesc } from './games/template/game-state';
 import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
@@ -41,6 +43,7 @@ import { desc as LegoGameDesc } from './games/mixed-fractions-to-improper-fracti
 import { desc as CommonDenominatorGameDesc } from './games/common-denominators/game-state';
 import { desc as MixedFractionGameDesc } from './games/mixed-fraction-without-regouping/game-state';
 import { desc as CompareFractionGameDesc } from './games/compare-fraction/game-state';
+import { desc as FractionToDecimalGameDesc } from './games/fraction-to-decimal/game-state';
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
@@ -111,6 +114,12 @@ const gameInfo: Record<string, GameInfo> = {
     desc: CompareFractionGameDesc,
     state: CompareFractionGameState,
     provider: CompareFractionGameStateProvider
+  },
+  'fraction-to-decimal': {
+    game: FractionToDecimalGame,
+    desc: FractionToDecimalGameDesc,
+    state: FractionToDecimalGameState,
+    provider: FractionToDecimalGameStateProvider
   }
 };
 
