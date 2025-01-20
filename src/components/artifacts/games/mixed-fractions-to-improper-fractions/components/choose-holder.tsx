@@ -16,11 +16,19 @@ export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage
   const handleDenomOptionClick = (option: number) => {
     if (option === answer) {
       onSuccess();
+      sendAdminMessage('agent', `Remember, the denominator is ${answer}. Look for the holder with exactly ${answer} slots!`);
     } else {
-      sendAdminMessage('agent', "Hmmm, let's give that another try!");
-      sendAdminMessage('admin', "Diagnosis socratically and ask user to select the correct holder");
+      sendAdminMessage('admin', `Diagnosis socratically, user has selected ${option} but the answer is ${answer}.`);
     }
   };
+  
+  // If the kid selects the holder with 3 divisions:
+  // "Close, but not quite! The denominator tells us there should be 4 equal divisions. Try again!"
+  // If the kid selects the holder with 5 divisions:
+  // "Oops! This one has too many divisions. The denominator is 4! Pick the right one!"
+  // If the kid clicks randomly or doesn’t choose:
+  // "Remember, the denominator is 4. Look for the holder with exactly 4 slots!"
+
 
   useEffect(() => {
     if (!hasGameStarted.current) {

@@ -2,53 +2,55 @@ import { useState } from "react";
 import { useGameState } from "../../state-utils";
 import { Input } from "@/components/custom_ui/input";
 import { Button } from "@/components/custom_ui/button";
-import { ChooseHolder } from "../../components/choose-holder";
+import { goToStep } from "../../utils/helper";
 
 
 // Footer components
 export const VerifyPiecesAndDivisions = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { fraction } = gameStateRef.current.state2;
-  const denominator = fraction.denominator;
-  const numerator = fraction.numerator;
   const [answer, setAnswer] = useState({numLego: '', numDiv: ''});
 
-  const verifyPiecesAndDivisions = () => {
-    if (parseInt(answer.numLego) === numerator && parseInt(answer.numDiv) === denominator) {
-      setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
-    }
-  }
   return (
-    <div className="flex flex-col items-center justify-center mt-4 space-y-4">
-      <div className="flex justify-center space-x-4">
-        <div className="flex flex-col items-center">
-          <label className="text-3xl mb-2">Number of Lego Pieces</label>
-          <Input 
-            type="text" 
-            placeholder="?"
-            className="w-12 text-center border-2 border-black text-3xl"
-            value={answer.numLego}
-            onChange={(e) => setAnswer(prev => ({ ...prev, numLego: e.target.value }))}
-          />
-        </div>
-        <div className="flex flex-col items-center">
-          <label className="text-3xl mb-2">Number of Divisions</label>
-          <Input 
-            type="text" 
-            placeholder="?"
-            className="w-12 text-center border-2 border-black text-3xl"
-            value={answer.numDiv}
-            onChange={(e) => setAnswer(prev => ({ ...prev, numDiv: e.target.value }))}
-          />
-        </div>
+    <div className="flex flex-col items-center justify-center mt-4">
+      <div className="flex flex-row items-center mb-8">
+        <label className="text-4xl mr-4 max-w-lg break-words">How many holders can you fill completely with green legos?</label>
+        <Input 
+          type="text" 
+          placeholder="?"
+          className="w-16 h-16 text-center border-4 border-black text-4xl shadow-[-3px_3px_0px_0px_rgba(0,0,0,1)] rounded-md"
+          value={answer.numLego}
+          onChange={(e) => setAnswer(prev => ({ ...prev, numLego: e.target.value }))}
+        />
       </div>
-      <div className="flex justify-center mt-4">
-        <Button 
-          className="bg-green-500 text-white px-6 py-3 mx-2 shadow-lg text-3xl rounded-none"
-          onClick={verifyPiecesAndDivisions}
-        >
-          VERIFY
-        </Button>
+      <div className="w-[40%] h-0.5 bg-gray-500 my-2" />
+      <div className="flex flex-row items-center m-8">
+        <label className="text-4xl mr-4 max-w-lg break-words">How many green legos will be left over?</label>
+        <Input 
+          type="text" 
+          placeholder="?"
+          className="w-16 h-16 text-center border-4 border-black text-4xl shadow-[-3px_3px_0px_0px_rgba(0,0,0,1)] rounded-md"
+          value={answer.numDiv}
+          onChange={(e) => setAnswer(prev => ({ ...prev, numDiv: e.target.value }))}
+        />
+      </div>
+      <div className="flex flex-col items-center justify-center m-16 bg-pink-100 w-screen">
+        <div className="flex justify-center m-4">
+          <div className="flex flex-col items-center">
+            <label className="text-4xl my-4">How do you want to verify your answer?</label>
+            <Button 
+              className="bg-pink-500 text-white px-6 py-1 w-72 text-3xl rounded-none shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] my-2"
+              onClick={() => goToStep('second', setGameStateRef, 4)}
+            >
+              I want to VISUALIZE
+            </Button>
+            <Button 
+              className="bg-pink-500 text-white px-6 py-1 w-72 text-3xl rounded-none shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] my-2 mb-8"
+              onClick={() => goToStep('second', setGameStateRef, 6)}
+            >
+              I can DIVIDE!
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )

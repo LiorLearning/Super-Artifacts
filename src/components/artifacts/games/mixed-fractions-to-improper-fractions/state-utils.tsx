@@ -28,8 +28,6 @@ export const GameStateProvider: React.FC<{
     } else {
       gameStateRef.current = { ...gameStateRef.current, ...newState }
     }
-
-    console.log(gameStateRef.current.screen, gameStateRef.current.state1.step, gameStateRef.current.state2.step, gameStateRef.current.state3.step);
     
     // Conditionally trigger a re-render
     if (shouldRerender) {

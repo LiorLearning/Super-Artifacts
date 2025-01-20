@@ -36,7 +36,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-    screen: 'first',
+    screen: 'second',
     state1: {
         step: 0,
         fraction: {
@@ -47,7 +47,7 @@ export const initialGameState: GameState = {
         denomOptions: [6, 3, 4],
     },
     state2: {
-        step: 0,
+        step: 3,
         fraction: {
             numerator: 8,
             denominator: 3,
