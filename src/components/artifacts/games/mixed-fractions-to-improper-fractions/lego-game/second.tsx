@@ -74,8 +74,26 @@ const LegoGame = () => {
 
 
   useEffect(() => {
-    if (step === 0) {
+    if (step === 1) {
+      for (let i = 0; i < denomOptions.length; i++) {
+        const position: [number, number, number] = [-1 + i * 2.2, 0, 2 - i * 2.2];
+        createHolder(scene, position, denomOptions[i]);
+      }
+
+      // for (let i = 0; i < fraction.numerator; i++) {
+      //   const row = Math.floor(i / 4);  // 4 pieces per row
+      //   const col = i % 4;              // Position within the row
+      //   const position: [number, number, number] = [-3.5 + col, 0, -3 + row * 1.5];
+      //   createPiece({ scene: scene!, position: position, color: COLORS.GREEN });
+      // }
+      
+      
+    } else if (step === 2) {
+      cleanUpHolders(scene!, holders);
+      setHolders([]);
+
       createHolder(scene, [0, 0, 0], fraction.denominator);
+      createPiece({ scene: scene!, position: [0, 0, 0.15], color: COLORS.GREEN });
 
       for (let i = 0; i < fraction.denominator; i++) {
         const fractionalText = createText(scene!, [-0.2, 1.9, 1 + i * (fraction.denominator/2)], `1/${fraction.denominator}`, {
@@ -88,31 +106,13 @@ const LegoGame = () => {
           textsRef.current = [...textsRef.current, fractionalText];
         }
       }
-      
-    } else if (step === 1) {
+
+    } else if (step === 3) {
+      cleanUpPieces(scene!, pieces);
+      setPieces([]);
+      cleanUpHolders(scene!, holders);
+      setHolders([]);
       cleanUpTexts(scene!);
-      cleanUpPieces(scene!, pieces);
-      setPieces([]);
-      cleanUpHolders(scene!, holders);
-      setHolders([]);
-
-      for (let i = 0; i < denomOptions.length; i++) {
-        const position: [number, number, number] = [-1 + i * 2.2, 0, 2 - i * 2.2];
-        createHolder(scene, position, denomOptions[i]);
-      }
-
-      // for (let i = 0; i < fraction.numerator; i++) {
-      //   const row = Math.floor(i / 4);  // 4 pieces per row
-      //   const col = i % 4;              // Position within the row
-      //   const position: [number, number, number] = [-3.5 + col, 0, -3 + row * 1.5];
-      //   createPiece({ scene: scene!, position: position, color: COLORS.GREEN });
-      // }
-
-    } else if (step === 2) {
-      cleanUpPieces(scene!, pieces);
-      setPieces([]);
-      cleanUpHolders(scene!, holders);
-      setHolders([]);
 
       createHolder(scene, [2, 0, -3], fraction.denominator);
 
@@ -123,13 +123,11 @@ const LegoGame = () => {
         const position: [number, number, number] = [-3 + col * 1.2, 0, -2 + row * 1.5];
         createPiece({ scene: scene!, position: position, color: COLORS.GREEN });
       }
-
-    } else if (step === 3) {
+    } else if (step >= 5) {
       cleanUpPieces(scene!, pieces);
       setPieces([]);
       cleanUpHolders(scene!, holders);
       setHolders([]);
-    } else if (step === 4) {
       const numHolder = Math.ceil(fraction.numerator / fraction.denominator);
       for (let i = 0; i < numHolder; i++) {
         const position: [number, number, number] = [-3 + i * 2.2, 0, - i * 2.2];

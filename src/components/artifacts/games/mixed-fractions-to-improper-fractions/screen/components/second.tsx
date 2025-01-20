@@ -1,55 +1,103 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGameState } from "../../state-utils";
 import { Input } from "@/components/custom_ui/input";
 import { Button } from "@/components/custom_ui/button";
-import { ChooseHolder } from "../../components/choose-holder";
-
+import { goToStep, nextStep } from "../../utils/helper";
+import { GameProps } from "../../utils/types";
 
 // Footer components
-export const VerifyPiecesAndDivisions = () => {
-  const { gameStateRef, setGameStateRef } = useGameState();
-  const { fraction } = gameStateRef.current.state2;
-  const denominator = fraction.denominator;
-  const numerator = fraction.numerator;
+export const VerifyPiecesAndDivisions = ({sendAdminMessage}: GameProps) => {
+  const { setGameStateRef } = useGameState();
   const [answer, setAnswer] = useState({numLego: '', numDiv: ''});
+  const [show2ndQues, setShow2ndQues] = useState(false);
+  const [showNextSteps, setShowNextSteps] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  const verifyPiecesAndDivisions = () => {
-    if (parseInt(answer.numLego) === numerator && parseInt(answer.numDiv) === denominator) {
-      setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      if (bottomRef.current) {
+        bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
+  }
+
+  const onChangeNumLego = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const prev = answer.numLego;
+    setAnswer(prev => ({ ...prev, numLego: value }));
+    if (value != '' && prev === '') {
+      setShow2ndQues(true);
+      sendAdminMessage('agent', `And how many green legos will be left over?`);
+      scrollToBottom();
     }
   }
+
+  const onChangeNumDiv = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const prev = answer.numDiv;
+    setAnswer(prev => ({ ...prev, numDiv: value }));
+    if (value != '' && prev === '') {
+      setShowNextSteps(true);
+      sendAdminMessage('agent', `We got your guesses, now how do you want to verify your answer? It's upto you lego builder!`);
+      scrollToBottom();
+    }
+  }
+
+  
   return (
-    <div className="flex flex-col items-center justify-center mt-4 space-y-4">
-      <div className="flex justify-center space-x-4">
-        <div className="flex flex-col items-center">
-          <label className="text-3xl mb-2">Number of Lego Pieces</label>
-          <Input 
-            type="text" 
-            placeholder="?"
-            className="w-12 text-center border-2 border-black text-3xl"
-            value={answer.numLego}
-            onChange={(e) => setAnswer(prev => ({ ...prev, numLego: e.target.value }))}
-          />
-        </div>
-        <div className="flex flex-col items-center">
-          <label className="text-3xl mb-2">Number of Divisions</label>
-          <Input 
-            type="text" 
-            placeholder="?"
-            className="w-12 text-center border-2 border-black text-3xl"
-            value={answer.numDiv}
-            onChange={(e) => setAnswer(prev => ({ ...prev, numDiv: e.target.value }))}
-          />
-        </div>
+    <div className="flex flex-col items-center justify-center mt-4">
+      <div className="flex flex-row items-center mb-8">
+        <label className="text-4xl mr-4 max-w-lg break-words">How many holders can you fill completely with green legos?</label>
+        <Input 
+          type="text" 
+          placeholder="?"
+          className="w-16 h-16 text-center border-4 border-black text-4xl shadow-[-3px_3px_0px_0px_rgba(0,0,0,1)] rounded-md"
+          value={answer.numLego}
+          onChange={onChangeNumLego}
+        />
       </div>
-      <div className="flex justify-center mt-4">
-        <Button 
-          className="bg-green-500 text-white px-6 py-3 mx-2 shadow-lg text-3xl rounded-none"
-          onClick={verifyPiecesAndDivisions}
-        >
-          VERIFY
-        </Button>
-      </div>
+      {show2ndQues && (
+        <>
+          <div className="w-[40%] h-0.5 bg-gray-500 my-2" />
+          <div className="flex flex-row items-center m-8">
+            <label className="text-4xl mr-4 max-w-lg break-words">How many green legos will be left over?</label>
+        <Input 
+          type="text" 
+          placeholder="?"
+          className="w-16 h-16 text-center border-4 border-black text-4xl shadow-[-3px_3px_0px_0px_rgba(0,0,0,1)] rounded-md"
+          value={answer.numDiv}
+          onChange={onChangeNumDiv}
+            />
+          </div>
+        </>
+      )}
+      {showNextSteps && (
+        <div className="flex flex-col items-center justify-center m-16 bg-pink-100 w-screen">
+          <div className="flex justify-center m-4">
+            <div className="flex flex-col items-center">
+              <label className="text-4xl my-4">How do you want to verify your answer?</label>
+            <Button 
+              className="bg-pink-500 text-white px-6 py-1 w-72 text-3xl rounded-none shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] my-2"
+              onClick={() => {
+                goToStep('second', setGameStateRef, 4)
+              }}
+            >
+              I want to VISUALIZE
+            </Button>
+            <Button 
+              className="bg-pink-500 text-white px-6 py-1 w-72 text-3xl rounded-none shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] my-2 mb-8"
+              onClick={() => {
+                sendAdminMessage('agent', `As you say! Here’s how it looks: ${answer.numLego} holders are full, and 1 is partly filled!`);
+                goToStep('second', setGameStateRef, 6)
+              }}
+            >
+              I can DIVIDE!
+            </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div ref={bottomRef} />
     </div>
   )
 }
@@ -89,7 +137,7 @@ export const VerifyPiecesAndDivisions = () => {
 //   )
 // }
 
-export const CreateBlocks = () => {
+export const CreateBlocks = ({sendAdminMessage}: GameProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction } = gameStateRef.current.state2;
   const denominator = fraction.denominator;
@@ -101,7 +149,12 @@ export const CreateBlocks = () => {
     const answerNumerator = parseInt(answer.count) * parseInt(answer.numerator);
     const answerDenominator = parseInt(answer.denominator);
     if (answerNumerator === numerator && answerDenominator === denominator) {
-      setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
+      sendAdminMessage('agent', `Great! We need ${answerNumerator} legos, each sized 1/${answerDenominator}. Let’s create them!`);
+      nextStep('second', setGameStateRef);
+    } else if (answerNumerator !== numerator) {
+      sendAdminMessage('agent', `Hmm, how many legos do you think we need to make ${numerator}/${denominator}?`);
+    } else if (answerDenominator !== denominator) {
+      sendAdminMessage('agent', `Remember, each lego matches the denominator. What’s the size of each piece?`);
     }
   };
 
@@ -144,7 +197,7 @@ export const CreateBlocks = () => {
         </span>
       </div>
 
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-4 mb-8">
         <Button className="bg-pink-400 text-white px-6 py-3 mx-2 shadow-lg text-xl rounded-none" onClick={verifyMixedFraction}>
           CREATE
         </Button>

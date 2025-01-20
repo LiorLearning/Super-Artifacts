@@ -1,8 +1,9 @@
 import { goToStep } from '../utils/helper';
 import { useGameState } from '../state-utils';
+import { Fraction } from '../game-state';
 
-export default function FirstQuestion() {
-  const { gameStateRef, setGameStateRef } = useGameState();
+export default function FirstQuestion({fraction, onNext}: {fraction: Fraction, onNext: () => void}) {
+  const { setGameStateRef } = useGameState();
 
   return (
     <div className="flex items-center justify-center bg-[#fffdf7] pt-36">
@@ -19,9 +20,9 @@ export default function FirstQuestion() {
               <span>Write</span>
               <div className="bg-white px-4 py-2">
                 <div className="flex flex-col items-center leading-tight">
-                  <span>7</span>
+                  <span>{fraction.numerator}</span>
                   <div className="w-4 h-px bg-black"></div>
-                  <span>4</span>
+                  <span>{fraction.denominator}</span>
                 </div>
               </div>
               <span>as a mixed number</span>
@@ -32,7 +33,7 @@ export default function FirstQuestion() {
         {/* Start Button */}
         <div className="mt-36 flex justify-center">
           <button className="group relative text-3xl bg-[#e9ed7b] px-12 py-4 rounded-xl shadow-[-5px_5px_0px_black] hover:bg-[#e0e472] transition-colors"
-            onClick={() => goToStep('first', setGameStateRef, 1)}
+            onClick={onNext}
           >
             START {'>>'}
           </button>
