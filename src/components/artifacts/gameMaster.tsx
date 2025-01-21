@@ -16,7 +16,7 @@ import AdditionGame from './games/addition-within-20-using-ten-frames/game';
 import FractionsGame from './games/compare-fractions-with-same-numerator-or-denominator/game';
 import EquivalentFractionsGame from './games/equivalent-fractions/game';
 import MixedFractionGame from './games/add-and-subtract-mixed-numbers-without-regouping/game';
-import LegoGame from './games/mixed-fractions-to-improper-fractions/game';
+import LegoGame from './games/writing-improper-fractions-as-mixed-numbers/game';
 import CommonDenominatorGame from './games/common-denominators/game';
 import CompareFractionGame from './games/compare-fraction-with-the-different-numerator-and-denominator/game';
 
@@ -26,7 +26,7 @@ import { GameStateProvider as FractionSubtractionGameStateProvider, useGameState
 import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition-within-20-using-ten-frames/state-utils'
 import { GameStateProvider as FractionsGameStateProvider, useGameState as FractionsGameState } from './games/compare-fractions-with-same-numerator-or-denominator/state-utils'
 import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState as EquivalentFractionsGameState } from './games/equivalent-fractions/state-utils'
-import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/mixed-fractions-to-improper-fractions/state-utils'
+import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/writing-improper-fractions-as-mixed-numbers/state-utils'
 import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState as CommonDenominatorGameState } from './games/common-denominators/state-utils'
 import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/add-and-subtract-mixed-numbers-without-regouping/state-utils'
 import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fraction-with-the-different-numerator-and-denominator/state-utils'
@@ -37,7 +37,7 @@ import { desc as FractionSubtractionGameDesc } from './games/subtract-fractions-
 import { desc as AdditionGameDesc } from './games/addition-within-20-using-ten-frames/game-state';
 import { desc as FractionsGameDesc } from './games/compare-fractions-with-same-numerator-or-denominator/game-state';
 import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
-import { desc as LegoGameDesc } from './games/mixed-fractions-to-improper-fractions/game-state';
+import { desc as LegoGameDesc } from './games/writing-improper-fractions-as-mixed-numbers/game-state';
 import { desc as CommonDenominatorGameDesc } from './games/common-denominators/game-state';
 import { desc as MixedFractionGameDesc } from './games/add-and-subtract-mixed-numbers-without-regouping/game-state';
 import { desc as CompareFractionGameDesc } from './games/compare-fraction-with-the-different-numerator-and-denominator/game-state';
@@ -94,7 +94,7 @@ const gameInfo: Record<string, GameInfo> = {
     state: MixedFractionGameState,
     provider: MixedFractionGameStateProvider
   },
-  'writing-mixed-numbers-as-improper-fractions': {
+  'writing-improper-fractions-as-mixed-numbers': {
     game: LegoGame,
     desc: LegoGameDesc,
     state: LegoGameState,
