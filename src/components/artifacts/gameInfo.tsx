@@ -21,23 +21,11 @@ import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState a
 import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/add-and-subtract-mixed-numbers-without-regouping/state-utils'
 import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fraction-with-the-different-numerator-and-denominator/state-utils'
 
-import { desc as TemplateGameDesc } from './games/template/game-state';
-import { desc as FractionAdditionGameDesc } from './games/add-fractions-with-common-denominator/game-state';
-import { desc as FractionSubtractionGameDesc } from './games/subtract-fractions-with-common-denominator/game-state';
-import { desc as AdditionGameDesc } from './games/addition-within-20-using-ten-frames/game-state';
-import { desc as FractionsGameDesc } from './games/compare-fractions-with-same-numerator-or-denominator/game-state';
-import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
-import { desc as LegoGameDesc } from './games/writing-improper-fractions-as-mixed-numbers/game-state';
-import { desc as MixedFractionGameDesc } from './games/add-and-subtract-mixed-numbers-without-regouping/game-state';
-import { desc as CompareFractionGameDesc } from './games/compare-fraction-with-the-different-numerator-and-denominator/game-state';
-
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
   useState: any;
   provider: React.ComponentType<{ children: React.ReactNode }>;
 }
-
-type GameKey = keyof typeof gameInfo;
 
 export const gameInfo: Record<string, GameInfo> = {
   // 'addition-within-20-using-ten-frames': {
@@ -75,12 +63,11 @@ export const gameInfo: Record<string, GameInfo> = {
   //   state: FractionAdditionGameState,
   //   provider: FractionAdditionGameStateProvider
   // },
-  // 'add-and-subtract-mixed-numbers-without-regouping': {
-  //   game: MixedFractionGame,
-  //   desc: MixedFractionGameDesc,
-  //   state: MixedFractionGameState,
-  //   provider: MixedFractionGameStateProvider
-  // },
+  'add-and-subtract-mixed-numbers-without-regouping': {
+    game: MixedFractionGame,
+    useState: MixedFractionGameState,
+    provider: MixedFractionGameStateProvider
+  },
   // 'writing-mixed-numbers-as-improper-fractions': {
   //   game: LegoGame,
   //   desc: LegoGameDesc,

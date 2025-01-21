@@ -7,11 +7,11 @@ import QuestionDescription from '../components/questionDescription';
 import React, { useEffect, useState } from 'react';
 import Intro from '../components/intro';
 import { Button } from '@/components/ui/button';
+import { QuestionDescriptionProps } from '../game-state';
 
 export default function SecondScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const {fraction1, fraction2} = gameStateRef.current.questions.question2;
-  const { step } = gameStateRef.current.state2;
+  const {step, fraction1, fraction2} = gameStateRef.current.state2;
 
   return (
     <div className="">
@@ -31,7 +31,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
 
 const Step1 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { fraction1, fraction2 } = gameStateRef.current.questions.question2;
+  const { fraction1, fraction2 } = gameStateRef.current.state2;
   return (
     <div className="flex gap-8 flex-col w-full">
       <Intro text="Lets us do another question now! You can do this." />
@@ -76,26 +76,43 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const setSubStep = (value: number) => {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, substep: value } }));
   }
-  const {fraction1, fraction2} = gameStateRef.current.questions.question2;
-  const { question1description, question2description } = gameStateRef.current.state2;
+  const {fraction1, fraction2} = gameStateRef.current.state2;
+
+  const [question1description, setQuestion1description] = useState({
+    showFirstRow: true,
+    showSecondRow: false,
+    showThirdRow: false,
+    inputWhole: '',
+    inputNumerator: '',
+    inputDenominator: '',
+  } as QuestionDescriptionProps);
+
+  const [question2description, setQuestion2description] = useState({
+    showFirstRow: true,
+    showSecondRow: false,
+    showThirdRow: false,
+    inputWhole: '',
+    inputNumerator: '',
+    inputDenominator: '',
+  } as QuestionDescriptionProps);
 
   return(
     <div className='flex flex-col gap-4 w-full my-16 items-center'>
       { substep >= 0 &&
         <QuestionDescription 
           showFirstRow={question1description.showFirstRow}
-          setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, showFirstRow: value } } }))}
+          setShowFirstRow={(value) => setQuestion1description(prev => ({ ...prev, showFirstRow: value }))}
           showSecondRow={question1description.showSecondRow}
-          setShowSecondRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, showSecondRow: value } } }))}
+          setShowSecondRow={(value) => setQuestion1description(prev => ({ ...prev, showSecondRow: value }))}
           showThirdRow={question1description.showThirdRow}
-          setShowThirdRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, showThirdRow: value } } }))}
+          setShowThirdRow={(value) => setQuestion1description(prev => ({ ...prev, showThirdRow: value }))}
 
           inputWhole={question1description.inputWhole}
-          setInputWhole={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, inputWhole: value } } }))}
+          setInputWhole={(value) => setQuestion1description(prev => ({ ...prev, inputWhole: value }))}
           inputNumerator={question1description.inputNumerator}
-          setInputNumerator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, inputNumerator: value } } }))}
+          setInputNumerator={(value) => setQuestion1description(prev => ({ ...prev, inputNumerator: value }))}
           inputDenominator={question1description.inputDenominator}
-          setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question1description: { ...prev.state2.question1description, inputDenominator: value } } }))}
+          setInputDenominator={(value) => setQuestion1description(prev => ({ ...prev, inputDenominator: value }))}
 
 
           whole={fraction1.whole} 
@@ -114,19 +131,18 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
       { substep >= 1 &&
         <QuestionDescription 
           showFirstRow={question2description.showFirstRow}
-          setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, showFirstRow: value } } }))}
+          setShowFirstRow={(value) => setQuestion2description(prev => ({ ...prev, showFirstRow: value }))}
           showSecondRow={question2description.showSecondRow}
-          setShowSecondRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, showSecondRow: value } } }))}
+          setShowSecondRow={(value) => setQuestion2description(prev => ({ ...prev, showSecondRow: value }))}
           showThirdRow={question2description.showThirdRow}
-          setShowThirdRow={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, showThirdRow: value } } }))}
+          setShowThirdRow={(value) => setQuestion2description(prev => ({ ...prev, showThirdRow: value }))}
 
           inputWhole={question2description.inputWhole}
-          setInputWhole={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, inputWhole: value } } }))}
+          setInputWhole={(value) => setQuestion2description(prev => ({ ...prev, inputWhole: value }))}
           inputNumerator={question2description.inputNumerator}
-          setInputNumerator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, inputNumerator: value } } }))}
+          setInputNumerator={(value) => setQuestion2description(prev => ({ ...prev, inputNumerator: value }))}
           inputDenominator={question2description.inputDenominator}
-          setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, question2description: { ...prev.state2.question2description, inputDenominator: value } } }))}
-
+          setInputDenominator={(value) => setQuestion2description(prev => ({ ...prev, inputDenominator: value }))}
 
           whole={fraction2.whole} 
           numerator={fraction2.numerator} 

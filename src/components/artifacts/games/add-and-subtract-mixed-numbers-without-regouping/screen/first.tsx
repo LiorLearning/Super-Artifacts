@@ -9,11 +9,11 @@ import Intro from '../components/intro';
 import Proceed from '../components/proceed';
 import DragDropPizza from '../components/dragDropPizza';
 import { goToStep, nextStep } from '../utils/helper';
+import { QuestionDescriptionProps } from '../game-state';
 
 export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const {fraction1, fraction2} = gameStateRef.current.questions.question1;
-  const { step } = gameStateRef.current.state1;
+  const { step, fraction1, fraction2 } = gameStateRef.current.state1;
 
   return (
     <div className="">
@@ -31,7 +31,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
 const Step1 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { fraction1, fraction2 } = gameStateRef.current.questions.question1;
+  const { fraction1, fraction2 } = gameStateRef.current.state1;
   return (
     <div className="flex gap-8 flex-col w-full">
       <Intro text="Let us solve this by imagining a pizza factory! Suppose the question is nothing but a pizza order like this" />
@@ -72,13 +72,26 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
 
 const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { fraction1, fraction2 } = gameStateRef.current.questions.question1;
-  const complete = gameStateRef.current.state1.step2Substep
-  const {question1description, question2description} = gameStateRef.current.state1;
+  const { fraction1, fraction2 } = gameStateRef.current.state1;
+  const [complete, setComplete] = useState(0);
+  const [question1description, setQuestion1description] = useState({
+    showFirstRow: true,
+    showSecondRow: false,
+    showThirdRow: false,
+    inputWhole: '',
+    inputNumerator: '',
+    inputDenominator: '',
+  } as QuestionDescriptionProps);
 
-  const setComplete = (value: number) => {
-    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step2Substep: value } }));
-  }
+  const [question2description, setQuestion2description] = useState({
+    showFirstRow: false,
+    showSecondRow: false,
+    showThirdRow: false,
+    inputWhole: '',
+    inputNumerator: '',
+    inputDenominator: '',
+  } as QuestionDescriptionProps);
+
 
   useEffect(() => {
     if (complete === 1) {
@@ -94,18 +107,18 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     { complete >= 0 &&
         <QuestionDescription 
           showFirstRow={question1description.showFirstRow}
-          setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, showFirstRow: value } } }))}
+          setShowFirstRow={(value) => setQuestion1description(prev => ({ ...prev, showFirstRow: value }))}
           showSecondRow={question1description.showSecondRow}
-          setShowSecondRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, showSecondRow: value } } }))}
+          setShowSecondRow={(value) => setQuestion1description(prev => ({ ...prev, showSecondRow: value }))}
           showThirdRow={question1description.showThirdRow}
-          setShowThirdRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, showThirdRow: value } } }))}
+          setShowThirdRow={(value) => setQuestion1description(prev => ({ ...prev, showThirdRow: value }))}
 
           inputWhole={question1description.inputWhole}
-          setInputWhole={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, inputWhole: value } } }))}
+          setInputWhole={(value) => setQuestion1description(prev => ({ ...prev, inputWhole: value }))}
           inputNumerator={question1description.inputNumerator}
-          setInputNumerator={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, inputNumerator: value } } }))}
+          setInputNumerator={(value) => setQuestion1description(prev => ({ ...prev, inputNumerator: value }))}
           inputDenominator={question1description.inputDenominator}
-          setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question1description: { ...prev.state1.question1description, inputDenominator: value } } }))}
+          setInputDenominator={(value) => setQuestion1description(prev => ({ ...prev, inputDenominator: value }))}
 
           whole={fraction1.whole} 
           numerator={fraction1.numerator} 
@@ -115,25 +128,25 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
 
           onComplete={() => {
             setComplete(1)
-            setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showFirstRow: true } } }))
+            setQuestion2description(prev => ({ ...prev, showFirstRow: true }))
           }} 
         />
     }
     { complete >= 1 &&
         <QuestionDescription 
           showFirstRow={question2description.showFirstRow}
-          setShowFirstRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showFirstRow: value } } }))}
+          setShowFirstRow={(value) => setQuestion2description(prev => ({ ...prev, showFirstRow: value }))}
           showSecondRow={question2description.showSecondRow}
-          setShowSecondRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showSecondRow: value } } }))}
+          setShowSecondRow={(value) => setQuestion2description(prev => ({ ...prev, showSecondRow: value }))}
           showThirdRow={question2description.showThirdRow}
-          setShowThirdRow={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, showThirdRow: value } } }))}
+          setShowThirdRow={(value) => setQuestion2description(prev => ({ ...prev, showThirdRow: value }))}
 
           inputWhole={question2description.inputWhole}
-          setInputWhole={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, inputWhole: value } } }))}
+          setInputWhole={(value) => setQuestion2description(prev => ({ ...prev, inputWhole: value }))}
           inputNumerator={question2description.inputNumerator}
-          setInputNumerator={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, inputNumerator: value } } }))}
+          setInputNumerator={(value) => setQuestion2description(prev => ({ ...prev, inputNumerator: value }))}
           inputDenominator={question2description.inputDenominator}
-          setInputDenominator={(value) => setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, question2description: { ...prev.state1.question2description, inputDenominator: value } } }))}
+          setInputDenominator={(value) => setQuestion2description(prev => ({ ...prev, inputDenominator: value }))}
 
           whole={fraction2.whole} 
           numerator={fraction2.numerator} 
@@ -164,8 +177,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
 
 const Step3 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { fraction1, fraction2 } = gameStateRef.current.questions.question1;
-  const {screen} = gameStateRef.current;
+  const { fraction1, fraction2 } = gameStateRef.current.state1;
 
   // States for first section (Whole Pizzas)
   const [wholeInputs, setWholeInputs] = useState({

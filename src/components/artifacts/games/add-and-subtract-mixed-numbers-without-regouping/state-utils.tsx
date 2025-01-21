@@ -1,10 +1,11 @@
-import { GameState, initialGameState } from "./game-state";
+import { GameState, initialGameState, descriptions } from "./game-state";
 import { createContext, useContext, useReducer, useRef, ReactNode } from 'react';
 
 
 const GameStateContext = createContext<{
     gameStateRef: React.MutableRefObject<GameState>;
     setGameStateRef: (newState: ((prevState: GameState) => GameState) | Partial<GameState>) => void;
+    getDescription: () => string;
   } | undefined>(undefined);
   
   const gameStateReducer = (state: GameState, action: Partial<GameState> | ((prevState: GameState) => GameState)): GameState => {
@@ -28,8 +29,6 @@ export const GameStateProvider: React.FC<{
     } else {
       gameStateRef.current = { ...gameStateRef.current, ...newState }
     }
-
-    console.log('gameStateRef', gameStateRef.current)
     
     // Conditionally trigger a re-render
     if (shouldRerender) {
@@ -37,10 +36,16 @@ export const GameStateProvider: React.FC<{
     }
   };
 
+  const getDescription = () => {
+    const description = descriptions.find(d => d.title === gameStateRef.current.screen)?.description;
+    return description || '';
+  }
+
   return (
     <GameStateContext.Provider value={{ 
       gameStateRef,
       setGameStateRef,
+      getDescription
     }}>
       {children}
     </GameStateContext.Provider>
