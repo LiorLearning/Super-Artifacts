@@ -72,12 +72,11 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: LegoGameState,
     provider: LegoGameStateProvider
   },
-  // 'template-game': {
-  //   game: TemplateGame,
-  //   desc: TemplateGameDesc,
-  //   state: TemplateGameState,
-  //   provider: TemplateGameStateProvider
-  // },
+  'template-game': {
+    game: TemplateGame,
+    useState: TemplateGameState,
+    provider: TemplateGameStateProvider
+  },
   // 'compare-fractions-with-different-numerator-and-denominator': {
   //   game: CompareFractionGame,
   //   desc: CompareFractionGameDesc,
