@@ -164,6 +164,8 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
             child.material = new THREE.MeshPhongMaterial({ color: COLORS.MAGENTA });
           }
         });
+
+        dragObjectsRef.current = dragObjectsRef.current.filter(p => p !== piece);
         
         // Update containerAssignmentsRef
         const prevIndex = piece.userData.containerIndex;
