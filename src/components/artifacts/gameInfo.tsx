@@ -57,12 +57,11 @@ export const gameInfo: Record<string, GameInfo> = {
   //   state: FractionSubtractionGameState,
   //   provider: FractionSubtractionGameStateProvider
   // },
-  // 'add-fractions-with-common-denominator': {
-  //   game: FractionAdditionGame,
-  //   desc: FractionAdditionGameDesc,
-  //   state: FractionAdditionGameState,
-  //   provider: FractionAdditionGameStateProvider
-  // },
+  'add-fractions-with-common-denominator': {
+    game: FractionAdditionGame,
+    useState: FractionAdditionGameState,
+    provider: FractionAdditionGameStateProvider
+  },
   'add-and-subtract-mixed-numbers-without-regouping': {
     game: MixedFractionGame,
     useState: MixedFractionGameState,

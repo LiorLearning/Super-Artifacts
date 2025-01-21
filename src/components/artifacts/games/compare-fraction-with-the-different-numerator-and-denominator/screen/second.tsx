@@ -51,7 +51,8 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
         }
       }))
     } else if (firstAnswer === fraction1.denominator*(fraction2.denominator -1)) {
-      sendAdminMessage('agent', `Does ${fraction1.denominator} go into ${fraction2.denominator}? If not, ${fraction2.denominator} cannot be a common denominator!`);
+      const option = fraction1.denominator*(fraction2.denominator -1)
+      sendAdminMessage('agent', `Does ${fraction1.denominator} go into ${option}? If not, ${option} cannot be a common denominator!`);
     }
   }, [firstAnswer]);
 
