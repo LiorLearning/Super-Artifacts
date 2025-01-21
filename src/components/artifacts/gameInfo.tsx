@@ -33,12 +33,11 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: AdditionGameState,
     provider: AdditionGameStateProvider
   },
-  // 'compare-fractions-with-same-numerator-or-denominator': {
-  //   game: FractionsGame,
-  //   desc: FractionsGameDesc,
-  //   state: FractionsGameState,
-  //   provider: FractionsGameStateProvider
-  // },
+  'compare-fractions-with-same-numerator-or-denominator': {
+    game: FractionsGame,
+    useState: FractionsGameState,
+    provider: FractionsGameStateProvider
+  },
   // 'equivalent-fractions': {
   //   game: EquivalentFractionsGame,
   //   desc: EquivalentFractionsGameDesc,
