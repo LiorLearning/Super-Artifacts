@@ -28,12 +28,11 @@ interface GameInfo {
 }
 
 export const gameInfo: Record<string, GameInfo> = {
-  // 'addition-within-20-using-ten-frames': {
-  //   game: AdditionGame,
-  //   desc: AdditionGameDesc,
-  //   state: AdditionGameState,
-  //   provider: AdditionGameStateProvider
-  // },
+  'addition-within-20-using-ten-frames': {
+    game: AdditionGame,
+    useState: AdditionGameState,
+    provider: AdditionGameStateProvider
+  },
   // 'compare-fractions-with-same-numerator-or-denominator': {
   //   game: FractionsGame,
   //   desc: FractionsGameDesc,

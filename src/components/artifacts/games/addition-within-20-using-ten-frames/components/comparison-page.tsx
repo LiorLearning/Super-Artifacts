@@ -30,12 +30,12 @@ export default function ComparisonPage({}) {
     { x: 480, y: 68 }
   ];
 
-  const setCurrentStep = (step: number) => {
+  const setCurrentStep = (_step: number) => {
     setGameStateRef(prev => ({ 
       ...prev, 
       state1: {
         ...prev.state1,
-        currentStep: step
+        step: _step
       }
     }));
   };
@@ -71,13 +71,13 @@ export default function ComparisonPage({}) {
       const activeball = leftContainerBallsRef.current[leftContainerBallsRef.current.length - 1];
       activeBallLeftRef.current = activeball;
       leftContainerBallsRef.current = leftContainerBallsRef.current.slice(0, -1);
-      setGameStateRef(prevState => ({ 
-        ...prevState,
-        state1: {
-          ...prevState.state1,
-          activePhase: 'left',
-        }
-      }));
+      // setGameStateRef(prevState => ({ 
+      //   ...prevState,
+      //   state1: {
+      //     ...prevState.state1,
+      //     activePhase: 'left',
+      //   }
+      // }));
       if (activeball) {
         Matter.Body.setPosition(activeball, { x: 170, y: 130 });
         attachStringsToBall(activeball, { x: 230, y: 100 }, { x: 213, y: 100 });
@@ -89,13 +89,13 @@ export default function ComparisonPage({}) {
       const activeball = rightContainerBallsRef.current[rightContainerBallsRef.current.length - 1];
       activeBallRightRef.current = activeball;
       rightContainerBallsRef.current = rightContainerBallsRef.current.slice(0, -1);
-      setGameStateRef(prevState => ({
-        ...prevState,
-        state1: {
-          ...prevState.state1,
-          activePhase: 'right',
-        }
-      }));
+      // setGameStateRef(prevState => ({
+      //   ...prevState,
+      //   state1: {
+      //     ...prevState.state1,
+      //     activePhase: 'right',
+      //   }
+      // }));
       if (activeball) {
         Matter.Body.setPosition(activeball, { x: 623, y: 130 });
         attachStringsToBall(activeball, { x: 563, y: 100 }, { x: 580, y: 100 });
@@ -307,13 +307,13 @@ export default function ComparisonPage({}) {
     activeBallRightRef.current = null;
 
 
-    setGameStateRef(prevState => ({
-      ...prevState,
-      state1: {
-        ...prevState.state1,
-        showAdditionStep: true
-      }
-    }));
+    // setGameStateRef(prevState => ({
+    //   ...prevState,
+    //   state1: {
+    //     ...prevState.state1,
+    //     showAdditionStep: true
+    //   }
+    // }));
 
     Matter.Composite.add(world, [
       ...leftContainerBalls,

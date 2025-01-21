@@ -18,20 +18,44 @@ interface FirstProps {
 export default function First({ sendAdminMessage, visible }: FirstProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const soundEffects = useSoundEffects();
-  const { 
-    greenScore, 
-    blueScore, 
-    containerScore, 
-    activePhase, 
-    currentStep, 
-    finalAnswer, 
-    clickDisabled, 
-    showAddButton, 
-    additionStarted,
-    maxGreenMarbles, 
-    maxBlueMarbles, 
-    maxBlackMarbles 
-  } = gameStateRef.current.state1;
+  const { step, maxGreenMarbles, maxBlueMarbles } = gameStateRef.current.state1;
+
+  const [greenScore, setGreenScore] = useState(maxGreenMarbles);
+  const [blueScore, setBlueScore] = useState(maxBlueMarbles);
+  const [blackScore, setBlackScore] = useState(0);
+  const [maxBlackMarbles, setMaxBlackMarbles] = useState(10);
+  const [containerScore, setContainerScore] = useState(0);
+  const [activePhase, setActivePhase] = useState<'left' | 'right'>('left');
+  const [finalAnswer, setFinalAnswer] = useState(0);
+  const [clickDisabled, setClickDisabled] = useState(false);
+  const [showAddButton, setShowAddButton] = useState(false);
+  const [additionStarted, setAdditionStarted] = useState(false);
+
+  const setStep = (step: number) => {
+    setGameStateRef(prev => ({
+      ...prev,
+      state1: {
+        ...prev.state1,
+        step: step
+      }
+    }));
+  }
+
+
+  // const { 
+  //   greenScore, 
+  //   blueScore, 
+  //   containerScore, 
+  //   activePhase, 
+  //   currentStep, 
+  //   finalAnswer, 
+  //   clickDisabled, 
+  //   showAddButton, 
+  //   additionStarted,
+  //   maxGreenMarbles, 
+  //   maxBlueMarbles, 
+  //   maxBlackMarbles 
+  // } = gameStateRef.current.state1;
 
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
@@ -55,16 +79,6 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
 
   const STEPS_WITH_PROCEED = [0, 1, 4, 5];
   // const STEPS_WITH_PROCEED = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-  const setCurrentStep = (step: number) => {
-    setGameStateRef(prev => ({ 
-      ...prev, 
-      state1: {
-        ...prev.state1,
-        currentStep: step
-      }
-    }));
-  };
 
   const [positions, setPositions] = useState({
     leftPlatform: { x: 190, y: 180 },
@@ -219,10 +233,10 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
   }, [containerScore]);
 
   useEffect(() => {
-    if (currentStep === 6) {
+    if (step === 6) {
       sendAdminMessage('agent', `Let us empty the marbles in one place to add them`);
     }
-  }, [currentStep])
+  }, [step])
 
   const createFinalContainer = () => {
     const containerWidth = 440;  
@@ -411,14 +425,6 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       }
     });
 
-    setGameStateRef(prevState => ({
-      ...prevState,
-      state1: {
-        ...prevState.state1,
-        showAdditionStep: true
-      }
-    }));
-
     // Center container pivot
     const containerPivot = { x: 400, y: 300 };
     // Right side pivot (between platform and container)
@@ -495,22 +501,13 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
 
     const reduceScoreAndUpdateColor = () => {
       if (dropBallStep < totalSteps) {
-        setGameStateRef(prevState => {
-          const newContainerScore = prevState.state1.containerScore - 1;
-          return {
-            ...prevState,
-            state1: {
-              ...prevState.state1,
-              containerScore: newContainerScore
-            }
-          };
-        });
+        setContainerScore(prevState => prevState - 1);
         soundEffects.pop.play();
         dropBallStep++;
         setTimeout(reduceScoreAndUpdateColor, 200);
       } else {
         setTimeout(() => {
-          setCurrentStep(8);
+          setStep(8);
           progressStep(8);
         }, 1000);
       }
@@ -625,24 +622,6 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
     activeBallLeftRef.current = null;
     activeBallRightRef.current = null;
 
-
-    setGameStateRef(prevState => ({
-      ...prevState,
-      state1: {
-        ...prevState.state1,
-        showAdditionStep: true
-      }
-    }));
-
-    // Don't set showEmptyButton
-    setGameStateRef(prevState => ({
-      ...prevState,
-      state1: {
-        ...prevState.state1,
-        showAdditionStep: true
-      }
-    }));
-
     Matter.Composite.add(world, [
       ...leftContainerBalls,
       ...rightContainerBalls
@@ -657,13 +636,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
 
     if ((color === 'green' && activePhase !== 'left') || (color === 'blue' && activePhase !== 'right')) return;
 
-    setGameStateRef(prevState => ({ 
-      ...prevState, 
-      state1: {
-        ...prevState.state1,
-        clickDisabled: true
-      }
-    }));
+    setClickDisabled(true);
 
     const isGreen = color === 'green';
     const platformX = isGreen ? 170 : 623;
@@ -701,14 +674,13 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
     Matter.Body.setVelocity(activeBall, velocity);
     setTimeout(() => {
       // Reduce score and manage ball movement
-      setGameStateRef(prevState => ({
-        ...prevState,
-        state1: {
-          ...prevState.state1,
-          [isGreen ? 'greenScore' : 'blueScore']: prevState.state1[isGreen ? 'greenScore' : 'blueScore'] - 1,
-          containerScore: prevState.state1.containerScore + 1,
-        }
-      }));
+      if (isGreen) {
+        setGreenScore(prevState => prevState - 1);
+        setContainerScore(prevState => prevState + 1);
+      } else {
+        setBlueScore(prevState => prevState - 1);
+        setContainerScore(prevState => prevState + 1);
+      }
       soundEffects.collect.play();
     }, 1000);
 
@@ -728,23 +700,12 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
             activeBallRightRef.current = ballToMove;
             rightContainerBallsRef.current = containerBalls.slice(0, -1);
           }
-
-          setGameStateRef(prevState => ({
-            ...prevState,
-            state1: {
-              ...prevState.state1,
-              clickDisabled: false
-            }
-          }));
+          
+          setClickDisabled(false);
         } else {
           isGreen ? activeBallLeftRef.current = null : activeBallRightRef.current = null;
-          setGameStateRef(prevState => ({
-            ...prevState,
-            state1: {
-              ...prevState.state1,
-              clickDisabled: false
-            }
-          }));
+
+          setClickDisabled(false);
         }
       }, 500);
     }, 1100);
@@ -754,14 +715,8 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
     launchBall('green');
     if (greenScore === 1 && activePhase === 'left') {
       setTimeout(() => {
-        setGameStateRef(prevState => ({
-          ...prevState,
-          state1: {
-            ...prevState.state1,
-            activePhase: 'right'
-          }
-        }));
-        setCurrentStep(3);
+        setActivePhase('right');
+        setStep(3);
         progressStep(3);
       }, 1500);
     }
@@ -770,7 +725,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
     launchBall('blue');
     if (containerScore === 9) {
       setTimeout(() => {
-        setCurrentStep(4);
+        setStep(4);
         progressStep(4);
       }, 1500);
     }
@@ -784,14 +739,10 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         blackBalls[0].render.fillStyle = 'gray';
         blackBalls[0].label = 'ball';
       }
-      setGameStateRef(prev => ({ 
-        ...prev, 
-        state1: { 
-          ...prev.state1, 
-          blackScore: Math.max(0, prev.state1.blackScore - 1),
-          finalAnswer: Math.max(0, finalAnswer - 1) 
-        } 
-      }));
+
+      setBlackScore(prevState => Math.max(0, prevState - 1));
+      setFinalAnswer(prevState => Math.max(0, prevState - 1));
+      
     } else {
       const balls = bodies.filter(body => body.label === 'ball');
       const firstNonBlackBall = balls.find(ball => ball.label !== 'black');
@@ -799,30 +750,24 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         firstNonBlackBall.render.fillStyle = 'black';
         firstNonBlackBall.label = 'black_ball';
       }
-      setGameStateRef(prev => {
-        const newAnswer = finalAnswer + 1;
-        if (newAnswer === (maxGreenMarbles + maxBlueMarbles)) {
-          soundEffects.complete.play();
-          setTimeout(() => {
-            setCurrentStep(9);
-            progressStep(9);
-          }, 500);
-        }
-        return { ...prev, state1: { ...prev.state1, finalAnswer: newAnswer, blackScore: Math.max(0, prev.state1.blackScore - 1) } };
-      });
+
+      const newAnswer = finalAnswer + 1;
+      setFinalAnswer(newAnswer);
+      if (newAnswer === (maxGreenMarbles + maxBlueMarbles)) {
+        setBlackScore(prevState => Math.max(0, prevState - 1));
+        soundEffects.complete.play();
+        setTimeout(() => {
+          setStep(9);
+          progressStep(9);
+        }, 500);
+      }
     }
   };
 
   const handleAddition = () => {
-    setCurrentStep(7);
-    setGameStateRef(prevState => ({
-      ...prevState,
-      state1: {
-        ...prevState.state1,
-        additionStarted: true,
-        showAddButton: false
-      }
-    }));
+    setStep(7);
+    setAdditionStarted(true);
+    setShowAddButton(false);
 
     soundEffects.rotate.play();
 
@@ -832,30 +777,25 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
   }
 
   const handleProceed = (currentStep: number) => {
-    setCurrentStep(currentStep+1);
+    setStep(currentStep+1);
     progressStep(currentStep+1);
   }
 
-  const progressStep = (step: number = currentStep) => {
-    if (step === 0) {
-      setGameStateRef(prevState => ({
-        ...prevState,
-        state1: {
-          ...prevState.state1,
-          greenScore: maxGreenMarbles,
-          blueScore: maxBlueMarbles,
-          containerScore: 0,
-          showAddButton: false,
-          clickDisabled: false,
-          activePhase: 'left'
-        }
-      }));
+  const progressStep = (_step: number = step) => {
+    if (_step === 0) {
+      setBlueScore(maxBlueMarbles);
+      setGreenScore(maxGreenMarbles);
+      setContainerScore(0);
+      setShowAddButton(false);
+      setClickDisabled(false);
+      setActivePhase('left');
+
       if (!gameStartedRef.current) {
         sendAdminMessage('agent', `Let's play a game to solve this, imagine you have ${maxGreenMarbles} green marbles, ${maxBlueMarbles} blue marbles and slingshots. Click on proceed to move forward`);
         gameStartedRef.current = true;
       }
 
-    } else if (step === 1) {
+    } else if (_step === 1) {
       if (!containerRef.current) createMainContainer();
       sendAdminMessage('agent', `And with that you have a container to collect the marbles after you shoot.`);
 
@@ -863,19 +803,13 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         sendAdminMessage('agent', `But remember! The container can only hold 10 marbles at once`);
       }, 5000);
       
-    } else if (step === 2) {
+    } else if (_step === 2) {
       sendAdminMessage('agent', `Let's begin! First let's finish shooting the green marbles into the marble holder!`);
       if (!activeBallLeftRef.current) {
         const activeball = leftContainerBallsRef.current[leftContainerBallsRef.current.length - 1];
         activeBallLeftRef.current = activeball;
         leftContainerBallsRef.current = leftContainerBallsRef.current.slice(0, -1);
-        setGameStateRef(prevState => ({ 
-          ...prevState,
-          state1: {
-            ...prevState.state1,
-            activePhase: 'left',
-          }
-        }));
+        setActivePhase('left');
         if (activeball) {
           Matter.Body.setPosition(activeball, { x: 170, y: 130 });
           attachStringsToBall(activeball, { x: 230, y: 100 }, { x: 213, y: 100 });
@@ -883,36 +817,31 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         }
       }
 
-    } else if (step === 3) {
+    } else if (_step === 3) {
       sendAdminMessage('agent', `Awesome! We have filled all ${maxGreenMarbles} green ones. Step 2 : Let's fill the blue ones.`);
       if (!activeBallRightRef.current) {
         const activeball = rightContainerBallsRef.current[rightContainerBallsRef.current.length - 1];
         activeBallRightRef.current = activeball;
         rightContainerBallsRef.current = rightContainerBallsRef.current.slice(0, -1);
-        setGameStateRef(prevState => ({
-          ...prevState,
-          state1: {
-            ...prevState.state1,
-            activePhase: 'right',
-          }
-        }));
+        setActivePhase('right');
+
         if (activeball) {
           Matter.Body.setPosition(activeball, { x: 623, y: 130 });
           attachStringsToBall(activeball, { x: 563, y: 100 }, { x: 580, y: 100 });
           console.log('Active ball set to right container.');
         }
       }
-    } else if (step === 4) {
+    } else if (_step === 4) {
       sendAdminMessage('agent', `Oops! The container is full. Let's count how many marbles we have now`);
 
-    } else if (step === 5) {
+    } else if (_step === 5) {
       sendAdminMessage('agent', `Look we made it easy. ${maxGreenMarbles} + ${maxBlueMarbles} is same as 10+${maxGreenMarbles + maxBlueMarbles - 10}`);
       Matter.Composite.remove(worldRef.current!, leftPlatformRef1.current!);
       Matter.Composite.remove(worldRef.current!, leftPlatformRef2.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef2.current!);
       progressStep(6);
 
-    } else if (step === 6) {
+    } else if (_step === 6) {
       const bodies = Matter.Composite.allBodies(worldRef.current!);
       const balls = bodies.filter(body => body.label === 'ball');
       balls.forEach(ball => {
@@ -924,13 +853,13 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       worldRef.current = Matter.World.add(worldRef.current!, finalContainer);
 
       worldRef.current = Matter.World.add(worldRef.current, balls);
-    } else if (step === 7) {
+    } else if (_step === 7) {
       sendAdminMessage('agent', `Let us empty the marbles in one place to add them`);
-    } else if (step === 8) {
+    } else if (_step === 8) {
       sendAdminMessage('agent', `Click on plus to count the number of marbles we have collected`);
       Matter.Composite.remove(worldRef.current!, containerRef.current!);
       Matter.Composite.remove(worldRef.current!, rightPlatformRef1.current!);
-    } else if (step === 9) {
+    } else if (_step === 9) {
       Matter.Composite.remove(worldRef.current!, finalContainerRef.current!);
       
       // change ball colors
@@ -961,14 +890,8 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
 
   useEffect(() => {
     if (containerScore === 10 && !showAddButton) {
-      setGameStateRef(prevState => ({
-        ...prevState,
-        state1: {
-          ...prevState.state1,
-          showAddButton: true,
-          clickDisabled: true
-        }
-      }));
+      setShowAddButton(true);
+      setClickDisabled(true);
     }
   }, [containerScore]);
 
@@ -986,13 +909,13 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
             </h3>
           </div>
           <div className={`w-2/3 mx-auto text-3xl border-2 shadow-[-5px_5px_0_0] border-black p-4 mb-5`} style={{
-            backgroundColor: currentStep === 4 ? COLORS.blue : COLORS.white
+            backgroundColor: step === 4 ? COLORS.blue : COLORS.white
           }}>
           <p className={`text-center font-jersey`} style={{
-            color: currentStep === 4 ? COLORS.white : COLORS.blue
+            color: step === 4 ? COLORS.white : COLORS.blue
           }}>
             {(() => {
-              switch (currentStep) {
+              switch (step) {
                 case 0:
                   return `Let's play a game to solve this. Imagine you have ${maxGreenMarbles} green, ${maxBlueMarbles} blue marbles and a slingshot!!`; 
                 case 1:
@@ -1024,7 +947,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
         </section>
 
         <div className="relative w-full">
-          {currentStep < 5 &&
+          {step < 5 &&
             <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-green-500 z-10 text-green-500" style={{
               top: slingPosition[0].y - 50,
               left: slingPosition[0].x - 160
@@ -1032,7 +955,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
               {greenScore}
             </div>
           }
-          {currentStep <= 5 &&
+          {step <= 5 &&
             <div className="absolute text-5xl font-bold px-4 py-2 bg-white border border-blue-500 z-10 text-blue-500" style={{
               top: slingPosition[1].y - 50,
               left: slingPosition[1].x + 220
@@ -1041,13 +964,13 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
             </div>
           }
 
-            {currentStep > 1 && currentStep <= 5 &&
-            <div className={`absolute ${currentStep === 5 ? "left-1/2 top-[2.5rem]" :  "bottom-1/4 left-1/3" } transform -translate-x-1/3 -translate-y-1/4  text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500`}>
+            {step > 1 && step <= 5 &&
+            <div className={`absolute ${step === 5 ? "left-1/2 top-[2.5rem]" :  "bottom-1/4 left-1/3" } transform -translate-x-1/3 -translate-y-1/4  text-5xl font-bold px-4 py-2 bg-white border border-purple-500 z-10 text-purple-500`}>
               {containerScore}
             </div>
             }
 
-            {currentStep < 5 && <>
+            {step < 5 && <>
               <Catapult position={slingPosition[0]} type="half" side="left" />
               <Catapult position={slingPosition[0]} type="full" side="left" />
               <Catapult position={slingPosition[1]} type="half" side="right" />
@@ -1059,7 +982,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
             ref={sceneRef}
             className="w-[800px] h-[600px] z-30 mx-auto rounded-lg bg-transparent"
           />
-          {currentStep === 1 &&
+          {step === 1 &&
             <div className="absolute right-20 top-80 w-60 mx-auto text-xl  bg-purple-100 border-2 shadow-[-5px_5px_0_0] border-black p-1">
               <p className="font-bold text-center text-purple-600">
                 Can hold a maximum of 10 marbles
@@ -1067,7 +990,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
             </div>
           }
 
-          {currentStep === 2 &&
+          {step === 2 &&
               <ShootButton 
                 onClick={launchGreen}
                 disabled={clickDisabled || activePhase !== 'left'}
@@ -1075,7 +998,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
               />
           }
 
-          {currentStep === 3 &&
+          {step === 3 &&
               <ShootButton 
                 onClick={launchBlue}
                 disabled={clickDisabled || activePhase !== 'right'}
@@ -1083,30 +1006,30 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
               />
           }
 
-          {currentStep === 5 &&
+          {step === 5 &&
             <span className="absolute right-1/4 top-[1.6rem] text-black fill-black">
               <Cross size={56} fill="#a855f7" />
             </span>
           }
 
-          {currentStep === 6 &&
+          {step === 6 &&
             <Button
               onClick={handleAddition}
-              disabled={currentStep != 6}
+              disabled={step != 6}
               className={`absolute right-5 top-52 text-2xl px-5 shadow-[-3px_3px_0_0] shadow-purple-500 border bg-white border-purple-500 text-purple-500 font-bold hover:opacity-90 rounded-none
-                ${currentStep != 6 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                ${step != 6 ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               Empty
             </Button>
           }
 
-          { currentStep === 8 && (
+          { step === 8 && (
             <div className="absolute h-24 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
-              <Counter onIncrement={() => handlefinalCount(1)} onDecrement={() => handlefinalCount(-1)} />
+              <Counter finalAnswer={finalAnswer} onIncrement={() => handlefinalCount(1)} />
             </div>
           )}
 
-          {currentStep === 9 && (
+          {step === 9 && (
             <div className="absolute h-30 flex flex-col w-full justify-center items-center top-10 left-1/2 transform -translate-x-1/2 gap-2">
               <p className="text-7xl text-center font-bold text-purple-500">
                 {maxGreenMarbles + maxBlueMarbles}
@@ -1121,10 +1044,10 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
       </div>
 
       {/* Fixed proceed button at bottom */}
-      {STEPS_WITH_PROCEED.includes(currentStep) && (
+      {STEPS_WITH_PROCEED.includes(step) && (
         <div className="fixed bottom-5 left-2/3 transform -translate-x-1/2 z-50 flex justify-center items-center">
           <Button 
-            onClick={() => handleProceed(currentStep)} 
+            onClick={() => handleProceed(step)} 
             className="text-lg bg-purple-100 border-2 shadow-[-5px_5px_0_0] shadow-black border-black p-2 px-6 rounded-none"
             style={{
               backgroundColor: COLORS.white,
