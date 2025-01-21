@@ -38,12 +38,11 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: FractionsGameState,
     provider: FractionsGameStateProvider
   },
-  // 'equivalent-fractions': {
-  //   game: EquivalentFractionsGame,
-  //   desc: EquivalentFractionsGameDesc,
-  //   state: EquivalentFractionsGameState,
-  //   provider: EquivalentFractionsGameStateProvider
-  // },
+  'equivalent-fractions': {
+    game: EquivalentFractionsGame,
+    useState: EquivalentFractionsGameState,
+    provider: EquivalentFractionsGameStateProvider
+  },
   'common-denominators': {
     game: CommonDenominatorGame,
     useState: CommonDenominatorGameState,

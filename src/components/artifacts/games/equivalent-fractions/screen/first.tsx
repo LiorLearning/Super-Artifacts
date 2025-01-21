@@ -11,7 +11,7 @@ import Image from "next/image";
 
 
 export default function Level1({ sendAdminMessage }: BaseProps) {
-  const { gameStateRef, setGameStateRef } = useGameState();
+  const { gameStateRef } = useGameState();
   const { step } = gameStateRef.current.screen1;
   const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;
 
@@ -32,18 +32,14 @@ export default function Level1({ sendAdminMessage }: BaseProps) {
 const Step1 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;  
-  const { step, selectedKnife, selectedPieces } = gameStateRef.current.screen1
+
+  const [selectedPieces, setSelectedPieces] = useState(0);
+  const [selectedKnife, setSelectedKnife] = useState<number | null>(null);
 
   const start = useRef(false);
 
   const handlePieceClick = (index: number) => {
-    setGameStateRef({
-      ...gameStateRef.current,
-      screen1: {
-        ...gameStateRef.current.screen1,
-        selectedPieces: index
-      }
-    });
+    setSelectedPieces(index);
   };
 
   useEffect(() => {
@@ -81,13 +77,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
             <div className="flex justify-center relative">
               <Bar numerator={0} denominator={selectedKnife ? selectedKnife * denominator1 : denominator1} handlePieceClick={handlePieceClick} disabled={true} />
               <div className="flex flex-col gap-2 ml-2 absolute top-0 left-full">
-                <KnifeSelector options={[2,3,4,5]} selectedKnife={selectedKnife} setSelectedKnife={(value: number | null) => setGameStateRef({
-                  ...gameStateRef.current,
-                  screen1: {
-                    ...gameStateRef.current.screen1,
-                    selectedKnife: value
-                  }
-                })} />
+                <KnifeSelector options={[2,3,4,5]} selectedKnife={selectedKnife} setSelectedKnife={(value: number | null) => setSelectedKnife(value)} />
               </div>
           </div>
           <span className="text-2xl font-medium flex items-center justify-center">
@@ -123,24 +113,18 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
 const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;  
-  const { step, selectedKnife, selectedPieces } = gameStateRef.current.screen1;
   const [correct, setCorrect] = useState(false);
   const [numerator, setNumerator] = useState(0);
   const [denominator, setDenominator] = useState(0);
   const [step2subpart, setStep2subpart] = useState(0);
   const [answer, setAnswer] = useState('');
 
+  const [selectedPieces, setSelectedPieces] = useState(0);
+
   const start = useRef(false);
 
   const handlePieceClick = (index: number) => {
-    console.log(index)
-    setGameStateRef({
-      ...gameStateRef.current,
-      screen1: {
-        ...gameStateRef.current.screen1,
-        selectedPieces: index
-      }
-    });
+    setSelectedPieces(index);
   };
 
   useEffect(() => {
