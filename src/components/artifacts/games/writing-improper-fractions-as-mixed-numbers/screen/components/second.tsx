@@ -79,7 +79,7 @@ export const VerifyPiecesAndDivisions = ({sendAdminMessage}: GameProps) => {
             <Button 
               className="bg-pink-500 text-white px-6 py-1 w-72 text-3xl rounded-none shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] my-2"
               onClick={() => {
-                goToStep('second', setGameStateRef, 4)
+                goToStep('second', setGameStateRef, 6)
               }}
             >
               I want to VISUALIZE
@@ -88,7 +88,7 @@ export const VerifyPiecesAndDivisions = ({sendAdminMessage}: GameProps) => {
               className="bg-pink-500 text-white px-6 py-1 w-72 text-3xl rounded-none shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] my-2 mb-8"
               onClick={() => {
                 sendAdminMessage('agent', `As you say! Here’s how it looks: ${answer.numLego} holders are full, and 1 is partly filled!`);
-                goToStep('second', setGameStateRef, 6)
+                goToStep('second', setGameStateRef, 4)
               }}
             >
               I can DIVIDE!

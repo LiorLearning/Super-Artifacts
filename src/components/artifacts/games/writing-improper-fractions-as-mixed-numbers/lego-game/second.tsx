@@ -91,6 +91,7 @@ const LegoGame = () => {
     } else if (step === 2) {
       cleanUpHolders(scene!, holders);
       setHolders([]);
+      cleanUpTexts(scene!);
 
       createHolder(scene, [0, 0, 0], fraction.denominator);
       createPiece({ scene: scene!, position: [0, 0, 0.15], color: COLORS.GREEN });
