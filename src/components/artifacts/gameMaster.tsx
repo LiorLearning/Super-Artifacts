@@ -38,80 +38,77 @@ import { desc as AdditionGameDesc } from './games/addition-within-20-using-ten-f
 import { desc as FractionsGameDesc } from './games/compare-fractions-with-same-numerator-or-denominator/game-state';
 import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
 import { desc as LegoGameDesc } from './games/writing-improper-fractions-as-mixed-numbers/game-state';
-import { desc as CommonDenominatorGameDesc } from './games/common-denominators/game-state';
 import { desc as MixedFractionGameDesc } from './games/add-and-subtract-mixed-numbers-without-regouping/game-state';
 import { desc as CompareFractionGameDesc } from './games/compare-fraction-with-the-different-numerator-and-denominator/game-state';
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
-  desc: string;
-  state: any;
+  useState: any;
   provider: React.ComponentType<{ children: React.ReactNode }>;
 }
 
 type GameKey = keyof typeof gameInfo;
 
 const gameInfo: Record<string, GameInfo> = {
-  'addition-within-20-using-ten-frames': {
-    game: AdditionGame,
-    desc: AdditionGameDesc,
-    state: AdditionGameState,
-    provider: AdditionGameStateProvider
-  },
-  'compare-fractions-with-same-numerator-or-denominator': {
-    game: FractionsGame,
-    desc: FractionsGameDesc,
-    state: FractionsGameState,
-    provider: FractionsGameStateProvider
-  },
-  'equivalent-fractions': {
-    game: EquivalentFractionsGame,
-    desc: EquivalentFractionsGameDesc,
-    state: EquivalentFractionsGameState,
-    provider: EquivalentFractionsGameStateProvider
-  },
+  // 'addition-within-20-using-ten-frames': {
+  //   game: AdditionGame,
+  //   desc: AdditionGameDesc,
+  //   state: AdditionGameState,
+  //   provider: AdditionGameStateProvider
+  // },
+  // 'compare-fractions-with-same-numerator-or-denominator': {
+  //   game: FractionsGame,
+  //   desc: FractionsGameDesc,
+  //   state: FractionsGameState,
+  //   provider: FractionsGameStateProvider
+  // },
+  // 'equivalent-fractions': {
+  //   game: EquivalentFractionsGame,
+  //   desc: EquivalentFractionsGameDesc,
+  //   state: EquivalentFractionsGameState,
+  //   provider: EquivalentFractionsGameStateProvider
+  // },
   'common-denominators': {
     game: CommonDenominatorGame,
-    desc: CommonDenominatorGameDesc,
-    state: CommonDenominatorGameState,
+    useState: CommonDenominatorGameState,
     provider: CommonDenominatorGameStateProvider
   },
-  'subtract-fractions-with-common-denominator': {
-    game: FractionSubtractionGame,
-    desc: FractionSubtractionGameDesc,
-    state: FractionSubtractionGameState,
-    provider: FractionSubtractionGameStateProvider
-  },
-  'add-fractions-with-common-denominator': {
-    game: FractionAdditionGame,
-    desc: FractionAdditionGameDesc,
-    state: FractionAdditionGameState,
-    provider: FractionAdditionGameStateProvider
-  },
-  'add-and-subtract-mixed-numbers-without-regouping': {
-    game: MixedFractionGame,
-    desc: MixedFractionGameDesc,
-    state: MixedFractionGameState,
-    provider: MixedFractionGameStateProvider
-  },
-  'writing-improper-fractions-as-mixed-numbers': {
-    game: LegoGame,
-    desc: LegoGameDesc,
-    state: LegoGameState,
-    provider: LegoGameStateProvider
-  },
-  'template-game': {
-    game: TemplateGame,
-    desc: TemplateGameDesc,
-    state: TemplateGameState,
-    provider: TemplateGameStateProvider
-  },
-  'compare-fractions-with-different-numerator-and-denominator': {
-    game: CompareFractionGame,
-    desc: CompareFractionGameDesc,
-    state: CompareFractionGameState,
-    provider: CompareFractionGameStateProvider
-  }
+  // 'subtract-fractions-with-common-denominator': {
+  //   game: FractionSubtractionGame,
+  //   desc: FractionSubtractionGameDesc,
+  //   state: FractionSubtractionGameState,
+  //   provider: FractionSubtractionGameStateProvider
+  // },
+  // 'add-fractions-with-common-denominator': {
+  //   game: FractionAdditionGame,
+  //   desc: FractionAdditionGameDesc,
+  //   state: FractionAdditionGameState,
+  //   provider: FractionAdditionGameStateProvider
+  // },
+  // 'add-and-subtract-mixed-numbers-without-regouping': {
+  //   game: MixedFractionGame,
+  //   desc: MixedFractionGameDesc,
+  //   state: MixedFractionGameState,
+  //   provider: MixedFractionGameStateProvider
+  // },
+  // 'writing-mixed-numbers-as-improper-fractions': {
+  //   game: LegoGame,
+  //   desc: LegoGameDesc,
+  //   state: LegoGameState,
+  //   provider: LegoGameStateProvider
+  // },
+  // 'template-game': {
+  //   game: TemplateGame,
+  //   desc: TemplateGameDesc,
+  //   state: TemplateGameState,
+  //   provider: TemplateGameStateProvider
+  // },
+  // 'compare-fractions-with-different-numerator-and-denominator': {
+  //   game: CompareFractionGame,
+  //   desc: CompareFractionGameDesc,
+  //   state: CompareFractionGameState,
+  //   provider: CompareFractionGameStateProvider
+  // }
 };
 
 interface GameComponentProps {
@@ -153,7 +150,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
     }
   }, [gameParam]);
 
-  const gameState = isClient && currentGame ? gameInfo[currentGame]?.state : null;
+  const { gameStateRef, getDescription } = gameInfo[currentGame]?.useState || {};
 
   const sendAdminMessage = async (role: string, content: string) => {
     if (!isClient) return;
@@ -165,8 +162,9 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         content: content,
         role: role,
         image: await handleScreenshot(componentRef),
-        desc: currentGame ? gameInfo[currentGame]?.desc : '',
-        gameState: gameState ? JSON.stringify(gameState, null, 0) : '',
+        desc: getDescription?.(),
+        // gameState: gameStateRef ? JSON.stringify(gameStateRef, null, 0) : '',
+        gameState: '',
       } as AdminRequestMessage)
     } else if (role == 'agent') {
       addToChat({
@@ -268,9 +266,9 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
       </div>
       <div className="w-[25%] min-w-[250px] flex flex-col">
         <Chat 
-          desc={currentGame ? gameInfo[currentGame]?.desc : ''} 
+          desc={getDescription?.()} 
           componentRef={componentRef} 
-          gameState={gameState} 
+          gameState={gameStateRef} 
         />
       </div>
     </div>
