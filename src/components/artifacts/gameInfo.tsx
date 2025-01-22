@@ -73,10 +73,9 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: TemplateGameState,
     provider: TemplateGameStateProvider
   },
-  // 'compare-fractions-with-different-numerator-and-denominator': {
-  //   game: CompareFractionGame,
-  //   desc: CompareFractionGameDesc,
-  //   state: CompareFractionGameState,
-  //   provider: CompareFractionGameStateProvider
-  // }
+  'compare-fractions-with-different-numerator-and-denominator': {
+    game: CompareFractionGame,
+    useState: CompareFractionGameState,
+    provider: CompareFractionGameStateProvider
+  }
 };
