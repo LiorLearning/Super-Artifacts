@@ -30,9 +30,9 @@ export default function Game({sendAdminMessage}: GameProps) {
     <div className="mx-auto game font-medium">
       <DevHelper />
       {/* Game screens */}
-      {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 1 && <FirstScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 2 && <SecondScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 3 && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
 
       
       {/* Select font */}

@@ -14,7 +14,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
 
   const { maxGreenMarbles, maxBlueMarbles } = gameStateRef.current.state2;
 
-  const [maxBlackMarbles, setMaxBlackMarbles] = useState(10);
+  const maxBlackMarbles = 10;
   const [greenMarblesCount, setGreenMarblesCount] = useState(0);
   const [blueMarblesCount, setBlueMarblesCount] = useState(0);
   const [blackMarblesCount, setBlackMarblesCount] = useState(0);

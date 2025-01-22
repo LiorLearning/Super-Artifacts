@@ -15,9 +15,9 @@ export const DevHelper = () => {
 
   const getCurrentStep = () => {
     switch(screen) {
-      case 'first': return step1;
-      case 'second': return step2;
-      case 'third': return step3;
+      case 1: return step1;
+      case 2: return step2;
+      case 3: return step3;
       default: return 0;
     }
   }
@@ -34,9 +34,9 @@ export const DevHelper = () => {
       <Button className='m-2' onClick={() => prevStep(screen, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
         <Select 
-          value={screen} 
+          value={screen.toString()} 
           onValueChange={(selectedScreen) => {
-            setGameStateRef(prev => ({ ...prev, screen: selectedScreen as GameScreen }));
+            setGameStateRef(prev => ({ ...prev, screen: parseInt(selectedScreen) as GameScreen }));
           }}
         >
           <SelectTrigger className="m-2">
@@ -73,7 +73,7 @@ export const nextStep = (
   screen: GameScreen, 
   setGameStateRef: (newState: (prevState: GameState) => GameState) => void
 ) => {
-  if (screen === 'first') {
+  if (screen === 1) {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
   } else {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
@@ -85,7 +85,7 @@ export const goToStep = (
   setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
   step: number
 ) => {
-  if (screen === 'first') {
+  if (screen === 1) {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step } }));
   } else {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step } }));
@@ -103,7 +103,7 @@ export const prevStep = (
   screen: GameScreen, 
   setGameStateRef: (newState: (prevState: GameState) => GameState) => void
 ) => {
-  if (screen === 'first') {
+  if (screen === 1) {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: Math.max(prev.state1.step - 1, 0) } }));
   } else {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: Math.max(prev.state2.step - 1, 0) } }));

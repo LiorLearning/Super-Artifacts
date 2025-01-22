@@ -18,7 +18,7 @@ function Game({ sendAdminMessage }: GameProps) {
           className="absolute inset-0 w-full object-cover opacity-100 z-1 right-[120px] mt-16"
         />
         <div className="relative z-10">
-          {gameStateRef.current.screen === 'first' && (
+          {gameStateRef.current.screen === 1 && (
             <>
               <First sendAdminMessage={sendAdminMessage} visible={true} />
               {gameStateRef.current.state1.step === 5 && (
@@ -32,7 +32,7 @@ function Game({ sendAdminMessage }: GameProps) {
               )}
             </>
           )}
-          {gameStateRef.current.screen === 'second' &&
+          {gameStateRef.current.screen === 2 &&
             <Second sendAdminMessage={sendAdminMessage} />
           }
         </div>

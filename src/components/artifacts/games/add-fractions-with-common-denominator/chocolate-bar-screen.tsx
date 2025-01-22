@@ -11,7 +11,7 @@ interface ChocolateBarScreenProps {
 
 export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBarScreenProps) {
   const { gameStateRef } = useGameState()
-  const { fraction1, fraction2 } = gameStateRef.current.question1
+  const { fraction1, fraction2 } = gameStateRef.current.state1
 
   const [ selectedPieces, setSelectedPieces ] = useState<number[]>([])
   const [ step2Pieces, setStep2Pieces ] = useState<number[]>([])

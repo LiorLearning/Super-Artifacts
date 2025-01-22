@@ -21,8 +21,7 @@ const STEPS = [
 
 export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { currentStep } = gameStateRef.current.screen2State;
-  const { fraction1, fraction2 } = gameStateRef.current.questions.question2;
+  const { step, fraction1, fraction2 } = gameStateRef.current.state2;
   const soundEffects = useSoundEffects();
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -35,9 +34,9 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
   const setCurrentStep = (step: number) => {
     setGameStateRef(prev => ({
       ...prev,
-      screen2State: {
-        ...prev.screen2State,
-        currentStep: step
+      state2: {
+        ...prev.state2,
+        step: step
       }
     }));
   }
@@ -93,7 +92,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
     if (contentRef.current) {
       contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
-  }, [currentStep]);
+  }, [step]);
 
   return (
       <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
@@ -128,15 +127,15 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
               denominator={fraction2.denominator}
             />
           </div>
-        {STEPS.map(step => (
-          (completedSteps.includes(step.id) || currentStep === step.id) && (
+        {STEPS.map(_step => (
+          (completedSteps.includes(_step.id) || step === _step.id) && (
             <div 
-              key={step.id} 
+              key={_step.id} 
               className="w-full max-w-2xl mb-8 flex flex-col gap-8 items-center"
-              ref={currentStep === step.id ? contentRef : undefined}
+              ref={step === _step.id ? contentRef : undefined}
             >
-              <StepHeader step={step.id} title={step.title} />
-              {step.id === 1 && (
+              <StepHeader step={step} title={_step.title} />
+              {step === 1 && (
                 <>
                   <h3 className="text-xl font-bold text-center">Mark the correct answer</h3>
                   <p className="text-lg font-bold text-center">
@@ -172,7 +171,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                   )}
                 </>
               )}
-              {step.id === 2 && (
+              {_step.id === 2 && (
                 <>
                   <h3 className="text-xl font-bold text-center">Mark the correct answer</h3>
                   <p className="text-lg font-bold text-center">
@@ -208,7 +207,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                   )}
                 </>
               )}
-              {step.id === 3 && (
+              {_step.id === 3 && (
                 <div className="flex items-center gap-4">
                   <FractionDisplay
                     numerator={fraction1.numerator}

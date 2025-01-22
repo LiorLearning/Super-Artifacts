@@ -16,7 +16,7 @@ interface FractionSubtractionProps {
 
 export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { currentStep } = gameStateRef.current.screen1State;
+  const { step, fraction1, fraction2 } = gameStateRef.current.state1;
 
   const [selectedPieces, setSelectedPieces] = useState<number>(0);
   const [droppedPieces, setDroppedPieces] = useState<Array<{ x: number, y: number, originalIndex: number }>>([]);
@@ -26,15 +26,14 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
   const [barValueStep, setBarValueStep] = useState<boolean>(false);
   const [barValue, setBarValue] = useState<{ numerator: number, denominator: number }>({ numerator: 0, denominator: 1 });
 
-  const { fraction1, fraction2 } = gameStateRef.current.questions.question1;
   const soundEffects = useSoundEffects();
 
   const setCurrentStep = (step: number) => {
     setGameStateRef(prev => ({
       ...prev,
-      screen1State: {
-        ...prev.screen1State,
-        currentStep: step
+      state1: {
+        ...prev.state1,
+        step: step
       }
     }));
   }
@@ -49,7 +48,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
   }, []);
 
   const handlePieceClick = (index: number) => {
-    if (currentStep === 1) {
+    if (step === 1) {
       soundEffects.drop.play();
 
       setSelectedPieces(index < selectedPieces ? index + 1 : index + 1);
@@ -57,10 +56,10 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
   }
 
   const handleProceed = () => {
-    if (currentStep === 1 && selectedPieces === fraction1.numerator) {
+    if (step === 1 && selectedPieces === fraction1.numerator) {
       sendAdminMessage('agent', `How about we share ${fraction2.numerator}/${fraction2.denominator}th with a friend? Try picking and dropping pieces to do that!`);
       setCurrentStep(2);
-    } else if (currentStep === 2) {
+    } else if (step === 2) {
       if (barValueStep) {
         sendAdminMessage('agent', 'Awesome, here are some fun questions for you to reflect on!');
 
@@ -75,7 +74,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
         setBarValueStep(true);
 
       }
-    } else if (currentStep === 3 &&
+    } else if (step === 3 &&
       answer.numerator === String(fraction1.numerator - fraction2.numerator) &&
       answer.denominator === String(fraction1.denominator)) {
       setCurrentStep(4);
@@ -83,7 +82,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
   }
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
-    if (currentStep === 2 && index < selectedPieces) {
+    if (step === 2 && index < selectedPieces) {
       e.dataTransfer.setData('text/plain', index.toString())
     }
   }
@@ -91,7 +90,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
 
-    if (currentStep === 2) {
+    if (step === 2) {
       const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'));
       const rect = e.currentTarget.getBoundingClientRect();
       const x = Math.min(Math.max(e.clientX - rect.left - 32, 0), rect.width - 64);
@@ -158,23 +157,23 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
       <div className="bg-[#F9F871] p-6 flex items-center justify-between border-b-4 border-black">
         {/* Left side - Navigation buttons */}
         <div className="flex w-full gap-2">
-          {currentStep > 1 && (
+          {step > 1 && (
             <Button
-              onClick={() => setCurrentStep(currentStep - 1)}
-              disabled={currentStep === 1}
+              onClick={() => setCurrentStep(step - 1)}
+              disabled={step === 1}
               className="bg-[#FF497C] text-white px-4 py-2 text-sm font-bold border-2 border-black hover:bg-[#FF497C]/90"
             >
               Previous Step
             </Button>
           )}
-          {currentStep < 4 && (
+          {step < 4 && (
             <Button
-              onClick={() => setCurrentStep(currentStep + 1)}
+              onClick={() => setCurrentStep(step + 1)}
               className="bg-[#FF497C] text-white px-4 py-2 text-sm font-bold border-2 border-black hover:bg-[#FF497C]/90"
               disabled={
-                (currentStep === 1 && selectedPieces !== fraction1.numerator) ||
-                (currentStep === 2 && droppedPieces.length !== fraction2.numerator) ||
-                (currentStep === 3 && !isAnswerCorrect())
+                (step === 1 && selectedPieces !== fraction1.numerator) ||
+                (step === 2 && droppedPieces.length !== fraction2.numerator) ||
+                (step === 3 && !isAnswerCorrect())
               }
             >
               Next Step
@@ -206,21 +205,21 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
         <div className="flex items-center gap-4 h-14">
           <div className="border-2 border-[#FF497C] px-6 flex items-center h-full">
             <span className="text-[#FF497C] font-bold text-xl">
-              STEP {barValueStep ? 3 : currentStep === 4 ? 4 : currentStep}
+              STEP {barValueStep ? 3 : step === 4 ? 4 : step}
             </span> 
           </div>
           <div className="bg-[#FF497C] px-6 flex items-center gap-2 h-full">
             <span className="text-white font-bold text-xl">
-              {currentStep === 1 ? 'CREATE' :
+              {step === 1 ? 'CREATE' :
                 barValueStep ? 'THE ANSWER' :
-                currentStep === 2 ? 'REMOVE' :
-                currentStep === 3 ? 'THE ANSWER' : 'REFLECT'
+                step === 2 ? 'REMOVE' :
+                step === 3 ? 'THE ANSWER' : 'REFLECT'
               }
             </span>
-            {currentStep !== 3 && currentStep !== 4 && !barValueStep && (
+            {step !== 3 && step !== 4 && !barValueStep && (
               <div className="bg-white px-2">
                 <div className="text-black font-bold">
-                  {currentStep === 1 ? fraction1.numerator : fraction2.numerator}
+                  {step === 1 ? fraction1.numerator : fraction2.numerator}
                 </div>
                 <div className="border-t-2 border-black"></div>
                 <div className="text-black font-bold">{fraction1.denominator}</div>
@@ -230,7 +229,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
         </div>
 
             {/* Chocolate Bar and Instructions */}
-            {currentStep !== 5 && (
+            {step !== 5 && (
             <>
               <div className="flex flex-col items-center gap-4">
                 <div className="flex items-center gap-4">
@@ -241,13 +240,13 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                     {[...Array(fraction1.denominator)].map((_, index) => (
                       <div
                         key={index}
-                        draggable={currentStep === 2 && !barValueStep && (index < selectedPieces)}
+                        draggable={step === 2 && !barValueStep && (index < selectedPieces)}
                         onDragStart={(e) => handleDragStart(e, index)}
                         className={`w-16 h-16 relative cursor-pointer border-[3px] border-[#906547] ${
                           index < selectedPieces && !isPieceDropped(index)
                             ? 'bg-gradient-to-br from-[#5B361B] to-[#432611]'
                             : 'bg-gradient-to-br from-[#906547] to-[#785339]'
-                        } ${currentStep === 2 && index < selectedPieces ? 'cursor-grab' : ''}`}
+                        } ${step === 2 && index < selectedPieces ? 'cursor-grab' : ''}`}
                         onClick={() => handlePieceClick(index)}
                       >
                         {/* 3D effect borders */}
@@ -292,13 +291,13 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                   
                 </div>
                 <p className="text-xl font-bold text-center">
-                  {currentStep === 1
+                  {step === 1
                     ? `Select pieces to get ${fraction1.numerator}/${fraction1.denominator} of the chocolate bar.`
-                    : currentStep === 2 && !barValueStep
+                    : step === 2 && !barValueStep
                       ? `Pick and drop pieces to give ${fraction2.numerator}/${fraction2.denominator} of the bar to your friend!`
-                      : currentStep === 3 && "Awesome, it's time to answer our original question"}
+                      : step === 3 && "Awesome, it's time to answer our original question"}
                 </p>
-                {currentStep >= 3 && (
+                {step >= 3 && (
                   <div className="flex items-center gap-4 text-2xl font-bold">
                     <FractionDisplay
                       numerator={fraction1.numerator}
@@ -344,7 +343,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
             )}
 
             {/* Reflection Questions */}
-            {currentStep === 4 ? (
+            {step === 4 ? (
               <div className="w-full max-w-2xl flex flex-col items-center">
                 <div className="bg-[#FCF0FF] p-8 rounded-lg flex flex-col items-center gap-8">
                   <h3 className="text-xl font-bold text-center">Mark the correct answer</h3>
@@ -416,7 +415,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
               <></>
             )}
 
-            {currentStep === 1 && (
+            {step === 1 && (
               /* Proceed Button */
               <Button
                 onClick={handleProceed}
@@ -428,7 +427,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
               </Button>
             )}
 
-            {currentStep === 2 && (
+            {step === 2 && (
               /* Drop Zone */
               <div className="w-full flex flex-col items-center justify-start pt-4">
                 <p className="text-xl font-bold mb-4">
@@ -477,7 +476,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
               </div>
             )}
 
-            {currentStep === 3 && (
+            {step === 3 && (
               <Button
                 onClick={handleProceed}
                 className={`bg-[#FF497C] text-white px-8 py-2 text-xl font-bold border-2 border-black hover:bg-[#FF497C]/90
@@ -487,7 +486,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
               </Button>
             )}
 
-            {currentStep === 4 && firstAnswer === 'same' && secondAnswer === 'subtracted' && (
+            {step === 4 && firstAnswer === 'same' && secondAnswer === 'subtracted' && (
               <div className="w-full flex justify-center mt-8">
                 <Button
                   onClick={handleFinalProceed}

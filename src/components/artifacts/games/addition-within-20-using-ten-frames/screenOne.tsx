@@ -1037,7 +1037,7 @@ export default function First({ sendAdminMessage, visible }: FirstProps) {
               <p className="text-7xl text-center font-bold text-black">
                 great job! <br/> correct answer
               </p>
-              <Button onClick={() => setGameStateRef(prevState => ({...prevState, screen: 'second'}))} className="text-2xl bg-purple-500 text-white">Next</Button>
+              <Button onClick={() => setGameStateRef(prevState => ({...prevState, screen: 2}))} className="text-2xl bg-purple-500 text-white">Next</Button>
             </div>
           )}
         </div>

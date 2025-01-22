@@ -1,4 +1,4 @@
-export type GameScreen = 'first' | 'second' | 'third';
+export type GameScreen = 1 | 2 | 3;
 
 interface Description {
   title: GameScreen;
@@ -8,12 +8,12 @@ interface Description {
 
 export const descriptions: Description[] = [
   {
-    title: 'first',
+    title: 1,
     oneliner: 'First screen',
     description: 'First screen description'
   },
   {
-    title: 'second',
+    title: 2,
     oneliner: 'Second screen',
     description: 'Second screen description'
   }
@@ -46,7 +46,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  screen: 'first',
+  screen: 1,
   state1: {
     step: 0,
     question: {

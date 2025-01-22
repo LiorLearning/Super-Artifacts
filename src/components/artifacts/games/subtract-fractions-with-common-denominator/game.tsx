@@ -4,7 +4,6 @@ import Screen1 from './Screen1';
 import Screen2 from './Screen2';
 import { useGameState } from './state-utils';
 import { Card } from '@/components/ui/card'; // Add Card import
-import { useEffect, useState } from 'react';
 import { GameScreen } from './game-state';
 
 interface EquationProps {
@@ -15,14 +14,14 @@ export default function DifferentNumeratorDenominator({ sendAdminMessage }: Equa
   const { gameStateRef, setGameStateRef } = useGameState();
 
   const handleNext = (nextFrame: GameScreen) => {
-    setGameStateRef({ currentFrame: nextFrame });
+    setGameStateRef({ screen: nextFrame });
   };
 
-  switch (gameStateRef.current.currentFrame) {
+  switch (gameStateRef.current.screen) {
     case 1:
       return <Screen1 onProceed={() => handleNext(2)} sendAdminMessage={sendAdminMessage} />;
     case 2:
-      return <Screen2 onProceed={() => handleNext(3)} sendAdminMessage={sendAdminMessage} />;
+      return <Screen2 onProceed={() => {}} sendAdminMessage={sendAdminMessage} />;
     default:
       return <Card>Invalid Frame</Card>;
   }
