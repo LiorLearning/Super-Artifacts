@@ -1,62 +1,35 @@
-export const desc = `
-Addition Game: Interactive Marble Counting Adventure
-
-Game Overview:
-This interactive game helps you learn addition by physically moving and combining marbles across two platforms.
-
-Detailed Gameplay:
-
-Platform Setup
-- You start with maxGreenMarbles green marbles on the left platform
-- You have maxBlueMarbles blue marbles on the right platform
-- Total marbles: maxGreenMarbles + maxBlueMarbles (maxGreenMarbles green + maxBlueMarbles blue)
-
-Shooting Marbles
-1. Begin by shooting green marbles into the central container
-   - Click the "Shoot" button to launch green marbles
-   - Aim to move all green marbles from the left platform
-2. After green marbles are depleted, switch to blue marbles
-   - Click the "Shoot" button to launch blue marbles
-   - Move all blue marbles from the right platform
-
-Goal
-- Successfully transfer ALL maxGreenMarbles + maxBlueMarbles marbles into the central container
-- Visualize how maxGreenMarbles + maxBlueMarbles combines to make maxGreenMarbles + maxBlueMarbles
-- Learn addition through a hands-on, interactive experience
-
-Learning Objectives:
-- Understand addition as combining groups of objects
-- Develop spatial reasoning skills
-- Practice counting and tracking marbles
-`;
-
 export type GameScreen = 'first' | 'second';
 
+interface Description {
+  title: GameScreen;
+  oneliner: string;
+  description: string;
+}
+
+export const descriptions: Description[] = [
+  {
+    title: 'first',
+    oneliner: 'Interactive marble shooting game to learn addition',
+    description: 'This screen teaches addition through an engaging marble shooting game. Students start with green and blue marbles on separate platforms and use slingshots to shoot them into a central container. The container has a 10-marble limit, helping students understand the concept of making groups of 10. First, shoot all green marbles, then blue marbles. When the container fills with 10 marbles, students learn to break down the addition problem (e.g., 7+6) into an easier form (10+3). The visual representation and physical interaction helps students grasp how numbers combine and how breaking them into tens makes addition easier.'
+  },
+  {
+    title: 'second',
+    oneliner: 'Practice addition by selecting and grouping marbles',
+    description: 'This screen reinforces addition concepts through a marble selection activity. Students are presented with another addition problem and must select the correct number of green and blue marbles. After selection, they identify groups of 10 by clicking marbles to turn them black, visually representing the make-a-ten strategy. The remaining marbles are then counted to complete the addition. Students enter their final answer and receive immediate feedback. This screen helps solidify understanding of the make-a-ten strategy without the shooting mechanic, focusing purely on the mathematical concept.'
+  }
+]
+
+
 export interface GameState1 {
+  step: number;
   maxGreenMarbles: number;
   maxBlueMarbles: number;
-  maxBlackMarbles: number;
-  greenScore: number;
-  blueScore: number;
-  blackScore: number;
-  containerScore: number;
-  activePhase: 'left' | 'right';
-  currentStep: number;
-  finalAnswer: number;
-  clickDisabled: boolean;
-  showAddButton: boolean;
-  additionStarted?: boolean;
 }
 
 
 export interface GameState2 {
   maxGreenMarbles: number;
   maxBlueMarbles: number;
-  maxBlackMarbles: number;
-  greenMarblesCount: number;
-  blueMarblesCount: number;
-  blackMarblesCount: number;
-  showFinalAnswer: boolean;
 }
 
 export interface GameState {
@@ -71,30 +44,11 @@ export const initialGameState: GameState = {
     // Defines the game screen 1
     maxGreenMarbles: 5,
     maxBlueMarbles: 6,
-    greenScore: 5, // = maxGreenMarbles
-    blueScore: 6, // = maxBlueMarbles
-    
-    // Do not change anything beyond this
-    maxBlackMarbles: 10,
-    blackScore: 0,
-    containerScore: 0,
-    activePhase: 'left',
-    clickDisabled: false,
-    currentStep: 0,
-    finalAnswer: 0,
-    showAddButton: false,
-    additionStarted: false
+    step: 0,
   },
   state2: {
     // Defines the game screen 2
     maxGreenMarbles: 7,
     maxBlueMarbles: 8,
-    
-    // Do not change anything beyond this
-    maxBlackMarbles: 10,
-    greenMarblesCount: 0,
-    blueMarblesCount: 0,
-    blackMarblesCount: 0,
-    showFinalAnswer: false,
   }
 };

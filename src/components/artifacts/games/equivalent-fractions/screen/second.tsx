@@ -13,8 +13,13 @@ import HoneySelector from "../components/honeyselctor";
 export default function Level2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {numerator1, denominator1, denominator2, denominator3 } = gameStateRef.current.screen2.question;  
-  const { step, selectedKnife, selectedPieces1, selectedPieces2, substep, selectedHoney } = gameStateRef.current.screen2;
+  const { step, substep } = gameStateRef.current.screen2;
   const [answer1, setAnswer1] = useState('');
+
+  const [selectedPieces1, setSelectedPieces1] = useState(0);
+  const [selectedPieces2, setSelectedPieces2] = useState(0);
+  const [selectedKnife, setSelectedKnife] = useState<number | null>(null);
+  const [selectedHoney, setSelectedHoney] = useState<number | null>(null);
 
   const start = useRef(false);
 
@@ -26,13 +31,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
   }, []);
 
   const handlePieceClick = (index: number) => {
-    setGameStateRef({
-      ...gameStateRef.current,
-      screen1: {
-        ...gameStateRef.current.screen1,
-        selectedPieces: index
-      }
-    });
+    setSelectedPieces1(index);
   };
 
   useEffect(() => {
@@ -135,13 +134,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
               numerator={selectedPieces1} 
               denominator={selectedKnife ? selectedKnife*denominator1  : denominator1}
               handlePieceClick={(index) => {
-                setGameStateRef({
-                  ...gameStateRef.current,
-                  screen2: {
-                    ...gameStateRef.current.screen2,
-                    selectedPieces1: index
-                  }
-                });
+                setSelectedPieces1(index);
               }}
               disabled={substep !== 1}
             />
@@ -151,13 +144,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
                   options={[2,3,5]}
                 selectedKnife={selectedKnife}
                 setSelectedKnife={(index) => {
-                  setGameStateRef({
-                    ...gameStateRef.current,
-                    screen2: {
-                      ...gameStateRef.current.screen2,
-                      selectedKnife: index
-                    }
-                  });
+                  setSelectedKnife(index);
                 }}
                 />
               </div>      
@@ -204,13 +191,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
               numerator={selectedPieces2} 
               denominator={selectedHoney ? denominator1/selectedHoney : denominator1} 
               handlePieceClick={(index) => {
-                setGameStateRef({
-                  ...gameStateRef.current,
-                  screen2: {
-                    ...gameStateRef.current.screen2,
-                    selectedPieces2: index
-                  }
-                });
+                setSelectedPieces2(index);
               }}
               disabled={substep === 2}
             />
@@ -226,13 +207,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
                   options={[2,3,6]}
                   selectedHoney={selectedHoney}
                   setSelectedHoney={(index) => {
-                    setGameStateRef({
-                      ...gameStateRef.current,
-                      screen2: {
-                        ...gameStateRef.current.screen2,
-                        selectedHoney: index
-                      }
-                    });
+                    setSelectedHoney(index);
                   }}
                 />
               )}

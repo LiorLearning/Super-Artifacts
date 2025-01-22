@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { useGameState } from './state-utils'
 import { StepHeader } from './components/StepHeader'
 import { FractionDisplay } from './components/FractionDisplay'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSoundEffects } from './sounds'
 
 interface FractionSubtractionProps {
@@ -21,17 +21,26 @@ const STEPS = [
 
 export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const {
-    currentStep,
-    denominatorAnswer,
-    numeratorAnswer,
-    finalAnswer,
-    completedSteps,
-    isStep3Correct
-  } = gameStateRef.current.screen2State;
+  const { currentStep } = gameStateRef.current.screen2State;
   const { fraction1, fraction2 } = gameStateRef.current.questions.question2;
   const soundEffects = useSoundEffects();
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [denominatorAnswer, setDenominatorAnswer] = useState<string | null>(null);
+  const [numeratorAnswer, setNumeratorAnswer] = useState<string | null>(null);
+  const [finalAnswer, setFinalAnswer] = useState<string | null>(null);
+  const [isStep3Correct, setIsStep3Correct] = useState<boolean>(false);
+
+  const setCurrentStep = (step: number) => {
+    setGameStateRef(prev => ({
+      ...prev,
+      screen2State: {
+        ...prev.screen2State,
+        currentStep: step
+      }
+    }));
+  }
 
   useEffect(() => {
     sendAdminMessage('agent', `Great, here's another question for you?`);
@@ -41,25 +50,13 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
     if (answer === 'same') {
       soundEffects.correct.play();
       sendAdminMessage('agent', 'Correct! what about the numerator?');
-      setGameStateRef(prev => ({
-        ...prev,
-        screen2State: {
-          ...prev.screen2State,
-          denominatorAnswer: answer,
-          completedSteps: [...prev.screen2State.completedSteps, 1],
-          currentStep: 2
-        } 
-      }));
+      setCompletedSteps([...completedSteps, 1]);
+      setDenominatorAnswer(answer);
+      setCurrentStep(2);
     } else {
       soundEffects.wrong.play();
       sendAdminMessage('agent', 'Ah, not quite. What do you think the denominator was before and after subtraction?')
-      setGameStateRef(prev => ({
-        ...prev,
-        screen2State: {
-          ...prev.screen2State,
-          denominatorAnswer: 'incorrect'
-        }
-      }));
+      setDenominatorAnswer('incorrect');
     }
   }
 
@@ -67,25 +64,13 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
     if (answer === 'subtracted') {
       soundEffects.correct.play();
       sendAdminMessage('agent', 'Correct! Now lets solve the problem.');
-      setGameStateRef(prev => ({
-        ...prev,
-        screen2State: {
-          ...prev.screen2State,
-          numeratorAnswer: answer,
-          completedSteps: [...prev.screen2State.completedSteps, 2],
-          currentStep: 3
-        }
-      }));
+      setCompletedSteps([...completedSteps, 2]);
+      setNumeratorAnswer(answer);
+      setCurrentStep(3);
     } else {
       soundEffects.wrong.play();
       sendAdminMessage('agent', 'Ah, not quite. What do you think the numerator was before and after subtraction?')
-      setGameStateRef(prev => ({
-        ...prev,
-        screen2State: {
-          ...prev.screen2State,
-          numeratorAnswer: 'incorrect'
-        }
-      }));
+      setNumeratorAnswer('incorrect');
     }
   }
 
@@ -100,14 +85,8 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
       soundEffects.wrong.play();
     }
 
-    setGameStateRef(prev => ({
-      ...prev,
-      screen2State: {
-        ...prev.screen2State,
-        finalAnswer: value,     
-        isStep3Correct: isCorrect
-      }
-    }));
+    setFinalAnswer(value);
+    setIsStep3Correct(isCorrect);
   }
 
   useEffect(() => {
@@ -244,7 +223,7 @@ export default function Screen2({ sendAdminMessage, onProceed }: FractionSubtrac
                   <div className="flex flex-col items-center gap-2">
                     <input
                       type="text"
-                      value={finalAnswer}
+                      value={finalAnswer || ''}
                       onChange={(e) => handleFinalAnswerChange(e.target.value)}
                       className="w-16 h-16 text-2xl font-bold text-center border-2 border-black"
                     />

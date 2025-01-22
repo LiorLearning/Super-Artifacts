@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useGameState } from './state-utils'
 
@@ -10,20 +10,17 @@ interface ChocolateBarScreenProps {
 }
 
 export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBarScreenProps) {
-  const { gameStateRef, setGameStateRef } = useGameState()
-  const gameState = gameStateRef.current
-  const { question1, chocolateBarScreen } = gameState
-  const { fraction1, fraction2 } = question1
-  const {
-    selectedPieces,
-    step2Pieces,
-    numerator,
-    denominator,
-    selectedOption,
-    showStep2,
-    showStep3,
-    showFooter,
-  } = chocolateBarScreen
+  const { gameStateRef } = useGameState()
+  const { fraction1, fraction2 } = gameStateRef.current.question1
+
+  const [ selectedPieces, setSelectedPieces ] = useState<number[]>([])
+  const [ step2Pieces, setStep2Pieces ] = useState<number[]>([])
+  const [ numerator, setNumerator ] = useState<string>('')
+  const [ denominator, setDenominator ] = useState<string>('')
+  const [ selectedOption, setSelectedOption ] = useState<number | null>(null)
+  const [ showStep2, setShowStep2 ] = useState<boolean>(false)
+  const [ showStep3, setShowStep3 ] = useState<boolean>(false)
+  const [ showFooter, setShowFooter ] = useState<boolean>(false)
 
   const chocolateBarPieces = fraction1.denominator
   const correctAnswer = {
@@ -33,13 +30,7 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
 
   useEffect(() => {
     const isCorrect = selectedPieces.length === fraction1.numerator
-    setGameStateRef((prevState) => ({
-      ...prevState,
-      chocolateBarScreen: {
-        ...prevState.chocolateBarScreen,
-        showStep2: isCorrect,
-      },
-    }))
+    setShowStep2(isCorrect)
     if (isCorrect) {
       sendAdminMessage('agent', `Great! Now imagine you get ${fraction2.numerator} more ${fraction2.numerator <= 1 ? 'piece' : 'pieces'} from a friend. Try selecting the pieces you have now.`);
     }
@@ -47,24 +38,12 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
 
   useEffect(() => {
     const correct = step2Pieces.length === correctAnswer.numerator && numerator === correctAnswer.numerator.toString() && denominator === correctAnswer.denominator.toString()
-    setGameStateRef((prevState) => ({
-      ...prevState,
-      chocolateBarScreen: {
-        ...prevState.chocolateBarScreen,
-        showStep3: correct,
-      },
-    }))
+    setShowStep3(correct)
   }, [step2Pieces, numerator, denominator])
 
   useEffect(() => {
     const isCorrect = selectedOption === 0 && numerator === correctAnswer.numerator.toString() && denominator === correctAnswer.denominator.toString()
-    setGameStateRef((prevState) => ({
-      ...prevState,
-      chocolateBarScreen: {
-        ...prevState.chocolateBarScreen,
-        showFooter: isCorrect,
-      },
-    }))
+    setShowFooter(isCorrect)
     if (isCorrect) {
       sendAdminMessage('agent', "You're right, why do you think the denominator remains the same?");
     }
@@ -75,60 +54,30 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
     const newSelectedPieces = selectedPieces.includes(index)
       ? selectedPieces.filter((i: number) => i !== index)
       : [...selectedPieces, index]
-    setGameStateRef((prevState) => ({
-      ...prevState,
-      chocolateBarScreen: {
-        ...prevState.chocolateBarScreen,
-        selectedPieces: newSelectedPieces,
-      },
-    }))
+    setSelectedPieces(newSelectedPieces)
   }
 
   const handleStep2PieceClick = (index: number) => {
     const newStep2Pieces = step2Pieces.includes(index)
       ? step2Pieces.filter((i: number) => i !== index)
       : [...step2Pieces, index]
-    setGameStateRef((prevState) => ({
-      ...prevState,
-      chocolateBarScreen: {
-        ...prevState.chocolateBarScreen,
-        step2Pieces: newStep2Pieces,
-      },
-    }))
+    setStep2Pieces(newStep2Pieces)
   }
 
   const handleOptionClick = (optionIndex: number) => {
-    setGameStateRef((prevState) => ({
-      ...prevState,
-      chocolateBarScreen: {
-        ...prevState.chocolateBarScreen,
-        selectedOption: optionIndex,
-      },
-    }))
+    setSelectedOption(optionIndex)
   }
 
   const handleNumeratorChange = (value: string) => {
-    setGameStateRef((prevState) => ({
-      ...prevState,
-      chocolateBarScreen: {
-        ...prevState.chocolateBarScreen,
-        numerator: value,
-      },
-    }))
+    setNumerator(value)
   }
 
   const handleDenominatorChange = (value: string) => {
-    setGameStateRef((prevState) => ({
-      ...prevState,
-      chocolateBarScreen: {
-        ...prevState.chocolateBarScreen,
-        denominator: value,
-      },
-    }))
+    setDenominator(value)
   }
 
   return (
-    <div className="p-8">
+    <div className="pt-16">
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Title */}
         <h2 className="text-xl font-medium text-center">Add fractions</h2>

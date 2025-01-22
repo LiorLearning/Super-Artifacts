@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ChocolateBarScreen } from './chocolate-bar-screen'
 import { DenominatorScreen } from './denominator-screen'
 import { useGameState } from './state-utils'
@@ -11,22 +11,22 @@ interface GameProps {
 
 export default function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState()
-  const started = gameStateRef.current.started
+  const [ started, setStarted ] = useState(false)
 
   const handleProceed = () => {
-    setGameStateRef({ currentScreen: 'denominator' })
+    setGameStateRef({ screen: 'denominator' })
   }
 
   useEffect(() => {
     if (started === false) {
       sendAdminMessage('agent', "Let's select pieces to give you 3/8th of the chocolate bar")
-      setGameStateRef({ started: true })
+      setStarted(true)
     }
   }, [])
 
   return (
-    <div className="bg-white p-16 rounded-lg">
-      {gameStateRef.current.currentScreen === 'chocolate' ? (
+    <div>
+      {gameStateRef.current.screen === 'chocolate' ? (
         <ChocolateBarScreen onProceed={handleProceed} sendAdminMessage={sendAdminMessage} />
       ) : (
         <DenominatorScreen sendAdminMessage={sendAdminMessage} />

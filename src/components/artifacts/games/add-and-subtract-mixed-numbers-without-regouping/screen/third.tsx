@@ -6,10 +6,7 @@ import { Button } from '@/components/ui/button';
 
 export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const {fraction1, fraction2} = gameStateRef.current.questions.question3;
-
-  const { step } = gameStateRef.current.state3;
-
+  const { step, fraction1, fraction2 } = gameStateRef.current.state3;
 
   return (
     <div className="flex flex-col items-center justify-center">

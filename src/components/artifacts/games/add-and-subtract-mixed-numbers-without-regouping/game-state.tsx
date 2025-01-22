@@ -1,10 +1,38 @@
 import { MixedFractionProps } from './utils/types';
 
-export const desc = ``;
-
 export type GameScreen = 1 | 2 | 3 | 4;
 
-interface QuestionDescription{
+interface Description {
+  title: GameScreen;
+  oneliner: string;
+  description: string;
+}
+
+export const descriptions: Description[] = [
+  {
+    title: 1,
+    oneliner: 'Introduction to pizza fractions through drag and drop',
+    description: 'This screen introduces the concept of mixed numbers using a pizza analogy. Players are presented with two types of pizzas (Pepperoni and Mushroom) represented as mixed fractions. The screen features a drag-and-drop interface where players must move whole pizzas and slices to designated areas. Players first drag the whole pizzas, then the sliced sections, and finally input their answers in a mixed number format. The screen includes visual feedback with color-coding (pink for Pepperoni, yellow for Mushroom) and sound effects for interactions. The goal is to help players understand how mixed numbers can be represented visually and how to combine them.'
+  },
+  {
+    title: 2,
+    oneliner: 'Practice adding mixed numbers with guided steps',
+    description: 'Building on the first screen\'s concepts, this screen provides a more structured approach to adding mixed numbers. Players work through multiple steps, starting with identifying the components of each mixed number (whole numbers and fractions). The screen maintains the pizza theme but focuses more on the mathematical process. Players must input their answers for both pizzas separately before combining them. The interface provides immediate feedback on correct/incorrect answers and includes helpful prompts to guide players through the addition process. This screen helps reinforce the concept that when adding mixed numbers with like denominators, you add the whole numbers and fractions separately.'
+  },
+  {
+    title: 3,
+    oneliner: 'Combining mixed numbers with same denominators',
+    description: 'This screen focuses on the actual addition of mixed numbers with the same denominators. Players are presented with a clean interface where they must add both the whole numbers and fractions separately. The screen maintains visual consistency with previous screens but removes the pizza visuals to help players transition to more abstract mathematical thinking. Players must input their answers in a structured format, with separate inputs for whole numbers and fractions. The screen provides immediate feedback and requires correct answers before allowing progression.'
+  },
+  {
+    title: 4,
+    oneliner: 'Final practice with mixed number addition',
+    description: 'The final screen serves as a comprehensive assessment of the skills learned. Players must complete the addition of mixed numbers independently, with minimal guidance. The interface presents the problem in a traditional mathematical format while maintaining the color-coding scheme from previous screens (green for whole numbers, purple for fractions). Players must input their answers in multiple steps, showing their understanding of the entire process. The screen includes validation for each step and provides feedback on the final answer, ensuring players have mastered the concept of adding mixed numbers without regrouping.'
+  }
+]
+
+
+export interface QuestionDescriptionProps{
   showFirstRow: boolean;
   showSecondRow: boolean;
   showThirdRow: boolean;
@@ -16,35 +44,28 @@ interface QuestionDescription{
 
 export interface screen1 {
   step: number;
-  step2Substep: number;
-
-  question1description: QuestionDescription;
-  question2description: QuestionDescription;
+  fraction1: MixedFractionProps;
+  fraction2: MixedFractionProps;
 }
 
 export interface screen2 {
   step: number;
   substep: number;
-  question1description: QuestionDescription;
-  question2description: QuestionDescription;
+  fraction1: MixedFractionProps;
+  fraction2: MixedFractionProps;
 }
 
 export interface screen3 {
   step: number;
   substep: number;
+  fraction1: MixedFractionProps;
+  fraction2: MixedFractionProps;
 }
 
 export interface screen4 {
   step: number;
-  whole1: number;
-  whole2: number;
-  whole3: number;
-  numerator1: number;
-  numerator2: number;
-  numerator3: number;
-  denominator1: number;
-  denominator2: number;
-  denominator3: number;
+  fraction1: MixedFractionProps;
+  fraction2: MixedFractionProps;
 }
 
 export interface Question {
@@ -58,95 +79,34 @@ export interface GameState {
   state2: screen2;
   state3: screen3;
   state4: screen4;
-
-  questions: {
-    question1: Question;
-    question2: Question;
-    question3: Question;
-    question4: Question;
-  };
 }
 
 export const initialGameState: GameState = {
-
   screen: 1,
 
   state1: {
     step: 1,
-    step2Substep: 0,
-    question1description: {
-      showFirstRow: true,
-      showSecondRow: false,
-      showThirdRow: false,
-      inputWhole: '',
-      inputNumerator: '',
-      inputDenominator: '',
-    },
-    question2description: {
-      showFirstRow: false,
-      showSecondRow: false,
-      showThirdRow: false,
-      inputWhole: '',
-      inputNumerator: '',
-      inputDenominator: '',
-    },
+    fraction1: { whole: 3, numerator: 1, denominator: 4 },
+    fraction2: { whole: 4, numerator: 3, denominator: 4 },
   },
 
   state2: {
     step: 0,
     substep: 0,
-    question1description: {
-      showFirstRow: true,
-      showSecondRow: false,
-      showThirdRow: false,
-      inputWhole: '',
-      inputNumerator: '',
-      inputDenominator: '',
-    },
-    question2description: {
-      showFirstRow: true,
-      showSecondRow: false,
-      showThirdRow: false,
-      inputWhole: '',
-      inputNumerator: '',
-      inputDenominator: '',
-    },
+    fraction1: { whole: 2, numerator: 3, denominator: 5 },
+    fraction2: { whole: 3, numerator: 1, denominator: 5 },
   },
 
   state3: {
     step: 0,
     substep: 0,
+    fraction1: { whole: 5, numerator: 5, denominator: 9 },
+    fraction2: { whole: 2, numerator: 2, denominator: 9 },
   },
 
   state4: {
     step: 0,
-    whole1: 0,
-    whole2: 0,
-    whole3: 0,
-    numerator1: 0,
-    numerator2: 0,
-    numerator3: 0,
-    denominator1: 0,
-    denominator2: 0,
-    denominator3: 0,
+    fraction1: { whole: 4, numerator: 2, denominator: 7 },
+    fraction2: { whole: 1, numerator: 1, denominator: 7 },
   },
-
-  questions: {
-    question1: {
-      fraction1: { whole: 3, numerator: 1, denominator: 4 },
-      fraction2: { whole: 4, numerator: 3, denominator: 4 },
-    },
-    question2: {
-      fraction1: { whole: 2, numerator: 3, denominator: 5 },
-      fraction2: { whole: 3, numerator: 1, denominator: 5 },
-    },
-    question3: {
-      fraction1: { whole: 5, numerator: 5, denominator: 9 },
-      fraction2: { whole: 2, numerator: 2, denominator: 9 },
-    },
-    question4: {
-      fraction1: { whole: 4, numerator: 2, denominator: 7 },
-      fraction2: { whole: 1, numerator: 1, denominator: 7 },
-    },
-  }
 };

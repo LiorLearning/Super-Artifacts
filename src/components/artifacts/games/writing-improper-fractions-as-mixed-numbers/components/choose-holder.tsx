@@ -18,7 +18,7 @@ export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage
       onSuccess();
       sendAdminMessage('agent', `Awesome! The denominator is ${answer}, so this holder is perfect. Let’s move on!`);
     } else {
-      sendAdminMessage('admin', `Diagnosis socratically, user has selected ${option} but the answer is ${answer}.`);
+      sendAdminMessage('admin', `Diagnose socratically to help user select the correct holder, user has selected ${option} but the answer is ${answer}.`);
     }
   };
   

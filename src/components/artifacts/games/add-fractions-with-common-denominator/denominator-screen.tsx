@@ -1,25 +1,26 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useGameState } from './state-utils'
+import SuccessAnimation from '../../utils/success-animate';
 
 interface DenominatorScreenProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
 
 export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) {
-  const { gameStateRef, setGameStateRef } = useGameState()
+  const { gameStateRef } = useGameState()
   const gameState = gameStateRef.current
-  const { question2, denominatorScreen } = gameState
+  const { question2 } = gameState
   const { fraction1, fraction2 } = question2
-  const {
-    denominatorOption,
-    numeratorOption,
-    answerNumerator,
-    answerDenominator,
-    showStep2,
-    isAnswerCorrect,
-  } = denominatorScreen
+
+  const [ denominatorOption, setDenominatorOption ] = useState(-1)
+  const [ numeratorOption, setNumeratorOption ] = useState(-1)
+  const [ answerNumerator, setAnswerNumerator ] = useState('')
+  const [ answerDenominator, setAnswerDenominator ] = useState('')
+  const [ showStep2, setShowStep2 ] = useState(false)
+  const [ showStep3, setShowStep3 ] = useState(false)
+  const [ isAnswerCorrect, setIsAnswerCorrect ] = useState(false)
 
   const correctAnswer = {
     numerator : fraction1.numerator + fraction2.numerator,
@@ -27,87 +28,41 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
   }
 
   useEffect(() => {
-    setGameStateRef({
-      denominatorScreen: {
-        ...denominatorScreen,
-        showStep3: showStep2 && numeratorOption === 0,
-      },
-    })
+    setShowStep3(showStep2 && numeratorOption === 0)
   }, [showStep2, numeratorOption])
 
   const handleDenominatorOptionClick = (option: number) => {
     if (option === 0){
-      
-      setGameStateRef({
-        denominatorScreen: {
-          ...denominatorScreen,
-          showStep2: true,
-        },
-      })
+      setShowStep2(true)
     }
-    setGameStateRef({
-      denominatorScreen: {
-        ...denominatorScreen,
-        denominatorOption: option,
-      },
-    })
+    setDenominatorOption(option)
   }
 
   const handleNumeratorOptionClick = (option: number) => {
     if (option === 0){
-      setGameStateRef({
-        denominatorScreen: {
-          ...denominatorScreen,
-          showStep3: true,
-        },
-      })
+      setShowStep3(true)
     } 
-    setGameStateRef({
-      denominatorScreen: {
-        ...denominatorScreen,
-        numeratorOption: option,
-      },
-    })
+    setNumeratorOption(option)
   }
 
   const handleAnswerNumeratorChange = (value: string) => {
     if (value === correctAnswer.numerator.toString() && answerDenominator === correctAnswer.denominator.toString()){
-      setGameStateRef({
-        denominatorScreen: {
-          ...denominatorScreen,
-          isAnswerCorrect: true,
-        },
-      })
+      setShowStep3(true)
     }
-    setGameStateRef({
-      denominatorScreen: {
-        ...denominatorScreen,
-        answerNumerator: value,
-      },
-    })
+    setAnswerNumerator(value)
   }
 
   const handleAnswerDenominatorChange = (value: string) => {
 
     if (answerNumerator === correctAnswer.numerator.toString() && value === correctAnswer.denominator.toString()){
-      setGameStateRef({
-        denominatorScreen: {
-          ...denominatorScreen,
-          isAnswerCorrect: true,
-        },
-      })
+      setIsAnswerCorrect(true)
     }
-    setGameStateRef({
-      denominatorScreen: {
-        ...denominatorScreen,
-        answerDenominator: value,
-      },
-    })
+    setAnswerDenominator(value)
 
   }
 
   return (
-    <div className="p-8">
+    <div className="pt-16">
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Title */}
         <h2 className="text-xl font-medium text-center">Add fractions</h2>
@@ -154,7 +109,7 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
         </div>
 
         {/* Step 2 */}
-        {denominatorOption === 0 &&
+        {denominatorOption === 0 && showStep2 &&
           <div className={`space-y-4 transition-all duration-500 ease-in-out transform origin-top opacity-100 translate-y-0 block`} >
             <p>
               <span className="font-bold">Step 2:</span> Select the right options for the numerator.
@@ -183,7 +138,7 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
         }
 
         {/* Step 3 */}
-        {numeratorOption === 0 &&
+        {numeratorOption === 0 && showStep3 &&
           <div className={`space-y-4 transition-all duration-500 ease-in-out transform origin-top opacity-100 translate-y-0`}>
             <p className="font-bold">Step 3</p>
             <div className="flex items-center justify-center gap-2 text-2xl">
@@ -226,10 +181,11 @@ export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) 
       </div>
 
       {/* Footer */}
-      {answerNumerator === correctAnswer.numerator.toString() && answerDenominator === correctAnswer.denominator.toString() && (
+      {isAnswerCorrect && (
         <div className={`bg-[#66CDAA] w-full mt-8`}>
           <div className="max-w-2xl mx-auto flex items-center p-4">
             <p className="text-xl font-medium">Correct! 🎉</p>
+            <SuccessAnimation />
           </div>
         </div>
       )} 

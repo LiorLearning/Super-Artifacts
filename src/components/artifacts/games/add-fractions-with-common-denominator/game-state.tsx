@@ -7,46 +7,26 @@
 // - Multi-step progression
 // - Validation and feedback
 
-export const desc = `
-Welcome to the Fraction Addition Game! Learn to add fractions through interactive chocolate bars.
+export type GameScreen = 'chocolate' | 'denominator';
 
-Detailed Gameplay:
+interface Description {
+  title: GameScreen;
+  oneliner: string;
+  description: string;
+}
 
-Chocolate Bar Screen
-1. You'll see a chocolate bar divided into equal parts based on the denominator
-2. First select pieces to represent the first fraction (e.g. 1/3)
-3. Then you'll see additional pieces from a friend (the second fraction)
-4. Select all pieces you now have to show the sum
-5. Enter the resulting fraction's numerator and denominator
-6. Choose the correct rule about denominators in fraction addition
-
-Denominator Screen
-1. You'll see the same fraction addition problem
-2. Select the correct rule about denominators in fraction addition
-3. Select the correct rule about numerators in fraction addition
-4. Enter the final answer showing your understanding
-
-Game State Details:
-- fractionProblem: Stores the two fractions being added
-- chocolateBarPieces: Number of total pieces in the visual bar
-- correctAnswer: The expected sum of the fractions
-- currentScreen: Tracks which screen is active
-- chocolateBarScreen: Manages state for the visual addition screen
-  * selectedPieces: Tracks clicked pieces for first fraction
-  * step2Pieces: Tracks pieces selected after adding second fraction
-  * numerator/denominator: User's input for the sum
-  * showStep2/3: Controls multi-step progression
-- denominatorScreen: Manages state for the rules screen
-  * denominatorOption: User's choice about denominator rules
-  * numeratorOption: User's choice about numerator rules
-  * answerNumerator/Denominator: Final fraction input
-  * showStep2/3: Controls multi-step progression
-
-Tips:
-- Use the chocolate bars to visualize how fractions combine
-- Pay attention to whether denominators change when adding fractions
-- Practice both visual and rule-based understanding
-`
+export const descriptions: Description[] = [
+  {
+    title: 'chocolate',
+    oneliner: 'Visual fraction addition using interactive chocolate bars',
+    description: 'This screen introduces fraction addition through an interactive chocolate bar visualization. Students start by selecting pieces of a chocolate bar to represent the first fraction (e.g., 2/5). After correctly selecting the first fraction, they see additional pieces from a friend (representing the second fraction) and must select all pieces to show the sum. Students then input their answer as a fraction, with separate fields for numerator and denominator. The screen concludes with a multiple-choice question about why denominators remain the same when adding fractions with like denominators, reinforcing the conceptual understanding through visual learning.'
+  },
+  {
+    title: 'denominator',
+    oneliner: 'Learn rules for adding fractions with same denominators',
+    description: 'Building on the visual understanding from the chocolate bar screen, this screen focuses on the mathematical rules of fraction addition. Students work through three structured steps: First, they select the correct rule about denominators in fraction addition (they remain the same). Next, they choose the correct rule about numerators (they are added together). Finally, students apply these rules by inputting the sum of two fractions with like denominators. The screen provides immediate feedback with color-coding (green for correct, red for incorrect) and reinforces the key concept that when adding fractions with the same denominator, we add the numerators while keeping the denominator unchanged.'
+  }
+]
 
 interface Fraction {
   numerator: number;
@@ -54,8 +34,7 @@ interface Fraction {
 }
 
 export interface GameState {
-  started : boolean;
-
+  screen: GameScreen;
   question1: {
     fraction1: Fraction;
     fraction2: Fraction;
@@ -64,31 +43,10 @@ export interface GameState {
     fraction1: Fraction;
     fraction2: Fraction;
   };
-
-  currentScreen: 'chocolate' | 'denominator';
-  chocolateBarScreen: {
-    selectedPieces: number[];
-    step2Pieces: number[];
-    numerator: string;
-    denominator: string;
-    selectedOption: number | null;
-    showStep2: boolean;
-    showStep3: boolean;
-    showFooter: boolean;
-  };
-  denominatorScreen: {
-    denominatorOption: number | null;
-    numeratorOption: number | null;
-    answerNumerator: string;
-    answerDenominator: string;
-    showStep2: boolean;
-    showStep3: boolean;
-    isAnswerCorrect: boolean;
-  };
 }
 
 export const initialGameState: GameState = {
-  started: false,
+  screen: 'chocolate',
   question1: {
     fraction1: { numerator: 2, denominator: 5 },
     fraction2: { numerator: 1, denominator: 5 },
@@ -96,25 +54,5 @@ export const initialGameState: GameState = {
   question2: {
     fraction1: { numerator: 2, denominator: 4 },
     fraction2: { numerator: 1, denominator: 4 },
-  },
-  currentScreen: 'chocolate',
-  chocolateBarScreen: {
-    selectedPieces: [],
-    step2Pieces: [],
-    numerator: '',
-    denominator: '',
-    selectedOption: null,
-    showStep2: false,
-    showStep3: false,
-    showFooter: false,
-  },
-  denominatorScreen: {
-    denominatorOption: null,
-    numeratorOption: null,
-    answerNumerator: '',
-    answerDenominator: '',
-    showStep2: false,
-    showStep3: false,
-    isAnswerCorrect: false,
   },
 }

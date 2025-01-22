@@ -8,9 +8,7 @@ import { COLORS } from './utils/constants';
 
 function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef } = useGameState();
-  const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  
   return (
     <div className="h-full w-full bg-white">
       <div className="flex flex-col pb-96 h-full w-full justify-center items-center font-gaegu relative" style={{ backgroundColor: COLORS.lightBlue }}>
@@ -23,7 +21,7 @@ function Game({ sendAdminMessage }: GameProps) {
           {gameStateRef.current.screen === 'first' && (
             <>
               <First sendAdminMessage={sendAdminMessage} visible={true} />
-              {gameStateRef.current.state1.currentStep === 5 && (
+              {gameStateRef.current.state1.step === 5 && (
                 <div className="w-full absolute inset-0 z-10 rounded-lg shadow-lg mt-8" style={{
                   backgroundColor: COLORS.white
                 }}>

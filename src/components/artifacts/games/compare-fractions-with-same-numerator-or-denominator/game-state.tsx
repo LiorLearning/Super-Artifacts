@@ -1,75 +1,42 @@
-import { Fraction, BarState } from './bar';
+import { Fraction } from './bar';
 
-// Initial fractions to compare
-const num1 = 1
-const denom1 = 2
-const num2 = 1
-const denom2 = 3
+export type GameScreen = 'first' | 'second';
 
-// Game state manages the interactive comparison of two fractions using chocolate bars
-// Each bar can be split into parts and pieces can be selected to represent fractions
-export const desc = `
-Welcome to the Fraction Comparison Game! Learn to compare fractions through interactive chocolate bars.
+interface Description {
+  title: GameScreen;
+  oneliner: string;
+  description: string;
+}
 
-Detailed Gameplay:
-1. You'll start with two chocolate bars and two fractions to compare
-2. For the first fraction (${num1}/${denom1}):
-   - Break the first chocolate bar into ${denom1} equal parts using the "Split" button
-   - Select ${num1} piece(s) to represent the fraction
-   - The bar will show green checkmark when correct pieces are selected
-3. For the second fraction (${num2}/${denom2}):
-   - Break the second chocolate bar into ${denom2} equal parts
-   - Select ${num2} piece(s) to represent the fraction
-   - The bar will show green checkmark when correct
-4. Once both fractions are correctly represented:
-   - Click "Compare Bars" to visually compare the selected pieces
-   - Choose which fraction you think is bigger
-   - Get immediate feedback on your answer
+export const descriptions: Description[] = [
+  {
+    title: 'first',
+    oneliner: 'Compare fractions using interactive chocolate bars',
+    description: 'In this engaging game, students compare two fractions by manipulating virtual chocolate bars. Each bar can be split into equal parts and pieces can be selected to represent fractions. Students first break the first chocolate bar into the correct number of pieces (denominator) and select the required pieces (numerator) to represent the first fraction. Once correct, they repeat the process with the second bar for the second fraction. The game provides immediate visual feedback with checkmarks and animations. After both fractions are correctly represented, students can compare them visually side by side and choose which fraction is larger. The game reinforces fraction concepts through tactile interaction and visual representation, making abstract fraction comparison concrete and intuitive.'
+  },
+  {
+    title: 'second',
+    oneliner: 'Practice comparing fractions with different denominators',
+    description: 'Building on the visual understanding from the first screen, this level challenges students with more complex fraction comparisons. Students continue using the chocolate bar visualization but now work with fractions that have different denominators. The interactive process remains the same - splitting bars and selecting pieces - but the focus shifts to understanding how fractions with different denominators can be compared. The visual representation helps students see why, for example, 2/3 is larger than 3/5, even though 3 and 5 are larger numbers. The game provides scaffolded support through immediate feedback and encourages students to make mathematical connections between visual representations and numerical values.'
+  }
+];
 
-Game State Details:
-- fraction1/fraction2: The two fractions being compared
-- bar1/bar2: Track the number of parts and which pieces are selected for each bar
-- isFirstFractionCorrect/isSecondFractionCorrect: Whether correct pieces are selected
-- compareMode: Whether in visual comparison mode
-- showAnswer: Whether to show the final result
-- correctAnswer: The larger fraction determined by cross multiplication
 
-Tips:
-- Use the Split button to break bars into equal parts
-- Click pieces to select/deselect them
-- Compare the selected pieces visually to determine the larger fraction
-- Pay attention to both the number of parts (denominator) and selected pieces (numerator)
-`;
-
-// Interface defining the complete game state structure
-export interface GameState {
+interface State1 {
   fraction1: Fraction;  // First fraction to compare
   fraction2: Fraction;  // Second fraction to compare 
-  bar1: BarState;      // State of first chocolate bar
-  bar2: BarState;      // State of second chocolate bar
-  showAnswer: boolean; // Whether to show the result
-  userAnswer: string | null;  // User's selected answer
-  isFirstFractionCorrect: boolean;  // First fraction correctly represented
-  isSecondFractionCorrect: boolean; // Second fraction correctly represented
-  compareMode: boolean;  // In comparison mode
-  gameStarted: boolean; // Game has begun
-  correctAnswer: Fraction; // The larger fraction
 }
 
 
-// Initial state when game starts
+export interface GameState {
+  screen: GameScreen;
+  state1: State1;
+}
+
 export const initialGameState: GameState = {
-    fraction1: { num: num1, denom: denom1 },
-    fraction2: { num: num2, denom: denom2 },
-    bar1: { parts: 1, selectedParts: [] },
-    bar2: { parts: 1, selectedParts: [] },
-    showAnswer: false,
-    userAnswer: null,
-    isFirstFractionCorrect: false,
-    isSecondFractionCorrect: false,
-    compareMode: false,
-    gameStarted: false,
-    correctAnswer: (num1 * denom2) > (num2 * denom1) 
-      ? { num: num1, denom: denom1 } 
-      : { num: num2, denom: denom2 }
+  screen: 'first',
+  state1: {
+    fraction1: { num: 1, denom: 2 },
+    fraction2: { num: 1, denom: 3 },
+  }
 };

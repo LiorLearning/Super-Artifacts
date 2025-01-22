@@ -10,16 +10,17 @@ import { Button } from "@/components/custom_ui/button";
 
 
 export default function Second({ sendAdminMessage }: GameProps) {
-  const { gameStateRef, setGameStateRef } = useGameState();
-  const { 
-    greenMarblesCount, 
-    blueMarblesCount, 
-    blackMarblesCount, 
-    showFinalAnswer,
-    maxGreenMarbles, 
-    maxBlueMarbles, 
-    maxBlackMarbles 
-  } = gameStateRef.current.state2;
+  const { gameStateRef } = useGameState();
+
+  const { maxGreenMarbles, maxBlueMarbles } = gameStateRef.current.state2;
+
+  const [maxBlackMarbles, setMaxBlackMarbles] = useState(10);
+  const [greenMarblesCount, setGreenMarblesCount] = useState(0);
+  const [blueMarblesCount, setBlueMarblesCount] = useState(0);
+  const [blackMarblesCount, setBlackMarblesCount] = useState(0);
+  const [showFinalAnswer, setShowFinalAnswer] = useState(false);
+
+
   const totalMarbles = maxGreenMarbles + maxBlueMarbles;
   const [answer, setAnswer] = useState('');
   const hasGameStarted = useRef(false);
@@ -27,30 +28,20 @@ export default function Second({ sendAdminMessage }: GameProps) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const handleMarbleClick = (color: 'green' | 'blue') => {
-    setGameStateRef(prev => ({
-      ...prev,
-      state2: {
-        ...prev.state2,
-        greenMarblesCount: color === 'green' && greenMarblesCount < maxGreenMarbles ? 
-          greenMarblesCount + 1 : greenMarblesCount,
-        blueMarblesCount: color === 'blue' && blueMarblesCount < maxBlueMarbles ? 
-          blueMarblesCount + 1 : blueMarblesCount,
-      }
-    }));
+    if (color === 'green' && greenMarblesCount < maxGreenMarbles) {
+      setGreenMarblesCount(prev => prev + 1);
+    } else if (color === 'blue' && blueMarblesCount < maxBlueMarbles) {
+      setBlueMarblesCount(prev => prev + 1);
+    }
   };
 
   const handleBlackMarbleClick = (index: number) => {
-    setGameStateRef(prev => ({
-      ...prev,
-      state2: {
-        ...prev.state2,
-        blackMarblesCount: index >= blackMarblesCount && blackMarblesCount < maxBlackMarbles ? 
-          blackMarblesCount + 1 : 
-          index === blackMarblesCount - 1 ? 
-            blackMarblesCount - 1 : 
-          blackMarblesCount
+    if (index >= blackMarblesCount && blackMarblesCount < maxBlackMarbles) {
+      setBlackMarblesCount(prev => prev + 1);
+      if (index === blackMarblesCount - 1) {
+        setBlackMarblesCount(prev => prev - 1);
       }
-    }));
+    }
   };
 
   useEffect(() => {
@@ -79,10 +70,7 @@ export default function Second({ sendAdminMessage }: GameProps) {
 
   const handleVerifyAnswer = () => {
     if (answer === totalMarbles.toString()) {
-      setGameStateRef(prev => ({
-        ...prev,
-        showFinalAnswer: true
-      }));
+      setShowFinalAnswer(true);
       gameFinished.current = true;
       sendAdminMessage('agent', "You did great! That is the correct answer");
     } else {

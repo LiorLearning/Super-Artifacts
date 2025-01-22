@@ -1,6 +1,23 @@
-export const desc = ``;
-
 export type GameScreen = 'first' | 'second' | 'third';
+
+interface Description {
+  title: GameScreen;
+  oneliner: string;
+  description: string;
+}
+
+export const descriptions: Description[] = [
+  {
+    title: 'first',
+    oneliner: 'First screen',
+    description: 'First screen description'
+  },
+  {
+    title: 'second',
+    oneliner: 'Second screen',
+    description: 'Second screen description'
+  }
+]
 
 interface Fraction {
   numerator: number;

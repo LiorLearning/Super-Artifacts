@@ -4,39 +4,52 @@ import { BaseProps } from '../utils/types';
 import { CombineFractionInput } from './second';
 import Intro from '../components/intro';
 import Proceed from '../components/proceed';
+import { useState } from 'react';
 
 export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const {fraction1, fraction2} = gameStateRef.current.questions.question3;
-  const { step, whole1, whole2, whole3, numerator1, numerator2, numerator3, denominator1, denominator2, denominator3 } = gameStateRef.current.state4;
+  const {step, fraction1, fraction2} = gameStateRef.current.state4;
+
+  const [whole1, setWhole1] = useState<number>(0);
+  const [whole2, setWhole2] = useState<number>(0);
+  const [whole3, setWhole3] = useState<number>(0);
+
+  const [numerator1, setNumerator1] = useState<number>(0);
+  const [numerator2, setNumerator2] = useState<number>(0);
+  const [numerator3, setNumerator3] = useState<number>(0);
+
+  const [denominator1, setDenominator1] = useState<number>(0);
+  const [denominator2, setDenominator2] = useState<number>(0);
+  const [denominator3, setDenominator3] = useState<number>(0);
+
 
   const handleWholeChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, whole1: parseInt(e.target.value) } }));
+    setWhole1(parseInt(e.target.value));
     checkFirstStep(parseInt(e.target.value), whole2, numerator1, numerator2, denominator1, denominator2);
   }
 
   const handleWholeChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, whole2: parseInt(e.target.value) } }));
+    setWhole2(parseInt(e.target.value));
     checkFirstStep(whole1, parseInt(e.target.value), numerator1, numerator2, denominator1, denominator2);
   }
 
   const handleNumeratorChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, numerator1: parseInt(e.target.value) } }));
+    setNumerator1(parseInt(e.target.value));
     checkFirstStep(whole1, whole2, parseInt(e.target.value), numerator2, denominator1, denominator2);
   }
 
   const handleNumeratorChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, numerator2: parseInt(e.target.value) } }));
+    setNumerator2(parseInt(e.target.value));
     checkFirstStep(whole1, whole2, numerator1, parseInt(e.target.value), denominator1, denominator2);
   }
 
   const handleDenominatorChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, denominator1: parseInt(e.target.value) } }));
+    setDenominator1(parseInt(e.target.value));
     checkFirstStep(whole1, whole2, numerator1, numerator2, parseInt(e.target.value), denominator2);
   }
 
   const handleDenominatorChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, denominator2: parseInt(e.target.value) } }));
+    setDenominator2(parseInt(e.target.value));
     checkFirstStep(whole1, whole2, numerator1, numerator2, denominator1, parseInt(e.target.value));
   }
 
@@ -62,17 +75,17 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   }
 
   const handleWholeChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, whole3: parseInt(e.target.value) } }));
+    setWhole3(parseInt(e.target.value));
     checkSecondStep(parseInt(e.target.value), numerator3, denominator3);
   }
 
   const handleNumeratorChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, numerator3: parseInt(e.target.value) } }));
+    setNumerator3(parseInt(e.target.value));
     checkSecondStep(whole3, parseInt(e.target.value), denominator3);
   }
 
   const handleDenominatorChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, denominator3: parseInt(e.target.value) } }));
+    setDenominator3(parseInt(e.target.value));
     checkSecondStep(whole3, numerator3, parseInt(e.target.value));
   }
 

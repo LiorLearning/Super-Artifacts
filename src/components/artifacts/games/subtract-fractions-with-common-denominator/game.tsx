@@ -5,7 +5,7 @@ import Screen2 from './Screen2';
 import { useGameState } from './state-utils';
 import { Card } from '@/components/ui/card'; // Add Card import
 import { useEffect, useState } from 'react';
-
+import { GameScreen } from './game-state';
 
 interface EquationProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -14,13 +14,9 @@ interface EquationProps {
 export default function DifferentNumeratorDenominator({ sendAdminMessage }: EquationProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
 
-  const handleNext = (nextFrame: number) => {
+  const handleNext = (nextFrame: GameScreen) => {
     setGameStateRef({ currentFrame: nextFrame });
   };
-
-  useEffect(() => {
-    console.log('Current Frame:', gameStateRef.current.currentFrame);
-  }, [gameStateRef.current.currentFrame]);
 
   switch (gameStateRef.current.currentFrame) {
     case 1:
