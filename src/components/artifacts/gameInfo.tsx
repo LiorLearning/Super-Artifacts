@@ -48,12 +48,11 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: CommonDenominatorGameState,
     provider: CommonDenominatorGameStateProvider
   },
-  // 'subtract-fractions-with-common-denominator': {
-  //   game: FractionSubtractionGame,
-  //   desc: FractionSubtractionGameDesc,
-  //   state: FractionSubtractionGameState,
-  //   provider: FractionSubtractionGameStateProvider
-  // },
+  'subtract-fractions-with-common-denominator': {
+    game: FractionSubtractionGame,
+    useState: FractionSubtractionGameState,
+    provider: FractionSubtractionGameStateProvider
+  },
   'add-fractions-with-common-denominator': {
     game: FractionAdditionGame,
     useState: FractionAdditionGameState,

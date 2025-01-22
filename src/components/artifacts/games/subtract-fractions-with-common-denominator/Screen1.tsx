@@ -4,7 +4,7 @@ import { useGameState } from './state-utils'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { FractionDisplay } from './components/FractionDisplay'
-import {  useEffect } from 'react'
+import {  useEffect, useState } from 'react'
 import { send } from 'node:process'
 import { stringify } from 'node:querystring'
 import { useSoundEffects } from './sounds'
@@ -16,92 +16,69 @@ interface FractionSubtractionProps {
 
 export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtractionProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { 
-    currentStep,
-    selectedPieces,
-    droppedPieces,
-    answer,
-    firstAnswer,
-    secondAnswer,
-    barValueStep,
-    barValue
-  } = gameStateRef.current.screen1State;
+  const { currentStep } = gameStateRef.current.screen1State;
+
+  const [selectedPieces, setSelectedPieces] = useState<number>(0);
+  const [droppedPieces, setDroppedPieces] = useState<Array<{ x: number, y: number, originalIndex: number }>>([]);
+  const [answer, setAnswer] = useState<{ numerator: string, denominator: string }>({ numerator: '', denominator: '' });
+  const [firstAnswer, setFirstAnswer] = useState<string | null>(null);
+  const [secondAnswer, setSecondAnswer] = useState<string | null>(null);
+  const [barValueStep, setBarValueStep] = useState<boolean>(false);
+  const [barValue, setBarValue] = useState<{ numerator: number, denominator: number }>({ numerator: 0, denominator: 1 });
 
   const { fraction1, fraction2 } = gameStateRef.current.questions.question1;
   const soundEffects = useSoundEffects();
 
-  useEffect(() => {
-    sendAdminMessage('agent', `Here's a chocolate for you! Try selecting pieces to get ${fraction1.numerator}/${fraction1.denominator}th of the chocolate.`);
+  const setCurrentStep = (step: number) => {
     setGameStateRef(prev => ({
       ...prev,
       screen1State: {
         ...prev.screen1State,
-        barValue:{
-          numerator: fraction1.numerator,
-          denominator: fraction1.denominator
-        }
+        currentStep: step
       }
     }));
+  }
+
+  useEffect(() => {
+    sendAdminMessage('agent', `Here's a chocolate for you! Try selecting pieces to get ${fraction1.numerator}/${fraction1.denominator}th of the chocolate.`);
+
+    setBarValue({
+      numerator: fraction1.numerator,
+      denominator: fraction1.denominator
+    });
   }, []);
 
   const handlePieceClick = (index: number) => {
     if (currentStep === 1) {
       soundEffects.drop.play();
-      setGameStateRef(prev => ({
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          selectedPieces: index < selectedPieces ? index + 1 : index + 1
-        }
-      }));
+
+      setSelectedPieces(index < selectedPieces ? index + 1 : index + 1);
     }
   }
 
   const handleProceed = () => {
     if (currentStep === 1 && selectedPieces === fraction1.numerator) {
       sendAdminMessage('agent', `How about we share ${fraction2.numerator}/${fraction2.denominator}th with a friend? Try picking and dropping pieces to do that!`);
-      setGameStateRef(prev => ({
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          currentStep: 2
-        }
-      }));
+      setCurrentStep(2);
     } else if (currentStep === 2) {
       if (barValueStep) {
         sendAdminMessage('agent', 'Awesome, here are some fun questions for you to reflect on!');
-        setGameStateRef(prev => ({
-          ...prev,
-          screen1State: {
-            ...prev.screen1State,
-            currentStep: 3,
-            barValueStep: false
-          }
-        }));
+
+        setBarValueStep(false);
+        setCurrentStep(3);
       } else if (droppedPieces.length === fraction2.numerator) {
         sendAdminMessage('agent', "Great! What fraction of the bar are we left with?");
-        setGameStateRef(prev => ({
-          ...prev,
-          screen1State: {
-            ...prev.screen1State,
-            barValueStep: true,
-            barValue: {
-              numerator: 0,
-              denominator: 0
-            }
-          }
-        }));
+        setBarValue({
+          numerator: 0,
+          denominator: 0
+        });
+        setBarValueStep(true);
+
       }
     } else if (currentStep === 3 &&
       answer.numerator === String(fraction1.numerator - fraction2.numerator) &&
       answer.denominator === String(fraction1.denominator)) {
-      setGameStateRef(prev => ({ 
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          currentStep: 4
-        }
-      }));
+      setCurrentStep(4);
     }
   }
 
@@ -122,13 +99,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
 
       soundEffects.drop.play();
 
-      setGameStateRef(prev => ({
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          droppedPieces: [...prev.screen1State.droppedPieces, { x, y, originalIndex: draggedIndex }]
-        }
-      }));
+      setDroppedPieces(prev => [...prev, { x, y, originalIndex: draggedIndex }]);
     }
   }
 
@@ -152,43 +123,19 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
     if (question === 'first' && answerValue === 'same') {
       soundEffects.correct.play();
       sendAdminMessage('agent', 'Correct! what about the numerator?');
-      setGameStateRef(prev => ({
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          firstAnswer: answerValue
-        }
-      }));
+      setFirstAnswer(answerValue);
     } else if (question === 'first' && answerValue !== 'same') {
       soundEffects.wrong.play();
       sendAdminMessage('agent', 'Ah, not quite. What do you think the denominator was before and after subtraction?')
-      setGameStateRef(prev => ({
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          firstAnswer: 'incorrect'
-        }
-      }));
+      setFirstAnswer('incorrect');
     } else if (question === 'second' && answerValue === 'subtracted') {
       soundEffects.correct.play();
       sendAdminMessage('agent', 'Correct!');
-      setGameStateRef(prev => ({
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          secondAnswer: answerValue
-        }
-      }));
+      setSecondAnswer(answerValue);
     } else if (question === 'second' && answerValue !== 'subtracted') {
       soundEffects.wrong.play();
       sendAdminMessage('agent', 'Ah, not quite. What do you think the numerator was before and after subtraction?')
-      setGameStateRef(prev => ({
-        ...prev,
-        screen1State: {
-          ...prev.screen1State,
-          secondAnswer: 'incorrect'
-        }
-      }));
+      setSecondAnswer('incorrect');
     }
   }
 
@@ -200,13 +147,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
     e.preventDefault();
     const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'));
     
-    setGameStateRef(prev => ({
-      ...prev,
-      screen1State: {
-        ...prev.screen1State,
-        droppedPieces: prev.screen1State.droppedPieces.filter(piece => piece.originalIndex !== draggedIndex)
-      }
-    }));
+    setDroppedPieces(prev => prev.filter(piece => piece.originalIndex !== draggedIndex));
     
     soundEffects.drop.play();
   }
@@ -219,13 +160,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
         <div className="flex w-full gap-2">
           {currentStep > 1 && (
             <Button
-              onClick={() => setGameStateRef(prev => ({
-                ...prev,
-                screen1State: {
-                  ...prev.screen1State,
-                  currentStep: currentStep - 1
-                }
-              }))}
+              onClick={() => setCurrentStep(currentStep - 1)}
               disabled={currentStep === 1}
               className="bg-[#FF497C] text-white px-4 py-2 text-sm font-bold border-2 border-black hover:bg-[#FF497C]/90"
             >
@@ -234,13 +169,7 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
           )}
           {currentStep < 4 && (
             <Button
-              onClick={() => setGameStateRef(prev => ({
-                ...prev,
-                screen1State: {
-                  ...prev.screen1State,
-                  currentStep: currentStep + 1
-                }
-              }))}
+              onClick={() => setCurrentStep(currentStep + 1)}
               className="bg-[#FF497C] text-white px-4 py-2 text-sm font-bold border-2 border-black hover:bg-[#FF497C]/90"
               disabled={
                 (currentStep === 1 && selectedPieces !== fraction1.numerator) ||
@@ -336,15 +265,9 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                         placeholder={"?"}
                         onChange={(e) => {
                           const value = parseInt(e.target.value);
-                          setGameStateRef(prev => ({
+                          setBarValue(prev => ({
                             ...prev,
-                            screen1State: {
-                              ...prev.screen1State,
-                              barValue: {
-                                ...prev.screen1State.barValue,
-                                numerator: isNaN(value) ? 0 : value
-                              }
-                            }
+                            numerator: isNaN(value) ? 0 : value
                           }));
                         }}
                         className={`w-12 h-12 text-2xl font-bold text-center border-2 ${!barValueStep ? 'bg-transparent outline-none border-transparent' : 'border-black bg-slate-200'}`}
@@ -358,15 +281,9 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                         placeholder={"?"}
                         onChange={(e) => {
                           const value = parseInt(e.target.value);
-                          setGameStateRef(prev => ({
+                          setBarValue(prev => ({
                             ...prev,
-                            screen1State: {
-                              ...prev.screen1State,
-                              barValue: {
-                                ...prev.screen1State.barValue,
-                                denominator: isNaN(value) ? 0 : value
-                              }
-                            }
+                            denominator: isNaN(value) ? 0 : value
                           }));
                         }}
                         className={`w-12 h-12 text-2xl font-bold text-center border-2 ${!barValueStep ? 'bg-transparent outline-none border-transparent' : 'border-black bg-slate-200'}`}
@@ -399,15 +316,9 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                           type="text"
                           placeholder='?'
                           value={answer.numerator}
-                          onChange={(e) => setGameStateRef(prev => ({
+                          onChange={(e) => setAnswer(prev => ({
                             ...prev,
-                            screen1State: {
-                              ...prev.screen1State,
-                              answer: {
-                                ...prev.screen1State.answer,
-                                numerator: e.target.value
-                              }
-                            }
+                            numerator: e.target.value
                           }))}
                           className="w-10 h-8 text-center rounded outline-none bg-slate-200"
                         />
@@ -418,15 +329,9 @@ export default function Screen1({ sendAdminMessage, onProceed }: FractionSubtrac
                           type="text"
                           placeholder='?'
                           value={answer.denominator}
-                          onChange={(e) => setGameStateRef(prev => ({
+                          onChange={(e) => setAnswer(prev => ({
                             ...prev,
-                            screen1State: {
-                              ...prev.screen1State,
-                              answer: {
-                                ...prev.screen1State.answer,
-                                denominator: e.target.value
-                              }
-                            }
+                            denominator: e.target.value
                           }))}
                           className="w-10 h-8 text-center rounded outline-none bg-slate-200"
                         />
