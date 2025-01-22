@@ -52,7 +52,7 @@ export const GameStateProvider: React.FC<{
   
 
   const getDescription = () => {
-    const description = descriptions.find(d => d.title === gameStateRef.current.currentFrame)?.description;
+    const description = descriptions.find(d => d.title === gameStateRef.current.screen)?.description;
     return description || '';
   }
 

@@ -48,7 +48,7 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
           lcd={lcd} 
           ecd={ecd} 
           onSuccess={() => {
-            goToStep('fourth', setGameStateRef, 1)
+            goToStep(4, setGameStateRef, 1)
             sendAdminMessage('agent', 
               `Great, ${ecd} here is the easiest common denominator. Why? Because you get ${ecd} ` + 
               `by simply multiplying your denominators ${fraction1.denominator} and ${fraction2.denominator}.`
@@ -68,9 +68,9 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
             question="How did we find the common denominator?" 
             options={["Multiply denominators directly to get ECD", "Find the LCD and then multiply by the ECD", "Both of the above"]} 
             correctAnswer={2}
-            onSuccess={() => goToStep('fourth', setGameStateRef, 2)}
+            onSuccess={() => goToStep(4, setGameStateRef, 2)}
           />
-          {step >= 2 && <ProceedButton onClick={() => goToScreen('fifth', setGameStateRef)} />} 
+          {step >= 2 && <ProceedButton onClick={() => goToScreen(5, setGameStateRef)} />} 
         </>
       
       }

@@ -34,12 +34,12 @@ export default function Game({sendAdminMessage}: GameProps) {
     <div className="mx-auto game font-jersey">
       <DevHelper />
       {/* Game screens */}
-      {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'fourth' && <FourthScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'fifth' && <FifthScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'sixth' && <SixthScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 1 && <FirstScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 2 && <SecondScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 3 && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 4 && <FourthScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 5 && <FifthScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 6 && <SixthScreen sendAdminMessage={sendAdminMessage} />}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');
         .font-jersey {

@@ -166,7 +166,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
           <Proceed
             onComplete={() => setGameStateRef(prev => ({
               ...prev,
-              screen: "second"
+              screen: 2
             }))}
           />
         )}

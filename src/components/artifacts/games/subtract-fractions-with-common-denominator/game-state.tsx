@@ -1,4 +1,4 @@
-export type GameScreen = 1 | 2 | 3;
+export type GameScreen = 1 | 2;
 
 interface Description {
   title: GameScreen;
@@ -16,11 +16,6 @@ export const descriptions: Description[] = [
     title: 2,
     oneliner: 'Understand core principles of fraction subtraction',
     description: 'Building on the visual foundation from Screen 1, this screen focuses on understanding the key principles of fraction subtraction with common denominators. Students work with a new problem (4/5 - 3/5) through a structured series of reflection questions. The screen is divided into three main steps: First, students answer questions about how denominators behave during subtraction, learning that they remain unchanged. Next, they explore how numerators are affected, discovering that they get subtracted. Finally, they apply this knowledge to solve the fraction subtraction problem. Each step provides immediate feedback with sound effects and visual cues, and students cannot proceed until they demonstrate understanding. The screen uses multiple-choice questions and clear visual feedback to help students discover and internalize the rules of fraction subtraction with common denominators.'
-  },
-  {
-    title: 3,
-    oneliner: '',
-    description: ''
   }
 ]
 
@@ -30,61 +25,45 @@ interface Fraction {
 }
 
 interface Screen1State {
-  currentStep: number;
+  step: number;
+  fraction1: Fraction;
+  fraction2: Fraction;
 }
 
 interface Screen2State {
-  currentStep: number;
+  step: number;
+  fraction1: Fraction;
+  fraction2: Fraction;
 }
 
-interface SharedState {
-  currentFrame: GameScreen;
-  questions: {
-    question1: {
-      fraction1: Fraction;
-      fraction2: Fraction;
-    }
-    question2: {
-      fraction1: Fraction;
-      fraction2: Fraction;
-    }
-  }
-}
-
-export interface GameState extends SharedState {
-  screen1State: Screen1State;
-  screen2State: Screen2State;
+export interface GameState {
+  screen: GameScreen;
+  state1: Screen1State;
+  state2: Screen2State;
 }
 
 export const initialGameState: GameState = {
-  currentFrame: 1,
-  questions: {
-    question1: {
-      fraction1: {
-        numerator: 7,
-        denominator: 8
-      },
-      fraction2: {
-        numerator: 1,
-        denominator: 8
-      }
+  screen: 1,
+  state1: {
+    step: 1,
+    fraction1: {
+      numerator: 7,
+      denominator: 8
     },
-    question2: {
-      fraction1: {
-        numerator: 4,
-        denominator: 5
-      },
-      fraction2: {
-        numerator: 3,
-        denominator: 5
-      }
+    fraction2: {
+      numerator: 1,
+      denominator: 8
     }
   },
-  screen1State: {
-    currentStep: 1,
-  },
-
-  screen2State: {
-    currentStep: 1,
+  state2: {
+    step: 1,
+    fraction1: {
+      numerator: 4,
+      denominator: 5
+    },
+    fraction2: {
+      numerator: 3,
+      denominator: 5
+    }
   }
 }

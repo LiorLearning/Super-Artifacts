@@ -98,13 +98,13 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
           multiplier={multiplier} 
           setMultiplier={setMultiplier} 
           onCorrect={() => {
-            goToStep('third', setGameStateRef, 1)
+            goToStep(3, setGameStateRef, 1)
             sendAdminMessage('agent', "Great job, let's move to step 2")
           }}
         />
       )}
       {step === 1 && <ProceedButton onClick={() => {
-        goToStep('third', setGameStateRef, 2)
+        goToStep(3, setGameStateRef, 2)
         setMultiplier(1)
       }} />}
       {step > 1 && (
@@ -114,14 +114,14 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
           multiplier={multiplier} 
           setMultiplier={setMultiplier} 
           onCorrect={() => {
-            goToStep('third', setGameStateRef, 3)
+            goToStep(3, setGameStateRef, 3)
             sendAdminMessage('agent', "Great job, let's move to step 3")
           }}
           hard={true}
         />
       )}
       {step > 2 && <ProceedButton onClick={() => {
-        goToStep('third', setGameStateRef, 4)
+        goToStep(3, setGameStateRef, 4)
         setMultiplier(1)
         sendAdminMessage('agent', 
           `Here is a summary of all different denominators we got. ` +
@@ -143,7 +143,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
             fraction2={fraction2} 
             gcd={gcd} 
             onSuccess={() => {
-              goToStep('third', setGameStateRef, 5)
+              goToStep(3, setGameStateRef, 5)
               sendAdminMessage('agent', "Great, let's try another one!")
             }} 
             onSelectKnife={(multiplier) => setMultiplier(multiplier)}
@@ -159,9 +159,9 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
               "Split each chocolate until the denominators matched.", 
               "Picked the greater of the two denominators.",
             ] as const} correctAnswer={0} 
-            onSuccess={() => goToStep('third', setGameStateRef, 6)}
+            onSuccess={() => goToStep(3, setGameStateRef, 6)}
           />
-          {step >= 6 && <ProceedButton onClick={() => goToScreen('fourth', setGameStateRef)} />} 
+          {step >= 6 && <ProceedButton onClick={() => goToScreen(4, setGameStateRef)} />} 
         </>
       }
     </div>

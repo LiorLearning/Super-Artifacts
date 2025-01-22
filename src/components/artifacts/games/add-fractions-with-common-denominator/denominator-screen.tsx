@@ -11,8 +11,7 @@ interface DenominatorScreenProps {
 export function DenominatorScreen({ sendAdminMessage }: DenominatorScreenProps) {
   const { gameStateRef } = useGameState()
   const gameState = gameStateRef.current
-  const { question2 } = gameState
-  const { fraction1, fraction2 } = question2
+  const { fraction1, fraction2 } = gameState.state2
 
   const [ denominatorOption, setDenominatorOption ] = useState(-1)
   const [ numeratorOption, setNumeratorOption ] = useState(-1)

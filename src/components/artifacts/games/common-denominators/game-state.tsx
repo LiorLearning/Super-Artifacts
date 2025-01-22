@@ -1,4 +1,4 @@
-export type GameScreen = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth';
+export type GameScreen = 1 | 2 | 3 | 4 | 5 | 6;
 
 interface Description {
   title: GameScreen;
@@ -8,32 +8,32 @@ interface Description {
 
 export const descriptions: Description[] = [
   {
-    title: 'first',
+    title: 1,
     oneliner: 'Slice bars to create fractions and find common denominators.',
     description: 'Each fraction is represented by a chocolate bar that you slice into smaller, equal pieces using the knife button (featuring a multiplier like 2 or 3), which increases both the denominator and numerator. After slicing, enter the new fraction (for example, turning 1/2 into 2/4) to confirm your answer and proceed. Complete this process for the first chocolate bar, repeat it for the second, and then move to the next screen once both fractions are correct. This illustrates how multiplying both numerator and denominator by a single number produces an equivalent fraction that reflects an identical amount of chocolate. The objective is to master creating equivalent fractions by slicing chocolate bars, and you win when you correctly slice and enter the fractions for both bars, then advance to the next screen. Each fraction is represented by a chocolate bar that you slice into smaller, equal pieces using the knife button (with a multiplier like 2 or 3), which increasˀˀes both the denominator and numerator; after slicing, enter the new fraction (for example, turning 1/2 into 2/4) to confirm your answer and proceed. Completing this process for both chocolate bars illustrates how multiplying numerator and denominator by the same number yields an equivalent fraction reflecting the same amount of chocolate.'
   },
   {
-    title: 'second',
+    title: 2,
     oneliner: 'Select the chocolate bars with same denominator.',
     description: 'The game will now show the user the equivalent fractions for the two fractions. The user will have to select the chocolate bars with the same denominator from the given list of options for both fractions.'
   },
   {
-    title: 'third',
+    title: 3,
     oneliner: 'Find the Greatest Common Divisor (GCD) of the two denominators.',
     description: 'This game will now show user how to find the Greatest Common Divisor (GCD) of the two denominators. First user will have to find the multiples of the numerator and denominators to understand that breaking the chocolate bars will not change the fraction. Then user will have to find the common multiples of the two denominators and find the greatest common multiple. This will be the Greatest Common Divisor (GCD) of the two denominators. User can use the knife tool to split the chocolate bars into equal pieces to find the GCD.'
   },
   {
-    title: 'fourth',
+    title: 4,
     oneliner: 'Find the Least Common Denominator (LCD) and Easiest Common Denominator (ECD) of the two denominators.',
     description: 'This game will show user the multiples of the two denominators and then find the least common multiple of the two denominators. This will be the Least Common Denominator (LCD) of the two denominators. Then user will have to find the easiest common denominator of the two denominators. This will be the Easiest Common Denominator (ECD) of the two denominators. User can use the knife tool to split the chocolate bars into equal pieces to find the LCD and ECD.'
   },
   {
-    title: 'fifth',
+    title: 5,
     oneliner: 'Find ECD, LCD without help',
     description: 'User will have to write the multiples of the two denominators and then find the least common multiple of the two denominators. This will be the Least Common Denominator (LCD) of the two denominators. Then user will have to find the easiest common denominator of the two denominators. This will be the Easiest Common Denominator (ECD) of the two denominators.'
   },
   {
-    title: 'sixth',
+    title: 6,
     oneliner: 'Find ECD, LCD without help (hard)',
     description: 'User will have to write the multiples of the two denominators and then find the least common multiple of the two denominators. This will be the Least Common Denominator (LCD) of the two denominators. Then user will have to find the easiest common denominator of the two denominators. This will be the Easiest Common Denominator (ECD) of the two denominators.'
   }
@@ -106,7 +106,7 @@ export interface GameState {
 // Easiest Common Denominator (ecd) = denom1 * denom2
 
 export const initialGameState: GameState = {
-  screen: 'first',
+  screen: 1,
   state1: {
     // Defines the game screen 1
     fraction1: { numerator: '1', denominator: '4' },

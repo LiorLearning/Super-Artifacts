@@ -14,7 +14,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
   const [ started, setStarted ] = useState(false)
 
   const handleProceed = () => {
-    setGameStateRef({ screen: 'denominator' })
+    setGameStateRef({ screen: 2 })
   }
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function Game({ sendAdminMessage }: GameProps) {
 
   return (
     <div>
-      {gameStateRef.current.screen === 'chocolate' ? (
+      {gameStateRef.current.screen === 1 ? (
         <ChocolateBarScreen onProceed={handleProceed} sendAdminMessage={sendAdminMessage} />
       ) : (
         <DenominatorScreen sendAdminMessage={sendAdminMessage} />
