@@ -8,7 +8,7 @@ import EquivalentFractionsGame from './games/equivalent-fractions/game';
 import MixedFractionGame from './games/add-and-subtract-mixed-numbers-without-regouping/game';
 import LegoGame from './games/writing-improper-fractions-as-mixed-numbers/game';
 import CommonDenominatorGame from './games/common-denominators/game';
-import CompareFractionGame from './games/compare-fraction-with-the-different-numerator-and-denominator/game';
+import CompareFractionGame from './games/compare-fractions-with-different-numerator-and-denominator/game';
 
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/add-fractions-with-common-denominator/state-utils'
@@ -19,7 +19,7 @@ import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState
 import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/writing-improper-fractions-as-mixed-numbers/state-utils'
 import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState as CommonDenominatorGameState } from './games/common-denominators/state-utils'
 import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/add-and-subtract-mixed-numbers-without-regouping/state-utils'
-import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fraction-with-the-different-numerator-and-denominator/state-utils'
+import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fractions-with-different-numerator-and-denominator/state-utils'
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
