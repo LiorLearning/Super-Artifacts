@@ -6,7 +6,7 @@ interface HeaderProps {
     title: any;
     level: string;
     leftBox: string;
-    rightBox: string;
+    rightBox: any;
 }
 const Header: React.FC<HeaderProps> = ({ title, level, leftBox, rightBox }) => {
   return (
@@ -22,9 +22,11 @@ const Header: React.FC<HeaderProps> = ({ title, level, leftBox, rightBox }) => {
       </div>
 
       <div className='flex justify-center w-full items-center gap-4'>
-        <div className="flex items-center gap-4">
-          <RedBox2>{leftBox}</RedBox2>
-          <p className='text-xl bg-[#FF497C] font-bold text-white px-4 py-5 h-full flex items-center'>
+        <div className="flex h-full items-center gap-4">
+          <div className="h-20">
+            <RedBox2>{leftBox}</RedBox2>
+          </div>
+          <p className='text-xl bg-[#FF497C] font-bold text-white px-4 py-5 h-20 flex items-center'>
             {rightBox}
           </p>
         </div>

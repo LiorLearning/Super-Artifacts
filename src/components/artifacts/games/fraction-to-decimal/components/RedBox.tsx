@@ -8,8 +8,8 @@ interface RedBoxProps {
 
 const RedBox2: React.FC<RedBoxProps> = ({ children, className='' }) => {
   return (
-    <div className={cn('h-full bg-[#FF497C] p-2 inline-flex flex-col items-center', className)}>
-      <div className='bg-white text-[#FF497C] text-xl p-3 font-medium inline-flex flex-col items-center'>
+    <div className={cn('h-full bg-[#FF497C] flex mx-auto p-2 flex-col justify-center items-center', className)}>
+      <div className='bg-white text-[#FF497C] text-xl w-full h-full p-3 font-medium inline-flex flex justify-center items-center'>
         {children}
       </div>
     </div>

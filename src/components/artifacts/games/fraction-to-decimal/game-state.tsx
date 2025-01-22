@@ -46,7 +46,12 @@ interface Question {
     numerator: number;
     denominator: number;
   }
-  question6 : {
+  question6 : number
+  question7 : {
+    numerator: number;
+    denominator: number;
+  }
+  question8 : {
     numerator: number;
     denominator: number;
   }
@@ -63,7 +68,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  screen: 'zero',
+  screen: 'fifth',
   question: {
     question1: {
       numerator: 2,
@@ -78,16 +83,21 @@ export const initialGameState: GameState = {
       denominator: 100,
     },
     question4: {
-      numerator: 23,
+      numerator: 21,
       denominator: 100,
     },
     question5: {
-      numerator: 17,
+      numerator: 217,
       denominator: 100,
     },
-    question6: {
-      numerator: 21,
+    question6: 1.7,
+    question7: {
+      numerator: 17,
       denominator: 10,
+    },
+    question8: {
+      numerator: 21,
+      denominator: 100,
     }
   },
   state1: {

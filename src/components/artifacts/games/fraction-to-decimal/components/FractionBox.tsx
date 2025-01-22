@@ -8,13 +8,17 @@ interface FractionBoxProps {
     numerator: (value: string) => void;
     denominator: (value: string) => void;
   };
+  correctnumerator?: string;
+  correctdenominator?: string;
 }
 
 const FractionBox = ({ 
   numerator = '', 
   denominator = '', 
   className = '',
-  onChange 
+  onChange,
+  correctnumerator,
+  correctdenominator
 }: FractionBoxProps) => {
   return (
     <div className={`flex flex-col ${className}`}>
@@ -25,16 +29,18 @@ const FractionBox = ({
         <div className="flex flex-col items-center gap-1">
           <input
             type="text"
-            value={numerator}
+            value={numerator === '0' ? '' : numerator}
             onChange={(e) => onChange?.numerator(e.target.value)}
-            className="w-12 h-12 border-2 border-purple-400 flex items-center justify-center text-2xl rounded-lg text-center"
+            placeholder="0"
+            className={`w-12 h-12 border-2 border-purple-400 flex items-center justify-center text-2xl rounded-lg text-center ${correctnumerator === numerator ? 'bg-green-500' : ( numerator !== '' && numerator.length > 0 ? 'bg-red-500' : 'bg-white')}`}
           />
           <div className="w-12 border-t-2 border-black"></div>
           <input
             type="text"
-            value={denominator}
+            value={denominator === '0' ? '' : denominator}
             onChange={(e) => onChange?.denominator(e.target.value)}
-            className="w-12 h-12 border-2 border-purple-400 flex items-center justify-center text-2xl rounded-lg text-center"
+            placeholder="0"
+            className={`w-12 h-12 border-2 border-purple-400 flex items-center justify-center text-2xl rounded-lg text-center ${correctdenominator === denominator ? 'bg-green-500' : ( denominator !== '' && denominator.length > 0 ? 'bg-red-500' : 'bg-white')}`}
           />
         </div>
       </div>
