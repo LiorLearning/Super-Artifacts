@@ -7,6 +7,7 @@ import RedBox from '../components/RedBox';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/custom_ui/button';
 import Proceed from '../components/proceed';
+import Image from 'next/image';
 
 export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -61,7 +62,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
     <div className='flex flex-col items-center justify-center h-full w-full'>
       <Header
         title={
-          <span className='text-xl flex justify-center items-center font-bold'> 
+          <span className='text-2xl flex justify-center items-center font-bold'> 
             Convert 
             <Fraction numerator={question1.numerator} denominator={question1.denominator} className='text-xl bg-white text-black mx-2 px-2 h-full' /> 
             to a decimal
@@ -78,7 +79,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
         }
       />
 
-      <div className='flex flex-col items-center w-screen-md justify-center gap-4 mt-8'>
+      <div className='flex flex-col items-center max-w-screen-md w-full justify-center gap-4 mt-8'>
         <div className="flex relative w-full items-center gap-8">
           <Bar
             numerator={selectedPieces}
@@ -140,7 +141,13 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
                 <span className="text-4xl relative mb-6 flex flex-col justify-end h-full">
                   .
                   {step >= 4 && (
-                    <img src="/img/mark.svg" className="w-92 h-92 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <Image
+                      width={30}
+                      height={30}
+                      alt="mark"
+                      src="/img/mark.svg" 
+                      className=" absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" 
+                    />
                   )}
                 </span>
                 <div className="flex flex-col items-center">

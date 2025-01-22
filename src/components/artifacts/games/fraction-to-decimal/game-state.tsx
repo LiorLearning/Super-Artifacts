@@ -68,7 +68,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  screen: 'fifth',
+  screen: 'zero',
   question: {
     question1: {
       numerator: 2,
@@ -93,11 +93,11 @@ export const initialGameState: GameState = {
     question6: 1.7,
     question7: {
       numerator: 17,
-      denominator: 10,
+      denominator: 100,
     },
     question8: {
       numerator: 21,
-      denominator: 100,
+      denominator: 10,
     }
   },
   state1: {
