@@ -3,7 +3,7 @@ import Header from '../components/header';
 import { BaseProps } from '../utils/types';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import Proceed from '../components/proceed';
+import Proceed, { Proceed2 } from '../components/proceed';
 import RedBox from '../components/RedBox';
 import MultiplierFraction from '../components/multiplierFraction';
 import ComparisonFractions from '../components/ComparisonFractions';
@@ -74,15 +74,15 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
         <h2 className="text-2xl font-bold text-center mb-4">Before we begin, take a guess:</h2>
         
         <div className="flex justify-center gap-4">
-          <Proceed
+          <Proceed2
             text={`I bet ${fraction1.numerator}/${fraction1.denominator} is bigger`}
             onComplete={() => handleguess()}
           />
-          <Proceed
+          <Proceed2
             text={`I bet ${fraction2.numerator}/${fraction2.denominator} is bigger`}
             onComplete={() => handleguess()}
           />
-          <Proceed
+          <Proceed2
             text="Both are equal"
             onComplete={() => handleguess()}
           />
