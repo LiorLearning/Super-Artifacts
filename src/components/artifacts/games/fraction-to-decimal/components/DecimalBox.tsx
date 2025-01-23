@@ -20,8 +20,8 @@ const DecimalBox = ({
 }: DecimalBoxProps) => {
   return (
     <div className={`flex flex-col ${className} ${disabled ? 'opacity-50' : ''}`}>
-      <div className="text-center mb-2">
-        <span className="text-lg font-bold bg-[#FFE4B5] px-4 py-1">Decimal</span>
+      <div className="text-center mb-4">
+        <span className="text-xl font-bold mb-2 bg-[#FFE4B5] shadow-[-5px_5px_0_0_rgba(0,0,0,1)] px-4 py-1">Decimal</span>
       </div>
       <div className="border-2 border-black p-4 bg-white">
         <div className="flex items-center gap-2">

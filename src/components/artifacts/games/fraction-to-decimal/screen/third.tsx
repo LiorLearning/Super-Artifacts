@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useGameState } from '../state-utils';
 import Bar, { Bar2d } from '../components/bar';
 import Proceed from '../components/proceed';
@@ -7,6 +7,7 @@ import Header from '../components/header';
 import Fraction from '../components/Fraction';
 import KnifeSelector from '../components/knifeselector';
 import DecimalBox from '../components/DecimalBox';
+import { sounds } from '../utils/sound';
 
 interface ThirdScreenProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -18,15 +19,15 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
   const {numerator, denominator} = gameStateRef.current.question.question5
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col mb-10 h-full w-full">
       <Header 
         title={
           <>
             Convert 
-            <span className='bg-white px-2 py-1 rounded-md'>
+            <span className='bg-white px-2 text-lg py-1 rounded-md'>
               <Fraction numerator={numerator} denominator={denominator} />
             </span>
-            to a decimal
+            to decimal
           </>
         }
         level='Level 3'
@@ -56,6 +57,17 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
   const [chocolate, setChocolate] = useState<number>(1);
   const [wholechocolate, setWholechocolate] = useState<number>(0);
 
+  const [allowadd, setAllowadd] = useState<boolean>(false)
+
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage('agent', `Let's practice more challenging problems now. Try creating ${numerator}/${denominator} of a chocolate"`);
+      start.current = true;
+    }
+  }, []);
+
 
   const setStep = (value: number) => {
     setGameStateRef((prev) => ({
@@ -70,12 +82,28 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
   useEffect(() => {
     if (selectedKnife*chocolate === denominator) {
       setStep(1)
+      sendAdminMessage('agent', `Awesome, now select pieces to get ${numerator}/${denominator} of the chocolate. Feel free to use more than 1 chocolate`);
     }
   }, [selectedKnife])
 
   useEffect(() => {
     if (selectedPieces + wholechocolate * selectedKnife * chocolate === numerator) {
       setStep(2)
+    }
+  }, [selectedPieces])
+
+  const handleadd = () => {
+    setWholechocolate(prev => prev + 1)
+    setAllowadd(false)
+    setSelectedPieces(0)
+    sounds.break()
+  }
+
+  useEffect(() => {
+    if (wholechocolate * selectedKnife + selectedPieces < numerator && selectedPieces === 100) {
+      setAllowadd(true)
+    } else {
+      setAllowadd(false)
     }
   }, [selectedPieces])
 
@@ -104,6 +132,7 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
               denominator={selectedKnife * chocolate}
               handlePieceClick={(index) => {
                 setSelectedPieces(index)
+                sounds.join()  
               }}
               active={step < 2}
             />
@@ -118,11 +147,8 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
                 />
               :
                 <div 
-                  className={`m-2 bg-amber-800/50 rounded-md aspect-square flex font-extrabold text-5xl items-center justify-center hover:bg-amber-800/60 transition-all duration-100 ${wholechocolate === Math.floor(numerator / denominator) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                  onClick={() => {
-                    if (wholechocolate === Math.floor(numerator / denominator)) return
-                    setWholechocolate(wholechocolate + 1)
-                  }}
+                  className={`m-2 bg-amber-800/50 rounded-md aspect-square flex font-extrabold text-5xl items-center justify-center hover:bg-amber-800/60 transition-all duration-100 ${!allowadd ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  onClick={() => { if (allowadd) handleadd(); }}
                 >
                   +
                 </div>
@@ -139,7 +165,9 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
           </div>
         :
           <div className="flex justify-center text-2xl font-bold items-center gap-4">
-            <Fraction numerator={selectedPieces + wholechocolate * selectedKnife * chocolate} denominator={selectedKnife * chocolate} />
+            <span className='border-2 border-[#fa787f] px-2 py-1 rounded-md'>
+              <Fraction numerator={selectedPieces + wholechocolate * selectedKnife * chocolate} denominator={selectedKnife * chocolate} />
+            </span>
           </div>
         }
       </div>
@@ -157,11 +185,23 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
   const [tenths, setTenths] = useState<string>('')
   const [hundredths, setHundredths] = useState<string>('')
 
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage('agent', `Awesome, now that we've created ${numerator}/${denominator}, try entering it in decimal form`)
+      start.current = true;
+    }
+  }, []);
+
   useEffect(() => {
     if (parseInt(wholes) === Math.floor(numerator / denominator) && parseInt(tenths) === Math.floor((numerator % denominator) / 10) && parseInt(hundredths) === Math.floor((numerator % denominator) % 10)) {
       setGameStateRef((prev) => ({
         ...prev,
-        screen: 'fourth'
+        state3: {
+          ...prev.state3,
+          step: 3
+        }
       }))
     }
   }, [wholes, tenths, hundredths])
@@ -206,7 +246,9 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
                 maxLength={1}
               />
             </div>
-            <span className="text-4xl mb-6">.</span>
+            <span className="text-4xl mt-6">.</span>
+
+            
             <div className='flex flex-col items-center'>
               <span className="text-sm font-bold">Tenths</span>
               <input 
@@ -230,6 +272,17 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
           </div>
         </div>
       </div>
+      {
+        step === 3 && (
+            <Proceed 
+              onComplete={() => setGameStateRef((prev) => ({
+                ...prev,
+                screen: 'fourth'
+              }))}
+              text='onwards'
+            />
+        )
+      }
     </div>
   )
 }

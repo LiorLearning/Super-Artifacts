@@ -1,4 +1,4 @@
-import React,{ useEffect, useState } from 'react';
+import React,{ useEffect, useState, useRef } from 'react';
 import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import Fraction from '../components/Fraction';
@@ -22,6 +22,15 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
 
   const [disabled, setDisabled] = useState(true)
 
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage('agent', `his time, let's try converting a fraction to decimal without the visuals. Let me know if you need help!`);
+      start.current = true;
+    }
+  }, []);
+
   const handleProceed = () => {
       setGameStateRef(prev => ({
         ...prev,
@@ -31,6 +40,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
       setTenths('')
       setHundredths('')
       setDisabled(true)
+      sendAdminMessage('agent', `Great, let's try another one!`);
   }
 
   useEffect(() => {
@@ -64,6 +74,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
           ...prev,
           state5: { step: 3 }
         }));
+        sendAdminMessage('agent', `Awesome, you're now a master at converting fractions to decimals - great job!`);
       }
     }
   }, [tenths, hundredths, wholes, step])

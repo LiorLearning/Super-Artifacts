@@ -104,7 +104,7 @@ export const initialGameState: GameState = {
     step: 0,
   },
   state2: {
-    step: 0,
+    step: 1,
     showHint1: false,
     showHint2: false,
   },

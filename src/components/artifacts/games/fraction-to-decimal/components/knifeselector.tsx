@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
+import { sounds } from '../utils/sound';
 
 export default function KnifeSelector({options, selectedKnife, setSelectedKnife}: {options: number[], selectedKnife: number, setSelectedKnife: (value: number) => void}) {
   const [isOpen, setIsOpen] = useState(false)
@@ -18,11 +19,13 @@ export default function KnifeSelector({options, selectedKnife, setSelectedKnife}
   const handleSelect = (value: number) => {
     setSelectedKnife(value)
     setIsOpen(false)
+    sounds.break()
   }
 
   const handleReset = () => {
     setSelectedKnife(1)
     setIsOpen(false)
+    sounds.break()
   }
 
   return (

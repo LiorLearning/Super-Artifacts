@@ -4,7 +4,7 @@ import FirstScreen from './screen/first';
 import SecondScreen from './screen/second';
 import { useGameState } from './state-utils';
 import { DevHelper } from './utils/helper';
-import Zero from './screen/zero';
+import IntroScreen from './screen/zero';
 import ThirdScreen from './screen/third';
 import FourthScreen from './screen/fourth';
 import FifthScreen from './screen/fifth';
@@ -35,7 +35,7 @@ export default function Game({sendAdminMessage}: GameProps) {
     <div className="mx-auto game">
       <DevHelper />
       {/* Game screens */}
-      {screen === 'zero' && <Zero />}
+      {screen === 'zero' && <IntroScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGameState } from '../state-utils';
 import Bar, { Bar2d, VerticalBar } from '../components/bar';
 import Proceed from '../components/proceed';
@@ -7,6 +7,7 @@ import KnifeSelector from '../components/knifeselector';
 import Header from '../components/header';
 import DecimalBox from '../components/DecimalBox';
 import FractionBox from '../components/FractionBox';
+import { sounds } from '../utils/sound';
 
 interface FourthScreenProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -24,6 +25,17 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
 
   const [numerator, setNumerator] = useState<number>(0)
   const [denominator, setDenominator] = useState<number>(0)
+
+  const [allowadd, setAllowadd] = useState<boolean>(false)
+
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage('agent', `This time, let's convert a decimal to a fraction. Let's start by creating the decimal!`);
+      start.current = true;
+    }
+  }, []);
 
 
   const setStep = (value: number) => {
@@ -45,7 +57,11 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
 
 
   useEffect(() => {
-    console.log(Math.floor((wholechocolate*selectedKnife + selectedPieces) ), question6*selectedKnife)
+    if(wholechocolate + 1 < question6 && selectedPieces === selectedKnife * chocolate) {
+      setAllowadd(true)
+    } else {
+      setAllowadd(false)
+    } 
     if ( Math.floor((wholechocolate*selectedKnife + selectedPieces)) === question6*selectedKnife) {
       setStep(2)
     }
@@ -54,8 +70,12 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
   useEffect(() => {
     if (numerator === question6*selectedKnife && denominator === selectedKnife) {
       setStep(3)
+      sendAdminMessage('agent', `Great job, let's head to the final level!`);
+    } else if ( numerator >= 1 || denominator >= 1) {
+      sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
     }
   }, [numerator, denominator])
+
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -107,6 +127,8 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
                 denominator={selectedKnife * chocolate}
                 handlePieceClick={(index) => {  
                   setSelectedPieces(index)
+                  sounds.join()
+
                 }}
                 active={step > 0}
               />
@@ -121,11 +143,13 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
                   />
                 :
                   <div 
-                    className={`m-2 bg-amber-800/50 rounded-md aspect-square flex font-extrabold text-5xl items-center justify-center hover:bg-amber-800/60 transition-all duration-100 ${wholechocolate === Math.floor(question6) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    className={`m-2 bg-amber-800/50 rounded-md aspect-square flex font-extrabold text-5xl items-center justify-center hover:bg-amber-800/60 transition-all duration-100 ${!allowadd ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     onClick={() => {
-                      if (wholechocolate === Math.floor(question6)) return
+                      if (allowadd) {
                       setWholechocolate(wholechocolate + 1) 
-                    }}
+                      sounds.break()
+                      setSelectedPieces(0)
+                    }}}
                   >
                     +
                   </div>
@@ -194,6 +218,7 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
                   ...prev,
                   screen: 'fifth'
                 }))
+                sounds.levelUp();
               }}
               text="Onward"
             />

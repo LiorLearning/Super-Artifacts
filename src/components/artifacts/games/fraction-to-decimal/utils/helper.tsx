@@ -17,7 +17,7 @@ export const DevHelper = () => {
 
   const getCurrentStep = () => {
     switch(screen) {
-      case 'zero': return 0;
+      case 'zero': return 0
       case 'first': return step1;
       case 'second': return step2;
       case 'third': return step3;
@@ -48,6 +48,7 @@ export const DevHelper = () => {
             <SelectValue placeholder="Select a screen" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="zero">Intro Screen</SelectItem>
             <SelectItem value="first">First Screen</SelectItem>
             <SelectItem value="second">Second Screen</SelectItem>
             <SelectItem value="third">Third Screen</SelectItem>
