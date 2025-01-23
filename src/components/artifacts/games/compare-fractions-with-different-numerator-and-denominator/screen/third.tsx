@@ -4,7 +4,7 @@ import { BaseProps } from '../utils/types';
 import { useEffect, useRef, useState } from 'react';
 import RedBox from '../components/RedBox';
 import Fraction from '../components/Fraction';
-import { sounds } from '../../equivalent-fractions/utils/sounds'
+import { sounds } from '../utils/sound';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 interface Fraction {
