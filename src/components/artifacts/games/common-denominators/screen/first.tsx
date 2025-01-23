@@ -34,12 +34,12 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
       <KnifeGame fraction={fraction1} onCorrect={() => {
         sendAdminMessage('agent', "You're doing great! Each time we split the chocolate, we're creating fractions with different denominators, but the amount of chocolate stays the same.")
-        goToStep('first', setGameStateRef, 1)
+        goToStep(1, setGameStateRef, 1)
       }} showKnife={true} sendAdminMessage={sendAdminMessage} />
 
       {step >= 1 && 
         <ProceedButton onClick={() => {
-          goToStep('first', setGameStateRef, 2)
+          goToStep(1, setGameStateRef, 2)
           sendAdminMessage('agent', `Now it’s time to slice ${fraction2.numerator}/${fraction2.denominator}! Before you use the knife, take a shot at entering the fractions.`);
         }} />
       }
@@ -50,14 +50,14 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
             <StepModule color={COLORS.pink} stepNumber={2} stepText="Create Equivalent Fractions" />
           </div>
           <KnifeGame fraction={fraction2} onCorrect={() => {
-            goToStep('first', setGameStateRef, 3)
+            goToStep(1, setGameStateRef, 3)
           }} showKnife={false} sendAdminMessage={sendAdminMessage} />
         </>
       }
 
       {step >= 3 &&
         <ProceedButton onClick={() => {
-          goToScreen('second', setGameStateRef)
+          goToScreen(2, setGameStateRef)
         }} />
       }
     </div>

@@ -14,7 +14,7 @@ function Level0({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage('agent', "2 out of 3 pieces is the same as how many out of 9?");
+      sendAdminMessage('agent', `${question.numerator1} out of ${question.denominator1} pieces is the same as how many out of ${question.denominator2}?`);
       start.current = true;
     }
   }, []);

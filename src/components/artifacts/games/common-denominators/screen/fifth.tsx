@@ -26,18 +26,18 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
       
       {/* Step 1 - ECD Section */}
       <ECDSection fraction1={fraction1} fraction2={fraction2} showHelp={true} onSuccess={() => {
-        goToStep('fifth', setGameStateRef, 1)
+        goToStep(5, setGameStateRef, 1)
         sendAdminMessage('agent', "Awesome, now let's find the lowest common denominator!")
       }} />
       
       {/* Step 2 - LCD Section */}
       {step >= 1 &&
         // Incorrect response, response of the form: "Try again, what is "X times Y?"
-        <LCDSection fraction1={fraction1} fraction2={fraction2} showHelp={true} lcd={lcd} onSuccess={() => goToStep('fifth', setGameStateRef, 2)} />
+        <LCDSection fraction1={fraction1} fraction2={fraction2} showHelp={true} lcd={lcd} onSuccess={() => goToStep(5, setGameStateRef, 2)} />
       }
 
       {/* Proceed Button */}
-      {step >= 2 &&<ProceedButton onClick={() => goToScreen('sixth', setGameStateRef)} />}
+      {step >= 2 &&<ProceedButton onClick={() => goToScreen(6, setGameStateRef)} />}
     </div>
   );
 }

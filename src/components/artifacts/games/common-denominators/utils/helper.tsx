@@ -19,12 +19,12 @@ export const DevHelper = () => {
 
   const getCurrentStep = () => {
     switch(screen) {
-      case 'first': return step1;
-      case 'second': return step2;
-      case 'third': return step3;
-      case 'fourth': return step4;
-      case 'fifth': return step5;
-      case 'sixth': return step6;
+      case 1: return step1;
+      case 2: return step2;
+      case 3: return step3;
+      case 4: return step4;
+      case 5: return step5;
+      case 6: return step6;
       default: return 0;
     }
   }
@@ -41,9 +41,12 @@ export const DevHelper = () => {
       <Button className='m-2' onClick={() => prevStep(screen, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
         <Select 
-          value={screen} 
+          value={screen.toString()} 
           onValueChange={(selectedScreen) => {
-            setGameStateRef(prev => ({ ...prev, screen: selectedScreen as GameScreen }));
+            setGameStateRef(prev => ({ 
+              ...prev, 
+              screen: parseInt(selectedScreen) as GameScreen
+            }));
           }}
         >
           <SelectTrigger className="m-2">
@@ -84,17 +87,17 @@ export const nextStep = (
   screen: GameScreen, 
   setGameStateRef: (newState: (prevState: GameState) => GameState) => void
 ) => {
-  if (screen === 'first') {
+  if (screen === 1) {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
-  } else if (screen === 'second') {
+  } else if (screen === 2) {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
-  } else if (screen === 'third') {
+  } else if (screen === 3) {
     setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: prev.state3.step + 1 } }));
-  } else if (screen === 'fourth') {
+  } else if (screen === 4) {
     setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: prev.state4.step + 1 } }));
-  } else if (screen === 'fifth') {
+  } else if (screen === 5) {
     setGameStateRef(prev => ({ ...prev, state5: { ...prev.state5, step: prev.state5.step + 1 } }));
-  } else if (screen === 'sixth') {
+  } else if (screen === 6) {
     setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: prev.state6.step + 1 } }));
   }
 }
@@ -104,17 +107,17 @@ export const goToStep = (
   setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
   step: number
 ) => {
-  if (screen === 'first') {
+  if (screen === 1) {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: step } }));
-  } else if (screen === 'second') {
+  } else if (screen === 2) {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: step } }));
-  } else if (screen === 'third') {
+  } else if (screen === 3) {
     setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: step } }));
-  } else if (screen === 'fourth') {
+  } else if (screen === 4) {
     setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: step } }));
-  } else if (screen === 'fifth') {
+  } else if (screen === 5) {
     setGameStateRef(prev => ({ ...prev, state5: { ...prev.state5, step: step } }));
-  } else if (screen === 'sixth') {
+  } else if (screen === 6) {
     setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: step } }));
   }
 }
@@ -130,17 +133,17 @@ export const prevStep = (
   screen: GameScreen, 
   setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
 ) => {
-  if (screen === 'first') {
+  if (screen === 1) {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: Math.max(prev.state1.step - 1, 0) } }));
-  } else if (screen === 'second') {
+  } else if (screen === 2) {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: Math.max(prev.state2.step - 1, 0) } }));
-  } else if (screen === 'third') {
+  } else if (screen === 3) {
     setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: Math.max(prev.state3.step - 1, 0) } }));
-  } else if (screen === 'fourth') {
+  } else if (screen === 4) {
     setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: Math.max(prev.state4.step - 1, 0) } }));
-  } else if (screen === 'fifth') {
+  } else if (screen === 5) {
     setGameStateRef(prev => ({ ...prev, state5: { ...prev.state5, step: Math.max(prev.state5.step - 1, 0) } }));
-  } else if (screen === 'sixth') {
+  } else if (screen === 6) {
     setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: Math.max(prev.state6.step - 1, 0) } }));
   }
 }

@@ -43,7 +43,7 @@ export default function HoneySelector({options, selectedHoney, setSelectedHoney}
         </button>
         <button
           onClick={handleReset}
-          className="text-md bg-red-500 flex justify-center items-center outline-none border-none px-4 rounded hover:bg-red-400"
+          className="text-xl py-1 bg-red-500 flex justify-center items-center outline-none border-none px-4 rounded hover:bg-red-400"
           style={{opacity: selectedHoney ? 1 : 0.5}}
         >
           Reset
