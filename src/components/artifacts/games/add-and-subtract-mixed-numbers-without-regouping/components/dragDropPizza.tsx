@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PizzaSlices from './pizzaSlices';
 import { sounds } from '../utils/sounds';
 
@@ -20,12 +20,14 @@ interface DragDropPizzaProps {
     name: string;
   };
   onComplete: () => void;
+  sendAdminMessage: (role: string, content: string) => void;
 }
 
 const DragDropPizza: React.FC<DragDropPizzaProps> = ({
   fraction1,
   fraction2,
-  onComplete
+  onComplete,
+  sendAdminMessage
 }) => {
   // Track source pizzas
   const [sourcePizzas, setSourcePizzas] = useState({
@@ -126,6 +128,12 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
   const allowDrop = (e: React.DragEvent) => {
     e.preventDefault();
   };
+
+  useEffect(() => {
+    if (allPiecesDropped) {
+      sendAdminMessage("agent","Mamma mia, all the pizzas are served. Now just add the wholes separately and add the slices or fractions separately");
+    }
+  }, [allPiecesDropped]);
 
   const handleAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
