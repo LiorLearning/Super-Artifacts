@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Proceed from '../components/proceed';
 import Fraction from '../components/Fraction';
-import { sounds } from '../../equivalent-fractions/utils/sounds';
+import { sounds } from '../utils/sound';
 
 interface Fraction {
   numerator: number;
