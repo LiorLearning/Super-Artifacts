@@ -66,7 +66,7 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
           </div>
           <Question 
             question="How did we find the common denominator?" 
-            options={["Multiply denominators directly to get ECD", "Find the LCD and then multiply by the ECD", "Both of the above"]} 
+            options={["Multiply denominators directly to get ECD", "Find multiples of each number to get the LCD", "Both of the above"]} 
             correctAnswer={2}
             onSuccess={() => goToStep(4, setGameStateRef, 2)}
           />
