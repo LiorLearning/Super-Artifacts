@@ -1,15 +1,10 @@
 import { BaseProps } from "../utils/types";
 import { useGameState } from "../state-utils";
-import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/header";
-import Intro from "../components/intro";
 import Bar from "../components/bar";
-import { ArrowBigDown, ArrowDown } from "lucide-react";
 import Fraction from "../components/Fraction";
 import Proceed from "../components/proceed";
-import { Input } from "@/components/custom_ui/input";
-import { ChocolateBar } from "../../different-numerator-denominator/components/ChocolateBar";
 import KnifeSelector from "../components/knifeselector";
 import HoneySelector from "../components/honeyselctor";
 
@@ -18,26 +13,25 @@ import HoneySelector from "../components/honeyselctor";
 export default function Level2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {numerator1, denominator1, denominator2, denominator3 } = gameStateRef.current.screen2.question;  
-  const { step, selectedKnife, selectedPieces1, selectedPieces2, substep, selectedHoney } = gameStateRef.current.screen2;
+  const { step, substep } = gameStateRef.current.screen2;
   const [answer1, setAnswer1] = useState('');
+
+  const [selectedPieces1, setSelectedPieces1] = useState(0);
+  const [selectedPieces2, setSelectedPieces2] = useState(0);
+  const [selectedKnife, setSelectedKnife] = useState<number | null>(null);
+  const [selectedHoney, setSelectedHoney] = useState<number | null>(null);
 
   const start = useRef(false);
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage('agent', "Alright, let's try finding another equivalent fraction for 2/3​! This time, we need to divide the chocolate into 12 equal pieces.");
+      sendAdminMessage('agent', `Alright, let's try finding another equivalent fraction for ${numerator1}/${denominator1}! This time, we need to divide the chocolate into ${denominator2} equal pieces.`);
       start.current = true;
     }
   }, []);
 
   const handlePieceClick = (index: number) => {
-    setGameStateRef({
-      ...gameStateRef.current,
-      screen1: {
-        ...gameStateRef.current.screen1,
-        selectedPieces: index
-      }
-    });
+    setSelectedPieces1(index);
   };
 
   useEffect(() => {
@@ -67,10 +61,11 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
         ...prev,
         screen2: {
           ...prev.screen2,
-          substep: prev.screen2.substep + 1
+          substep: 3
         }
       }));
       console.log(selectedHoney, denominator1/selectedHoney, denominator3, substep)
+      sendAdminMessage('agent', `Sweet! You picked the perfect amount of honey. Let's select pieces to grab the same amount of chocolate`);
     }
   }, [selectedHoney]);
 
@@ -126,6 +121,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
               numerator={numerator1} 
               denominator={denominator1} 
               handlePieceClick={() => {}}
+              disabled={true}
             />
             <div className="absolute top-0 left-full text-center text-2xl font-bold ml-6">
               <Fraction numerator={!numerator1 ? '?' : numerator1} denominator={denominator1} className="text-3xl bg-white p-2 h-full flex items-center" />
@@ -138,14 +134,9 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
               numerator={selectedPieces1} 
               denominator={selectedKnife ? selectedKnife*denominator1  : denominator1}
               handlePieceClick={(index) => {
-                setGameStateRef({
-                  ...gameStateRef.current,
-                  screen2: {
-                    ...gameStateRef.current.screen2,
-                    selectedPieces1: index
-                  }
-                });
+                setSelectedPieces1(index);
               }}
+              disabled={substep !== 1}
             />
             {substep === 0 && (
               <div className="absolute top-0 right-full text-center text-2xl font-bold mx-6">
@@ -153,21 +144,16 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
                   options={[2,3,5]}
                 selectedKnife={selectedKnife}
                 setSelectedKnife={(index) => {
-                  setGameStateRef({
-                    ...gameStateRef.current,
-                    screen2: {
-                      ...gameStateRef.current.screen2,
-                      selectedKnife: index
-                    }
-                  });
+                  setSelectedKnife(index);
                 }}
                 />
               </div>      
             )}
               
-              
             <div className="absolute top-0 left-full flex flex-col text-2xl font-bold ml-6">
-              <Fraction numerator={selectedPieces1 ? selectedPieces1 : ''} denominator={denominator2} className="text-3xl bg-white p-2 h-full flex items-center" />
+              {substep > 0 &&
+                <Fraction numerator={selectedPieces1 ? selectedPieces1 : ''} denominator={denominator2} className="text-3xl bg-white p-2 h-full flex items-center" />
+              }
             </div>
           </div>
 
@@ -205,33 +191,26 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
               numerator={selectedPieces2} 
               denominator={selectedHoney ? denominator1/selectedHoney : denominator1} 
               handlePieceClick={(index) => {
-                setGameStateRef({
-                  ...gameStateRef.current,
-                  screen2: {
-                    ...gameStateRef.current.screen2,
-                    selectedPieces2: index
-                  }
-                });
+                setSelectedPieces2(index);
               }}
+              disabled={substep === 2}
             />
             <div className="absolute top-0 left-full text-center text-2xl font-bold ml-6">
-              <Fraction numerator={selectedPieces2} denominator={denominator3} />
+              {substep > 2 &&
+                <Fraction numerator={selectedPieces2} denominator={denominator3} />
+              }
             </div>
 
             <div className="absolute top-0 right-full text-center text-2xl mx-4 font-bold ml-6">
-              <HoneySelector 
-                options={[2,3,6]}
-                selectedHoney={selectedHoney}
-                setSelectedHoney={(index) => {
-                  setGameStateRef({
-                    ...gameStateRef.current,
-                    screen2: {
-                      ...gameStateRef.current.screen2,
-                      selectedHoney: index
-                    }
-                  });
-                }}
-              />
+              {substep === 2 && (
+                <HoneySelector 
+                  options={[2,3,6]}
+                  selectedHoney={selectedHoney}
+                  setSelectedHoney={(index) => {
+                    setSelectedHoney(index);
+                  }}
+                />
+              )}
             </div>
 
           </div>

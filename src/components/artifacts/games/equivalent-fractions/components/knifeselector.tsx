@@ -44,7 +44,7 @@ export default function KnifeSelector({options, selectedKnife, setSelectedKnife}
         {/* {selectedKnife && ( */}
           <button
             onClick={handleReset}
-            className="text-md bg-[#FF497C] flex justify-center items-center outline-none border-none px-4 rounded hover:bg-[#FF497C]/80"
+            className="text-xl py-1 bg-[#FF497C] flex justify-center items-center outline-none border-none px-4 rounded hover:bg-[#FF497C]/80"
             style={{opacity: selectedKnife ? 1 : 0.5}}
           >
             Reset

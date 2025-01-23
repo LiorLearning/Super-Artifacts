@@ -1,11 +1,8 @@
 import { BaseProps } from "../utils/types";
 import { useGameState } from "../state-utils";
-import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/header";
-import Intro from "../components/intro";
 import Bar from "../components/bar";
-import { ArrowBigDown, ArrowDown } from "lucide-react";
 import Fraction from "../components/Fraction";
 import Proceed from "../components/proceed";
 import { Input } from "@/components/custom_ui/input";
@@ -14,7 +11,7 @@ import Image from "next/image";
 
 
 export default function Level1({ sendAdminMessage }: BaseProps) {
-  const { gameStateRef, setGameStateRef } = useGameState();
+  const { gameStateRef } = useGameState();
   const { step } = gameStateRef.current.screen1;
   const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;
 
@@ -35,23 +32,19 @@ export default function Level1({ sendAdminMessage }: BaseProps) {
 const Step1 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;  
-  const { step, selectedKnife, selectedPieces } = gameStateRef.current.screen1
+
+  const [selectedPieces, setSelectedPieces] = useState(0);
+  const [selectedKnife, setSelectedKnife] = useState<number | null>(null);
 
   const start = useRef(false);
 
   const handlePieceClick = (index: number) => {
-    setGameStateRef({
-      ...gameStateRef.current,
-      screen1: {
-        ...gameStateRef.current.screen1,
-        selectedPieces: index
-      }
-    });
+    setSelectedPieces(index);
   };
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage('agent', "Let's solve this visually! Imagine you have 2 out of 3 big chunks, but we need 9 smaller sized bites. We need to use a suitable knife to divide the chocolate into 9 pieces!");
+      sendAdminMessage('agent', `Let's solve this visually! Imagine you have ${numerator1} out of ${denominator1} big chunks, but we need ${denominator2} smaller sized bites. We need to use a suitable knife to divide the chocolate into ${denominator2}pieces!`);
       start.current = true;
     }
   }, []);
@@ -71,7 +64,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
         <div className="flex flex-col gap-4 w-full">
           <p className="text-2xl font-medium">Let's split this chocolate into {denominator2} pieces.</p>
             <div className="flex justify-center relative">
-              <Bar numerator={numerator1} denominator={denominator1} handlePieceClick={() => {}} />
+              <Bar numerator={numerator1} denominator={denominator1} handlePieceClick={() => {}} disabled={true} />
               <Fraction numerator={numerator1} denominator={denominator1} className="text-3xl font-bold ml-4 absolute top-0 left-full" />
             </div>
             <div className="flex justify-center">
@@ -82,15 +75,9 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
               Choose a suitable knife to split the chocolate into {denominator2} pieces
             </p>
             <div className="flex justify-center relative">
-              <Bar numerator={0} denominator={selectedKnife ? selectedKnife * denominator1 : denominator1} handlePieceClick={handlePieceClick} />
+              <Bar numerator={0} denominator={selectedKnife ? selectedKnife * denominator1 : denominator1} handlePieceClick={handlePieceClick} disabled={true} />
               <div className="flex flex-col gap-2 ml-2 absolute top-0 left-full">
-                <KnifeSelector options={[2,3,4,5]} selectedKnife={selectedKnife} setSelectedKnife={(value: number | null) => setGameStateRef({
-                  ...gameStateRef.current,
-                  screen1: {
-                    ...gameStateRef.current.screen1,
-                    selectedKnife: value
-                  }
-                })} />
+                <KnifeSelector options={[2,3,4,5]} selectedKnife={selectedKnife} setSelectedKnife={(value: number | null) => setSelectedKnife(value)} />
               </div>
           </div>
           <span className="text-2xl font-medium flex items-center justify-center">
@@ -126,24 +113,18 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
 const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;  
-  const { step, selectedKnife, selectedPieces } = gameStateRef.current.screen1;
   const [correct, setCorrect] = useState(false);
   const [numerator, setNumerator] = useState(0);
   const [denominator, setDenominator] = useState(0);
   const [step2subpart, setStep2subpart] = useState(0);
   const [answer, setAnswer] = useState('');
 
+  const [selectedPieces, setSelectedPieces] = useState(0);
+
   const start = useRef(false);
 
   const handlePieceClick = (index: number) => {
-    console.log(index)
-    setGameStateRef({
-      ...gameStateRef.current,
-      screen1: {
-        ...gameStateRef.current.screen1,
-        selectedPieces: index
-      }
-    });
+    setSelectedPieces(index);
   };
 
   useEffect(() => {
@@ -153,11 +134,6 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (numerator === numerator1 * denominator2 / denominator1 && denominator === denominator2) {
-      sendAdminMessage('agent', "Great job, who knew math could be this sweet?");
-    }
-  }, [numerator, denominator]);
 
 
   return (
@@ -173,7 +149,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           </p>}
 
             <div className="flex justify-center relative">
-              <Bar numerator={numerator1} denominator={denominator1} handlePieceClick={() => {}} />
+              <Bar numerator={numerator1} denominator={denominator1} handlePieceClick={() => {}} disabled={true} />
               <Fraction numerator={numerator1} denominator={denominator1} className="text-3xl font-bold ml-4 absolute top-0 left-full" />
             </div>
 
@@ -184,7 +160,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             )}
 
             <div className="flex justify-center relative">
-              <Bar numerator={selectedPieces} denominator={denominator2} handlePieceClick={handlePieceClick} />
+              <Bar numerator={selectedPieces} denominator={denominator2} handlePieceClick={handlePieceClick} disabled={false} />
               {correct && (
                 <div className="flex flex-col gap-2 ml-2 absolute top-0 left-full">
                   <Input 
@@ -223,15 +199,17 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
               }}
             />
           ) : (!correct &&
-            <div 
+            <button 
               className={`text-xl cursor-pointer bg-red-500 text-white shadow-[-3px_3px_0px_#000000] px-8 py-2 font-bold ${correct && 'bg-gray-500'}`}
               onClick={() => { 
-                if (!correct && selectedPieces === 6) { setCorrect(true) } else { setCorrect(false) };
+                if (!correct && selectedPieces === numerator1 * denominator2 / denominator1) { setCorrect(true) } else { 
+                  sendAdminMessage('admin', `needed to select ${numerator1 * denominator2 / denominator1} pieces of chocolate from ${denominator2} to make the fraction equivalent to ${numerator1}/${denominator1} but you selected ${selectedPieces} pieces. Dont Mention the number ${numerator1 * denominator2 / denominator1} in your response rather ask to compare visually`);
+                };
                 console.log(correct)   
               }}
             >
               Check
-            </div>
+            </button>
           )
         ) : (
           <div className="flex justify-center items-center max-w-lg mx-auto text-3xl font-bold">
@@ -242,7 +220,14 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
                 type="text"
                 value={answer ? answer : ''}
                 placeholder="?"
-                onChange={(e) => setAnswer(e.target.value)}
+                onChange={(e) => {
+                  setAnswer(e.target.value)
+                  if (parseInt(e.target.value) === numerator1 * denominator2 / denominator1) {
+                    sendAdminMessage('agent', "Great job, who knew math could be this sweet?");
+                  } else if (e.target.value.length > 0 && parseInt(e.target.value) !== numerator1 * denominator2 / denominator1) {
+                    sendAdminMessage('admin', `needed ${numerator1 * denominator2 / denominator1} but you filled in ${e.target.value}, ask to compare visually`);
+                  }
+                }}
                 className={`p-2 w-12 border-2 font-extrabold text-center border-black rounded-lg ${
                   parseInt(answer) === numerator1 * denominator2 / denominator1 && answer !== '' ? 'border-green-500 text-green-500' : 'border-black'
                 }`}
@@ -252,15 +237,16 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             </div>
           </div>
         )}
-        {step2subpart && (parseInt(answer) === numerator1 * denominator2 / denominator1 && (
+        {step2subpart !== 0 && parseInt(answer) === numerator1 * denominator2 / denominator1 && (
           <Proceed
-            onComplete={() => {setGameStateRef({
-              ...gameStateRef.current,
-              level: 2
-            });
-          }}
+            onComplete={() => {
+              setGameStateRef(prev => ({
+                ...prev,
+                level: 2
+              }));
+            }}
           />
-        ))}
+        )}
       </div>
   );
 }

@@ -55,7 +55,7 @@ function AnswerForm() {
 
   const verifyAnswer = () => {
     if (answer === lcd.toString()) {
-      goToScreen('third', setGameStateRef);
+      goToScreen(3, setGameStateRef);
     }
   }
 
@@ -120,7 +120,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
 
       if (chocolateFractions1[idx1].denominator === chocolateFractions2[idx2].denominator) {
         setIncorrect(false);
-        goToStep('second', setGameStateRef, 1);
+        goToStep(2, setGameStateRef, 1);
       } else {
         setIncorrect(true);
         sendAdminMessage('agent', "Hmmm, let's give that another try!");

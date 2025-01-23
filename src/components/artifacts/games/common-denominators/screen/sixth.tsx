@@ -28,13 +28,13 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
       {/* Step 1 - ECD Section */}
       {/* Incorrect */}
       {/* How will you find the ECD? Remember, you can multiply denominators to find the ECD. */}
-      <ECDSection fraction1={fraction1} fraction2={fraction2} onSuccess={() => goToStep('sixth', setGameStateRef, 1)} />
+      <ECDSection fraction1={fraction1} fraction2={fraction2} onSuccess={() => goToStep(6, setGameStateRef, 1)} />
       
       {/* Step 2 - LCD Section */}
       {/* Incorrect response: "You're entering the Xth multiple of 4. What is 4 times X" */}
       {step >= 1 &&
         <LCDSection fraction1={fraction1} fraction2={fraction2} lcd={lcd} onSuccess={() => {
-          goToStep('sixth', setGameStateRef, 2)
+          goToStep(6, setGameStateRef, 2)
           sendAdminMessage('agent', "Awesome, you're a master at finding common denominators now!")
         }} />
       }

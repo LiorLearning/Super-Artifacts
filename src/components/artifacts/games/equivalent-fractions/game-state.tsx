@@ -1,6 +1,37 @@
-export const desc = ``;
+export type GameScreen = 0 | 1 | 2 | 3 | 4;
 
-export type GameScreen = 1 | 2 | 3 | 4;
+interface Description {
+  title: GameScreen;
+  oneliner: string;
+  description: string;
+}
+export const descriptions: Description[] = [
+  {
+    title: 0,
+    oneliner: 'Introduction to equivalent fractions with chocolate bars',
+    description: 'This screen introduces the concept of equivalent fractions using a visual chocolate bar metaphor. It presents an initial fraction (e.g., 2/3) and asks students to think about how many pieces they would need out of a larger denominator (e.g., 6) to represent the same amount. The screen features a simple interface with the question and a "Let\'s find out" button to proceed to the interactive exercises.'
+  },
+  {
+    title: 1,
+    oneliner: 'Split chocolate bars to discover equivalent fractions',
+    description: 'Students learn to create equivalent fractions by splitting chocolate bars into equal pieces. They first select a knife (multiplier) to split the original fraction into more pieces, then identify how many pieces they need to maintain the same proportion. The screen provides immediate visual feedback with the chocolate bar representation and includes step-by-step guidance. Students must select the correct number of pieces and input the resulting equivalent fraction to proceed.'
+  },
+  {
+    title: 2,
+    oneliner: 'Create multiple equivalent fractions using split and merge',
+    description: 'This screen introduces both splitting and merging concepts to create equivalent fractions. Students first split a chocolate bar into smaller pieces using a knife tool, then use honey to merge pieces back together, creating two different equivalent fractions. The interactive visualization shows how the same amount can be represented with different denominators, and students must complete both splitting and merging operations correctly to advance.'
+  },
+  {
+    title: 3,
+    oneliner: 'Identify patterns in creating equivalent fractions',
+    description: 'The final interactive screen focuses on pattern recognition in equivalent fractions. Students work with multiple representations of the same fraction, identifying the multipliers used to create each equivalent fraction. They must understand both multiplication and division relationships between fractions, input the correct multipliers, and explain their reasoning. The screen includes multiple steps of reflection and verification, helping students understand the systematic approach to creating equivalent fractions.'
+  },
+  {
+    title: 4,
+    oneliner: 'Apply equivalent fraction concepts in complex problems',
+    description: 'This screen tests students\' comprehensive understanding of equivalent fractions through more challenging problems. Students must work with multiple fractions simultaneously, identifying relationships between numerators and denominators. They need to determine correct multipliers and divisors to create equivalent fractions, demonstrating their mastery of the concept. The screen includes step-by-step verification and requires students to show their work through input fields for both operations and final answers.'
+  }
+]
 
 export interface Screen1 {
   step: {
@@ -12,8 +43,6 @@ export interface Screen1 {
     denominator1: number
     denominator2: number
   },
-  selectedKnife: number | null,
-  selectedPieces: number,
 }
 
 export interface Screen2 {
@@ -22,10 +51,6 @@ export interface Screen2 {
     text: string
   },
   substep: number,
-  selectedKnife: number | null,
-  selectedHoney: number | null,
-  selectedPieces1: number,
-  selectedPieces2: number,
 
   question: {
     numerator1: number
@@ -98,8 +123,6 @@ export const initialGameState: GameState = {
       denominator1: 3,
       denominator2: 9
     },
-    selectedKnife: null,
-    selectedPieces: 0,
   },
   screen2: {
     step: {
@@ -107,10 +130,6 @@ export const initialGameState: GameState = {
       text: "CREATE 9 PIECES"
     },
     substep: 0,
-    selectedKnife: null,
-    selectedHoney: null,
-    selectedPieces1: 0,
-    selectedPieces2: 0,
     question: {
       numerator1: 4,
       denominator1: 6,

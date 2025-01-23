@@ -8,120 +8,9 @@ import { Button } from '../custom_ui/button';
 import { RefreshCw } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
-
-import TemplateGame from './games/template/game';
-import FractionAdditionGame from './games/fraction-addition/game';
-import FractionSubtractionGame from './games/fraction-subtraction/game';
-import AdditionGame from './games/addition-within-20/game';
-import FractionsGame from './games/fractions-game/game';
-import EquivalentFractionsGame from './games/equivalent-fractions/game';
-import MixedFractionGame from './games/mixed-fraction-without-regouping/game';
-import LegoGame from './games/mixed-fractions-to-improper-fractions/game';
-import CommonDenominatorGame from './games/common-denominators/game';
-import CompareFractionGame from './games/compare-fraction/game';
-import FractionToDecimalGame from './games/fraction-to-decimal/game';
-
-import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
-import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/fraction-addition/state-utils'
-import { GameStateProvider as FractionSubtractionGameStateProvider, useGameState as FractionSubtractionGameState } from './games/fraction-subtraction/state-utils'
-import { GameStateProvider as AdditionGameStateProvider, useGameState as AdditionGameState } from './games/addition-within-20/state-utils'
-import { GameStateProvider as FractionsGameStateProvider, useGameState as FractionsGameState } from './games/fractions-game/state-utils'
-import { GameStateProvider as EquivalentFractionsGameStateProvider, useGameState as EquivalentFractionsGameState } from './games/equivalent-fractions/state-utils'
-import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameState } from './games/mixed-fractions-to-improper-fractions/state-utils'
-import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState as CommonDenominatorGameState } from './games/common-denominators/state-utils'
-import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/mixed-fraction-without-regouping/state-utils'
-import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fraction/state-utils'
-import { GameStateProvider as FractionToDecimalGameStateProvider, useGameState as FractionToDecimalGameState } from './games/fraction-to-decimal/state-utils'
-
-import { desc as TemplateGameDesc } from './games/template/game-state';
-import { desc as FractionAdditionGameDesc } from './games/fraction-addition/game-state';
-import { desc as FractionSubtractionGameDesc } from './games/fraction-subtraction/game-state';
-import { desc as AdditionGameDesc } from './games/addition-within-20/game-state';
-import { desc as FractionsGameDesc } from './games/fractions-game/game-state';
-import { desc as EquivalentFractionsGameDesc } from './games/equivalent-fractions/game-state';
-import { desc as LegoGameDesc } from './games/mixed-fractions-to-improper-fractions/game-state';
-import { desc as CommonDenominatorGameDesc } from './games/common-denominators/game-state';
-import { desc as MixedFractionGameDesc } from './games/mixed-fraction-without-regouping/game-state';
-import { desc as CompareFractionGameDesc } from './games/compare-fraction/game-state';
-import { desc as FractionToDecimalGameDesc } from './games/fraction-to-decimal/game-state';
-
-interface GameInfo {
-  game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
-  desc: string;
-  state: any;
-  provider: React.ComponentType<{ children: React.ReactNode }>;
-}
+import { gameInfo } from './gameInfo';
 
 type GameKey = keyof typeof gameInfo;
-
-const gameInfo: Record<string, GameInfo> = {
-  'addition-within-20-using-ten-frames': {
-    game: AdditionGame,
-    desc: AdditionGameDesc,
-    state: AdditionGameState,
-    provider: AdditionGameStateProvider
-  },
-  'compare-fractions-with-same-numerator-or-denominator': {
-    game: FractionsGame,
-    desc: FractionsGameDesc,
-    state: FractionsGameState,
-    provider: FractionsGameStateProvider
-  },
-  'equivalent-fractions': {
-    game: EquivalentFractionsGame,
-    desc: EquivalentFractionsGameDesc,
-    state: EquivalentFractionsGameState,
-    provider: EquivalentFractionsGameStateProvider
-  },
-  'common-denominators': {
-    game: CommonDenominatorGame,
-    desc: CommonDenominatorGameDesc,
-    state: CommonDenominatorGameState,
-    provider: CommonDenominatorGameStateProvider
-  },
-  'fraction-subtraction-with-common-denominator': {
-    game: FractionSubtractionGame,
-    desc: FractionSubtractionGameDesc,
-    state: FractionSubtractionGameState,
-    provider: FractionSubtractionGameStateProvider
-  },
-  'add-fractions-with-common-denominator': {
-    game: FractionAdditionGame,
-    desc: FractionAdditionGameDesc,
-    state: FractionAdditionGameState,
-    provider: FractionAdditionGameStateProvider
-  },
-  'mixed-fraction-without-regouping': {
-    game: MixedFractionGame,
-    desc: MixedFractionGameDesc,
-    state: MixedFractionGameState,
-    provider: MixedFractionGameStateProvider
-  },
-  'writing-mixed-numbers-as-improper-fractions': {
-    game: LegoGame,
-    desc: LegoGameDesc,
-    state: LegoGameState,
-    provider: LegoGameStateProvider
-  },
-  'template-game': {
-    game: TemplateGame,
-    desc: TemplateGameDesc,
-    state: TemplateGameState,
-    provider: TemplateGameStateProvider
-  },
-  'compare-fraction': {
-    game: CompareFractionGame,
-    desc: CompareFractionGameDesc,
-    state: CompareFractionGameState,
-    provider: CompareFractionGameStateProvider
-  },
-  'fraction-to-decimal': {
-    game: FractionToDecimalGame,
-    desc: FractionToDecimalGameDesc,
-    state: FractionToDecimalGameState,
-    provider: FractionToDecimalGameStateProvider
-  }
-};
 
 interface GameComponentProps {
   currentGame: string;
@@ -162,7 +51,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
     }
   }, [gameParam]);
 
-  const gameState = isClient && currentGame ? gameInfo[currentGame]?.state : null;
+  const { gameStateRef, getDescription } = gameInfo[currentGame]?.useState || {};
 
   const sendAdminMessage = async (role: string, content: string) => {
     if (!isClient) return;
@@ -174,8 +63,9 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         content: content,
         role: role,
         image: await handleScreenshot(componentRef),
-        desc: currentGame ? gameInfo[currentGame]?.desc : '',
-        gameState: gameState ? JSON.stringify(gameState, null, 0) : '',
+        desc: getDescription?.(),
+        // gameState: gameStateRef ? JSON.stringify(gameStateRef, null, 0) : '',
+        gameState: '',
       } as AdminRequestMessage)
     } else if (role == 'agent') {
       addToChat({
@@ -277,9 +167,9 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
       </div>
       <div className="w-[25%] min-w-[250px] flex flex-col">
         <Chat 
-          desc={currentGame ? gameInfo[currentGame]?.desc : ''} 
+          desc={getDescription?.()} 
           componentRef={componentRef} 
-          gameState={gameState} 
+          gameState={gameStateRef} 
         />
       </div>
     </div>
