@@ -2,7 +2,7 @@ import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps } from '../utils/types';
 import MixedFraction from '../components/mixedFraction';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import QuestionDescription from '../components/questionDescription';
 import Intro from '../components/intro';
@@ -14,6 +14,16 @@ import { QuestionDescriptionProps } from '../game-state';
 export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step, fraction1, fraction2 } = gameStateRef.current.state1;
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage("agent","Let us solve this by imagining a pizza factory! Suppose the question is nothing but a pizza order like this, Click Next to proceed");
+    }
+    start.current = true;
+  }, []);
+
+
 
   return (
     <div className="">
@@ -36,7 +46,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
     <div className="flex gap-8 flex-col w-full">
       <Intro text="Let us solve this by imagining a pizza factory! Suppose the question is nothing but a pizza order like this" />
       <div className="w-full max-w-3xl mx-auto">
-        <div className="bg-lime-200 py-4 mb-[2px] border-2 font-extrabold border-gray-800 px-4 rounded-t-lg text-center">
+        <div className="bg-[#D3EA00] py-4 mb-[2px] border-2 font-extrabold border-gray-800 px-4 rounded-t-lg text-center">
           Total Order
         </div>
         <div className="flex items-center justify-center gap-4 p-8 border-2 border-gray-800 rounded-b-lg">
@@ -65,7 +75,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
           </div>
         </div>
       </div>
-      <Button onClick={() => goToStep(1, setGameStateRef, 2)} className='m-2 mx-auto bg-lime-500 hover:bg-lime-600 max-w-3xl'>Next Step</Button>
+      <Button onClick={() => goToStep(1, setGameStateRef, 2)} className='m-2 mx-auto bg-[#D3EA00] border-2 border-black text-black hover:bg-[#ADD100] max-w-3xl'>Next Step</Button>
     </div>
   );
 };
@@ -178,6 +188,14 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
 const Step3 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction1, fraction2 } = gameStateRef.current.state1;
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage("agent","Now all you need to do is drag the wholes on the left side, and the slices on the right. No stealing slices!!");
+    }
+    start.current = true;
+  }, []);
 
   // States for first section (Whole Pizzas)
   const [wholeInputs, setWholeInputs] = useState({
@@ -246,6 +264,10 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
       parseInt(newInputs.numerator || '0') === totalNumerator &&
       parseInt(newInputs.denominator || '0') === commonDenominator;
 
+    if (isCorrect) {
+      sendAdminMessage("agent", "Wohoo! Great job on this question partner. Now that you are trained, let's do some more");
+    }
+
     setMixedFormInputs({
       ...newInputs,
       isCorrect
@@ -287,7 +309,9 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
         }}
         onComplete={() => {
           setShowMixedForm(true);
+          sendAdminMessage("agent","Fill these boxes to arrive at your answer");
         }}
+        sendAdminMessage={sendAdminMessage}
       />
 
       {showMixedForm && (

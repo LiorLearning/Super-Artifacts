@@ -150,7 +150,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           pizzaName='mushroom' color='yellow' 
 
           onComplete={() => {
-            sendAdminMessage('agent', "That is done! You have revised the order, now click on next to move to the most important step");
+            sendAdminMessage('agent', "Perfect again! Now the most important step, rearranging the order!");
             setTimeout(() => {
               setSubStep(2)
             }, 1000)
@@ -158,7 +158,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           />
       }
       { substep >= 2 &&
-        <CombineFractionInput onComplete={() => setSubStep(4)} fraction1={fraction1} fraction2={fraction2} message={() => sendAdminMessage('agents', "There you are, add the wholes and fractions now, and you will have your answer")} />
+        <CombineFractionInput onComplete={() => setSubStep(4)} fraction1={fraction1} fraction2={fraction2} sendAdminMessage={sendAdminMessage} />
       }
       { substep >= 4 &&
         <Proceed onComplete={() => setGameStateRef(prev => ({ ...prev, screen: 3 }))} />
@@ -174,7 +174,7 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
   )
 }
 
-export const CombineFractionInput = ({ onComplete, fraction1, fraction2, message }: { onComplete: () => void, fraction1: MixedFractionProps, fraction2: MixedFractionProps, message: () => void }) => {
+export const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessage }: { onComplete: () => void, fraction1: MixedFractionProps, fraction2: MixedFractionProps, sendAdminMessage: (role: string, content: string) => void }) => {
   const [whole1, setWhole1] = useState<string>('');
   const [whole2, setWhole2] = useState<string>('');
   const [whole3, setWhole3] = useState<string>('');
@@ -228,6 +228,7 @@ export const CombineFractionInput = ({ onComplete, fraction1, fraction2, message
       parseInt(denominator1)===fraction1.denominator && 
       parseInt(denominator2)===fraction2.denominator
     ) {
+      sendAdminMessage('agent', "There you are, add the wholes and fractions now, and you will have your answer");
       setSecond(1);
     }
   }
@@ -256,13 +257,13 @@ export const CombineFractionInput = ({ onComplete, fraction1, fraction2, message
       parseInt(numerator3) === (fraction1.numerator + fraction2.numerator) && 
       parseInt(denominator3) === fraction1.denominator
     ) {
+      sendAdminMessage('agent', "You are on a roll! Final one to practice now!");
       onComplete();
     }
   }
 
   useEffect(() => {
     if (numerator1 !== '' && denominator1 !== '' && numerator2 !== '' && denominator2 !== ''){
-      message()
     }
   }, [whole1, whole2, numerator1, numerator2, denominator1, denominator2])
 

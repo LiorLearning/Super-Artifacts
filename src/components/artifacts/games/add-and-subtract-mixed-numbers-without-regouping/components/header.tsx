@@ -12,7 +12,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = (({ fraction1, fraction2, type, version }) => {
   return (
     <div className='w-full sticky top-0 bg-white flex flex-col'>
-      <div className="w-full bg-[#d3ea00] flex justify-center items-center p-2 border-b-4 border-blue-600 gap-6">
+      <div className="w-full bg-[#D3EA00] flex justify-center items-center p-2 border-b-4 border-blue-600 gap-6">
         <div className='bg-white px-2 pr-4 '>
           <MixedFraction 
           whole={fraction1.whole} 

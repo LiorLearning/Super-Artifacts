@@ -4,7 +4,7 @@ import { BaseProps } from '../utils/types';
 import { CombineFractionInput } from './second';
 import Intro from '../components/intro';
 import Proceed from '../components/proceed';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -22,6 +22,14 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const [denominator2, setDenominator2] = useState<number>(0);
   const [denominator3, setDenominator3] = useState<number>(0);
 
+  const start = useRef(false)
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage("agent","Okay, now we will try to subtract two mixed numbers");
+    }
+    start.current = true;
+  }, []);
 
   const handleWholeChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWhole1(parseInt(e.target.value));
@@ -71,6 +79,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       denominator2 === fraction2.denominator
     ) {
       setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: 1 } }));
+      sendAdminMessage("agent","Perfection! Correctly rearranged! Now carefully look at the signs, subtract the wholes separately and subtract the fractions separately");
     }
   }
 
@@ -96,6 +105,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   ) => {
     if (whole3 === fraction1.whole - fraction2.whole && numerator3 === fraction1.numerator - fraction2.numerator && denominator3 === fraction1.denominator) {
       setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: 2 } }));
+      sendAdminMessage("agent","Correct again");
     }
   }
 
