@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Fraction from "./Fraction";
-import { ChevronDown } from 'lucide-react'
+import { ArrowDown, ChevronDown } from 'lucide-react'
 import { sounds } from '../../equivalent-fractions/utils/sounds'
 
 interface ComparisonFractionsProps {
@@ -118,6 +118,7 @@ export default function ComparisonFractions({
               ) : "bg-white"}`}
           >
             {answer || "?"}
+            <ChevronDown className={`absolute bottom-1 right-0 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {isOpen && (
