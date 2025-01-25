@@ -10,23 +10,29 @@ interface ChooseHolderProps extends GameProps {
 }
 
 export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage }: ChooseHolderProps) => {
-  const [showButton, setShowButton] = useState(false);
   const hasGameStarted = useRef(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const handleDenomOptionClick = (option: number) => {
+    setIsDisabled(true);
+    
     if (option === answer) {
       onSuccess();
-      sendAdminMessage('agent', `Awesome! The denominator is ${answer}, so this holder is perfect. Let’s move on!`);
+      sendAdminMessage('agent', `Awesome! The denominator is ${answer}, so this holder is perfect. Let's move on!`);
     } else {
       sendAdminMessage('admin', `Diagnose socratically to help user select the correct holder, user has selected ${option} but the answer is ${answer}.`);
     }
+
+    setTimeout(() => {
+      setIsDisabled(false);
+    }, 5000);
   };
   
   // If the kid selects the holder with 3 divisions:
   // "Close, but not quite! The denominator tells us there should be 4 equal divisions. Try again!"
   // If the kid selects the holder with 5 divisions:
   // "Oops! This one has too many divisions. The denominator is 4! Pick the right one!"
-  // If the kid clicks randomly or doesn’t choose:
+  // If the kid clicks randomly or doesn't choose:
   // "Remember, the denominator is 4. Look for the holder with exactly 4 slots!"
 
 
@@ -34,15 +40,10 @@ export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage
     if (!hasGameStarted.current) {
       setTimeout(() => {
         sendAdminMessage('agent', "A hint: Look at the denominator");
-        setShowButton(true);
-      }, 8000);
+      }, 5000);
       hasGameStarted.current = true;
     }
   }, []);
-
-  if (!showButton) {
-    return null;
-  }
 
   return (
     <div className="flex flex-col items-center justify-center mt-4 space-y-2">
@@ -55,6 +56,7 @@ export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage
               backgroundColor: COLORS.pink,
             }}
             onClick={() => handleDenomOptionClick(option)}
+            disabled={isDisabled}
           >
             {option}
           </Button>

@@ -12,11 +12,8 @@ export const SNAPPABLE_POSITIONS = [
   new THREE.Vector3(2, 1, -4),
   new THREE.Vector3(2, 1, -2),
   new THREE.Vector3(2, 1, 0),
-  new THREE.Vector3(2, 1, 2),
   new THREE.Vector3(4, 1, -2),
-  new THREE.Vector3(4, 1, 0),
-  new THREE.Vector3(4, 1, 2),
-  new THREE.Vector3(4, 1, 4),
+  new THREE.Vector3(4, 1, 0)
 ];
 
 export const COLORS = {
@@ -32,6 +29,7 @@ export const COLORS = {
   CYAN: 0x00FFFF,
   MAGENTA: 0xD625FE, // Vibrant magenta (deep pink)
   WHITE: 0xffffff,
+  LIGHT_YELLOW: 0xFFFF99,
   HOLDER_CELL: 0x7B3F00, // Vibrant brown
   HOLDER_BACK: 0xFFB300, // Bright yellowish brown
   HOLDER_BASE: 0x8B4513, // Slightly darker sienna
