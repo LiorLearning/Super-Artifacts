@@ -46,7 +46,6 @@ export const useThreeSetup = (mountRef: React.RefObject<HTMLDivElement>, hasInit
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Higher quality shadows
     mountRef.current.appendChild(renderer.domElement);
 
     // Add lights
