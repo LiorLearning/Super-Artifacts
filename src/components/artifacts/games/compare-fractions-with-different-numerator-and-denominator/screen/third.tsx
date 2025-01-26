@@ -18,6 +18,9 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const { fraction1, fraction2 } = gameStateRef.current.state3.question;
   const { step } = gameStateRef.current.state3;
 
+  const answerFraction1 = Fraction({numerator: (fraction1.numerator*fraction2.denominator), denominator: (fraction1.denominator*fraction2.denominator)});
+  const answerFraction2 = Fraction({numerator: (fraction2.numerator*fraction1.denominator), denominator: (fraction2.denominator*fraction1.denominator)});
+
   const [firstFraction, setFirstFraction] = useState<Fraction>({ numerator: 0, denominator: 0 });
   const [secondFraction, setSecondFraction] = useState<Fraction>({ numerator: 0, denominator: 0 });
   const [answer, setAnswer] = useState('');
@@ -52,20 +55,8 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
         }
       }));
       sendAdminMessage('agent', `Great, now that we have the same bottom number, its time to re-write these fractions`);
-    } else {
-      const timer = setTimeout(() => {
-        if (typing.current) {
-          sendAdminMessage('admin', `Which number do both ${fraction1.denominator} and ${fraction2.denominator} go into?`);
-          typing.current = false;
-        }
-      }, 1000); // Wait 1 second after last typing event
-
-      return () => {
-        clearTimeout(timer);
-        typing.current = true;
-      };
     }
-  }, [firstFraction, secondFraction]);
+  }, [firstFraction.denominator, secondFraction.denominator]);
 
   useEffect(() => {
     if (firstFraction.numerator === 0 || secondFraction.numerator === 0) return;
@@ -81,11 +72,12 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       }));
       sendAdminMessage('agent', `Awesome, now enter the right symbol between these fractions!"`);
     }
-  }, [firstFraction, secondFraction]);
+  }, [firstFraction.numerator, secondFraction.numerator]);
 
   useEffect(() => {
     if (step < 2) return;
     if(answer === correctAnswer) {
+      sendAdminMessage('agent', `You're on a roll - a fraction comparison maestro!`);
       setGameStateRef(prev => ({
         ...prev,
         state3: {
@@ -94,7 +86,6 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
         }
       }));
     }
-    sendAdminMessage('agent', `You're on a roll - a fraction comparison maestro!`);
   }, [answer]);
 
   useEffect(() => {
@@ -177,9 +168,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
             <div className='flex items-center justify-center gap-8'>
               <div className='flex flex-col items-center text-4xl'>
-                <div>{fraction2.numerator}</div>
-                <div className='w-8 h-1 bg-black'></div>
-                <div>{fraction2.denominator}</div>
+                <Fraction numerator={fraction2.numerator} denominator={fraction2.denominator} />
               </div>
               <div className='text-4xl'>=</div>
               <div className='flex gap-1 flex-col items-center text-4xl'>

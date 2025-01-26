@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Fraction from "./Fraction";
 import { ArrowDown, ChevronDown } from 'lucide-react'
-import { sounds } from '../../equivalent-fractions/utils/sounds'
+import { sounds } from "../utils/sound";
 
 interface ComparisonFractionsProps {
   fraction1: {
@@ -34,12 +34,6 @@ export default function ComparisonFractions({
   const commonDenominator = fraction1.denominator * fraction2.denominator;
   const newNumerator1 = fraction1.numerator * fraction2.denominator;
   const newNumerator2 = fraction2.numerator * fraction1.denominator;
-
-  useEffect(() => {
-    if (answer === correctAnswer) {
-      onComplete();
-    }
-  }, [answer]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

@@ -43,9 +43,9 @@ export const DevHelper = () => {
             <SelectValue placeholder="Select a screen" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="first">First Screen</SelectItem>
-            <SelectItem value="second">Second Screen</SelectItem>
-            <SelectItem value="third">Third Screen</SelectItem>
+            <SelectItem value="1">First Screen</SelectItem>
+            <SelectItem value="2">Second Screen</SelectItem>
+            <SelectItem value="3">Third Screen</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -117,8 +117,6 @@ export const CORRECT = 'correct';
 export const INCORRECT = 'incorrect';
 
 export const getState = (input: string, actual: string) => {
-  console.log(input, actual);
-  console.log("Length", input.length, actual.length);
   if (input !== '') {
     if (input.length >= actual.length) {
       if (input === actual) {
@@ -135,7 +133,6 @@ export const getState = (input: string, actual: string) => {
 }
 
 export const getInputColor = (input: string, actual: string) => {
-  console.log(input, actual);
   const state = getState(input, actual);
   if (state === NOT_ATTEMPTED) {
     return COLORS.white;
