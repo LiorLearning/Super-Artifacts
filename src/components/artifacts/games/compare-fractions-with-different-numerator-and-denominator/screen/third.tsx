@@ -6,6 +6,7 @@ import RedBox from '../components/RedBox';
 import Fraction from '../components/Fraction';
 import { sounds } from '../utils/sound';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
+import { ChevronDown } from 'lucide-react';
 
 interface Fraction {
   numerator: number;
@@ -83,6 +84,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   }, [firstFraction, secondFraction]);
 
   useEffect(() => {
+    if (step < 2) return;
     if(answer === correctAnswer) {
       setGameStateRef(prev => ({
         ...prev,
@@ -237,6 +239,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                   ) : "bg-white"}`}
               >
                 {answer || "?"}
+                <ChevronDown className={`absolute bottom-1 right-0 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isOpen && (
@@ -264,7 +267,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
       {step >= 3 && (
           <div className="flex text-3xl justify-center items-center gap-4 my-8 text-white bg-green-500 min-h-32">
-            Correct Answer!!!
+            Correct! 🎉
             <SuccessAnimation />
           </div>
       )}

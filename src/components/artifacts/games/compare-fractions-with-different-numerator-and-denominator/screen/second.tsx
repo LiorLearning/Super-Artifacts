@@ -3,7 +3,7 @@ import Header from '../components/header';
 import { BaseProps } from '../utils/types';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import Proceed from '../components/proceed';
+import Proceed, { Proceed2 } from '../components/proceed';
 import RedBox from '../components/RedBox';
 import MultiplierFraction from '../components/multiplierFraction';
 import ComparisonFractions from '../components/ComparisonFractions';
@@ -52,7 +52,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
       }))
     } else if (firstAnswer === fraction1.denominator*(fraction2.denominator -1)) {
       const option = fraction1.denominator*(fraction2.denominator -1)
-      sendAdminMessage('agent', `Does ${fraction1.denominator} go into ${option}? If not, ${option} cannot be a common denominator!`);
+      sendAdminMessage('agent', `Does ${option%fraction1.denominator==0 ? fraction2.denominator : fraction1.denominator} go into ${option}? If not, ${option} cannot be a common denominator!`);
     }
   }, [firstAnswer]);
 
@@ -74,15 +74,15 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
         <h2 className="text-2xl font-bold text-center mb-4">Before we begin, take a guess:</h2>
         
         <div className="flex justify-center gap-4">
-          <Proceed
+          <Proceed2
             text={`I bet ${fraction1.numerator}/${fraction1.denominator} is bigger`}
             onComplete={() => handleguess()}
           />
-          <Proceed
+          <Proceed2
             text={`I bet ${fraction2.numerator}/${fraction2.denominator} is bigger`}
             onComplete={() => handleguess()}
           />
-          <Proceed
+          <Proceed2
             text="Both are equal"
             onComplete={() => handleguess()}
           />
@@ -95,7 +95,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
             <RedBox>
               STEP 2
             </RedBox>
-            <div className="bg-pink-500 text-white text-center text-xl px-6 py-2 font-bold">
+            <div className="bg-[#FF497C] text-white text-center text-xl px-6 py-2 font-bold">
               CHOOSE COMMON <br/> DENOMINATOR
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
                 className={`px-16 py-2 text-lg font-bold text-white rounded-none shadow-[-5px_5px_0_rgba(0,0,0,1)]
                   ${firstAnswer === fraction1.denominator*fraction2.denominator
                     ? 'bg-[#2EA500] hover:bg-[#2EA500]'
-                    : 'bg-[#FF497C] hover:bg-[#FF497C]/90'}`
+                    : 'bg-[#FF497C] hover:bg-[#FF497C]/70'}`
                   }
               >
                 {fraction1.denominator*fraction2.denominator}
@@ -136,7 +136,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
             <RedBox>
               STEP 3
             </RedBox>
-            <div className="bg-pink-500 text-white text-center text-xl px-6 py-6 font-bold">
+            <div className="bg-[#FF497C] text-white text-center text-xl px-6 py-6 font-bold">
               Rewrite Fractions
             </div>
           </div>
