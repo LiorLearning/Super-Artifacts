@@ -228,6 +228,9 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
       }
 
       setTimeout(() => {
+        if (step !== 1) {
+          return;
+        }
         for (let i = 0; i < denomOptions.length; i++) {
           const denom = denomOptions[i];
           const position: [number, number, number] = [-1 + i * 2.2, 0, 2 - i * 2.2];
@@ -246,7 +249,7 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
             }
           } 
         }
-      }, 7000);
+      }, 6000);
 
       // Show the holder
       // toggleTextVisibilityOfHolder(true);

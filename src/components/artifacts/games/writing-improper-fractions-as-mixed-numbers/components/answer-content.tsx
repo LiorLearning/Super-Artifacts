@@ -25,9 +25,10 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
     const expectedWhole = Math.floor(numerator / denominator);
     if (parseInt(remainder) === expectedRemainder && parseInt(whole) === expectedWhole) {
       sendAdminMessage('agent', `Aren't you a math explorer! Correct answer`);
-      goToStep('second', setGameStateRef, 6);
+      goToStep(2, setGameStateRef, 6);
     } else {
-      goToStep('second', setGameStateRef, 5);
+      sendAdminMessage('agent', `Here's how the legos will look when arranged, can you answer now?`);
+      goToStep(2, setGameStateRef, 5);
       setWhole('');
       setRemainder('');
     }

@@ -67,7 +67,10 @@ const Chat: React.FC<ChatProps> = ({ desc, gameState, componentRef }) => {
     if (!scrollArea) return;
     
     const scrollToBottom = () => {
-      scrollArea.scrollTop = scrollArea.scrollHeight;
+      scrollArea.scrollTo({
+        top: scrollArea.scrollHeight,
+        behavior: 'smooth'
+      });
     };
 
     // Initial scroll

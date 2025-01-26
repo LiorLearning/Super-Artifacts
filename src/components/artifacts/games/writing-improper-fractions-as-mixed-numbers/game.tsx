@@ -22,23 +22,23 @@ const DevHelper = () => {
       <Button className='m-2' onClick={() => prevStep(screen, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
         <Select 
-          value={screen} 
+          value={screen.toString()} 
           onValueChange={(selectedScreen) => {
-            setGameStateRef(prev => ({ ...prev, screen: selectedScreen as GameScreen }));
+            setGameStateRef(prev => ({ ...prev, screen: parseInt(selectedScreen) as GameScreen }));
           }}
         >
           <SelectTrigger className="m-2">
             <SelectValue placeholder="Select a screen" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="first">First Screen</SelectItem>
-            <SelectItem value="second">Second Screen</SelectItem>
-            <SelectItem value="third">Third Screen</SelectItem>
+            <SelectItem value="1">First Screen</SelectItem>
+            <SelectItem value="2">Second Screen</SelectItem>
+            <SelectItem value="3">Third Screen</SelectItem>
           </SelectContent>
         </Select>
       </div>
-      {screen === 'first' && <span>Step: {step1}</span>}
-      {screen === 'second' && <span>Step: {step2}</span>}
+      {screen === 1 && <span>Step: {step1}</span>}
+      {screen === 2 && <span>Step: {step2}</span>}
       <Button className='m-2' onClick={() => nextStep(screen, setGameStateRef)}>Next Step</Button>
     </div>
   );
@@ -63,9 +63,9 @@ export default function Game({sendAdminMessage}: GameProps) {
   return (
     <div className="mx-auto game font-jersey">
       <DevHelper />
-      {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 1 && <FirstScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 2 && <SecondScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 3 && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
       
       <style jsx global>{`
           @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');

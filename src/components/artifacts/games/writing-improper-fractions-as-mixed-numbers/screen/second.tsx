@@ -23,16 +23,16 @@ const MainContent = () => {
   const stepText = step <= 2 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
 
   const nextScreen = () => {
-    setGameStateRef(prev => ({ ...prev, screen: 'third' }));
+    setGameStateRef(prev => ({ ...prev, screen: 3 }));
   };
 
   return (
     <div className="flex flex-col m-4">
       {step === 0 && (
-        <FirstQuestion fraction={fraction} onNext={() => nextStep('second', setGameStateRef)} />
+        <FirstQuestion fraction={fraction} onNext={() => nextStep(2, setGameStateRef)} />
       )}
       {step >= 1 && (
-        <StepModule screen={step <= 1 ? 'first' : 'second'} color={color} stepNumber={stepNumber} numerator={numerator} denominator={denominator} stepText={stepText} />
+        <StepModule screen={step <= 1 ? 1 : 2} color={color} stepNumber={stepNumber} numerator={numerator} denominator={denominator} stepText={stepText} />
       )}
       {step === 2 && (
         <div className="flex justify-center mt-4">
@@ -61,14 +61,14 @@ const Footer = ({sendAdminMessage}: GameProps) => {
   const denominator = fraction.denominator;
   const showFinalAnswerRef = useRef(false);
 
-  useEffect(() => {
-    if (step === 6) {
-      setTimeout(() => {
-        sendAdminMessage('agent', `Easy peasy! Keep the denominator the same and turn it into a mixed fraction!`);
-        showFinalAnswerRef.current = true;
-      }, 7000)
-    }
-  }, [step]);
+  // useEffect(() => {
+  //   if (step === 6) {
+  //     setTimeout(() => {
+  //       sendAdminMessage('agent', `Easy peasy! Keep the denominator the same and turn it into a mixed fraction!`);
+  //       showFinalAnswerRef.current = true;
+  //     }, 7000)
+  //   }
+  // }, [step]);
 
   return (
     <div className="relative">
@@ -77,7 +77,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
           <ChooseHolder 
             answer={fraction.denominator} 
             denomOptions={denomOptions} 
-            onSuccess={() => {nextStep('second', setGameStateRef)}} 
+            onSuccess={() => {nextStep(2, setGameStateRef)}} 
             sendAdminMessage={sendAdminMessage}
           />
           <div className="text-center mt-4">
@@ -98,7 +98,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
       {step === 6 && (
         <div>
           <div className="flex justify-center my-16">
-            <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep('second', setGameStateRef)} sendAdminMessage={sendAdminMessage} />
+            <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep(2, setGameStateRef)} sendAdminMessage={sendAdminMessage} />
           </div>
         </div>
       )}
@@ -110,10 +110,14 @@ const Footer = ({sendAdminMessage}: GameProps) => {
 export default function SecondScreen({sendAdminMessage}: GameProps) {
     const { gameStateRef } = useGameState();
     const { fraction, step } = gameStateRef.current.state2;
+    const hasGameStarted = useRef(false);
 
     useEffect(() => {
       if (step === 0) {
-        sendAdminMessage('agent', `Ready for a new challenge? Let’s turn ${fraction.numerator}/${fraction.denominator} into a mixed fraction!`);
+        if (!hasGameStarted.current) {
+          sendAdminMessage('agent', `Ready for a new challenge? Let’s turn ${fraction.numerator}/${fraction.denominator} into a mixed fraction!`);
+          hasGameStarted.current = true;
+        }
       } else if (step === 1) {
         sendAdminMessage('agent', `Step 1: Pick the holder that can fit ${fraction.denominator} legos completely.`);
       } else if (step === 2) {
@@ -122,8 +126,6 @@ export default function SecondScreen({sendAdminMessage}: GameProps) {
         sendAdminMessage('agent', `Here you go!! How many holders can you fill with green legos?`);
       } else if (step === 4) {
         sendAdminMessage('agent', `Awesome, let’s divide! How many groups of ${fraction.denominator} can you make from ${fraction.numerator}, and what’s left over?`);
-      } else if (step === 5) {
-        sendAdminMessage('agent', `Here's how the legos will look when arranged, can you answer now?`);
       }
     }, [step]);
 
