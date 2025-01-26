@@ -23,16 +23,16 @@ const MainContent = () => {
   const stepText = step <= 6 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
 
   const nextScreen = () => {
-    setGameStateRef(prev => ({ ...prev, screen: 'second' }));
+    setGameStateRef(prev => ({ ...prev, screen: 2 }));
   };
 
   return (
     <div className="flex flex-col m-4">
       {step === 0 && (
-        <FirstQuestion fraction={fraction} onNext={() => nextStep('first', setGameStateRef)} />
+        <FirstQuestion fraction={fraction} onNext={() => nextStep(1, setGameStateRef)} />
       )}
       {step > 0 && (
-        <StepModule screen={step <= 3 ? 'first' : 'second'} color={color} stepNumber={stepNumber} numerator={numerator} denominator={denominator} stepText={stepText} />
+        <StepModule screen={step <= 3 ? 1 : 2} color={color} stepNumber={stepNumber} numerator={numerator} denominator={denominator} stepText={stepText} />
       )}
       {step === 3 && (
         <Statement numerator={numerator} denominator={denominator} count={numerator} />
@@ -69,7 +69,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
 
   const verifyAnswer = () => {
     if (answer1 !== '' && answer2 !== '') {
-      goToStep('first', setGameStateRef, 5);
+      goToStep(1, setGameStateRef, 5);
     }
   }
 
@@ -77,7 +77,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
     if (numerator === piecesAtYOne) {
       setIsIncorrect(false);
       sendAdminMessage('agent', `Woohoo! You built ${numerator}/${denominator}th perfectly! Now let’s see what happens next!`);
-      goToStep('first', setGameStateRef, 3);
+      goToStep(1, setGameStateRef, 3);
     } else {
       setIsIncorrect(true);
       // sendAdminMessage('agent', "Hmmm, let's give that another try!");
@@ -109,7 +109,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
             sendAdminMessage={sendAdminMessage}
             answer={denominator}
             denomOptions={denomOptions}
-            onSuccess={() => {nextStep('first', setGameStateRef)}}
+            onSuccess={() => {nextStep(1, setGameStateRef)}}
           />
           <div className="text-center text-3xl mt-8 space-y-2">
             <span>Which holder can hold groups of {denominator}</span>
@@ -198,7 +198,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
             </div>
             <span className="text-3xl">th</span>
           </div>
-          {showStep6Ans.current && <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep('first', setGameStateRef)} sendAdminMessage={sendAdminMessage} />}
+          {showStep6Ans.current && <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep(1, setGameStateRef)} sendAdminMessage={sendAdminMessage} />}
         </>
       )}
     </div>
@@ -221,7 +221,7 @@ export default function FirstScreen({sendAdminMessage}: GameProps) {
         sendAdminMessage('agent', `Alright, builder! That was correct, let's create fresh legos by copying and dragging the green one. Our mission is to make ${fraction.numerator}/${fraction.denominator}th!`);
       } else if (step === 3) {
         setTimeout(() => {
-          nextStep('first', setGameStateRef);
+          nextStep(1, setGameStateRef);
         }, 7000);
       } else if (step === 4) {
         sendAdminMessage('agent', `Now that we have ${fraction.numerator}/${fraction.denominator}th, how many holders can you fill with green legos?`);

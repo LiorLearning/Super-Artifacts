@@ -40,11 +40,11 @@ export const FinalAnswer = ({ numerator, denominator, nextStep, sendAdminMessage
       expectedDenominator === denominator && 
       parseInt(mixedFraction.numerator) < parseInt(mixedFraction.denominator)
     ) {
-      sendAdminMessage('agent', `Wow, you nailed it! Your guess was spot on ${expectedWhole} whole and ${expectedRemainder}/${denominator}ths leftover. Great job!`);
+      sendAdminMessage('agent', `Wow, you nailed it! Your guess was spot on ${expectedWhole} whole and ${expectedRemainder}/${denominator}th leftover. Great job!`);
+      nextStep();
     } else {
-      sendAdminMessage('agent', `Oops, close call! The right answer is ${expectedWhole} whole and ${expectedRemainder}/${denominator}ths. Better luck next time!`);
+      sendAdminMessage('admin', `Diagnose socratically, user slected ${mixedFraction.integer} as the whole number, ${mixedFraction.numerator} as the numerator, and ${mixedFraction.denominator} as the denominator but the answer is ${expectedWhole} whole and ${expectedRemainder}/${denominator}ths.`);
     }
-    nextStep();
   };
 
   return (
@@ -140,7 +140,7 @@ export const CorrectAnswer = ({ numerator, denominator, large, nextScreen }: Cor
 
 
 interface StepModuleProps {
-  screen: string;
+  screen: number;
   color: string;
   stepNumber: number;
   numerator?: number;
@@ -156,7 +156,7 @@ export const StepModule = ({ screen, color, stepNumber, numerator, denominator, 
       </div>
       <div className={`flex-1 border-8 flex items-center max-w-xl`} style={{ color: color, borderColor: color, backgroundColor: color }}>
         <h2 className="text-white text-2xl font-bold flex items-center gap-4 mx-auto">
-          {screen === 'first' && numerator && denominator && (
+          {screen === 1 && numerator && denominator && (
             <>
               <span>CREATE</span>
               <div className="bg-white text-black px-3 py-1 inline-flex flex-col items-center">
@@ -167,7 +167,7 @@ export const StepModule = ({ screen, color, stepNumber, numerator, denominator, 
               <span>LEGO BLOCKS</span>
             </>
           )}
-          {screen === 'second' && (
+          {screen === 2 && (
             <div className="flex items-center justify-center my-4">
               <span>{stepText}</span>
             </div>

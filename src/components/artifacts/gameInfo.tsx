@@ -63,7 +63,7 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: MixedFractionGameState,
     provider: MixedFractionGameStateProvider
   },
-  'writing-mixed-numbers-as-improper-fractions': {
+  'writing-improper-fractions-as-mixed-numbers': {
     game: LegoGame,
     useState: LegoGameState,
     provider: LegoGameStateProvider

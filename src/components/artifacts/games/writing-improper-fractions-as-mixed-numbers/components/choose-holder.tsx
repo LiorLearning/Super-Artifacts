@@ -17,15 +17,18 @@ export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage
     setIsDisabled(true);
     
     if (option === answer) {
-      onSuccess();
+      hasGameStarted.current = false;
       sendAdminMessage('agent', `Awesome! The denominator is ${answer}, so this holder is perfect. Let's move on!`);
+      setTimeout(() => {
+        onSuccess();
+      }, 7000);
     } else {
       sendAdminMessage('admin', `Diagnose socratically to help user select the correct holder, user has selected ${option} but the answer is ${answer}.`);
     }
 
     setTimeout(() => {
       setIsDisabled(false);
-    }, 5000);
+    }, 8000);
   };
   
   // If the kid selects the holder with 3 divisions:
@@ -36,14 +39,14 @@ export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage
   // "Remember, the denominator is 4. Look for the holder with exactly 4 slots!"
 
 
-  useEffect(() => {
-    if (!hasGameStarted.current) {
-      setTimeout(() => {
-        sendAdminMessage('agent', "A hint: Look at the denominator");
-      }, 5000);
-      hasGameStarted.current = true;
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!hasGameStarted.current) {
+  //     setTimeout(() => {
+  //       sendAdminMessage('agent', "A hint: Look at the denominator");
+  //     }, 5000);
+  //     hasGameStarted.current = true;
+  //   }
+  // }, []);
 
   return (
     <div className="flex flex-col items-center justify-center mt-4 space-y-2">

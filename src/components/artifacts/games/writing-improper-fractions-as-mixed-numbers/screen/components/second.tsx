@@ -7,7 +7,8 @@ import { GameProps } from "../../utils/types";
 
 // Footer components
 export const VerifyPiecesAndDivisions = ({sendAdminMessage}: GameProps) => {
-  const { setGameStateRef } = useGameState();
+  const { gameStateRef, setGameStateRef } = useGameState();
+  const { fraction } = gameStateRef.current.state2;
   const [answer, setAnswer] = useState({numLego: '', numDiv: ''});
   const [show2ndQues, setShow2ndQues] = useState(false);
   const [showNextSteps, setShowNextSteps] = useState(false);
@@ -79,7 +80,8 @@ export const VerifyPiecesAndDivisions = ({sendAdminMessage}: GameProps) => {
             <Button 
               className="bg-pink-500 text-white px-6 py-1 w-72 text-3xl rounded-none shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] my-2"
               onClick={() => {
-                goToStep('second', setGameStateRef, 6)
+                sendAdminMessage('agent', `As you say! Here’s how it looks: ${Math.floor(fraction.numerator / fraction.denominator)} holders are full, and 1 is partly filled!`);
+                goToStep(2, setGameStateRef, 5)
               }}
             >
               I want to VISUALIZE
@@ -87,8 +89,7 @@ export const VerifyPiecesAndDivisions = ({sendAdminMessage}: GameProps) => {
             <Button 
               className="bg-pink-500 text-white px-6 py-1 w-72 text-3xl rounded-none shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] my-2 mb-8"
               onClick={() => {
-                sendAdminMessage('agent', `As you say! Here’s how it looks: ${answer.numLego} holders are full, and 1 is partly filled!`);
-                goToStep('second', setGameStateRef, 4)
+                goToStep(2, setGameStateRef, 4)
               }}
             >
               I can DIVIDE!
@@ -150,7 +151,7 @@ export const CreateBlocks = ({sendAdminMessage}: GameProps) => {
     const answerDenominator = parseInt(answer.denominator);
     if (answerNumerator === numerator && answerDenominator === denominator) {
       sendAdminMessage('agent', `Great! We need ${answerNumerator} legos, each sized 1/${answerDenominator}. Let’s create them!`);
-      nextStep('second', setGameStateRef);
+      nextStep(2, setGameStateRef);
     } else if (answerNumerator !== numerator) {
       sendAdminMessage('agent', `Hmm, how many legos do you think we need to make ${numerator}/${denominator}?`);
     } else if (answerDenominator !== denominator) {
