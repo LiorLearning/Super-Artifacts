@@ -37,7 +37,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
         step: 1
       }
     }))
-    sendAdminMessage('agent', `Alright, I hear you. Let's rewrite these fractions with the same denominator to find out! \n Start by choosing a common denominator - a number both ${fraction1.denominator} and ${fraction2.denominator} go into`);
+    sendAdminMessage('agent', `Alright, I hear you. Let's rewrite these fractions with the same denominator to find out!`);
   }
 
   useEffect(() => {
@@ -199,7 +199,9 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
                 step: 5
               }
             }))
-            sendAdminMessage('agent', `Superb, you're almost a master! Time for Level 3`);
+            setTimeout(() => {
+              sendAdminMessage('agent', `Superb, you're almost a master! Time for Level 3`);
+            }, 1000);
           }}
           sendAdminMessage={sendAdminMessage}
         />

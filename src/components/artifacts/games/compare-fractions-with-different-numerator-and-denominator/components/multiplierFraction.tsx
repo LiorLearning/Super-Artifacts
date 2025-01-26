@@ -25,7 +25,6 @@ export default function MultiplierFraction({
   const [multiplerStep, setMultiplerStep] = useState(0);
 
   useEffect(() => {
-    console.log(multiplerStep);
     if (multiplerStep === 0) {
       if (numerator2Ref.current) {
         (numerator2Ref.current as HTMLInputElement).focus();
@@ -48,13 +47,15 @@ export default function MultiplierFraction({
       }
     }}, []);
 
-  useEffect(() => {
-    if (multiplerStep === 0 && multiplier1_denominator === (denominator2/denominator1).toString()) {
+  const setMultiplier1_denominator = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setmultiplier1_denominator(value);
+    if (multiplerStep === 0 && value === (denominator2/denominator1).toString()) {
       setMultiplerStep(1);
-    } else if (multiplier1_denominator){
-      sendAdminMessage('admin', `User entered ${multiplier1_denominator} as factor of ${denominator2} and ${denominator1} but it is not a valid factor, diagnose socratically`);
+    } else {
+      sendAdminMessage('admin', `User entered ${e.target.value} as factor of ${denominator2} and ${denominator1} but it is not a valid factor, diagnose socratically`);
     }
-  }, [multiplier1_denominator]);
+  }
 
   useEffect(() => {
     if (multiplerStep ===2 && numerator2 === (numerator1 * parseInt(multiplier1_denominator)).toString()) {
@@ -62,13 +63,15 @@ export default function MultiplierFraction({
     }
   }, [numerator2]);
 
-  useEffect(() => {
-    if (multiplerStep === 1 && multiplier1_numerator === (denominator2/denominator1).toString()) {
+  const setMultiplier1_numerator = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setmultiplier1_numerator(value);
+    if (multiplerStep === 1 && value === (denominator2/denominator1).toString()) {
       setMultiplerStep(2);
     } else {
-      sendAdminMessage('admin', `User entered ${multiplier1_numerator} as factor for numerator, user already entered ${multiplier1_denominator} as factor of ${denominator2} and ${denominator1}`);
+      sendAdminMessage('admin', `User entered ${e.target.value} as factor for numerator, user already entered ${multiplier1_denominator} as factor of ${denominator2} and ${denominator1}`);
     }
-  }, [multiplier1_numerator]);
+  }
 
   return (
 
@@ -80,7 +83,7 @@ export default function MultiplierFraction({
           <input 
             type="text"
             value={multiplier1_numerator ? multiplier1_numerator.toString() : ''}
-            onChange={(e) => setmultiplier1_numerator(e.target.value)}
+            onChange={setMultiplier1_numerator}
             placeholder={multiplerStep === 1 ? "?" : ""}
             className={`w-10 text-center mb-2 ml-2 border-2 border-black ${multiplerStep >= 1 ? 'opacity-100' : 'opacity-5'}`}
             disabled={multiplerStep !== 1}
@@ -127,7 +130,7 @@ export default function MultiplierFraction({
           <input 
             type="text"
             value={multiplier1_denominator}
-            onChange={(e) =>  setmultiplier1_denominator(e.target.value)}
+            onChange={setMultiplier1_denominator}
             placeholder={multiplerStep === 0 ? "?" : ""}
             className={`w-10 text-center my-1 ml-2 border-2 border-black`}
             style={{
