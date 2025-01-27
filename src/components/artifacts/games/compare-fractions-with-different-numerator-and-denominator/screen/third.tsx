@@ -202,13 +202,13 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       )}
 
       {step >= 2 && (
-        <div className='flex flex-col items-center gap-8'>
-          <div className="flex justify-center items-center gap-4 my-8">
-            <RedBox>
-              STEP 3
-            </RedBox>
-            <div className="bg-pink-500 text-white text-center text-xl px-6 py-6 font-bold">
-              COMPARE
+        <div className='flex flex-col items-center gap-8 mb-48'>
+          <div className='flex justify-center items-center gap-4 mt-16'>
+            <div className="flex items-center gap-4">
+              <RedBox>STEP 3</RedBox>
+              <div className='text-xl bg-[#FF497C] font-bold text-white px-4 py-5 h-full flex items-center'>
+                COMPARE
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4 mt-8">
