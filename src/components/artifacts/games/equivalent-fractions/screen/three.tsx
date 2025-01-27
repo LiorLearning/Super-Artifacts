@@ -200,7 +200,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
                 }
               }))
               sendAdminMessage('agent', `You've got it! We splitted each piece by multiplying both the total number of pieces (denominator) and the pieces you have (numerator) by ${multiplier1}`);
-            }} />
+            }} sendAdminMessage={sendAdminMessage} />
           </div>
         )}
           {step == 4 && (
