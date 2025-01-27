@@ -129,7 +129,14 @@ export default function MultiplierFraction({
   </div>
 )}
 
-export const OnlyMultiplier = ({numerator1, denominator1, multiplier, onComplete}: {numerator1: number, denominator1: number, multiplier: number, onComplete: () => void}) => {
+interface OnlyMultiplierProps extends BaseProps {
+  numerator1: number;
+  denominator1: number;
+  multiplier: number;
+  onComplete: () => void;
+}
+
+export const OnlyMultiplier = ({numerator1, denominator1, multiplier, onComplete, sendAdminMessage}: OnlyMultiplierProps) => {
   const [multiplier1_numerator, setmultiplier1_numerator] = useState(0);
   const multiplier1_numeratorRef = useRef(null);
   const [multiplier1_denominator, setmultiplier1_denominator] = useState(0);
@@ -140,6 +147,7 @@ export const OnlyMultiplier = ({numerator1, denominator1, multiplier, onComplete
   useEffect(() => {
     if (multiplier1_denominator === multiplier) {
       setMultiplierStep(1);
+      sendAdminMessage('agent', `If you multiply the bottom number by ${multiplier}, what should you multiply the top by to get the same fraction?`);
       if (multiplier1_denominatorRef.current) {
         (multiplier1_denominatorRef.current as HTMLInputElement).focus();
       }
