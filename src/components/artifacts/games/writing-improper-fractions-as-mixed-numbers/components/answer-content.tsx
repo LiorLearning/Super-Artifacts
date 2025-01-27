@@ -16,9 +16,11 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
   showFull,
   sendAdminMessage,
 }) => {
-  const { setGameStateRef } = useGameState();
+  const { gameStateRef, setGameStateRef } = useGameState();
   const [whole, setWhole] = useState(showFull ? Math.floor(numerator / denominator).toString() : '');
   const [remainder, setRemainder] = useState(showFull ? (numerator % denominator).toString() : '');
+
+  const { step } = gameStateRef.current.state2;
 
   const onDone = () => {
     const expectedRemainder = numerator % denominator;
@@ -27,7 +29,11 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
       sendAdminMessage('agent', `Aren't you a math explorer! Correct answer`);
       goToStep(2, setGameStateRef, 6);
     } else {
-      sendAdminMessage('agent', `Here's how the legos will look when arranged, can you answer now?`);
+      if (step === 4) {
+        sendAdminMessage('agent', `Here's how the legos will look when arranged, can you answer now?`);
+      } else {
+        sendAdminMessage('admin', `User entered ${whole} and ${remainder} but the answer is ${expectedWhole} and ${expectedRemainder}. Diagnose socratically`);
+      }
       goToStep(2, setGameStateRef, 5);
       setWhole('');
       setRemainder('');
