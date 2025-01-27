@@ -53,7 +53,9 @@ export default function MultiplierFraction({
     if (multiplerStep === 0 && value === (denominator2/denominator1).toString()) {
       setMultiplerStep(1);
     } else {
-      sendAdminMessage('admin', `User entered ${e.target.value} as factor of ${denominator2} and ${denominator1} but it is not a valid factor, diagnose socratically`);
+      if (value !== '') {
+        sendAdminMessage('admin', `User entered ${e.target.value} as factor of ${denominator2} and ${denominator1} but it is not a valid factor, diagnose socratically`);
+      }
     }
   }
 
@@ -69,7 +71,9 @@ export default function MultiplierFraction({
     if (multiplerStep === 1 && value === (denominator2/denominator1).toString()) {
       setMultiplerStep(2);
     } else {
-      sendAdminMessage('admin', `User entered ${e.target.value} as factor for numerator, user already entered ${multiplier1_denominator} as factor of ${denominator2} and ${denominator1}`);
+      if (value !== '') {
+        sendAdminMessage('admin', `User entered ${e.target.value} as factor for numerator, user should enter ${multiplier1_denominator} as factor for numerator to get an equivalent fraction. Don't tell away the answer. Diagnose socratically`);
+      }
     }
   }
 
