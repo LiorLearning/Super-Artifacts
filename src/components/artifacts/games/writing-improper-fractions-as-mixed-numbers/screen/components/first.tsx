@@ -40,7 +40,7 @@ export const FinalAnswer = ({ numerator, denominator, nextStep, sendAdminMessage
       expectedDenominator === denominator && 
       parseInt(mixedFraction.numerator) < parseInt(mixedFraction.denominator)
     ) {
-      sendAdminMessage('agent', `Wow, you nailed it! Your guess was spot on ${expectedWhole} whole and ${expectedRemainder}/${denominator}th leftover. Great job!`);
+      sendAdminMessage('agent', `Wow, you nailed it! The answer is - ${expectedWhole} whole and ${expectedRemainder}/${denominator}th leftover. Great job!`);
       nextStep();
     } else {
       sendAdminMessage('admin', `Diagnose socratically, user slected ${mixedFraction.integer} as the whole number, ${mixedFraction.numerator} as the numerator, and ${mixedFraction.denominator} as the denominator but the answer is ${expectedWhole} whole and ${expectedRemainder}/${denominator}ths.`);

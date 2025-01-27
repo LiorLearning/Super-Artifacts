@@ -45,8 +45,8 @@ const MainContent = () => {
       )}
       {step === 7 && (
         <>
-          <CorrectAnswer numerator={numerator} denominator={denominator} large={true} />
-          <SuccessAnimation/>
+          <CorrectAnswer numerator={numerator} denominator={denominator} large={true} nextScreen={nextScreen} />
+          {/* <SuccessAnimation/> */}
         </>
       )}
     </div>
@@ -134,7 +134,7 @@ export default function SecondScreen({sendAdminMessage}: GameProps) {
         {step > 0 && <Header fraction={fraction} />}
         <MainContent />
         {step > 0 && step !== 4 && step <= 6 && (
-          <div className="flex items-center justify-center">
+          <div className={`flex items-center justify-center ${(step === 2 || step === 3) ? 'opacity-50 pointer-events-none' : ''}`}>
             <LegoGame />
           </div>
         )}

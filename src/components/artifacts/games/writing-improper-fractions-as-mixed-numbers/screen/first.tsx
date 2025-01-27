@@ -97,7 +97,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
       setTimeout(() => {
         sendAdminMessage('agent', "Now let’s connect the math! Quotient goes in the purple box. Remainder in the green box.");
         showStep6Ans.current = true;
-      }, 12000);
+      }, 7000);
     }
   }, [step])
 
