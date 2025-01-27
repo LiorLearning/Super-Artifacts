@@ -11,18 +11,18 @@ function Game({ sendAdminMessage }: GameProps) {
 
   return (
     <div className="h-full w-full bg-white">
-      <div className="flex flex-col pb-96 h-full w-full justify-center items-center font-gaegu relative" style={{ backgroundColor: COLORS.lightBlue }}>
+      <div className="flex flex-col h-full w-full justify-start items-center font-gaegu relative overflow-y-auto" style={{ backgroundColor: COLORS.lightBlue }}>
         <img 
           src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/clouds.png" 
           alt="Game background" 
-          className="absolute inset-0 w-full object-cover opacity-100 z-1 right-[120px] mt-16"
+          className="absolute inset-0 w-full object-cover opacity-100 z-1 right-[120px]"
         />
-        <div className="relative z-10">
+        <div className="relative z-10 w-full pt-8">
           {gameStateRef.current.screen === 1 && (
             <>
               <First sendAdminMessage={sendAdminMessage} visible={true} />
               {gameStateRef.current.state1.step === 5 && (
-                <div className="w-full absolute inset-0 z-10 rounded-lg shadow-lg mt-8" style={{
+                <div className="w-full absolute inset-0 z-10 rounded-lg shadow-lg" style={{
                   backgroundColor: COLORS.white
                 }}>
                   <div className="h-full w-full">
