@@ -47,7 +47,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
           substep: 1
         }
       }));
-      sendAdminMessage('agent', `Time for you to grab the same amount of chocolate again!`);
+      // sendAdminMessage('agent', `Time for you to grab the same amount of chocolate again!`);
     } else if (selectedKnife) {
       sendAdminMessage('agent', `Hmm, right now, you've used the knife labeled ${selectedKnife}, and that gave us ${selectedKnife*denominator1} pieces, but we need ${denominator2} pieces. Can you figure out which knife will get us to ${denominator2}?`);
     }
@@ -91,7 +91,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
           substep: 4  
         }
       });
-      sendAdminMessage('agent', `Awesome, you're now ready for the next level`);
+      // sendAdminMessage('agent', `Awesome, you're now ready for the next level`);
     }
   }, [selectedPieces2]);
 

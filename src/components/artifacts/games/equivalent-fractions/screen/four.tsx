@@ -153,7 +153,7 @@ const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMes
   useEffect(() => {
     if (hint === 1 && multiplier_denominator === denominator2/denominator1) {
       setHint(2);
-      sendAdminMessage('agent', `Awesome, so what would you need to multiply ${numerator1} by to keep the same fraction?`);
+      // sendAdminMessage('agent', `Awesome, so what would you need to multiply ${numerator1} by to keep the same fraction?`);
       multiplier_numeratorRef.current?.focus();
     } else if (hint === 2 && multiplier_numerator === denominator2/denominator1) {
       setHint(3)
@@ -253,7 +253,7 @@ const STEP3 = ({numerator1, numerator2, denominator2, onComplete, sendAdminMessa
   useEffect(() => {
     if (hint === 1 && multiplier_numerator === numerator2/numerator1) {
       setHint(2);
-      sendAdminMessage('agent', `Awesome, so what would you need to multiply ${numerator2} by to keep the same fraction?`);
+      // sendAdminMessage('agent', `Awesome, so what would you need to multiply ${numerator2} by to keep the same fraction?`);
       multiplier_denominatorRef.current?.focus();
     } else if (hint === 2 && multiplier_denominator === numerator2/numerator1) {
       setHint(3)

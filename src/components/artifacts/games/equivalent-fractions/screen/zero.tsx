@@ -12,12 +12,12 @@ function Level0({ sendAdminMessage }: BaseProps) {
   const { question } = state1;
   const start = useRef(false);
 
-  useEffect(() => {
-    if (!start.current) {
-      sendAdminMessage('agent', `${question.numerator1} out of ${question.denominator1} pieces is the same as how many out of ${question.denominator2}?`);
-      start.current = true;
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!start.current) {
+  //     sendAdminMessage('agent', `${question.numerator1} out of ${question.denominator1} pieces is the same as how many out of ${question.denominator2}?`);
+  //     start.current = true;
+  //   }
+  // }, []);
 
   return (
     <div className="flex flex-col justify-center items-center h-full w-full">

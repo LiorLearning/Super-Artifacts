@@ -48,7 +48,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
           step: 2
         }
       }));
-      sendAdminMessage('agent', `When you use a knife with a size of ${denominator2/denominator1} to split the chocolate, both the total number of pieces (denominator) and the pieces you have (numerator) are multiplied by ${denominator2/denominator1}.`);
+      // sendAdminMessage('agent', `When you use a knife with a size of ${denominator2/denominator1} to split the chocolate, both the total number of pieces (denominator) and the pieces you have (numerator) are multiplied by ${denominator2/denominator1}.`);
     }
   }, [numerator]);
 
@@ -168,7 +168,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
         {step == 2 && (
           <div className="flex flex-col">
             <Proceed onComplete={() => {
-              sendAdminMessage('agent', `What would you need to multiply ${denominator1} by to get ${denominator1*multiplier1}?`);
+              // sendAdminMessage('agent', `What would you need to multiply ${denominator1} by to get ${denominator1*multiplier1}?`);
               setGameStateRef(prev => ({
                 ...prev,
                 state3: {
@@ -216,7 +216,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
                   step: 5
                 }
               }))
-              sendAdminMessage('agent', `Do you remember how many pieces we got when we merged the chocolate to  ${denominator1/multiplier2} pieces?`);
+              // sendAdminMessage('agent', `Do you remember how many pieces we got when we merged the chocolate to  ${denominator1/multiplier2} pieces?`);
             }} />
           </div>
           )}
@@ -251,7 +251,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
           step: 6
         }
       }));
-      sendAdminMessage('agent', `When you use honey with a value of ${multiplier2}, you merge every ${multiplier2} pieces into 1. This reduces both the denominator and the numerator by dividing each by ${multiplier2}!`);
+      // sendAdminMessage('agent', `When you use honey with a value of ${multiplier2}, you merge every ${multiplier2} pieces into 1. This reduces both the denominator and the numerator by dividing each by ${multiplier2}!`);
     }
   }, [numerator]);
 
