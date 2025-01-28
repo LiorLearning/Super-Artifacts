@@ -381,7 +381,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
             <Proceed onComplete={() => {
               setGameStateRef(prev => ({
                 ...prev,
-                level: 4
+                screen: 4
               }))
             }} />
           </div>

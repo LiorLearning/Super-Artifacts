@@ -242,7 +242,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             onComplete={() => {
               setGameStateRef(prev => ({
                 ...prev,
-                level: 2
+                screen: 2
               }));
             }}
           />
