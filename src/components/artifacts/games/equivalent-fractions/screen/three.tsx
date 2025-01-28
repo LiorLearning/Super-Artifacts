@@ -12,7 +12,7 @@ import { OnlyDivisor, OnlyMultiplier } from "../components/multiplierFraction";
 
 export default function Level3 ({sendAdminMessage}: BaseProps) {
   const { gameStateRef } = useGameState();
-  const { step } = gameStateRef.current.screen3;
+  const { step } = gameStateRef.current.state3;
   return (    
     step < 5 ? (
       <Level3_1 sendAdminMessage={sendAdminMessage} />
@@ -25,9 +25,9 @@ export default function Level3 ({sendAdminMessage}: BaseProps) {
 
 function Level3_1({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step } = gameStateRef.current.screen3;
-  const {numerator1, denominator1, denominator2, denominator3} = gameStateRef.current.screen3.question;
-  const {numerator, multiplier1, multiplier2} = gameStateRef.current.screen3.answers;
+  const { step } = gameStateRef.current.state3;
+  const {numerator1, denominator1, denominator2, denominator3} = gameStateRef.current.state3.question;
+  const {numerator, multiplier1, multiplier2} = gameStateRef.current.state3.answers;
   const dropref = useRef<HTMLDivElement>(null);
 
   const [multiplier1_denominator, setmultiplier1_denominator] = useState<number | undefined>();
@@ -43,12 +43,12 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
     if (numerator === numerator1/denominator1*denominator2) {
       setGameStateRef(prev => ({
         ...prev,
-        screen3: {
-          ...prev.screen3,
+        state3: {
+          ...prev.state3,
           step: 2
         }
       }));
-      sendAdminMessage('agent', `When you use a knife with a size of ${denominator2/denominator1} to split the chocolate, both the total number of pieces (denominator) and the pieces you have (numerator) are multiplied by ${denominator2/denominator1}.`);
+      // sendAdminMessage('agent', `When you use a knife with a size of ${denominator2/denominator1} to split the chocolate, both the total number of pieces (denominator) and the pieces you have (numerator) are multiplied by ${denominator2/denominator1}.`);
     }
   }, [numerator]);
 
@@ -116,10 +116,10 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
                 onChange={(e) => {
                   setGameStateRef(prev => ({
                     ...prev,
-                    screen3: {
-                      ...prev.screen3,
+                    state3: {
+                      ...prev.state3,
                       answers: {
-                        ...prev.screen3.answers,
+                        ...prev.state3.answers,
                         numerator: Number(e.target.value)
                       }
                     }
@@ -168,11 +168,11 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
         {step == 2 && (
           <div className="flex flex-col">
             <Proceed onComplete={() => {
-              sendAdminMessage('agent', `What would you need to multiply ${denominator1} by to get ${denominator1*multiplier1}?`);
+              // sendAdminMessage('agent', `What would you need to multiply ${denominator1} by to get ${denominator1*multiplier1}?`);
               setGameStateRef(prev => ({
                 ...prev,
-                screen3: {
-                  ...prev.screen3,
+                state3: {
+                  ...prev.state3,
                   step: 3
                 }
               }))
@@ -194,8 +194,8 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
             <OnlyMultiplier numerator1={numerator1} denominator1={denominator1} multiplier={multiplier1} onComplete={() => {
               setGameStateRef(prev => ({
                 ...prev,
-                screen3: {
-                  ...prev.screen3,
+                state3: {
+                  ...prev.state3,
                   step: 4
                 }
               }))
@@ -211,12 +211,12 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
             <Proceed onComplete={() => {
               setGameStateRef(prev => ({
                 ...prev,
-                screen3: {
-                  ...prev.screen3,
+                state3: {
+                  ...prev.state3,
                   step: 5
                 }
               }))
-              sendAdminMessage('agent', `Do you remember how many pieces we got when we merged the chocolate to  ${denominator1/multiplier2} pieces?`);
+              // sendAdminMessage('agent', `Do you remember how many pieces we got when we merged the chocolate to  ${denominator1/multiplier2} pieces?`);
             }} />
           </div>
           )}
@@ -227,9 +227,9 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
 
 function Level3_2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step } = gameStateRef.current.screen3;
-  const {numerator1, denominator1, denominator2, denominator3} = gameStateRef.current.screen3.question;
-  const {multiplier1, multiplier2, multiplier3} = gameStateRef.current.screen3.answers;
+  const { step } = gameStateRef.current.state3;
+  const {numerator1, denominator1, denominator2, denominator3} = gameStateRef.current.state3.question;
+  const {multiplier1, multiplier2, multiplier3} = gameStateRef.current.state3.answers;
   const dropref = useRef<HTMLDivElement>(null);
 
   const [numerator, setnumerator] = useState<number | undefined>();
@@ -246,12 +246,12 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
     if (numerator === numerator1/multiplier2) {
       setGameStateRef(prev => ({
         ...prev,
-        screen3: {
-          ...prev.screen3,
+        state3: {
+          ...prev.state3,
           step: 6
         }
       }));
-      sendAdminMessage('agent', `When you use honey with a value of ${multiplier2}, you merge every ${multiplier2} pieces into 1. This reduces both the denominator and the numerator by dividing each by ${multiplier2}!`);
+      // sendAdminMessage('agent', `When you use honey with a value of ${multiplier2}, you merge every ${multiplier2} pieces into 1. This reduces both the denominator and the numerator by dividing each by ${multiplier2}!`);
     }
   }, [numerator]);
 
@@ -261,8 +261,8 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
     if (multiplier1_numerator === multiplier3 && multiplier1_denominator === multiplier3) {
                     setGameStateRef(prev => ({
                       ...prev,
-                      screen3: {
-                        ...prev.screen3,
+                      state3: {
+                        ...prev.state3,
           step: 8
         } 
       }));
@@ -343,7 +343,7 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
               setGameStateRef(prev => ({
                 ...prev,
                 screen3: {
-                  ...prev.screen3,
+                  ...prev.state3,
                   step: 7
                 }
               }))
@@ -364,8 +364,8 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
             <OnlyDivisor numerator1={numerator1} denominator1={denominator1} divisor={multiplier3} onComplete={() => {
               setGameStateRef(prev => ({
                 ...prev,
-                screen3: {
-                  ...prev.screen3,
+                state3: {
+                  ...prev.state3,
                   step: 8
                 }
               }))

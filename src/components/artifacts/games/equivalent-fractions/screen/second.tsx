@@ -12,8 +12,8 @@ import HoneySelector from "../components/honeyselctor";
 
 export default function Level2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const {numerator1, denominator1, denominator2, denominator3 } = gameStateRef.current.screen2.question;  
-  const { step, substep } = gameStateRef.current.screen2;
+  const {numerator1, denominator1, denominator2, denominator3 } = gameStateRef.current.state2.question;  
+  const { step, substep } = gameStateRef.current.state2;
   const [answer1, setAnswer1] = useState('');
 
   const [selectedPieces1, setSelectedPieces1] = useState(0);
@@ -38,16 +38,16 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
     if(selectedKnife && selectedKnife*denominator1 === denominator2){
       setGameStateRef(prev => ({
         ...prev,
-        screen2: {
-          ...prev.screen2,
+        state2: {
+          ...prev.state2,
           step: {
-            ...prev.screen2.step,
-            id: prev.screen2.step.id + 1
+            ...prev.state2.step,
+            id: prev.state2.step.id + 1
           },
           substep: 1
         }
       }));
-      sendAdminMessage('agent', `Time for you to grab the same amount of chocolate again!`);
+      // sendAdminMessage('agent', `Time for you to grab the same amount of chocolate again!`);
     } else if (selectedKnife) {
       sendAdminMessage('agent', `Hmm, right now, you've used the knife labeled ${selectedKnife}, and that gave us ${selectedKnife*denominator1} pieces, but we need ${denominator2} pieces. Can you figure out which knife will get us to ${denominator2}?`);
     }
@@ -59,8 +59,8 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
     if(denominator1/selectedHoney === denominator3){
       setGameStateRef(prev => ({
         ...prev,
-        screen2: {
-          ...prev.screen2,
+        state2: {
+          ...prev.state2,
           substep: 3
         }
       }));
@@ -73,8 +73,8 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
     if(selectedPieces1 === denominator2/denominator1*numerator1){
       setGameStateRef({
         ...gameStateRef.current,
-        screen2: {
-          ...gameStateRef.current.screen2,
+        state2: {
+          ...gameStateRef.current.state2,
           substep: 2  
         }
       });
@@ -86,12 +86,12 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
     if(selectedPieces2 === numerator1/denominator1*denominator3){
       setGameStateRef({
         ...gameStateRef.current,
-        screen2: {
-          ...gameStateRef.current.screen2,
+        state2: {
+          ...gameStateRef.current.state2,
           substep: 4  
         }
       });
-      sendAdminMessage('agent', `Awesome, you're now ready for the next level`);
+      // sendAdminMessage('agent', `Awesome, you're now ready for the next level`);
     }
   }, [selectedPieces2]);
 
@@ -232,7 +232,7 @@ export default function Level2({ sendAdminMessage }: BaseProps) {
             <Proceed onComplete={() => {
               setGameStateRef({
                 ...gameStateRef.current,
-                level: 3
+                screen: 3
               });
             }} />
           )}

@@ -104,19 +104,19 @@ export interface Screen4 {
 }
 
 export interface GameState {
-  level: number,
-  screen1: Screen1,
-  screen2: Screen2,
-  screen3: Screen3,
-  screen4: Screen4,
+  screen: number,
+  state1: Screen1,
+  state2: Screen2,
+  state3: Screen3,
+  state4: Screen4,
 }
 
 export const initialGameState: GameState = {
-  level: 0,
-  screen1: {
+  screen: 0,
+  state1: {
     step: {
       id: 1,
-      text: "CREATE 9 PIECES"
+      text: "CREATE 9 PIECES" // If changing denominator, change this text
     },
     question:{
       numerator1: 2,
@@ -124,7 +124,7 @@ export const initialGameState: GameState = {
       denominator2: 9
     },
   },
-  screen2: {
+  state2: {
     step: {
       id: 1,
       text: "CREATE 9 PIECES"
@@ -137,7 +137,7 @@ export const initialGameState: GameState = {
       denominator3: 3
     }
   },
-  screen3: {
+  state3: {
     step: 1,
     fraction1: {
       numerator: 4,
@@ -164,7 +164,7 @@ export const initialGameState: GameState = {
       multiplier3: 3
     }
   },
-  screen4: {
+  state4: {
     step: 1,
     question1: {
       numerator1: 2,
