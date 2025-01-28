@@ -8,8 +8,8 @@ import { Triangle } from 'lucide-react'
 
 function Level0({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { screen1 } = gameStateRef.current;
-  const { question } = screen1;
+  const { state1 } = gameStateRef.current;
+  const { question } = state1;
   const start = useRef(false);
 
   useEffect(() => {

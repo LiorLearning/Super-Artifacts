@@ -12,8 +12,8 @@ import { getInputColor } from "../utils/helper";
 
 export default function Level4({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step } = gameStateRef.current.screen4;
-  const {question1, question2} = gameStateRef.current.screen4;
+  const { step } = gameStateRef.current.state4;
+  const {question1, question2} = gameStateRef.current.state4;
   const [answerNumerator, setAnswerNumerator] = useState(0);
   const [answerDenominator, setAnswerDenominator] = useState(0);
   const multiplier1 = question1.denominator2/question1.denominator1;
@@ -44,8 +44,8 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
     if (answerNumerator === question1.numerator1*question1.denominator2/question1.denominator1) {
       setGameStateRef({
         ...gameStateRef.current,
-        screen4: {
-          ...gameStateRef.current.screen4,
+        state4: {
+          ...gameStateRef.current.state4,
           step: 2
         }
       });
@@ -56,8 +56,8 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
     if (answerDenominator === question2.numerator1*question2.denominator2/question2.numerator2) {
       setGameStateRef({
         ...gameStateRef.current,
-        screen4: {
-          ...gameStateRef.current.screen4,
+        state4: {
+          ...gameStateRef.current.state4,
           step: 4
         }
       });
@@ -88,8 +88,8 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           <STEP2 numerator1={question1.numerator1} denominator1={question1.denominator1} denominator2={question1.denominator2} onComplete={() => {
             setGameStateRef({
               ...gameStateRef.current,
-              screen4: {
-                ...gameStateRef.current.screen4,
+              state4: {
+                ...gameStateRef.current.state4,
                 step: 2
               }
             });
@@ -98,8 +98,8 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           <STEP3 numerator1={question2.numerator1} numerator2={question2.numerator2} denominator2={question2.denominator2} onComplete={() => {
             setGameStateRef({
               ...gameStateRef.current,
-              screen4: {
-                ...gameStateRef.current.screen4,
+              state4: {
+                ...gameStateRef.current.state4,
                 step: 4
               }
             });
@@ -113,8 +113,8 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           <Proceed onComplete={() => {
             setGameStateRef({
               ...gameStateRef.current,
-              screen4: {
-                ...gameStateRef.current.screen4,
+              state4: {
+                ...gameStateRef.current.state4,
                 step: 3
               }
             });
