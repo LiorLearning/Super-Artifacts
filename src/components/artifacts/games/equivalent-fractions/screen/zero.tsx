@@ -47,7 +47,7 @@ function Level0({ sendAdminMessage }: BaseProps) {
         onClick={() => {
           setGameStateRef(prev => ({
             ...gameStateRef.current,
-            level: 1
+            screen: 1
           }));
         }}
       >
