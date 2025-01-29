@@ -167,7 +167,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           whole={fraction2.whole} 
           numerator={fraction2.numerator} 
           denominator={fraction2.denominator} 
-          pizzaName='mushroom' 
+          pizzaName='Cheese' 
+
           color='yellow' 
           pizzacolor={['yellow', 'black', '#CA8A04']}
 

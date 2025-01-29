@@ -65,7 +65,8 @@ const Header: React.FC<HeaderProps> = (({ fraction1, fraction2, type, version })
               <div className={`flex flex-col items-center justify-center p-1 rounded-full border-2 border-yellow-800 bg-yellow-200`}>
                 <div className={`w-12 h-12 bg-yellow-600 border-2 border-yellow-800 rounded-full`} />
               </div>
-              Pepperoni Pizza
+              Cheeze Pizza
+
             </p>
           </div>
         </div>
