@@ -12,7 +12,7 @@ export const descriptions: Description[] = [
   {
     title: 1,
     oneliner: 'Introduction to pizza fractions through drag and drop',
-    description: 'This screen introduces the concept of mixed numbers using a pizza analogy. Players are presented with two types of pizzas (Pepperoni and Mushroom) represented as mixed fractions. The screen features a drag-and-drop interface where players must move whole pizzas and slices to designated areas. Players first drag the whole pizzas, then the sliced sections, and finally input their answers in a mixed number format. The screen includes visual feedback with color-coding (pink for Pepperoni, yellow for Mushroom) and sound effects for interactions. The goal is to help players understand how mixed numbers can be represented visually and how to combine them.'
+    description: 'This screen introduces the concept of mixed numbers using a pizza analogy. Players are presented with two types of pizzas (Pepperoni and Cheese) represented as mixed fractions. The screen features a drag-and-drop interface where players must move whole pizzas and slices to designated areas. Players first drag the whole pizzas, then the sliced sections, and finally input their answers in a mixed number format. The screen includes visual feedback with color-coding (pink for Pepperoni, yellow for Cheese) and sound effects for interactions. The goal is to help players understand how mixed numbers can be represented visually and how to combine them.'
   },
   {
     title: 2,
@@ -85,7 +85,7 @@ export const initialGameState: GameState = {
   screen: 1,
 
   state1: {
-    step: 1,
+    step: 0,
     fraction1: { whole: 3, numerator: 1, denominator: 4 },
     fraction2: { whole: 4, numerator: 3, denominator: 4 },
   },
