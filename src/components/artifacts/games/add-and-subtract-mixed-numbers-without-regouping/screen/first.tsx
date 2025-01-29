@@ -19,6 +19,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (!start.current) {
       sendAdminMessage("agent","Today, we're learning to add mixed numbers! Let's Start!");
+
     }
     start.current = true;
   }, []);
@@ -32,6 +33,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       <div className="">
       <Header fraction1={fraction1} fraction2={fraction2} type='addition' version={step === 2 ? 2 : 1} />
       {step === 1 ?
+
           <Step1 sendAdminMessage={sendAdminMessage} />
         : step === 2 ?
           <Step2 sendAdminMessage={sendAdminMessage} />
@@ -169,6 +171,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     if (parseInt(question1description.inputNumerator) === fraction1.numerator && parseInt(question1description.inputDenominator) === fraction1.denominator){
       sendAdminMessage('agent', `Great job! There's ${fraction1.numerator} slice left out of ${fraction1.denominator}. That makes it ${fraction1.numerator}/${fraction1.denominator} of a pizza!`);
     } else if (parseInt(question1description.inputNumerator) > 0 && parseInt(question1description.inputNumerator) !== fraction1.numerator) {
+
       sendAdminMessage('agent', "Almost! Count the leftover slices carefully—how many do you see?");
     }
   }, [question1description.inputNumerator])
@@ -201,6 +204,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     if (parseInt(question2description.inputDenominator) === fraction2.denominator && parseInt(question2description.inputNumerator) === fraction2.numerator){
       sendAdminMessage('agent', `Great job! There's ${fraction2.numerator} slice left out of ${fraction2.denominator}. That makes it ${fraction2.numerator}/${fraction2.denominator} of a pizza!. Now quickly fill in the Cheese order`);
     } else if (parseInt(question2description.inputDenominator) > 0 && parseInt(question2description.inputDenominator) !== fraction2.denominator) {
+
       sendAdminMessage('agent', "Not quite! Think about how many slices make up a whole pizza. Try again!");
     }
   }, [question2description.inputDenominator])

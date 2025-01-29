@@ -172,13 +172,16 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
     <div className='flex flex-col gap-4'>
 
       {/* Source Pizzas Display */}
+
       <div className='flex flex-col justify-evenly px-16 pt-4 gap-2'>
+
         {[
           { index: 0, pizza: fraction1, fraction: fraction1 },
           { index: 1, pizza: fraction2, fraction: fraction2 }
         ].map(({ index, pizza, fraction}) => (
           <div key={index} className={`min-h-32 flex bg-[#F97315] p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg`}>
             <span className='bg-white text-2xl rounded-lg px-2 pr-4 font-bold border-2 border-gray-500 flex shadow-sm items-center'>
+
               <MixedFraction numerator={fraction.numerator} denominator={fraction.denominator} />
             </span>
             <p className='text-xl font-extrabold px-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center'>
@@ -211,7 +214,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
           </p>
           </div>
         ))}
-      </div>
+           </div>
 
       {/* Drop Zones Container */}
       <div className='bg-orange-500 mt-4 p-8 px-16 flex flex-col gap-8'>
