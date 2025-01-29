@@ -5,6 +5,7 @@ import { CombineFractionInput } from './second';
 import Intro from '../components/intro';
 import Proceed from '../components/proceed';
 import { useState, useRef, useEffect } from 'react';
+import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -26,7 +27,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage("agent","Okay, now we will try to subtract two mixed numbers");
+      sendAdminMessage("agent","Okay, lets start by rearranging the two fractions");
     }
     start.current = true;
   }, []);
@@ -80,6 +81,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
     ) {
       setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: 1 } }));
       sendAdminMessage("agent","Perfection! Correctly rearranged! Now carefully look at the signs, subtract the wholes separately and subtract the fractions separately");
+      sendAdminMessage("agent","Perfection! Correctly rearranged! Now carefully look at the signs, subtract the wholes separately and subtract the fractions separately");
     }
   }
 
@@ -105,6 +107,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   ) => {
     if (whole3 === fraction1.whole - fraction2.whole && numerator3 === fraction1.numerator - fraction2.numerator && denominator3 === fraction1.denominator) {
       setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: 2 } }));
+      sendAdminMessage("agent","Correct again");
       sendAdminMessage("agent","Correct again");
     }
   }
@@ -256,11 +259,16 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
             </div>
           }
 
-          {step >= 2 && 
-            <Proceed onComplete={() => {}} />
-          }
         </div>
       </div>
+
+      {step >= 2 && 
+            <div className='w-full font-bold text-5xl text-center bg-lime-200 py-16'>
+              <SuccessAnimation />
+              <p> Congratulations! You did it! 🎉</p>
+            </div>
+          }
+
     </div>
   );
 }
