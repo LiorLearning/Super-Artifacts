@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import PizzaSlices from './pizzaSlices';
 import { sounds } from '../utils/sounds';
+import MixedFraction from './mixedFraction';
 
 interface DragDropPizzaProps {
   fraction1: {
@@ -166,52 +167,54 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
     if (value === '') return 'bg-white';
     return parseInt(value) === correctValue ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
   };
-
+ 
   return (
     <div className='flex flex-col gap-4'>
 
       {/* Source Pizzas Display */}
-      <div className='flex flex-col justify-evenly px-16 gap-2 h-[200px]'>
+      <div className='flex flex-col justify-evenly px-16 pt-4 gap-2 h-[200px]'>
         {[
-          { pizza: fraction1, name: 'Pepperoni' },
-          { pizza: fraction2, name: 'Mushroom' }
-        ].map(({ pizza, name }) => (
-          <div key={name} className='flex items-center gap-4'>
-            <span className='w-24 text-2xl font-bold'>{name}</span>
-            <div className='flex items-center ml-4 gap-2'>
-            <div className='flex items-center gap-2'>
-              {sourcePizzas[name].wholes.map((exists, index) => exists && (
+          { pizza: fraction1, fraction: fraction1 },
+          { pizza: fraction2, fraction: fraction2 }
+        ].map(({ pizza, fraction}) => (
+          <div className={`min-h-24 flex bg-[#F97315] p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg`}>
+            <span className='bg-white rounded-lg px-2 pr-4 font-bold border-2 border-gray-500 flex shadow-sm items-center'>
+              <MixedFraction numerator={fraction.numerator} denominator={fraction.denominator} />
+            </span>
+            <p className='text-xl font-extrabold px-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center'>
+              {sourcePizzas[pizza.name].wholes.map((exists, index) => exists ? (
                 <div
                   key={index}
                   draggable
-                  onDragStart={(e) => handleDragStart(e, 'whole', name, index)}
-                  className={`w-16 h-16 rounded-full border-2 border-${pizza.color}-800 bg-${pizza.color}-200`}
+                  onDragStart={(e) => handleDragStart(e, 'whole', pizza.name, index)}
+                  className={`flex flex-col items-center justify-center w-16 h-16 rounded-full border-2 border-${pizza.color}-800 bg-${pizza.color}-200`}
                 >
-                  <div className={`w-full h-full rounded-full bg-${pizza.color}-500 cursor-move`} />
+                <div className={`w-14 h-14 bg-${pizza.color}-600 border-2 border-${pizza.color}-800 cursor-move rounded-full`} />
                 </div>
-              ))}
-              {sourcePizzas[name].slices && (
+
+
+              ) : null)}
+              {sourcePizzas[pizza.name].slices && (
                 <div
                   draggable
-                  onDragStart={(e) => handleDragStart(e, 'slice', name)}
-                  className="cursor-move"
+                  onDragStart={(e) => handleDragStart(e, 'slice', pizza.name)}
+                  className="cursor-move scale-75"
                 >
                   <PizzaSlices
                     numerator={pizza.numerator}
                     denominator={pizza.denominator}
-                    color={pizza.color}
-                    size="md"
+                    color={pizza === fraction1 ? ["pink", "black", "#CA8A04"] : ["yellow", "black", "#CA8A04"]}
                   />
+                  
                 </div>
               )}
-            </div>
-          </div>
+          </p>
           </div>
         ))}
       </div>
 
       {/* Drop Zones Container */}
-      <div className='bg-orange-500 mt-36 p-8 px-16 flex flex-col gap-8'>
+      <div className='bg-orange-500 mt-4 p-8 px-16 flex flex-col gap-8'>
 
         {/* Instruction Banner */}
         <div className='bg-white border-2 border-black mx-auto p-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'>
@@ -237,24 +240,19 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
               {/* Pepperoni Pizzas */}
               <div className="flex gap-2 flex-wrap">
                 {Array.from({ length: droppedWholes[fraction1.name] }).map((_, i) => (
-                  <div
-                    key={`dropped-pepperoni-${i}`}
-                    className={`w-16 h-16 rounded-full border-2 border-${fraction1.color}-800 bg-${fraction1.color}-200`}
-                  >
-                    <div className={`w-full h-full rounded-full bg-${fraction1.color}-500`} />
+                  <div key={i} className={`flex flex-col items-center justify-center w-16 h-16 rounded-full border-2 border-${fraction1.color}-800 bg-${fraction1.color}-200`}>
+                    <div className={`w-14 h-14 bg-${fraction1.color}-600 border-2 border-${fraction1.color}-800 rounded-full`} />
                   </div>
                 ))}
               </div>
               {/* Mushroom Pizzas */}
               <div className="flex gap-2 flex-wrap">
                 {Array.from({ length: droppedWholes[fraction2.name] }).map((_, i) => (
-                  <div
-                    key={`dropped-mushroom-${i}`}
-                    className={`w-16 h-16 rounded-full border-2 border-${fraction2.color}-800 bg-${fraction2.color}-200`}
-                  >
-                    <div className={`w-full h-full rounded-full bg-${fraction2.color}-500`} />
+                  <div key={i} className={`flex flex-col items-center justify-center w-16 h-16 rounded-full border-2 border-${fraction2.color}-800 bg-${fraction2.color}-200`}>
+                    <div className={`w-14 h-14 bg-${fraction2.color}-600 border-2 border-${fraction2.color}-800 rounded-full`} />
                   </div>
                 ))}
+
               </div>
             </div>
             <div className='flex items-center justify-center gap-2 mt-4 text-xl font-bold'>
@@ -292,8 +290,8 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
                   key={`dropped-slice-${pizza}`}
                   numerator={count}
                   denominator={pizza === fraction1.name ? fraction1.denominator : fraction2.denominator}
-                  color={pizza === fraction1.name ? fraction1.color : fraction2.color}
-                  size="md"
+                  // color={pizza === fraction1.name ? fraction1.color : fraction2.color}  
+                  color={pizza === fraction1.name ? ["pink", "black", "#CA8A04"] : ["yellow", "black", "#CA8A04"]}
                 />
               ))}
             </div>
@@ -336,6 +334,8 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
           </div>
         </div>
       </div>
+
+
     </div>
   );
 };

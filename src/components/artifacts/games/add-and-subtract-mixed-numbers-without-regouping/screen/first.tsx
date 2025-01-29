@@ -18,7 +18,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage("agent","Let us solve this by imagining a pizza factory! Suppose the question is nothing but a pizza order like this, Click Next to proceed");
+      sendAdminMessage("agent","Today, we're learning to add mixed numbers!, Here's your order, can figure out the total number of pizzas? Let's get started—click 'Next'!");
     }
     start.current = true;
   }, []);
@@ -27,7 +27,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
   return (
     <div className="">
-      <Header fraction1={fraction1} fraction2={fraction2} type='addition' version={step === 1 ? 1 : 2} />
+      <Header fraction1={fraction1} fraction2={fraction2} type='addition' version={step === 2 ? 2 : 1} />
       {
         step === 1 ?
           <Step1 sendAdminMessage={sendAdminMessage} />
@@ -44,38 +44,54 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
   const { fraction1, fraction2 } = gameStateRef.current.state1;
   return (
     <div className="flex gap-8 flex-col w-full">
-      <Intro text="Let us solve this by imagining a pizza factory! Suppose the question is nothing but a pizza order like this" />
-      <div className="w-full max-w-3xl mx-auto">
-        <div className="bg-[#D3EA00] py-4 mb-[2px] border-2 font-extrabold border-gray-800 px-4 rounded-t-lg text-center">
-          Total Order
+      <div className="w-full max-w-3xl mx-auto mt-20">
+        <div className="bg-[#F97315] text-white text-2xl py-4 mb-[2px] border-2 font-extrabold border-gray-800 px-4  text-center">
+          PIZZA ORDER
         </div>
-        <div className="flex items-center justify-center gap-4 p-8 border-2 border-gray-800 rounded-b-lg">
-          <div className="flex items-center gap-2 border-2 border-gray-800 rounded-lg">
-            <span className='bg-pink-100 rounded-lg'>
+        <div className="flex items-center justify-center gap-4 p-8 border-2 border-gray-800">
+          <div className="flex bg-[#F97315] p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg">
+            <span className='bg-white rounded-lg border-2 border-gray-500 flex shadow-sm items-center'>
               <MixedFraction
                 whole={fraction1.whole}
                 numerator={fraction1.numerator}
                 denominator={fraction1.denominator}
-                className='text-xl font-extrabold p-3'
+                className='text-xl font-extrabold p-2'
               />
             </span>
-            <p className='text-xl font-extrabold p-3'>Pepperoni Pizza</p>
-          </div>  
-          <span className="text-5xl font-bold text-red-500">+</span>
-          <div className="flex items-center gap-2 rounded-lg border-2 border-gray-800">
-            <span className='bg-yellow-100 rounded-lg'>
+            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center'>
+              <div className={`flex flex-col items-center justify-center p-1 rounded-full border-2 border-pink-800 bg-pink-200`}>
+                <div className={`w-12 h-12 bg-pink-600 border-2 border-pink-800 rounded-full`} />
+              </div>
+              Pepperoni Pizza
+            </p>
+          </div>
+          <span className="text-5xl font-bold text-yellow-200">+</span>
+          <div className="flex bg-yellow-200 p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg">
+            <span className='bg-white rounded-lg border-2 border-gray-500 flex shadow-sm items-center'>
               <MixedFraction
                 whole={fraction2.whole}
                 numerator={fraction2.numerator}
                 denominator={fraction2.denominator}
-                className='text-xl font-extrabold p-3'
+                className='text-xl font-extrabold p-2'
               />
             </span>
-            <p className='text-xl font-extrabold p-3'>Cheese Pizza</p>
+            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center'>
+              <div className={`flex flex-col items-center justify-center p-1 rounded-full border-2 border-yellow-800 bg-yellow-200`}>
+                <div className={`w-12 h-12 bg-yellow-600 border-2 border-yellow-800 rounded-full`} />
+              </div>
+              Pepperoni Pizza
+            </p>
           </div>
         </div>
       </div>
-      <Button onClick={() => goToStep(1, setGameStateRef, 2)} className='m-2 mx-auto bg-[#D3EA00] border-2 border-black text-black hover:bg-[#ADD100] max-w-3xl'>Next Step</Button>
+      <Button 
+      onClick={() => {
+        goToStep(1, setGameStateRef, 2); 
+        sendAdminMessage('agent', "Let's break it down! Start with the pepperoni pizzas")}
+      } 
+      className='m-2 p-6 mx-auto bg-[#F97315] border-2 text-3xl border-black text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] hover:bg-[#F97315] max-w-3xl rounded-none'>
+        Next
+      </Button>
     </div>
   );
 };
@@ -111,8 +127,57 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     }
   }, [complete])
 
+  useEffect(() => {
+    if (parseInt(question1description.inputWhole) === fraction1.whole){
+      sendAdminMessage('agent', `That's right! There are ${fraction1.whole} whole pepperoni pizzas. Now, let’s look at the leftover slices!`);
+    } else if (parseInt(question1description.inputWhole) > 0) {
+      sendAdminMessage('agent', "Oops! Take a closer look at the picture to count the full ones. Try again!");
+    }
+  }, [question1description.inputWhole])
+
+  useEffect(() => {
+    if (parseInt(question1description.inputNumerator) === fraction1.numerator && parseInt(question1description.inputDenominator) === fraction1.denominator){
+      sendAdminMessage('agent', `Great job! There's ${fraction1.numerator} slice left out of ${fraction1.denominator}. That makes it ${fraction1.numerator}/${fraction1.denominator} of a pizza!`);
+    } else if (parseInt(question1description.inputNumerator) > 0) {
+      sendAdminMessage('agent', "Almost! Count the leftover slices carefully—how many do you see?");
+    }
+  }, [question1description.inputNumerator])
+
+  useEffect(() => {
+    if (parseInt(question1description.inputDenominator) === fraction1.denominator && parseInt(question1description.inputNumerator) === fraction1.numerator){
+      sendAdminMessage('agent', `Great job! There's ${fraction1.numerator} slice left out of ${fraction1.denominator}. That makes it ${fraction1.numerator}/${fraction1.denominator} of a pizza!`);
+    } else if (parseInt(question1description.inputDenominator) > 0) {
+      sendAdminMessage('agent', "Not quite! Think about how many slices make up a whole pizza. Try again!");
+    }
+  }, [question1description.inputDenominator])
+
+  useEffect(() => {
+    if (parseInt(question1description.inputWhole) === fraction1.whole){
+      sendAdminMessage('agent', `That's right! There are ${fraction1.whole} whole pepperoni pizzas. Now, let’s look at the leftover slices!`);
+    } else if (parseInt(question1description.inputWhole) > 0) {
+      sendAdminMessage('agent', "Oops! Take a closer look at the picture to count the full ones. Try again!");
+    }
+  }, [question2description.inputWhole])
+
+  useEffect(() => {
+    if (parseInt(question2description.inputNumerator) === fraction2.numerator && parseInt(question2description.inputDenominator) === fraction2.denominator){
+      sendAdminMessage('agent', `Great job! There's ${fraction2.numerator} slice left out of ${fraction2.denominator}. That makes it ${fraction2.numerator}/${fraction2.denominator} of a pizza!. Now quickly fill in the mushroom order`);
+    } else if (parseInt(question2description.inputNumerator) > 0) {
+      sendAdminMessage('agent', "Almost! Count the leftover slices carefully—how many do you see?");
+    }
+  }, [question2description.inputNumerator])
+
+  useEffect(() => {
+    if (parseInt(question2description.inputDenominator) === fraction2.denominator && parseInt(question2description.inputNumerator) === fraction2.numerator){
+      sendAdminMessage('agent', `Great job! There's ${fraction2.numerator} slice left out of ${fraction2.denominator}. That makes it ${fraction2.numerator}/${fraction2.denominator} of a pizza!. Now quickly fill in the mushroom order`);
+    } else if (parseInt(question2description.inputDenominator) > 0) {
+      sendAdminMessage('agent', "Not quite! Think about how many slices make up a whole pizza. Try again!");
+    }
+  }, [question2description.inputDenominator])
+
   return (
-    <div className="flex p-8 gap-8 flex-col w-full">
+    <div className='flex flex-col gap-4 max-w-3xl mx-auto'>
+    <div className={`flex p-8 gap-8 ${complete<2 && 'flex-col'} w-full`}>
     {/* explaining inital pizzas */}
     { complete >= 0 &&
         <QuestionDescription 
@@ -135,6 +200,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           denominator={fraction1.denominator} 
           pizzaName='pepperoni' 
           color='pink' 
+          pizzacolor={['pink', 'black', '#DB2777']}
 
           onComplete={() => {
             setComplete(1)
@@ -142,6 +208,13 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           }} 
         />
     }
+    { complete >= 2 && (
+        <div className="flex items-center justify-center w-full">
+          <span className="text-5xl font-bold">
+            +
+          </span>
+        </div>
+    )}
     { complete >= 1 &&
         <QuestionDescription 
           showFirstRow={question2description.showFirstRow}
@@ -163,18 +236,17 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           denominator={fraction2.denominator} 
           pizzaName='mushroom' 
           color='yellow' 
+          pizzacolor={['yellow', 'black', '#CA8A04']}
 
           onComplete={() => setComplete(2)} 
         />
     }
+    </div>
     { complete >= 2 && 
       <div className='flex flex-col gap-4 max-w-3xl mx-auto'>
-          <p className='text-xl font-bold'>
-            Perfect, let's rearrange the wholes and slices to add them together
-          </p>
           <Button 
             onClick={() => goToStep(1, setGameStateRef, 3)}
-            className='bg-lime-500 text-white font-bold w-16 mx-auto hover:bg-lime-600'
+            className='bg-[#F97315] border-2 text-3xl border-black text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] hover:bg-[#F97315] max-w-3xl rounded-none'
         >
           Next
           </Button> 
@@ -182,6 +254,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     }
 
     </div>
+  
   )
 };
 

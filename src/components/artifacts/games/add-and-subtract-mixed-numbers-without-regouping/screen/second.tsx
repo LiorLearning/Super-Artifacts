@@ -34,38 +34,51 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
   const { fraction1, fraction2 } = gameStateRef.current.state2;
   return (
     <div className="flex gap-8 flex-col w-full">
-      <Intro text="Lets us do another question now! You can do this." />
-      <div className="w-full max-w-3xl mx-auto">
-        <div className="bg-lime-200 py-4 mb-[2px] border-2 font-extrabold border-gray-800 px-4 rounded-t-lg text-center">
-          Total Order
+      <div className="w-full max-w-3xl mx-auto mt-20">
+        <div className="bg-[#F97315] text-white text-2xl py-4 mb-[2px] border-2 font-extrabold border-gray-800 px-4  text-center">
+          PIZZA ORDER
         </div>
-        <div className="flex items-center justify-center gap-4 p-8 border-2 border-gray-800 rounded-b-lg">
-          <div className="flex items-center gap-2 border-2 border-gray-800 rounded-lg">
-            <span className='bg-pink-100 rounded-lg'>
+        <div className="flex items-center justify-center gap-4 p-8 border-2 border-gray-800">
+          <div className="flex bg-[#F97315] p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg">
+            <span className='bg-white rounded-lg border-2 border-gray-500 flex shadow-sm items-center'>
               <MixedFraction
                 whole={fraction1.whole}
                 numerator={fraction1.numerator}
                 denominator={fraction1.denominator}
-                className='text-xl font-extrabold p-3'
+                className='text-xl font-extrabold p-2'
               />
             </span>
-            <p className='text-xl font-extrabold p-3'>Pepperoni Pizza</p>
-          </div>  
-          <span className="text-5xl font-bold text-red-500">+</span>
-          <div className="flex items-center gap-2 rounded-lg border-2 border-gray-800">
-            <span className='bg-yellow-100 rounded-lg'>
+            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center'>
+              <div className={`flex flex-col items-center justify-center p-1 rounded-full border-2 border-pink-800 bg-pink-200`}>
+                <div className={`w-12 h-12 bg-pink-600 border-2 border-pink-800 rounded-full`} />
+              </div>
+              Pepperoni Pizza
+            </p>
+          </div>
+          <span className="text-5xl font-bold text-yellow-200">+</span>
+          <div className="flex bg-yellow-200 p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg">
+            <span className='bg-white rounded-lg border-2 border-gray-500 flex shadow-sm items-center'>
               <MixedFraction
                 whole={fraction2.whole}
                 numerator={fraction2.numerator}
                 denominator={fraction2.denominator}
-                className='text-xl font-extrabold p-3'
+                className='text-xl font-extrabold p-2'
               />
             </span>
-            <p className='text-xl font-extrabold p-3'>Cheese Pizza</p>
+            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center'>
+              <div className={`flex flex-col items-center justify-center p-1 rounded-full border-2 border-yellow-800 bg-yellow-200`}>
+                <div className={`w-12 h-12 bg-yellow-600 border-2 border-yellow-800 rounded-full`} />
+              </div>
+              Pepperoni Pizza
+            </p>
           </div>
         </div>
-      </div>
-      <Button onClick={() => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: 1 } }))} className='m-2 mx-auto bg-lime-500 hover:bg-lime-600 max-w-3xl'>Next Step</Button>
+      </div>  
+      <Button 
+        onClick={() => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: 1 } }))} 
+        className='m-2 p-6 mx-auto bg-[#F97315] border-2 text-3xl border-black text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] hover:bg-[#F97315] max-w-3xl rounded-none'>
+        Next
+      </Button>
     </div>
   );
 };
@@ -97,8 +110,9 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
   } as QuestionDescriptionProps);
 
   return(
-    <div className='flex flex-col gap-4 w-full my-16 items-center'>
-      { substep >= 0 &&
+    <div className='flex flex-col gap-4 max-w-3xl mx-auto'>
+    <div className={`flex p-8 gap-8 ${substep<2 && 'flex-col'} w-full`}>
+    { substep >= 0 &&
         <QuestionDescription 
           showFirstRow={question1description.showFirstRow}
           setShowFirstRow={(value) => setQuestion1description(prev => ({ ...prev, showFirstRow: value }))}
@@ -114,21 +128,27 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           inputDenominator={question1description.inputDenominator}
           setInputDenominator={(value) => setQuestion1description(prev => ({ ...prev, inputDenominator: value }))}
 
-
           whole={fraction1.whole} 
           numerator={fraction1.numerator} 
           denominator={fraction1.denominator} 
-          pizzaName='pepperoni' color='pink' 
+          pizzaName='pepperoni' 
+          color='pink' 
+          pizzacolor={['pink', 'black', '#DB2777']}
 
-          onComplete={() => { 
-            sendAdminMessage('agent', "Awesome! The pepperoni pizza order is complete, let's revise the mushroom pizza order too");
-            setTimeout(() => {
-              setSubStep(1)
-            }, 1000)
+          onComplete={() => {
+            setSubStep(1)
+            setQuestion2description(prev => ({ ...prev, showFirstRow: true }))
           }} 
         />
-      }
-      { substep >= 1 &&
+    }
+    { substep >= 2 && (
+        <div className="flex items-center justify-center w-full">
+          <span className="text-5xl font-bold">
+            +
+          </span>
+        </div>
+    )}
+    { substep >= 1 &&
         <QuestionDescription 
           showFirstRow={question2description.showFirstRow}
           setShowFirstRow={(value) => setQuestion2description(prev => ({ ...prev, showFirstRow: value }))}
@@ -147,16 +167,14 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           whole={fraction2.whole} 
           numerator={fraction2.numerator} 
           denominator={fraction2.denominator} 
-          pizzaName='mushroom' color='yellow' 
+          pizzaName='mushroom' 
+          color='yellow' 
+          pizzacolor={['yellow', 'black', '#CA8A04']}
 
-          onComplete={() => {
-            sendAdminMessage('agent', "Perfect again! Now the most important step, rearranging the order!");
-            setTimeout(() => {
-              setSubStep(2)
-            }, 1000)
-          }} 
-          />
+          onComplete={() => setSubStep(2)} 
+        />
       }
+      </div>
       { substep >= 2 &&
         <CombineFractionInput onComplete={() => setSubStep(4)} fraction1={fraction1} fraction2={fraction2} sendAdminMessage={sendAdminMessage} />
       }

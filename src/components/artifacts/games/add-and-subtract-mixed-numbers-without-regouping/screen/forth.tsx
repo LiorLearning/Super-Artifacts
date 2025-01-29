@@ -5,6 +5,7 @@ import { CombineFractionInput } from './second';
 import Intro from '../components/intro';
 import Proceed from '../components/proceed';
 import { useState, useRef, useEffect } from 'react';
+import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -26,7 +27,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage("agent","Okay, now we will try to subtract two mixed numbers");
+      sendAdminMessage("agent","Okay, lets start by rearranging the two fractions");
     }
     start.current = true;
   }, []);
@@ -256,11 +257,16 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
             </div>
           }
 
-          {step >= 2 && 
-            <Proceed onComplete={() => {}} />
-          }
         </div>
       </div>
+
+      {step >= 2 && 
+            <div className='w-full font-bold text-5xl text-center bg-lime-200 py-16'>
+              <SuccessAnimation />
+              <p> Congratulations! You did it! 🎉</p>
+            </div>
+          }
+
     </div>
   );
 }

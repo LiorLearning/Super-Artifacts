@@ -22,6 +22,7 @@ interface QuestionDescriptionProps {
   denominator: number;
   pizzaName: string;
   color: string;
+  pizzacolor: string[];
   onComplete: () => void;
 }
 
@@ -47,9 +48,11 @@ const QuestionDescription = ({
   denominator, 
   pizzaName, 
   color, 
+  pizzacolor,
   onComplete 
 }: QuestionDescriptionProps) => {
 
+  const [showNextButton, setShowNextButton] = useState(false);
 
   const handleWholeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -78,18 +81,22 @@ const QuestionDescription = ({
       !isNaN(inputNumerator) && 
       !isNaN(inputDenominator)
     ) {
-      setShowFirstRow(false);
-      setShowSecondRow(false);
-      setShowThirdRow(true);
-      onComplete();
+      setShowNextButton(true);
     }
+  }
+
+  const handleNextClick = () => {
+    setShowFirstRow(false);
+    setShowSecondRow(false);
+    setShowThirdRow(true);
+    onComplete();
   }
 
   return (
     <div className={`flex flex-col gap-4 max-w-3xl w-full mx-auto`}>
       {showFirstRow &&
         <div className="flex gap-4 items-center">
-          <span className={`flex items-center w-full h-full justify-between border-2 border-${color}-800 bg-${color}-100 p-8 rounded-lg h-[136px]`}>
+          <span className={`flex items-center w-full h-full justify-between border-2 border-${color}-800 bg-${color}-100 p-6 rounded-lg h-[136px]`}>
             <p className='text-xl w-2/3'>
               How many <span className='font-bold'>whole</span> {pizzaName} pizzas
               are ordered?
@@ -107,7 +114,7 @@ const QuestionDescription = ({
           <span className={`flex items-center w-full h-full justify-between border-2 border-${color}-800 bg-${color}-100 p-8 rounded-lg h-[136px]`}>
             <div className='flex gap-2'>
               {Array.from({ length: whole }).map((_, index) => (
-                <div key={index} className={`flex flex-col items-center justify-center w-16 h-16 rounded-full border-2 border-${color}-800 bg-${color}-500`}>
+                <div key={index} className={`flex flex-col items-center justify-center w-16 h-16 rounded-full border-2 border-${color}-800 bg-${color}-200`}>
                   <div className={`w-14 h-14 bg-${color}-600 border-2 border-${color}-800 rounded-full`} />
                 </div>
               ))}
@@ -142,18 +149,25 @@ const QuestionDescription = ({
             </div>
           </span>
 
-          <span className={`flex items-center w-full h-full justify-between border-2 border-${color}-800 bg-${color}-100 p-8 rounded-lg h-[136px]`}>
+          <span className={`flex items-center w-full h-full justify-between border-2 border-${color}-800 bg-${color}-100 p-6 rounded-lg h-[136px]`}>
             <PizzaSlices
               numerator={numerator}
               denominator={denominator}
-              color={color}
-              size="md"
+              color={pizzacolor}
             />
           </span>
         </div>
       )}
+      {showNextButton && !showThirdRow && (
+        <button
+          onClick={handleNextClick}
+          className='m-2 px-6 py-2 mx-auto bg-[#f94a15] hover:bg-[#f96815] border-2 text-xl border-black text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] max-w-3xl rounded-none'
+        >
+          Next
+        </button>
+      )}
       {showThirdRow && (
-        <div className={`bg-${color}-100 p-8 w-full rounded-lg border-2 border-${color}-800 transition-all duration-100`}>
+        <div className={`bg-${color}-100 p-2 w-full rounded-lg border-2 border-${color}-800 transition-all duration-100`}>
           <div className="flex items-center w-full justify-center gap-8">
             {/* Left side - Mixed Fraction */}
             <div className="flex items-center">

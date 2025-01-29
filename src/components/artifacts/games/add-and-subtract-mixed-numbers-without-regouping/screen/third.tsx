@@ -22,7 +22,11 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       <Header fraction1={fraction1} fraction2={fraction2} version={1} type='addition' />
       <CombineFractionInput fraction1={fraction1} fraction2={fraction2} onComplete={() => setGameStateRef(prev => ({...prev, state3: {...prev.state3, step: 1}}))} sendAdminMessage={sendAdminMessage} />
       {step === 1 ?
-        <Button onClick={() => setGameStateRef(prev => ({...prev, screen: 4}))} className='m-2 mx-auto bg-[#D3EA00] border-2 border-black text-black hover:bg-[#D3EA00]/70 max-w-3xl'>Next Step</Button>
+        <Button 
+          onClick={() => setGameStateRef(prev => ({...prev, screen: 4}))} 
+          className='m-2 p-6 mx-auto bg-[#F97315] border-2 text-3xl border-black text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] hover:bg-[#F97315] max-w-3xl rounded-none'>
+          Next
+          </Button>
       : null}
     </div>
   );
@@ -113,7 +117,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
       parseInt(numerator3) === (fraction1.numerator + fraction2.numerator) && 
       parseInt(denominator3) === fraction1.denominator
     ) {
-      sendAdminMessage('agent', "You are on a roll! Final one to practice now!");
+      sendAdminMessage('agent', "You nailed the addition, now let's subtract");
       onComplete();
     }
   }
