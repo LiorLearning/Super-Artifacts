@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Fraction from "./Fraction";
-import { ChevronDown } from 'lucide-react'
-import { sounds } from '../../equivalent-fractions/utils/sounds'
+import { ArrowDown, ChevronDown } from 'lucide-react'
+import { sounds } from "../utils/sound";
 
 interface ComparisonFractionsProps {
   fraction1: {
@@ -34,12 +34,6 @@ export default function ComparisonFractions({
   const commonDenominator = fraction1.denominator * fraction2.denominator;
   const newNumerator1 = fraction1.numerator * fraction2.denominator;
   const newNumerator2 = fraction2.numerator * fraction1.denominator;
-
-  useEffect(() => {
-    if (answer === correctAnswer) {
-      onComplete();
-    }
-  }, [answer]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -118,6 +112,7 @@ export default function ComparisonFractions({
               ) : "bg-white"}`}
           >
             {answer || "?"}
+            <ChevronDown className={`absolute bottom-1 right-0 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {isOpen && (

@@ -6,10 +6,10 @@ import { createLegoPiece } from './utils/pieceFactory';
 import { createHolder as createLegoHolder } from './utils/holderFactory';
 import * as THREE from 'three';
 import { useGameState } from '../state-utils';
-import { COLORS, HOLDER_POSITION } from './utils/constants';
+import { COLORS, HOLDER_POSITION, SNAPPABLE_POSITIONS } from './utils/constants';
 import { animateCamera, animatePiece } from './utils/animation';
 import { createText } from './utils/textFactory';
-import { createVectorArrow } from './utils/vectorFactory';
+import { createPlatform } from './utils/platformFactory';
 import { GameProps } from '../utils/types';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
@@ -25,6 +25,7 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
   const { scene, camera, renderer, orbitControls } = useThreeSetup(mountRef, hasInitialized);
 
   const [holders, setHolders] = React.useState<THREE.Group[]>([]);
+  const [platforms, setPlatforms] = React.useState<THREE.Mesh[]>([]);
   const [pieces, setPieces] = React.useState<THREE.Group[]>([]);
   const textsRef = React.useRef<THREE.Group[]>([]);
   const vectorRef = React.useRef<THREE.Group | null>(null);
@@ -53,9 +54,6 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
         );
         sendAdminMessage('agent', "Wow, that’s 1 whole! It turned purple! Now let’s move to the next holder.");
         showConfettiRef.current = true;
-        setTimeout(() => {
-          sendAdminMessage('agent', `We have ${fraction.numerator % fraction.denominator} pieces left. Fill the new holder with these blocks to see what’s next!`);
-        }, 9000);
       }
       if (count === 0) {
         goToStep(6);
@@ -124,32 +122,27 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
     textsRef.current = [];
   }
 
-  const createVector = (start: THREE.Vector3, end: THREE.Vector3, options: {
-    color?: number;
-    arrowHeadSize?: number;
-    thickness?: number;
-    curvature?: number;
-    linewidth?: number;
-    label?: string;
-  } = {}) => {
-    const vectorArrow = createVectorArrow(start, end, {
-      color: options.color || COLORS.BLACK,
-      arrowHeadSize: options.arrowHeadSize || 0.5,
-      thickness: options.thickness || 0.1,
-      curvature: options.curvature || 2,
-      linewidth: options.linewidth || 0.5,
-    });
-    if (vectorArrow) {
-      vectorRef.current = vectorArrow;
-      scene?.add(vectorArrow);
+  const createPlatforms = (scene: THREE.Scene | null) => {
+    if (!scene) return null;
+    for (let i = 4; i < SNAPPABLE_POSITIONS.length; i++) {
+      const platform = createPlatform();
+      platform.position.set(SNAPPABLE_POSITIONS[i].x, SNAPPABLE_POSITIONS[i].y-0.4, SNAPPABLE_POSITIONS[i].z);
+      scene.add(platform);
+      platforms.push(platform);
     }
+    return platforms;
   }
 
-  const clearVector = () => {
-    if (vectorRef.current) {
-      scene?.remove(vectorRef.current);
-      vectorRef.current = null;
-    }
+  const cleanUpPlatforms = (scene: THREE.Scene | null, platforms: THREE.Mesh[]) => {
+    if (!scene) return;
+    platforms.forEach(platform => {
+      scene.remove(platform);
+      if (platform instanceof THREE.Mesh) {
+        platform.geometry.dispose();
+        (platform.material as THREE.Material).dispose();
+      }
+    });
+    setPlatforms([]);
   }
 
   const animateAllPieces = (yPos: number) => {
@@ -235,6 +228,9 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
       }
 
       setTimeout(() => {
+        if (step !== 1) {
+          return;
+        }
         for (let i = 0; i < denomOptions.length; i++) {
           const denom = denomOptions[i];
           const position: [number, number, number] = [-1 + i * 2.2, 0, 2 - i * 2.2];
@@ -253,7 +249,7 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
             }
           } 
         }
-      }, 7000);
+      }, 6000);
 
       // Show the holder
       // toggleTextVisibilityOfHolder(true);
@@ -289,7 +285,7 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
       createHolder(scene, HOLDER_POSITION, 4);
 
       const newPieces: THREE.Group[] = [];
-      for (let i = 0; i < fraction.numerator+5; i++) {
+      for (let i = 0; i < fraction.numerator; i++) {
         const piece = createPiece({ scene: scene!, position: HOLDER_POSITION, color: COLORS.GREEN });
         if (piece) {
           newPieces.push(piece);
@@ -297,6 +293,7 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
       }
       setPieces(newPieces);
       setEnableDragging(true);
+      createPlatforms(scene!);
       
     } else if (step === 3) {
       cleanUpTexts(scene!);
@@ -314,6 +311,7 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
       setEnableDragging(true);
       // animateCamera(camera!, new THREE.Vector3(7, 5, 3), 1);
     } else if (step === 6) {
+      cleanUpPlatforms(scene!, platforms);
       setEnableDragging(false);
       animateCamera(camera!, new THREE.Vector3(-1, 5, 8.7), 1);
 

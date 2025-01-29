@@ -341,6 +341,10 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
       sendAdminMessage("agent", "Wohoo! Great job on this question partner. Now that you are trained, let's do some more");
     }
 
+    if (isCorrect) {
+      sendAdminMessage("agent", "Wohoo! Great job on this question partner. Now that you are trained, let's do some more");
+    }
+
     setMixedFormInputs({
       ...newInputs,
       isCorrect
@@ -382,6 +386,7 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
         }}
         onComplete={() => {
           setShowMixedForm(true);
+          sendAdminMessage("agent","Fill these boxes to arrive at your answer");
           sendAdminMessage("agent","Fill these boxes to arrive at your answer");
         }}
         sendAdminMessage={sendAdminMessage}

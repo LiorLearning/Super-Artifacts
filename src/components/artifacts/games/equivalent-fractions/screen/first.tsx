@@ -12,8 +12,8 @@ import Image from "next/image";
 
 export default function Level1({ sendAdminMessage }: BaseProps) {
   const { gameStateRef } = useGameState();
-  const { step } = gameStateRef.current.screen1;
-  const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;
+  const { step } = gameStateRef.current.state1;
+  const {numerator1, denominator1, denominator2} = gameStateRef.current.state1.question;
 
   return (
     <div className="w-full space-y-8 mb-12">
@@ -31,7 +31,7 @@ export default function Level1({ sendAdminMessage }: BaseProps) {
 
 const Step1 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;  
+  const {numerator1, denominator1, denominator2} = gameStateRef.current.state1.question;  
 
   const [selectedPieces, setSelectedPieces] = useState(0);
   const [selectedKnife, setSelectedKnife] = useState<number | null>(null);
@@ -54,7 +54,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
       if (selectedKnife * denominator1 === denominator2) {
         sendAdminMessage('agent', `Boom—now we've got ${denominator2} pieces! Let's figure out how many you get from these ${denominator2}. Let's go!`);
       } else {
-        sendAdminMessage('agent', `Hmm, right now, you've used the knife labeled ${selectedKnife}, and that gave us ${selectedKnife * denominator1} pieces, but we need 9 pieces. Can you figure out which knife we should use?`);
+        // sendAdminMessage('agent', `Hmm, right now, you've used the knife labeled ${selectedKnife}, and that gave us ${selectedKnife * denominator1} pieces, but we need 9 pieces. Can you figure out which knife we should use?`); // TODO
       }
     }
   }, [selectedKnife]);
@@ -95,8 +95,8 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
             <Proceed onComplete={() => {
               setGameStateRef({
                 ...gameStateRef.current,
-                screen1: {
-                  ...gameStateRef.current.screen1,
+                state1: {
+                  ...gameStateRef.current.state1,
                   step: {
                     id: 2,
                     text: 'Create equivalent fractions'
@@ -112,7 +112,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
 
 const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const {numerator1, denominator1, denominator2} = gameStateRef.current.screen1.question;  
+  const {numerator1, denominator1, denominator2} = gameStateRef.current.state1.question;  
   const [correct, setCorrect] = useState(false);
   const [numerator, setNumerator] = useState(0);
   const [denominator, setDenominator] = useState(0);
@@ -195,7 +195,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             <Proceed
               onComplete={() => {
                 setStep2subpart(1)
-                sendAdminMessage('agent', "Now, let's fill in the missing number to complete the fraction!");
+                // sendAdminMessage('agent', "Now, let's fill in the missing number to complete the fraction!");
               }}
             />
           ) : (!correct &&
@@ -242,7 +242,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             onComplete={() => {
               setGameStateRef(prev => ({
                 ...prev,
-                level: 2
+                screen: 2
               }));
             }}
           />

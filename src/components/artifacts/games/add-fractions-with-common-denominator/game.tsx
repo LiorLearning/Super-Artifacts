@@ -11,18 +11,10 @@ interface GameProps {
 
 export default function Game({ sendAdminMessage }: GameProps) {
   const { gameStateRef, setGameStateRef } = useGameState()
-  const [ started, setStarted ] = useState(false)
-
+  
   const handleProceed = () => {
     setGameStateRef({ screen: 2 })
   }
-
-  useEffect(() => {
-    if (started === false) {
-      sendAdminMessage('agent', "Let's select pieces to give you 3/8th of the chocolate bar")
-      setStarted(true)
-    }
-  }, [])
 
   return (
     <div>

@@ -151,7 +151,7 @@ const MainContent = ({sendAdminMessage}: GameProps) => {
       )}
       {step === 1 && (
         <>
-          <StepModule screen='second' color={COLORS.purple} stepNumber={3} stepText='THE ANSWER' />
+          <StepModule screen={2} color={COLORS.purple} stepNumber={3} stepText='THE ANSWER' />
           <CorrectAnswer numerator={fraction.numerator} denominator={fraction.denominator} large={false} />
         </>
       )}

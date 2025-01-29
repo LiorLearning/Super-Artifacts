@@ -4,8 +4,9 @@ import { BaseProps } from '../utils/types';
 import { useEffect, useRef, useState } from 'react';
 import RedBox from '../components/RedBox';
 import Fraction from '../components/Fraction';
-import { sounds } from '../../equivalent-fractions/utils/sounds'
+import { sounds } from '../utils/sound';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
+import { ChevronDown } from 'lucide-react';
 
 interface Fraction {
   numerator: number;
@@ -16,6 +17,9 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction1, fraction2 } = gameStateRef.current.state3.question;
   const { step } = gameStateRef.current.state3;
+
+  const answerFraction1 = Fraction({numerator: (fraction1.numerator*fraction2.denominator), denominator: (fraction1.denominator*fraction2.denominator)});
+  const answerFraction2 = Fraction({numerator: (fraction2.numerator*fraction1.denominator), denominator: (fraction2.denominator*fraction1.denominator)});
 
   const [firstFraction, setFirstFraction] = useState<Fraction>({ numerator: 0, denominator: 0 });
   const [secondFraction, setSecondFraction] = useState<Fraction>({ numerator: 0, denominator: 0 });
@@ -51,20 +55,8 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
         }
       }));
       sendAdminMessage('agent', `Great, now that we have the same bottom number, its time to re-write these fractions`);
-    } else {
-      const timer = setTimeout(() => {
-        if (typing.current) {
-          sendAdminMessage('admin', `Which number do both ${fraction1.denominator} and ${fraction2.denominator} go into?`);
-          typing.current = false;
-        }
-      }, 1000); // Wait 1 second after last typing event
-
-      return () => {
-        clearTimeout(timer);
-        typing.current = true;
-      };
     }
-  }, [firstFraction, secondFraction]);
+  }, [firstFraction.denominator, secondFraction.denominator]);
 
   useEffect(() => {
     if (firstFraction.numerator === 0 || secondFraction.numerator === 0) return;
@@ -80,10 +72,12 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       }));
       sendAdminMessage('agent', `Awesome, now enter the right symbol between these fractions!"`);
     }
-  }, [firstFraction, secondFraction]);
+  }, [firstFraction.numerator, secondFraction.numerator]);
 
   useEffect(() => {
+    if (step < 2) return;
     if(answer === correctAnswer) {
+      sendAdminMessage('agent', `You're on a roll - a fraction comparison maestro!`);
       setGameStateRef(prev => ({
         ...prev,
         state3: {
@@ -92,7 +86,6 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
         }
       }));
     }
-    sendAdminMessage('agent', `You're on a roll - a fraction comparison maestro!`);
   }, [answer]);
 
   useEffect(() => {
@@ -175,9 +168,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
             <div className='flex items-center justify-center gap-8'>
               <div className='flex flex-col items-center text-4xl'>
-                <div>{fraction2.numerator}</div>
-                <div className='w-8 h-1 bg-black'></div>
-                <div>{fraction2.denominator}</div>
+                <Fraction numerator={fraction2.numerator} denominator={fraction2.denominator} />
               </div>
               <div className='text-4xl'>=</div>
               <div className='flex gap-1 flex-col items-center text-4xl'>
@@ -211,13 +202,13 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       )}
 
       {step >= 2 && (
-        <div className='flex flex-col items-center gap-8'>
-          <div className="flex justify-center items-center gap-4 my-8">
-            <RedBox>
-              STEP 3
-            </RedBox>
-            <div className="bg-pink-500 text-white text-center text-xl px-6 py-6 font-bold">
-              COMPARE
+        <div className='flex flex-col items-center gap-8 mb-48'>
+          <div className='flex justify-center items-center gap-4 mt-16'>
+            <div className="flex items-center gap-4">
+              <RedBox>STEP 3</RedBox>
+              <div className='text-xl bg-[#FF497C] font-bold text-white px-4 py-5 h-full flex items-center'>
+                COMPARE
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4 mt-8">
@@ -237,6 +228,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                   ) : "bg-white"}`}
               >
                 {answer || "?"}
+                <ChevronDown className={`absolute bottom-1 right-0 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isOpen && (
@@ -264,7 +256,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
       {step >= 3 && (
           <div className="flex text-3xl justify-center items-center gap-4 my-8 text-white bg-green-500 min-h-32">
-            Correct Answer!!!
+            Correct! 🎉
             <SuccessAnimation />
           </div>
       )}

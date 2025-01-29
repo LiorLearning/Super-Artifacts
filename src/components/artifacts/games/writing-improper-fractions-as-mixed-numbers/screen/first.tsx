@@ -10,6 +10,7 @@ import { goToStep, nextStep } from '../utils/helper';
 import { Input } from '@/components/custom_ui/input';
 import { ChooseHolder } from '../components/choose-holder';
 import { GameProps } from '../../addition-within-20-using-ten-frames/components/types';
+import { Statement } from '../components/statement';
 
 const MainContent = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -22,35 +23,19 @@ const MainContent = () => {
   const stepText = step <= 6 ? 'FILL THE BLOCKS IN THE HOLDERS' : 'THE ANSWER';
 
   const nextScreen = () => {
-    setGameStateRef(prev => ({ ...prev, screen: 'second' }));
+    setGameStateRef(prev => ({ ...prev, screen: 2 }));
   };
 
   return (
     <div className="flex flex-col m-4">
       {step === 0 && (
-        <FirstQuestion fraction={fraction} onNext={() => nextStep('first', setGameStateRef)} />
+        <FirstQuestion fraction={fraction} onNext={() => nextStep(1, setGameStateRef)} />
       )}
       {step > 0 && (
-        <StepModule screen={step <= 3 ? 'first' : 'second'} color={color} stepNumber={stepNumber} numerator={numerator} denominator={denominator} stepText={stepText} />
+        <StepModule screen={step <= 3 ? 1 : 2} color={color} stepNumber={stepNumber} numerator={numerator} denominator={denominator} stepText={stepText} />
       )}
       {step === 3 && (
-        <div className="flex justify-center mt-4 items-center space-x-4">
-          <div className="text-3xl font-bold text-center">
-            <span>1</span>
-            <div className="w-full h-px bg-black my-1" />
-            <span>{denominator}</span>
-          </div>
-          <span className="text-3xl">x</span>
-          <div className="text-3xl font-bold text-center text-purple-500 border-4 border-purple-500 px-3 py-1">
-            <span>{piecesAtYOne}</span>
-          </div>
-          <span className="text-3xl">=</span>
-          <div className="text-3xl font-bold text-center">
-            <span>{numerator}</span>
-            <div className="w-full h-px bg-black my-1" />
-            <span>{denominator}</span>
-          </div>
-        </div>
+        <Statement numerator={numerator} denominator={denominator} count={numerator} />
       )}
       {step === 6 && (
         <div className="flex justify-center mt-4 items-center space-x-4">
@@ -84,19 +69,19 @@ const Footer = ({sendAdminMessage}: GameProps) => {
 
   const verifyAnswer = () => {
     if (answer1 !== '' && answer2 !== '') {
-      goToStep('first', setGameStateRef, 5);
+      goToStep(1, setGameStateRef, 5);
     }
   }
 
   const handleDoneClick = () => {
     if (numerator === piecesAtYOne) {
       setIsIncorrect(false);
-      sendAdminMessage('agent', `Woohoo! You built ${numerator}/${denominator}ths perfectly! Now let’s see what happens next!`);
-      goToStep('first', setGameStateRef, 3);
+      sendAdminMessage('agent', `Woohoo! You built ${numerator}/${denominator}th perfectly! Now let’s see what happens next!`);
+      goToStep(1, setGameStateRef, 3);
     } else {
       setIsIncorrect(true);
       // sendAdminMessage('agent', "Hmmm, let's give that another try!");
-      sendAdminMessage('admin', `User has dragged ${piecesAtYOne} blocks but we need ${numerator} blocks to make ${fraction.numerator}/${fraction.denominator}ths! Diagnosis socratically to ask how many blocks to drag in or out`);
+      sendAdminMessage('admin', `User has dragged ${piecesAtYOne} blocks but we need ${numerator} blocks to make ${fraction.numerator}/${fraction.denominator}th! Diagnosis socratically to ask how many blocks to drag in or out`);
     }
   };
 
@@ -112,7 +97,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
       setTimeout(() => {
         sendAdminMessage('agent', "Now let’s connect the math! Quotient goes in the purple box. Remainder in the green box.");
         showStep6Ans.current = true;
-      }, 12000);
+      }, 7000);
     }
   }, [step])
 
@@ -124,7 +109,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
             sendAdminMessage={sendAdminMessage}
             answer={denominator}
             denomOptions={denomOptions}
-            onSuccess={() => {nextStep('first', setGameStateRef)}}
+            onSuccess={() => {nextStep(1, setGameStateRef)}}
           />
           <div className="text-center text-3xl mt-8 space-y-2">
             <span>Which holder can hold groups of {denominator}</span>
@@ -134,21 +119,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
       {step === 2 && (
         <>
           <div className="flex justify-center mt-4 items-center space-x-4">
-            <div className="text-3xl font-bold text-center">
-              <span>1</span>
-              <div className="w-full h-px bg-black my-1" />
-              <span>{denominator}</span>
-            </div>
-            <span className="text-3xl">x</span>
-            <div className="text-3xl font-bold text-center text-purple-500 border-4 border-purple-500 px-3 py-1">
-              <span>{piecesAtYOne}</span>
-            </div>
-            <span className="text-3xl">=</span>
-            <div className="text-3xl font-bold text-center">
-              <span>?</span>
-              <div className="w-full h-px bg-black my-1" />
-              <span>{denominator}</span>
-            </div>
+            <Statement numerator={numerator} denominator={denominator} count={piecesAtYOne} />
           </div>
           <div className="flex flex-col items-center justify-center pb-8">
             <div className="flex justify-center mt-4">
@@ -227,7 +198,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
             </div>
             <span className="text-3xl">th</span>
           </div>
-          {showStep6Ans.current && <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep('first', setGameStateRef)} sendAdminMessage={sendAdminMessage} />}
+          {showStep6Ans.current && <FinalAnswer numerator={numerator} denominator={denominator} nextStep={() => nextStep(1, setGameStateRef)} sendAdminMessage={sendAdminMessage} />}
         </>
       )}
     </div>
@@ -247,17 +218,17 @@ export default function FirstScreen({sendAdminMessage}: GameProps) {
       } else if (step === 1) {
         sendAdminMessage('agent', `Which holder would you choose to make groups of ${fraction.denominator}?`);
       } else if (step === 2) {
-        sendAdminMessage('agent', `Alright, builder! That was correct, let's create fresh legos by copying and dragging the green one. Our mission is to make ${fraction.numerator}/${fraction.denominator}ths!`);
+        sendAdminMessage('agent', `Alright, builder! That was correct, let's create fresh legos by copying and dragging the green one. Our mission is to make ${fraction.numerator}/${fraction.denominator}th!`);
       } else if (step === 3) {
         setTimeout(() => {
-          nextStep('first', setGameStateRef);
+          nextStep(1, setGameStateRef);
         }, 7000);
       } else if (step === 4) {
-        sendAdminMessage('agent', `Now that we have ${fraction.numerator}/${fraction.denominator}ths, how many holders can you fill with green legos?`);
+        sendAdminMessage('agent', `Now that we have ${fraction.numerator}/${fraction.denominator}th, how many holders can you fill with green legos?`);
       } else if (step === 5) {
         sendAdminMessage('agent', `Let's find out if your guess is correct. Start by dropping the legos in the holder.`);
       } else if (step === 6) {
-        sendAdminMessage('agent', `This is exactly what happens when you divide ${fraction.numerator} by ${fraction.denominator} - ${Math.floor(fraction.numerator / fraction.denominator)} whole and ${fraction.numerator % fraction.denominator}/${fraction.denominator}ths left!`);
+        sendAdminMessage('agent', `This is exactly what happens when you divide ${fraction.numerator} by ${fraction.denominator}: ${Math.floor(fraction.numerator / fraction.denominator)} whole and ${fraction.numerator % fraction.denominator}/${fraction.denominator}th left!`);
       }
     }, [step]);
 
@@ -266,7 +237,7 @@ export default function FirstScreen({sendAdminMessage}: GameProps) {
         {step > 0 && <Header fraction={fraction} />}
         <MainContent />
         {step <= 6 && step > 0 && (
-          <div className="flex items-center justify-center">
+          <div className={`flex items-center justify-center ${(step === 4 || step === 3) ? 'opacity-50 pointer-events-none' : ''}`}>
             <LegoGame sendAdminMessage={sendAdminMessage} />
           </div>
         )}

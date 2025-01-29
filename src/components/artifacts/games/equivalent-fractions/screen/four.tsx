@@ -7,12 +7,13 @@ import Proceed from "../components/proceed";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import SuccessAnimation from '@/components/artifacts/utils/success-animate'
+import { getInputColor } from "../utils/helper";
 
 
 export default function Level4({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step } = gameStateRef.current.screen4;
-  const {question1, question2} = gameStateRef.current.screen4;
+  const { step } = gameStateRef.current.state4;
+  const {question1, question2} = gameStateRef.current.state4;
   const [answerNumerator, setAnswerNumerator] = useState(0);
   const [answerDenominator, setAnswerDenominator] = useState(0);
   const multiplier1 = question1.denominator2/question1.denominator1;
@@ -40,11 +41,11 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
     }
   }, []);
   useEffect(() => {
-    if (answerNumerator == question1.numerator1*question1.denominator2/question1.denominator1) {
+    if (answerNumerator === question1.numerator1*question1.denominator2/question1.denominator1) {
       setGameStateRef({
         ...gameStateRef.current,
-        screen4: {
-          ...gameStateRef.current.screen4,
+        state4: {
+          ...gameStateRef.current.state4,
           step: 2
         }
       });
@@ -52,11 +53,11 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
   }, [answerNumerator]);
 
   useEffect(() => {
-    if (answerDenominator == question2.numerator1*question2.denominator2/question2.numerator2) {
+    if (answerDenominator === question2.numerator1*question2.denominator2/question2.numerator2) {
       setGameStateRef({
         ...gameStateRef.current,
-        screen4: {
-          ...gameStateRef.current.screen4,
+        state4: {
+          ...gameStateRef.current.state4,
           step: 4
         }
       });
@@ -87,8 +88,8 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           <STEP2 numerator1={question1.numerator1} denominator1={question1.denominator1} denominator2={question1.denominator2} onComplete={() => {
             setGameStateRef({
               ...gameStateRef.current,
-              screen4: {
-                ...gameStateRef.current.screen4,
+              state4: {
+                ...gameStateRef.current.state4,
                 step: 2
               }
             });
@@ -97,8 +98,8 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
           <STEP3 numerator1={question2.numerator1} numerator2={question2.numerator2} denominator2={question2.denominator2} onComplete={() => {
             setGameStateRef({
               ...gameStateRef.current,
-              screen4: {
-                ...gameStateRef.current.screen4,
+              state4: {
+                ...gameStateRef.current.state4,
                 step: 4
               }
             });
@@ -106,14 +107,14 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
         )}
       </div>
 
-      {step == 2 && (
+      {step === 2 && (
         <div className="flex flex-col justify-center items-center gap-8 p-4">
           <p className="text-3xl font-bold">You got it right!</p>
           <Proceed onComplete={() => {
             setGameStateRef({
               ...gameStateRef.current,
-              screen4: {
-                ...gameStateRef.current.screen4,
+              state4: {
+                ...gameStateRef.current.state4,
                 step: 3
               }
             });
@@ -121,7 +122,7 @@ export default function Level4({ sendAdminMessage }: BaseProps) {
         </div>
       )}
 
-      {step == 4 && (
+      {step === 4 && (
         <div className="flex flex-col justify-center items-center gap-8 text-3xl font-bold text-green-500 p-4">
           Correct!
           <SuccessAnimation />
@@ -152,7 +153,7 @@ const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMes
   useEffect(() => {
     if (hint === 1 && multiplier_denominator === denominator2/denominator1) {
       setHint(2);
-      sendAdminMessage('agent', `Awesome, so what would you need to multiply ${numerator1} by to keep the same fraction?`);
+      // sendAdminMessage('agent', `Awesome, so what would you need to multiply ${numerator1} by to keep the same fraction?`);
       multiplier_numeratorRef.current?.focus();
     } else if (hint === 2 && multiplier_numerator === denominator2/denominator1) {
       setHint(3)
@@ -165,7 +166,7 @@ const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMes
   return (
     <div className="max-w-screen-sm flex gap-4 justify-center items-center">
     <div className="flex flex-col mt-10 py-10 w-full">
-    {hint != 0 && (
+    {hint !== 0 && (
       <div className="flex flex-col w-full">
         <div className="flex justify-center items-center">
           x
@@ -173,9 +174,12 @@ const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMes
             type="text"
             value={multiplier_numerator ? multiplier_numerator.toString() : ''}
             onChange={(e) => setMultiplier_numerator(Number(e.target.value))}
-            placeholder={hint == 2 ? "?" :""}
-            className={`w-10 text-center mb-2 ml-2 border-2 border-black ${multiplier_numerator > 0 && (multiplier_numerator === denominator2/denominator1 ? 'bg-green-500' : 'bg-red-500')} ${hint < 2 && 'opacity-10'}`}
-            disabled={hint != 2}
+            placeholder={hint === 2 ? "?" :""}
+            className={`w-10 text-center mb-2 ml-2 border-2 border-black`}
+            style={{
+              backgroundColor: getInputColor(multiplier_numerator ? multiplier_numerator.toString() : '', (denominator2/denominator1).toString())
+            }}
+            disabled={hint !== 2}
             ref={multiplier_numeratorRef}
           />
           
@@ -192,11 +196,14 @@ const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMes
           <span className="text-3xl text-center font-bold flex flex-col justify-end pt-6"> 
             <input 
               type="text"
-              disabled={hint != 0 && hint != 3}
+              disabled={hint !== 0 && hint !== 3}
               value={answerNumerator ? answerNumerator.toString() : ''}
-              placeholder={hint == 0 ? "?" : hint == 3 ? "?" : ""}
+              placeholder={hint === 0 ? "?" : hint === 3 ? "?" : ""}
               onChange={(e) => setAnswerNumerator(parseInt(e.target.value || '0'))}
-              className={`outline-none rounded text-3xl text-center border-2 border-black ${answerNumerator > 0 && (answerNumerator === numerator1*denominator2/denominator1 ? 'bg-green-500' : 'bg-red-500')} ${hint == 0 ? "opacity-100" : hint == 3 ? "opacity-100" : "opacity-10"}`}
+              className={`outline-none rounded text-3xl text-center border-2 border-black`}
+              style={{
+                backgroundColor: getInputColor(answerNumerator ? answerNumerator.toString() : '', (numerator1*denominator2/denominator1).toString())
+              }}
               ref={answerNumeratorRef}
             />
           </span>
@@ -204,7 +211,7 @@ const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMes
           <span className="text-3xl text-center font-bold flex flex-col justify-end pb-6"> {denominator2} </span>
           </div>
         </div>
-        {hint != 0 && (
+        {hint !== 0 && (
         <div className="flex flex-col w-full">
           <div className="flex justify-center items-center">
           <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8 -scale-x-100 rotate-180" />
@@ -215,9 +222,12 @@ const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMes
             type="text"
             value={multiplier_denominator === 0 ? "" : multiplier_denominator?.toString()}
             onChange={(e) => setMultiplier_denominator(Number(e.target.value))}
-            placeholder={hint == 1 ? "?" :""}
-            className={`w-10 text-center mt-2 ml-2 border-2 border-black ${multiplier_denominator > 0 && (multiplier_denominator === denominator2 / denominator1 ? 'bg-green-500' : 'bg-red-500')} ${hint < 2 && 'opacity-10'}`}
-            disabled={hint != 1}
+            placeholder={hint === 1 ? "?" :""}
+            className={`w-10 text-center mt-2 ml-2 border-2 border-black`}
+            style={{
+              backgroundColor: getInputColor(multiplier_denominator ? multiplier_denominator.toString() : '', (denominator2/denominator1).toString())
+            }}
+            disabled={hint !== 1}
             ref={multiplier_denominatorRef}
           />
           
@@ -225,7 +235,7 @@ const STEP2 = ({numerator1, denominator1, denominator2, onComplete, sendAdminMes
       </div>
       )}
     </div>
-    {hint == 0 && <Hint setShowHint={() => {setHint(1); multiplier_denominatorRef.current?.focus(); setAnswerNumerator(0); }} className="absolute cursor-pointer bottom-10 right-10"/>}
+    {hint === 0 && <Hint setShowHint={() => {setHint(1); multiplier_denominatorRef.current?.focus(); setAnswerNumerator(0); }} className="absolute cursor-pointer bottom-10 right-10"/>}
   </div>
   )
 }
@@ -243,7 +253,7 @@ const STEP3 = ({numerator1, numerator2, denominator2, onComplete, sendAdminMessa
   useEffect(() => {
     if (hint === 1 && multiplier_numerator === numerator2/numerator1) {
       setHint(2);
-      sendAdminMessage('agent', `Awesome, so what would you need to multiply ${numerator2} by to keep the same fraction?`);
+      // sendAdminMessage('agent', `Awesome, so what would you need to multiply ${numerator2} by to keep the same fraction?`);
       multiplier_denominatorRef.current?.focus();
     } else if (hint === 2 && multiplier_denominator === numerator2/numerator1) {
       setHint(3)
@@ -257,24 +267,27 @@ const STEP3 = ({numerator1, numerator2, denominator2, onComplete, sendAdminMessa
   return (
     <div className="max-w-screen-sm flex gap-4 justify-center items-center">
     <div className="flex flex-col mt-10 py-10 w-full">
-    {hint != 0 && (
-      <div className="flex flex-col w-full">
-        <div className="flex justify-center items-center">
-          x
-          <input 
-            type="text"
-            value={multiplier_numerator ? multiplier_numerator.toString() : ''}
-            onChange={(e) => setMultiplier_numerator(Number(e.target.value))}
-            placeholder={hint == 1 ? "?" :""}
-            className={`w-10 text-center mb-2 mx-2 border-2 border-black ${multiplier_numerator === numerator2/numerator1 ? 'bg-green-500' : ''}`}
-            disabled={hint != 1}
-            ref={multiplier_numeratorRef}
-          />
+      {(hint !== 0 && hint !== 4) && (
+        <div className="flex flex-col w-full">
+          <div className="flex justify-center items-center">
+            x
+            <input 
+              type="text"
+              value={multiplier_numerator ? multiplier_numerator.toString() : ''}
+              onChange={(e) => setMultiplier_numerator(Number(e.target.value))}
+              placeholder={hint === 1 ? "?" :""}
+              className={`w-10 text-center mb-2 mx-2 border-2 border-black`}
+              style={{
+                backgroundColor: getInputColor(multiplier_numerator ? multiplier_numerator.toString() : '', (numerator2/numerator1).toString())
+              }}
+              disabled={hint !== 1}
+              ref={multiplier_numeratorRef}
+            />
+          </div>
+          <div className="flex justify-center items-center">
+            <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8" />
+          </div>  
         </div>
-        <div className="flex justify-center items-center">
-          <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8" />
-        </div>  
-      </div>
       )}
       <div className="flex justify-center items-center g0ap-4">
         <div className="flex flex-col gap-2 px-2 bg-white w-24">
@@ -283,11 +296,14 @@ const STEP3 = ({numerator1, numerator2, denominator2, onComplete, sendAdminMessa
           <span className="text-3xl text-center font-bold flex flex-col justify-end pb-6"> 
             <input 
               type="text"
-              disabled={hint != 0 && hint != 3}
+              disabled={hint !== 0 && hint !== 3}
               value={answerDenominator ? answerDenominator.toString() : ''}
-              placeholder={hint == 0 ? "?" : hint == 3 ? "?" : ""}
+              placeholder={hint === 0 ? "?" : hint === 3 ? "?" : ""}
               onChange={(e) => setAnswerDenominator(parseInt(e.target.value || '0'))}
-              className={`outline-none rounded text-3xl text-center border-2 border-black ${answerDenominator === denominator2*numerator1/numerator2 ? 'bg-green-500' : ''} ${hint == 0 ? "opacity-100" : hint >= 3 ? "opacity-100" : "opacity-10"}`}
+              className={`outline-none rounded text-3xl text-center border-2 border-black`}
+              style={{
+                backgroundColor: getInputColor(answerDenominator ? answerDenominator.toString() : '', (denominator2*numerator1/numerator2).toString())
+              }}
               ref={answerDenominatorRef}
             />
           </span>
@@ -295,10 +311,10 @@ const STEP3 = ({numerator1, numerator2, denominator2, onComplete, sendAdminMessa
         <span className="text-3xl font-bold">=</span>
         <Fraction numerator={numerator2} denominator={denominator2} className="text-3xl font-bold bg-white rounded px-6 py-6" /> 
       </div>
-      {hint != 0 && (
+      {(hint !== 0 && hint !== 4) && (
         <div className="flex flex-col w-full">
           <div className="flex justify-center items-center">
-          <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8 -scale-100 rotate-180" />
+          <img src='https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/curvearrow.svg' className="h-8 -scale-x-100 rotate-180" />
         </div>  
         <div className="flex justify-center items-center">
           x
@@ -306,16 +322,19 @@ const STEP3 = ({numerator1, numerator2, denominator2, onComplete, sendAdminMessa
             type="text"
             value={multiplier_denominator === 0 ? "" : multiplier_denominator?.toString()}
             onChange={(e) => setMultiplier_denominator(Number(e.target.value))}
-            placeholder={hint == 2 ? "?" :""}
-            className={`w-10 text-center mt-2 mx-2 border-2 border-black ${multiplier_denominator === numerator2/numerator1 ? 'bg-green-500' : ''} ${hint < 2 && 'opacity-10'}`}
-            disabled={hint != 2}
+            placeholder={hint === 2 ? "?" :""}
+            className={`w-10 text-center mt-2 mx-2 border-2 border-black`}
+            style={{
+              backgroundColor: getInputColor(multiplier_denominator ? multiplier_denominator.toString() : '', (numerator2/numerator1).toString())
+            }}
+            disabled={hint !== 2}
             ref={multiplier_denominatorRef}
           />         
         </div>
       </div>
       )}
     </div>
-    {hint == 0 && <Hint setShowHint={() => {setHint(1); multiplier_numeratorRef.current?.focus(); setAnswerDenominator(0); }} className="absolute cursor-pointer bottom-10 right-10"/>}
+    {hint === 0 && <Hint setShowHint={() => {setHint(1); multiplier_numeratorRef.current?.focus(); setAnswerDenominator(0); }} className="absolute cursor-pointer bottom-10 right-10"/>}
   </div>
   )
 }

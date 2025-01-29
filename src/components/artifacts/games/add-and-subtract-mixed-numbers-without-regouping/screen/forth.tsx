@@ -81,6 +81,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
     ) {
       setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: 1 } }));
       sendAdminMessage("agent","Perfection! Correctly rearranged! Now carefully look at the signs, subtract the wholes separately and subtract the fractions separately");
+      sendAdminMessage("agent","Perfection! Correctly rearranged! Now carefully look at the signs, subtract the wholes separately and subtract the fractions separately");
     }
   }
 
@@ -106,6 +107,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   ) => {
     if (whole3 === fraction1.whole - fraction2.whole && numerator3 === fraction1.numerator - fraction2.numerator && denominator3 === fraction1.denominator) {
       setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: 2 } }));
+      sendAdminMessage("agent","Correct again");
       sendAdminMessage("agent","Correct again");
     }
   }

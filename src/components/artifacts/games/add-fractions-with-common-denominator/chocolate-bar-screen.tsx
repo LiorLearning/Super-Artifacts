@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { useGameState } from './state-utils'
 
@@ -13,6 +13,7 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
   const { gameStateRef } = useGameState()
   const { fraction1, fraction2 } = gameStateRef.current.state1
 
+  const startedRef = useRef(false)
   const [ selectedPieces, setSelectedPieces ] = useState<number[]>([])
   const [ step2Pieces, setStep2Pieces ] = useState<number[]>([])
   const [ numerator, setNumerator ] = useState<string>('')
@@ -27,6 +28,13 @@ export function ChocolateBarScreen({ onProceed, sendAdminMessage }: ChocolateBar
     numerator: fraction1.numerator + fraction2.numerator,
     denominator: fraction1.denominator,
   }
+
+  useEffect(() => {
+    if (startedRef.current === false) {
+      sendAdminMessage('agent', `Let's select pieces to give you ${fraction1.numerator}/${fraction1.denominator}th of the chocolate bar`)
+      startedRef.current = true
+    }
+  }, [])
 
   useEffect(() => {
     const isCorrect = selectedPieces.length === fraction1.numerator

@@ -192,7 +192,12 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
   )
 }
 
-export const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessage }: { onComplete: () => void, fraction1: MixedFractionProps, fraction2: MixedFractionProps, sendAdminMessage: (role: string, content: string) => void }) => {
+export const CombineFractionInput: React.FC<{ 
+  onComplete: () => void, 
+  fraction1: MixedFractionProps, 
+  fraction2: MixedFractionProps, 
+  sendAdminMessage: (role: string, content: string) => void 
+}> = ({ onComplete, fraction1, fraction2, sendAdminMessage }) => {
   const [whole1, setWhole1] = useState<string>('');
   const [whole2, setWhole2] = useState<string>('');
   const [whole3, setWhole3] = useState<string>('');
@@ -247,6 +252,7 @@ export const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdm
       parseInt(denominator2)===fraction2.denominator
     ) {
       sendAdminMessage('agent', "There you are, add the wholes and fractions now, and you will have your answer");
+      sendAdminMessage('agent', "There you are, add the wholes and fractions now, and you will have your answer");
       setSecond(1);
     }
   }
@@ -275,6 +281,7 @@ export const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdm
       parseInt(numerator3) === (fraction1.numerator + fraction2.numerator) && 
       parseInt(denominator3) === fraction1.denominator
     ) {
+      sendAdminMessage('agent', "You are on a roll! Final one to practice now!");
       sendAdminMessage('agent', "You are on a roll! Final one to practice now!");
       onComplete();
     }
