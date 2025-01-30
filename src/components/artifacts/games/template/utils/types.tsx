@@ -1,3 +1,3 @@
 export interface BaseProps {
-    sendAdminMessage: (role: string, content: string) => void;
+    sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string>;
 }

@@ -5,7 +5,7 @@ const BUFFER_QUEUE_THRESHOLD = 3; // Minimum number of chunks to queue before st
 
 interface AudioContextProps {
   isConnected: boolean;
-  playAudio: (messageId: string, text: string) => void;
+  playAudio: (messageId: string, text: string, onComplete?: () => void) => void;
   stopAudio: (messageId?: string) => void;
 }
 
@@ -82,9 +82,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, clientId
    * Initiates audio playback by connecting to the WebSocket.
    * @param messageId Unique identifier for the message.
    * @param text Text to be converted to speech.
+   * @param onComplete Optional callback to be executed when audio playback is complete.
    */
-  const playAudio = async (messageId: string, text: string) => {
+  const playAudio = async (messageId: string, text: string, onComplete?: () => void) => {
     currentMessageIdRef.current = messageId;
+    setIsPlaying(messageId, true);
 
     if (!audioContextRef.current) {
       try {
@@ -108,7 +110,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, clientId
       }
     }
 
-    connectWebSocket(messageId, text);
+    connectWebSocket(messageId, text, onComplete);
   };
 
   /**
@@ -148,8 +150,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, clientId
    * Establishes a WebSocket connection and sets up event handlers.
    * @param messageId Unique identifier for the message.
    * @param text Text to be converted to speech.
+   * @param onComplete Optional callback to be executed when audio playback is complete.
    */
-  const connectWebSocket = (messageId: string, text: string) => {
+  const connectWebSocket = (messageId: string, text: string, onComplete?: () => void) => {
     if (webSocketRef.current) {
       webSocketRef.current.close();
     }
@@ -188,6 +191,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, clientId
             initializeAudioPlayback();
           } else if (message.type === 'stream_end') {
             processAudioQueue(true);
+            setIsPlaying(messageId, false);
+            onComplete?.();
+            console.log('Stream ended:', message);
+
           }
         } catch (error) {
           console.error('Error parsing JSON message:', error);
