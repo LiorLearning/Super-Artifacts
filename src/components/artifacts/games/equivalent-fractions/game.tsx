@@ -11,13 +11,22 @@ import Level4 from './screen/four';
 
 const DevHelper = () => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { step } = gameStateRef.current.state1;
+  const { screen } = gameStateRef.current;
 
   return (
     <div className="flex justify-between mt-4">
-      <Button className='m-2' onClick={() => prevStep(step.id, setGameStateRef)}>Previous Step</Button>
-      <Select onValueChange={(value) => setGameStateRef((prevState) => ({ ...prevState, screen: parseInt(value) }))}>
-        <SelectTrigger>
+      <Button className='m-2' onClick={() => prevStep(screen, setGameStateRef)}>Previous Step</Button>
+      <div className="flex items-center justify-center m-2 w-64">
+        <span className="font-medium">
+          Step: {screen === 1 ? gameStateRef.current.state1.step.id : 
+                 screen === 2 ? gameStateRef.current.state2.step.id :
+                 screen === 3 ? gameStateRef.current.state3.step :
+                 screen === 4 ? gameStateRef.current.state4.step : 0}
+        </span>
+        <span className='m-4'>Screen: {screen}</span>
+      </div>
+      <Select value={screen.toString()} onValueChange={(value) => setGameStateRef((prevState) => ({ ...prevState, screen: parseInt(value) }))}>
+        <SelectTrigger className="h-8 text-sm">
           <SelectValue placeholder="Select Screen" />
         </SelectTrigger>
         <SelectContent>
@@ -28,7 +37,7 @@ const DevHelper = () => {
           <SelectItem value="4">Screen 4</SelectItem>
         </SelectContent>
       </Select>
-      <Button className='m-2' onClick={() => nextStep(step.id, setGameStateRef)}>Next Step</Button>
+      <Button className='m-2' onClick={() => nextStep(screen, setGameStateRef)}>Next Step</Button>
     </div>
   );
 };
