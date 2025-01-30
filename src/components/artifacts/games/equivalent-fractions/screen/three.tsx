@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
 import Proceed from "../components/proceed";
 import { useState } from "react";
 import { OnlyDivisor, OnlyMultiplier } from "../components/multiplierFraction";
+import { nextStep } from '../utils/helper'
 
 
 export default function Level3 ({sendAdminMessage}: BaseProps) {
@@ -88,11 +89,11 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
         </div>
 
 
-        <div className='flex mt-8 justify-center items-center gap-4'>
+        <div className='flex justify-center items-center gap-4 mt-8'>
           <div className="flex items-center gap-4">
-            <RedBox>Step 5</RedBox>
-            <p className='text-xl min-w-56 text-center bg-[#FF497C] font-bold text-white px-4 py-5'>
-              Reflect
+            <RedBox>STEP 5</RedBox>
+            <p className='text-xl bg-[#FF497C] font-bold text-white px-4 py-5 h-full flex items-center'>
+            Reflect
             </p>
           </div>
         </div>
@@ -203,7 +204,7 @@ function Level3_1({ sendAdminMessage }: BaseProps) {
             }} sendAdminMessage={sendAdminMessage} />
           </div>
         )}
-          {step == 4 && (
+          {step === 4 && (
           <div className="flex flex-col justify-center items-center">
             <p className="text-3xl font-bold text-center text-green-600 mt-8 mb-16">
               You've got it!
@@ -306,11 +307,11 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
         </div>
 
 
-        <div className='flex mt-8 justify-center items-center gap-4'>
+        <div className='flex justify-center items-center gap-4 mt-8'>
           <div className="flex items-center gap-4">
-            <RedBox>Step 5</RedBox>
-            <p className='text-xl min-w-56 text-center bg-[#FF497C] font-bold text-white px-4 py-8'>
-              Reflect
+            <RedBox>STEP 5</RedBox>
+            <p className='text-xl bg-[#FF497C] font-bold text-white px-4 py-5 h-full flex items-center'>
+            Reflect
             </p>
           </div>
         </div>
@@ -337,16 +338,10 @@ function Level3_2({ sendAdminMessage }: BaseProps) {
               <Fraction numerator={numerator1*multiplier1} denominator={denominator1*multiplier1} className="text-3xl font-bold" />
             </div>
 
-        {step == 6 && (
+        {step === 6 && (
           <div className="flex flex-col">
             <Proceed onComplete={() => {
-              setGameStateRef(prev => ({
-                ...prev,
-                screen3: {
-                  ...prev.state3,
-                  step: 7
-                }
-              }))
+              nextStep(3, setGameStateRef)
             }} />
           </div>
         )}
