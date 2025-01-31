@@ -24,7 +24,7 @@ import { GameStateProvider as CompareFractionGameStateProvider, useGameState as 
 import { GameStateProvider as DecimalGameStateProvider, useGameState as DecimalGameState } from './games/fraction-to-decimal/state-utils'
 
 interface GameInfo {
-  game: React.ComponentType<{ sendAdminMessage: (role: string, content: string) => void }>;
+  game: React.ComponentType<{ sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string> }>;
   useState: any;
   provider: React.ComponentType<{ children: React.ReactNode }>;
 }
