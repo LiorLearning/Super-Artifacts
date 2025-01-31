@@ -14,7 +14,7 @@ type GameKey = keyof typeof gameInfo;
 
 interface GameComponentProps {
   currentGame: string;
-  sendAdminMessage: (role: string, content: string) => void;
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string>;
 }
 
 // Get the current game component
@@ -53,29 +53,34 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
 
   const { gameStateRef, getDescription } = gameInfo[currentGame]?.useState || {};
 
-  const sendAdminMessage = async (role: string, content: string) => {
-    if (!isClient) return;
+  const sendAdminMessage = async (role: string, content: string, onComplete?: () => void): Promise<string> => {
+    if (!isClient) return '';
+
+    const messageId = crypto.randomUUID();
 
     if (role == 'admin') {
       sendLog({
+        messageId,
         type: 'admin',
         timestamp: new Date().toISOString(),
         content: content,
         role: role,
         image: await handleScreenshot(componentRef),
         desc: getDescription?.(),
-        // gameState: gameStateRef ? JSON.stringify(gameStateRef, null, 0) : '',
         gameState: '',
-      } as AdminRequestMessage)
+      } as AdminRequestMessage);
+      onComplete?.();
     } else if (role == 'agent') {
       addToChat({
-        messageId: crypto.randomUUID(),
+        messageId,
         type: 'agent',
         timestamp: new Date().toISOString(),
         content: content,
         role: 'agent',
-      } as AssistanceResponseMessage)
+      } as AssistanceResponseMessage, onComplete);
     }
+
+    return messageId; // Return the messageId for optional tracking
   };
 
   useEffect(() => {

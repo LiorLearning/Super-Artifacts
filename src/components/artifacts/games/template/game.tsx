@@ -7,7 +7,7 @@ import { DevHelper } from './utils/helper';
 
 
 interface GameProps {
-  sendAdminMessage: (role: string, content: string) => void;
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string>;
 }
 
 export default function Game({sendAdminMessage}: GameProps) {
