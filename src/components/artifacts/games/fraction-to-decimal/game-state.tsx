@@ -68,7 +68,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  screen: 'zero',
+  screen: 'second',
   question: {
     question1: {
       numerator: 2,

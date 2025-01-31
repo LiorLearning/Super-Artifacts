@@ -1,7 +1,7 @@
 import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps } from '../utils/types';
-import Bar from '../components/bar';
+import Bar, { BarWithHint, DecimalHintBar } from '../components/bar';
 import { useState, useEffect, useRef } from 'react';
 import FractionBox from '../components/FractionBox';
 import DecimalBox from '../components/DecimalBox';
@@ -69,7 +69,6 @@ function Tenth({ sendAdminMessage }: BaseProps) {
 
   const handleProceed = () => {
     setStep(4);
-    sounds.levelUp();
   };
 
   return (
@@ -141,6 +140,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
   const [wholes, setWholes] = useState('');
   const [tenths, setTenths] = useState('');
   const [hundredths, setHundredths] = useState('');
+  const [hint, setHint] = useState(false);
 
   const start = useRef(false);
 
@@ -184,7 +184,6 @@ function Hundred({ sendAdminMessage }: BaseProps) {
 
   const handleProceed = () => {
     setStep(7);
-    sounds.levelUp();
   };
 
   return (
@@ -205,12 +204,21 @@ function Hundred({ sendAdminMessage }: BaseProps) {
       />
 
       <div className='flex w-full flex-col max-w-screen-md mx-auto items-center justify-center gap-8 my-8'>
-        <Bar
-          numerator={question3.numerator}
-          denominator={question3.denominator}
-          handlePieceClick={(index) => setSelectedPieces(index)}
-          active={false}
-        />
+        {hint ?
+          <DecimalHintBar 
+            numerator={question3.numerator}
+            denominator={question3.denominator}
+            handlePieceClick={(index) => setSelectedPieces(index)}
+            active={false}
+          />
+          :
+          <Bar
+            numerator={question3.numerator}
+            denominator={question3.denominator}
+            handlePieceClick={(index) => setSelectedPieces(index)}
+            active={false}
+          />
+        }
 
         <div className="flex justify-center gap-32 w-full max-w-3xl">
           <FractionBox 
@@ -275,6 +283,13 @@ function Hundred({ sendAdminMessage }: BaseProps) {
             text="Onward!"
           />
         )}
+
+        {step === 5 && !hint && (
+          <Proceed
+            onComplete={() => setHint(true)}
+            text="Need a Hint?"
+          />
+        )}
       </div>
     </div>
   );
@@ -290,6 +305,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     const [wholes, setWholes] = useState('');
     const [tenths, setTenths] = useState('');
     const [hundredths, setHundredths] = useState('');
+    const [hint, setHint] = useState(0);
 
     const start = useRef(false);
   
@@ -358,25 +374,37 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
         />
   
         <div className='flex w-full flex-col max-w-screen-md mx-auto items-center justify-center gap-8 my-8'>
-          <Bar
-            numerator={question4.numerator}
-            denominator={question4.denominator}
-            handlePieceClick={(index) => setSelectedPieces(index)}
-            active={false}
-          />
+          {hint > 0 ?
+            <BarWithHint
+              numerator={question4.numerator}
+              denominator={question4.denominator}
+              handlePieceClick={(index) => setSelectedPieces(index)}
+              active={false}
+              complete={() => setHint(2)}
+            />
+          :
+            <Bar
+              numerator={question4.numerator}
+              denominator={question4.denominator}
+              handlePieceClick={(index) => setSelectedPieces(index)}
+              active={false}
+            />
+          }
   
           <div className="flex justify-center gap-32 w-full max-w-3xl">
-            <FractionBox 
-              numerator={fractionNumerator}
-              denominator={fractionDenominator}
-              onChange={{
-                numerator: setFractionNumerator,
-                denominator: setFractionDenominator
-              }}
-              correctnumerator={String(question4.numerator)}
-              correctdenominator={String(question4.denominator)}
-            />
-            <div className={`flex flex-col items-center gap-2 text-2xl ${step >= 8 ? 'opacity-100' : 'opacity-50'}`}>
+            {!hint &&
+              <FractionBox 
+                numerator={fractionNumerator}
+                denominator={fractionDenominator}
+                onChange={{
+                  numerator: setFractionNumerator,
+                  denominator: setFractionDenominator
+                }}
+                correctnumerator={String(question4.numerator)}
+                correctdenominator={String(question4.denominator)}
+              />
+            }
+            <div className={`flex flex-col items-center gap-2 text-2xl ${step >= 8 ? ( hint!=1 && 'opacity-100' ) : 'opacity-50'}`}>
               <div className="text-center mb-2">
                 <span className="text-lg font-bold bg-[#FFE4B5] px-4 py-1">Decimal</span>
               </div>
@@ -390,7 +418,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
                       onChange={(e) => setWholes(e.target.value)}
                       className="w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl"
                       maxLength={1}
-                      disabled = {step !== 8}
+                      disabled = {step !== 8 || hint === 1}
                     />
                   </div>
                   <span className="text-4xl mb-6">.</span>
@@ -402,7 +430,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
                       onChange={(e) => setTenths(e.target.value)}
                       className="w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl"
                       maxLength={1}
-                      disabled = {step !== 8}
+                      disabled = {step !== 8 || hint === 1}
                     />
                   </div>
                   <div className="flex flex-col items-center">
@@ -413,7 +441,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
                       onChange={(e) => setHundredths(e.target.value)}
                       className="w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl"
                       maxLength={2}
-                      disabled = {step !== 8}
+                      disabled = {step !== 8 || hint === 1}
                     />
                   </div>
                 </div>
@@ -427,6 +455,14 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
               text="Onward!"
             />
           )}
+
+          {step === 8 && !hint && (
+            <Proceed
+              onComplete={() => setHint(1)}
+              text="Need a Hint?"
+            />
+          )}
+
         </div>
       </div>
     );
