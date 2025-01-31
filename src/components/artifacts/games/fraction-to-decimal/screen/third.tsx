@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGameState } from '../state-utils';
-import Bar, { Bar2d } from '../components/bar';
+import Bar, { Bar2d, BarWithHint } from '../components/bar';
 import Proceed from '../components/proceed';
 import RedBox, { RedBox2 } from '../components/RedBox';
 import Header from '../components/header';
@@ -187,6 +187,8 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
 
   const start = useRef(false);
 
+  const [hint, setHint] = useState(0)
+
   useEffect(() => {
     if (!start.current) {
       sendAdminMessage('agent', `Awesome, now that we've created ${numerator}/${denominator}, try entering it in decimal form`)
@@ -209,7 +211,10 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
 
   return (
     <div className="flex flex-col items-center max-w-screen-lg w-full mx-auto justify-center flex-1 gap-8">
-      <div className="flex gap-7">
+      {hint === 1 ? 
+      <div className='flex w-full justify-center'>
+          
+        <span className='flex flex-col justify-center h-full mx-16 w-1/6 text-center text-xl'>
           {Array.from({length: wholechocolate}, (_, index) => (
             <div 
               key={index}
@@ -222,13 +227,41 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
             />
             </div>
           ))}
-          <Bar2d
-            numerator={numerator % denominator}
-            denominator={100}
+        </span>
+
+        <span className='relative w-4/6 text-center text-xl'>
+          <BarWithHint
+            numerator={numerator%denominator}
+            denominator={denominator}
             handlePieceClick={() => {}}
             active={false}
+            complete={() => {}}
           />
+        </span>
+
       </div>
+      :
+        <div className="flex gap-7">
+            {Array.from({length: wholechocolate}, (_, index) => (
+              <div 
+                key={index}
+              >
+                <Bar2d
+                  numerator={100}
+                  denominator={100}
+                  handlePieceClick={() => {}}
+                  active={false}
+              />
+              </div>
+            ))}
+            <Bar2d
+              numerator={numerator % denominator}
+              denominator={100}
+              handlePieceClick={() => {}}
+              active={false}
+            />
+        </div>
+      }
 
       <div className="flex flex-col items-center gap-2 text-2xl">
         <div className="text-center mb-2">
@@ -283,6 +316,13 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
             />
         )
       }
+
+      {hint === 0 && (
+        <Proceed
+          onComplete={() => setHint(1)}
+          text='Need a hint?'
+        />
+      )}
     </div>
   )
 }
