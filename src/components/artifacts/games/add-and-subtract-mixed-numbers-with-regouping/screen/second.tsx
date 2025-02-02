@@ -8,7 +8,7 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
 
   return (
     <div className="mx-auto">
-      <Header variable={variable} />
+      {/* <Header variable={variable} /> */}
     </div>
   )
 }
