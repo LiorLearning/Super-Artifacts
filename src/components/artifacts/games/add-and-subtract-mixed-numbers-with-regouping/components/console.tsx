@@ -113,11 +113,15 @@ const Pieces = ({type, number = [1,2,3,4], index, selected, selectedSegments, on
 export function Console({
   fraction = {whole: 1, numerator: 1, denominator: 2},
   units,
-  setUnits
+  setUnits,
+  variant = 1,
+  hidden = false
 }:{
   fraction?: {whole: number, numerator: number, denominator: number},
   units: ConsoleUnit[],
   setUnits: React.Dispatch<React.SetStateAction<ConsoleUnit[]>>
+  variant?: number
+  hidden?: boolean
 }){
   const [selected, setSelected] = useState<{index: number, segments?: number[]} | null>(null);
 
@@ -195,29 +199,28 @@ export function Console({
   return(
     <div className="bg-[#E8F5FF] p-3 w-full max-w-screen-md rounded-lg shadow-[-3px_3px_1px_1px_rgba(0,_0,_0,_0.5)]">
       <div className="bg-white flex flex-col p-3 shadow-[inset_-3px_3px_1px_1px_rgba(0,_0,_0,_0.5)] rounded-md">
-        <div className="flex justify-between w-full items-center">
-          <div className={`gap-2 flex items-center bg-[#E3F6FF] px-4 border-2 border-slate-500 shadow-[-2px_2px_0px_rgba(0,_0,_0,_1)] rounded-lg text-2xl`}>
-              <span className={`text-[#0E94D3]`}>{fraction.whole}</span>
-              <div className="flex flex-col justify-center items-center">
-                  <div className={` text-[#0E94D3]`}>{fraction.numerator}</div>
-                  <div className={`border-t-[1px] border-black px-2 w-full`}></div>
-                  <div className={`text-[#0E94D3]`}>{fraction.denominator}</div>
-              </div>
+        
+        {variant !== 2 &&
+          <div className="flex justify-between w-full items-center">
+            <div className={`gap-2 flex items-center bg-[#E3F6FF] px-4 border-2 border-slate-500 shadow-[-2px_2px_0px_rgba(0,_0,_0,_1)] rounded-lg text-2xl`}>
+                <span className={`text-[#0E94D3]`}>{hidden ? "?" : fraction.whole}</span>
+                <div className="flex flex-col justify-center items-center">
+                    <div className={` text-[#0E94D3]`}>{hidden ? "?" : fraction.numerator}</div>
+                    <div className={`border-t-[1px] border-black px-2 w-full`}></div>
+                    <div className={`text-[#0E94D3]`}>{hidden ? "?" : fraction.denominator}</div>
+                </div>
+            </div>
+            <div className="flex gap-2 items-center">
+              <Add 
+                onClick={handleadd}
+              />
+              <Delete 
+                onClick={handledelete} 
+                disabled={!selected || !units[selected.index]}
+              />
+            </div>
           </div>
-
-          <div className="flex gap-2 items-center">
-
-            <Add 
-              onClick={handleadd}
-            />
-
-            <Delete 
-              onClick={handledelete} 
-              disabled={!selected || !units[selected.index]}
-            />
-          </div>
-
-        </div>
+        }
 
         <div className="flex gap-2 mt-4 min-h-40 items-center">
           {units.map((unit, i) => (
@@ -234,18 +237,30 @@ export function Console({
         </ div>
 
       </div>
-      <div className="p-2 flex items-center w-fullrounded-md min-h-[100px]">
+      <div className="p-2 flex justify-between w-full rounded-md min-h-[100px]">
+        { variant !== 3 &&
+          <div className="flex gap-2 items-center">
+            <Merge 
+              onClick={handlemerge}
+              disabled={!selected?.segments || selected.segments.length !== 4}
+            />
 
-        <Merge 
-          onClick={handlemerge}
-          disabled={!selected?.segments || selected.segments.length !== 4}
-        />
-
-        <Split 
-          onClick={handlesplit} 
-          disabled={!selected || !units[selected.index] || units[selected.index].type !== 1}
-        />
-
+            <Split 
+              onClick={handlesplit} 
+            disabled={!selected || !units[selected.index] || units[selected.index].type !== 1}
+          />
+          </div>
+        }
+        { variant === 2 &&
+          <div className={`gap-2 flex items-center bg-[#E3F6FF] px-4 border-2 border-slate-500 shadow-[-2px_2px_0px_rgba(0,_0,_0,_1)] rounded-lg text-2xl`}>
+            <span className={`text-[#0E94D3]`}>{hidden ? "?" : fraction.whole}</span>
+            <div className="flex flex-col justify-center items-center">
+                <div className={` text-[#0E94D3]`}>{hidden ? "?" : fraction.numerator}</div>
+                <div className={`border-t-[1px] border-black px-2 w-full`}></div>
+                <div className={`text-[#0E94D3]`}>{hidden ? "?" : fraction.denominator}</div>
+            </div>
+          </div>
+        }
       </div>
     </div>
   )

@@ -19,9 +19,9 @@ function MixedFraction({ whole, numerator, denominator, className , textcolor}: 
     );
 }
 
-export function MixedFractionBox({ whole, numerator, denominator, type=1}: MixedFractionProps & { type?: number }) {
+export function MixedFractionBox({ whole, numerator, denominator, onClick, type=1}: MixedFractionProps & {onClick?: () => void, type?: number }) {
     return (
-        <div className={`gap-2 py-1 px-4 border-[1px] border-[black] rounded-lg shadow-[-3px_3px_0_rgba(0,_0,_0,_1)] flex items-center ${type === 1 ? 'bg-[#009700]' : 'bg-[#fff]'}`}>
+        <div className={`gap-2 py-1 px-4 border-[1px] border-[black] rounded-lg shadow-[-3px_3px_0_rgba(0,_0,_0,_1)] flex items-center ${type === 1 ? 'bg-[#009700]' : 'bg-[#fff]'}`} onClick={onClick}>
             {whole !== 0 && <span className={`${type===1 ? 'text-white' : 'text-[#1E9AD6]'} font-bold text-2xl`}>{whole}</span>}
             <div className="flex flex-col justify-center items-center">
                 <div className={` ${type===1 ? 'text-white' : 'text-[#1E9AD6]'} font-bold text-2xl`}>{numerator}</div>

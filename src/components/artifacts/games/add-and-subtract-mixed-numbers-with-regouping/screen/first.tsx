@@ -19,7 +19,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage("agent","Welcome to Level 1: Create Fractions! Your task is to create 3 3/4 using the tools. Ready to make pies into fractions?");
+      sendAdminMessage("agent",`Welcome to Level 1: Create Fractions! Your task is to create ${question1.whole} ${question1.numerator}/${question1.denominator} using the tools. Ready to make pies into fractions?`);
       start.current = true;
     }
   }, []);
@@ -30,10 +30,10 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       console.log(whole, numerator, denominator);
 
       if (step === 0 && whole === question1.whole && numerator === question1.numerator && denominator === question1.denominator) {
-        goToStep('first', setGameStateRef, 1);
+        goToStep('first', setGameStateRef, 1);  
       } else if (step > 1 && whole === question2.whole && numerator === question2.numerator && denominator === question2.denominator) {
         console.log("Reached Step 2");
-        goToStep('first', setGameStateRef, 3);
+        sendAdminMessage("agent",`Amazing work! You've created ${question2.whole} ${question2.numerator}/${question2.denominator}. Now, what do you feel like doing next? Take your pick!`, () => goToStep('first', setGameStateRef, 3));
       }
     }
   }, [units]);
@@ -51,8 +51,11 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
         {step === 1 && (
           <BlueBox
-            className="text-2xl mt-8"
-            onClick={() => goToStep('first', setGameStateRef, 2)}
+            className="text-2xl mt-8 cursor-pointer text-center"
+            onClick={() => {
+              goToStep('first', setGameStateRef, 2);
+              sendAdminMessage("agent",`This time, your task is to create ${question2.whole} ${question2.numerator}/${question2.denominator}. You already know the tools—let's see how you do!`);
+            }}
           >
             Next &gt; &gt; 
           </BlueBox>
@@ -65,14 +68,13 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
             </p>
             <BlueBox
               className="text-2xl mt-8 cursor-pointer"
-              onClick={() => goToStep('first', setGameStateRef, 4)}
             >
               I want to create more fractions
             </BlueBox>
 
             <BlueBox
               className="text-2xl mt-8 cursor-pointer"
-              onClick={() => goToStep('first', setGameStateRef, 4)}
+              onClick={() => setGameStateRef(prev => ({ ...prev, screen: 'second' }))}
             >
               Ready for the next level !
             </BlueBox>
