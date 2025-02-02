@@ -8,6 +8,22 @@ export interface ConsoleUnit {
   number: number[];
 }
 
+export function consoletofraction(unit: ConsoleUnit[]) {
+  let whole = 0;
+  let numerator = 0;
+  let denominator = 4;
+  
+  unit.forEach((u) => {
+    if (u.type === 1) {
+      whole += u.number.length;
+    } else {
+      numerator += u.number.length;
+    }
+  });
+  
+  return { whole, numerator, denominator };
+}
+
 const Pieces = ({type, number = [1,2,3,4], index, selected, selectedSegments, onSelect}:{
   type: 1 | 2,
   number: number[],

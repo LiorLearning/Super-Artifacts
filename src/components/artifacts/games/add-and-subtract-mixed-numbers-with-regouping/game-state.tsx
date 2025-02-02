@@ -22,6 +22,16 @@ export const descriptions: Description[] = [
 interface State1 {
   step: number;
   variable: number;
+  question1: {
+    whole: number;
+    numerator: number;
+    denominator: number;
+  }
+  question2: {
+    whole: number;
+    numerator: number;
+    denominator: number;
+  }
 }
 
 interface State2 {
@@ -40,6 +50,16 @@ export const initialGameState: GameState = {
   state1: {
     step: 0,
     variable: 0,
+    question1: {
+      whole: 3,
+      numerator: 3,
+      denominator: 4,
+    },
+    question2: {
+      whole: 3,
+      numerator: 5,
+      denominator: 4,
+    },
   },
   state2: {
     step: 0,

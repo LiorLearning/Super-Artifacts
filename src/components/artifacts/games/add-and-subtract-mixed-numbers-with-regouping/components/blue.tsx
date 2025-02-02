@@ -1,9 +1,9 @@
 
 import { ReactNode } from "react"
 
-export function BlueBox({ children, className }: { children: ReactNode; className?: string }) {
+export function BlueBox({ children, className, onClick }: { children: ReactNode; className?: string; onClick?: () => void }) {
   return (
-    <div className={`bg-[#26B8FF] py-2 px-4 border-[1px] border-black text-white shadow-[-3px_3px_0px_rgba(0,0,0,1)] ${className}`} >
+    <div className={`bg-[#26B8FF] py-2 px-4 border-[1px] border-black text-white shadow-[-3px_3px_0px_rgba(0,0,0,1)] ${className}`} onClick={onClick}>
       {children}
     </div>
   )
