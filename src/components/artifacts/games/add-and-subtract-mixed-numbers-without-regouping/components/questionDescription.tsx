@@ -21,7 +21,7 @@ interface QuestionDescriptionProps {
   numerator: number;
   denominator: number;
   pizzaName: string;
-  color: string;
+  color: string[];
   pizzacolor: string[];
   onComplete: () => void;
 }
@@ -92,11 +92,13 @@ const QuestionDescription = ({
     onComplete();
   }
 
+  console.log(`bg-[${color}]`);
+
   return (
     <div className={`flex flex-col gap-4 max-w-3xl w-full mx-auto`}>
       {showFirstRow &&
-        <div className="flex gap-4 items-center">
-          <span className={`flex items-center w-full h-full justify-between border-2 border-${color}-800 bg-${color}-100 p-6 rounded-lg h-[136px]`}>
+        <div className="flex w-full gap-4 items-center">
+          <span className={`flex items-center w-1/2 h-full justify-between p-6 rounded-lg`} style={{backgroundColor: color[0]}}>
             <p className='text-xl w-2/3'>
               How many <span className='font-bold'>whole</span> {pizzaName} pizzas
               are ordered?
@@ -107,15 +109,17 @@ const QuestionDescription = ({
               max={10}
               value={inputWhole}
               onChange={handleWholeChange}
-              className={`border-2 text-center font-extrabold border-gray-600 rounded p-2 w-12 h-16 text-xl text-${color}-800`}
+              className={`border-2 text-center font-extrabold border-gray-600 rounded p-2 w-12 h-16 text-xl ${inputWhole !== '' ? (parseInt(inputWhole) === whole ? "bg-green-200" : "bg-red-200") : ""}`} 
+              style={{ color: 'black' }}
+              disabled={showSecondRow}
             />
           </span>
 
-          <span className={`flex items-center w-full h-full justify-between border-2 border-${color}-800 bg-${color}-100 p-8 rounded-lg h-[136px]`}>
+          <span className="flex items-center w-1/2 h-full justify-between p-8 rounded-lg" style={{ borderWidth: 2, borderColor: color[1], backgroundColor: color[2] }}>
             <div className='flex gap-2'>
               {Array.from({ length: whole }).map((_, index) => (
-                <div key={index} className={`flex flex-col items-center justify-center w-16 h-16 rounded-full border-2 border-${color}-800 bg-${color}-200`}>
-                  <div className={`w-14 h-14 bg-${color}-600 border-2 border-${color}-800 rounded-full`} />
+                <div key={index} className="flex flex-col items-center justify-center p-1 rounded-full border-[1px] border-black" style={{ backgroundColor: pizzacolor[0] }}>
+                  <div className="w-14 h-14 border-[1px] border-black shadow-[inset_0px_0px_4px_0px_rgba(0,0,0,0.5)] rounded-full" style={{ backgroundColor: pizzacolor[1] }} />
                 </div>
               ))}
             </div>
@@ -123,8 +127,8 @@ const QuestionDescription = ({
         </div>
       }
       {showSecondRow && (
-        <div className="flex gap-4 items-center mt-4">
-          <span className={`flex items-center w-full h-full justify-between border-2 border-${color}-800 bg-${color}-100 p-8 rounded-lg h-[136px]`}>
+        <div className="flex gap-4 w-full items-center">
+          <span className="flex items-center w-1/2 h-full justify-between p-8 rounded-lg" style={{ backgroundColor: color[0] }}>
             <div className="flex justify-between items-center w-full">
               <div className="text-xl w-2/3">What fraction of {pizzaName} pizza is left?</div>
               <div className="flex flex-col gap-2">
@@ -134,7 +138,9 @@ const QuestionDescription = ({
                   max={10}
                   value={inputNumerator}
                   onChange={handleNumeratorChange}
-                  className={`border-2 text-center font-extrabold border-${color}-600 rounded p-2 w-12 h-12 text-xl text-${color}-800`}
+                  className={`border-2 text-center font-extrabold border-gray-600 rounded p-2 w-12 h-12 text-xl ${inputNumerator !== '' ? (parseInt(inputNumerator) === numerator ? "bg-green-200" : "bg-red-200") : ""}`} 
+                  style={{ color: 'black' }}
+                  disabled={showNextButton}
                 />
                 <span className='border-b-2 border-gray-600 w-12'></span>
                 <input
@@ -143,13 +149,15 @@ const QuestionDescription = ({
                   max={10}
                   value={inputDenominator}
                   onChange={handleDenominatorChange}
-                  className={`border-2 text-center font-extrabold border-${color}-600 rounded p-2 w-12 h-12 text-xl text-${color}-800`}
+                  className={`border-2 text-center font-extrabold border-gray-600 rounded p-2 w-12 h-12 text-xl ${inputDenominator !== '' ? (parseInt(inputDenominator) === denominator ? "bg-green-200" : "bg-red-200") : ""}`} 
+                  style={{ color: 'black' }}
+                  disabled={showNextButton}
                 />
               </div>
             </div>
           </span>
 
-          <span className={`flex items-center w-full h-full justify-between border-2 border-${color}-800 bg-${color}-100 p-6 rounded-lg h-[136px]`}>
+          <span className="flex items-center w-1/2 h-full justify-between p-6 rounded-lg" style={{ borderWidth: 2, borderColor: color[1], backgroundColor: color[2] }}>
             <PizzaSlices
               numerator={numerator}
               denominator={denominator}
@@ -161,59 +169,60 @@ const QuestionDescription = ({
       {showNextButton && !showThirdRow && (
         <button
           onClick={handleNextClick}
-          className='m-2 px-6 py-2 mx-auto bg-[#f94a15] hover:bg-[#f96815] border-2 text-xl border-black text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] max-w-3xl rounded-none'
+          className='m-2 px-6 py-2 mx-auto bg-[#F97315] text-xl text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] max-w-3xl rounded-none font-bold'
         >
-          Next
+          Next &gt;&gt;
         </button>
       )}
       {showThirdRow && (
-        <div className={`bg-${color}-100 p-2 w-full rounded-lg border-2 border-${color}-800 transition-all duration-100`}>
-          <div className="flex items-center w-full justify-center gap-8">
-            {/* Left side - Mixed Fraction */}
+        <div className="bg-[#f7f7f7] p-2 w-full rounded-lg border-2 border-[#f7f7f7] transition-all duration-100" style={{ backgroundColor: color[2], borderColor: color[1] }}>
+          <div className="flex items-center w-full justify-center gap-8 p-8">
             <div className="flex items-center">
               <MixedFraction
                 whole={whole}
                 numerator={numerator}
                 denominator={denominator}
-                className='text-2xl font-extrabold'
+                className='text-3xl font-extrabold'
               />
             </div>
 
             {/* Equals sign */}
-            <div className="text-2xl font-bold">=</div>
+            <div className="text-3xl font-bold">=</div>
 
             {/* Right side - Input fields */}
             <div className="flex items-center gap-4">
               {/* Whole number input */}
-              <div className="flex flex-col items-center">
+              <div className="relative h-[100px] flex flex-col items-center justify-center border-2 border-black bg-white px-2">
                 <input 
                   type="text" 
                   value={whole} 
                   readOnly
-                  className={`border-2 text-center font-extrabold border-${color}-600 rounded p-2 w-12 h-12 text-xl text-${color}-800`} 
+                  className="text-center font-extrabold bg-transparent border-none outline-none w-12 text-3xl"
+                  style={{ color: color[3] }}
                 />
-                <span className="text-sm mt-1">Wholes</span>
+                <span className="absolute top-[110%] text-sm mt-1">Wholes</span>
               </div>
 
-              <div className="text-2xl font-bold">+</div>
+              <div className="text-3xl font-bold">+</div>
 
-              {/* Fraction input */}
-              <div className="flex flex-col items-center">
+              <span className='relative h-[100px] flex flex-col items-center justify-center border-2 border-black bg-white px-2'>
                 <input 
                   type="text" 
                   value={numerator} 
                   readOnly
-                  className={`border-2 text-center font-extrabold border-${color}-600 rounded p-2 w-12 h-12 text-xl text-${color}-800`} 
+                  className="text-center font-extrabold bg-transparent border-none outline-none w-12 text-3xl"
+                  style={{ color: color[3] }}
                 />
-                <div className="w-12 border-b-2 border-gray-600 my-1"></div>
+                <div className="w-8 border-b-2 border-gray-600 my-1"></div>
                 <input 
                   type="text" 
                   value={denominator} 
                   readOnly
-                  className={`border-2 text-center font-extrabold border-${color}-600 rounded p-2 w-12 h-12 text-xl text-${color}-800`} 
+                  className="text-center font-extrabold bg-transparent border-none outline-none w-12 text-3xl"
+                  style={{ color: color[3] }}
                 />
-                <span className="text-sm mt-1">Slices</span>
-              </div>
+                <span className="absolute top-[110%] text-sm mt-1">Slices</span>
+              </span>
             </div>
           </div>
         </div>

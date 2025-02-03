@@ -12,7 +12,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage("agent","You are trained,  you can directly add the numbers now. Don't forget to rearrange.");
+      sendAdminMessage("agent","Keep the pizzas in your mind when you solve this new challenge. Wholes to the left and fractions to the right. Fill the boxes carefully!");
     }
     start.current = true;
   }, []);
@@ -53,19 +53,33 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
   const handleWholeChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWhole1(e.target.value);
     checkfirst(e.target.value,whole2,numerator1,numerator2,denominator1,denominator2)
+    if(whole1 === '' && parseInt(e.target.value) !== fraction1.whole) {
+      sendAdminMessage("agent","Try again! Try imagining the pizzas again, how many wholes and how many slices");
+    }
   }
 
   const handleWholeChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWhole2(e.target.value);
     checkfirst(whole1,e.target.value,numerator1,numerator2,denominator1,denominator2)
+    if(whole2 === '' && parseInt(e.target.value) !== fraction2.whole) {
+      sendAdminMessage("agent","Try again! Try imagining the pizzas again, how many wholes and how many slices");
+    }
   }
 
   const handleNumeratorChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumerator1(e.target.value);
     checkfirst(whole1,whole2,e.target.value,numerator2,denominator1,denominator2)
+    if(numerator1 === '' && parseInt(e.target.value) !== fraction1.numerator) {
+      sendAdminMessage("agent","Try again! Try imagining the pizzas again, how many wholes and how many slices");
+    }
   }
 
   const handleNumeratorChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNumerator2(e.target.value);
+    checkfirst(whole1,whole2,numerator1,e.target.value,denominator1,denominator2)
+    if(numerator2 === '' && parseInt(e.target.value) !== fraction2.numerator) {
+      sendAdminMessage("agent","Try again! Try imagining the pizzas again, how many wholes and how many slices");
+    }
     setNumerator2(e.target.value);
     checkfirst(whole1,whole2,numerator1,e.target.value,denominator1,denominator2)
   }
@@ -73,11 +87,17 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
   const handleDenominatorChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDenominator1(e.target.value);
     checkfirst(whole1,whole2,numerator1,numerator2,e.target.value,denominator2)
+    if(denominator1 === '' && parseInt(e.target.value) !== fraction1.denominator) {
+      sendAdminMessage("agent","Try again! Try imagining the pizzas again, how many wholes and how many slices");
+    }
   }
 
   const handleDenominatorChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDenominator2(e.target.value);
     checkfirst(whole1,whole2,numerator1,numerator2,denominator1,e.target.value)
+    if(denominator2 === '' && parseInt(e.target.value) !== fraction2.denominator) {
+      sendAdminMessage("agent","Try again! Try imagining the pizzas again, how many wholes and how many slices");
+    }
   }
 
   const checkfirst = (whole1: string, whole2: string, numerator1: string, numerator2: string, denominator1: string, denominator2: string) => {
@@ -90,22 +110,32 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
       parseInt(denominator2)===fraction2.denominator
     ) {
       setSecond(1);
+      sendAdminMessage("agent","Good job! Now write this as mixed fraction and we're good to go to next question");
     }
   }
 
   const handleWholeChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWhole3(e.target.value);
     checksecond(e.target.value,numerator3,denominator3)
+    if(whole3 === '' && parseInt(e.target.value) !== (fraction1.whole+fraction2.whole)) {
+      sendAdminMessage("agent","It Seems like you made a mistake in adding. You can always go back to the pizzas analogy");
+    }
   }
 
   const handleNumeratorChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumerator3(e.target.value);
     checksecond(whole3,e.target.value,denominator3)
+    if(numerator3 === '' && parseInt(e.target.value) !== (fraction1.numerator+fraction2.numerator)) {
+      sendAdminMessage("agent","It Seems like you made a mistake in adding. You can always go back to the pizzas analogy");
+    }
   }
 
   const handleDenominatorChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDenominator3(e.target.value);
     checksecond(whole3,numerator3,e.target.value)
+    if(denominator3 === '' && parseInt(e.target.value) !== fraction2.denominator) {
+      sendAdminMessage("agent","It Seems like you made a mistake in adding. You can always go back to the pizzas analogy");
+    }
   }
 
 
@@ -117,7 +147,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
       parseInt(numerator3) === (fraction1.numerator + fraction2.numerator) && 
       parseInt(denominator3) === fraction1.denominator
     ) {
-      sendAdminMessage('agent', "You nailed the addition, now let's subtract");
+      sendAdminMessage('agent', "Wow, you are almost a master! There's one last challenge before you become a complete master!");
       onComplete();
     }
   }
@@ -145,7 +175,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                   min={0}
                   max={10}
                   placeholder="?"
-                  className="w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded"
+                  className={`w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole1!=='' ? ( parseInt(whole1)===fraction1.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
                 />
                 <span className="text-2xl font-bold">+</span>
                 <input
@@ -155,7 +185,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                   min={0}
                   max={10}
                   placeholder="?"
-                  className="w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded"
+                  className={`w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole2!=='' ? ( parseInt(whole2)===fraction2.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
                 />
               </div>
             </div>
@@ -179,7 +209,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator1!=='' ? ( parseInt(numerator1)===fraction1.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -189,7 +219,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator1!=='' ? ( parseInt(denominator1)===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                 </div>
                 <span className="text-2xl font-bold">+</span>
@@ -201,7 +231,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator2!=='' ? ( parseInt(numerator2)===fraction2.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -211,7 +241,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator2!=='' ? ( parseInt(denominator2)===fraction2.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                 </div>
               </div>
@@ -238,7 +268,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                   min={0}
                   max={10}
                   placeholder="?"
-                  className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded"
+                  className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole3!=='' ? ( parseInt(whole3)===(fraction1.whole + fraction2.whole) ? 'bg-green-200' : 'bg-red-200') : ''}`}
                 />
                 
                 <div className="flex flex-col items-center">
@@ -249,7 +279,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator3!=='' ? ( parseInt(numerator3)===(fraction1.numerator + fraction2.numerator) ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -259,7 +289,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator3!=='' ? ( parseInt(denominator3)===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                 </div>
               </div>
