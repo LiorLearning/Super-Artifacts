@@ -10,6 +10,7 @@ import LegoGame from './games/writing-improper-fractions-as-mixed-numbers/game';
 import CommonDenominatorGame from './games/common-denominators/game';
 import CompareFractionGame from './games/compare-fractions-with-different-numerator-and-denominator/game';
 import DecimalGame from './games/fraction-to-decimal/game';
+import MixedNumberToImproperFractionGame from './games/mixed-number-to-improper-fraction/game';
 
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/add-fractions-with-common-denominator/state-utils'
@@ -22,6 +23,7 @@ import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState a
 import { GameStateProvider as MixedFractionGameStateProvider, useGameState as MixedFractionGameState } from './games/add-and-subtract-mixed-numbers-without-regouping/state-utils'
 import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fractions-with-different-numerator-and-denominator/state-utils'
 import { GameStateProvider as DecimalGameStateProvider, useGameState as DecimalGameState } from './games/fraction-to-decimal/state-utils'
+import { GameStateProvider as MixedNumberToImproperFractionGameStateProvider, useGameState as MixedNumberToImproperFractionGameState } from './games/mixed-number-to-improper-fraction/state-utils'
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string> }>;
@@ -84,5 +86,10 @@ export const gameInfo: Record<string, GameInfo> = {
     game: DecimalGame,
     useState: DecimalGameState,
     provider: DecimalGameStateProvider
+  },
+  'mixed-number-to-improper-fraction': {
+    game: MixedNumberToImproperFractionGame,
+    useState: MixedNumberToImproperFractionGameState,
+    provider: MixedNumberToImproperFractionGameStateProvider
   }
 };
