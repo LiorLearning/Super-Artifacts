@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import FirstScreen from './screen/first';
 import SecondScreen from './screen/second';
 import { useGameState } from './state-utils';
-import { DevHelper } from './utils/helper';
+import { DevHelper } from './utils/helper'; 
 import ThirdScreen from './screen/third';
 
 

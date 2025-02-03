@@ -1,17 +1,9 @@
-import { useGameState } from './state-utils';
-import FirstScreen from './screen/first';
-import SecondScreen from './screen/second';
-import ThirdScreen from './screen/third';
+import Game from './game';
 
-export default function MixedNumberToImproperFraction() {
-  const { gameStateRef } = useGameState();
-  const currentScreen = gameStateRef.current.screen;
+interface MixedNumberToImproperFractionProps {
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
+}
 
-  return (
-    <>
-      {currentScreen === 'first' && <FirstScreen />}
-      {currentScreen === 'second' && <SecondScreen />}
-      {currentScreen === 'third' && <ThirdScreen />}
-    </>
-  );
+export default function MixedNumberToImproperFraction({ sendAdminMessage }: MixedNumberToImproperFractionProps) {
+  return <Game sendAdminMessage={sendAdminMessage} />;
 } 
