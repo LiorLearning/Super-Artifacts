@@ -11,14 +11,25 @@ interface Step1Props {
 const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
   const [wholes, setWholes] = useState<number | null>(null)
   const [fraction, setFraction] = useState<{ numerator: number; denominator: number } | null>(null)
+  const [isDragging, setIsDragging] = useState<"whole" | "fraction" | null>(null)
 
   const handleDragStart = (type: "whole" | "fraction", e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("type", type)
-    const dragImg = document.createElement("div")
-    dragImg.style.visibility = "hidden"
-    document.body.appendChild(dragImg)
-    e.dataTransfer.setDragImage(dragImg, 0, 0)
-    document.body.removeChild(dragImg)
+    setIsDragging(type)
+    
+    // Create a custom drag image
+    const dragElement = e.currentTarget.cloneNode(true) as HTMLDivElement
+    dragElement.style.transform = 'rotate(4deg)'
+    dragElement.style.opacity = '0.8'
+    dragElement.style.position = 'fixed'
+    dragElement.style.top = '-1000px'
+    document.body.appendChild(dragElement)
+    e.dataTransfer.setDragImage(dragElement, 20, 20)
+    setTimeout(() => document.body.removeChild(dragElement), 0)
+  }
+
+  const handleDragEnd = () => {
+    setIsDragging(null)
   }
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -58,7 +69,10 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
               <div
                 draggable
                 onDragStart={(e) => handleDragStart("whole", e)}
-                className="w-20 h-20 bg-white shadow-lg rounded-2xl flex items-center justify-center text-4xl cursor-move hover:shadow-xl transition-shadow"
+                onDragEnd={handleDragEnd}
+                className={`w-20 h-20 bg-white shadow-lg rounded-2xl flex items-center justify-center text-4xl cursor-move 
+                  ${isDragging === "whole" ? "opacity-50 scale-95" : "hover:shadow-xl"} 
+                  transition-all duration-200`}
               >
                 {mixedFraction.whole}
               </div>
@@ -67,7 +81,10 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
               <div
                 draggable
                 onDragStart={(e) => handleDragStart("fraction", e)}
-                className="flex flex-col items-center bg-white shadow-lg rounded-2xl p-4 cursor-move hover:shadow-xl transition-shadow"
+                onDragEnd={handleDragEnd}
+                className={`flex flex-col items-center bg-white shadow-lg rounded-2xl p-4 cursor-move
+                  ${isDragging === "fraction" ? "opacity-50 scale-95" : "hover:shadow-xl"}
+                  transition-all duration-200`}
               >
                 <span className="text-3xl">{mixedFraction.numerator}</span>
                 <div className="w-8 h-0.5 bg-black my-1"></div>
@@ -84,7 +101,8 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
               <div
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop("whole", e)}
-                className="border-2 border-green-400 rounded-2xl p-6 min-h-[140px]"
+                className={`border-2 ${isDragging === "whole" ? "border-green-600 bg-green-50" : "border-green-400"} 
+                  rounded-2xl p-6 min-h-[140px] transition-colors duration-200`}
               >
                 <h4 className="text-green-500 font-medium tracking-widest mb-4 text-lg">WHOLES</h4>
                 {wholes !== null && <div className="text-4xl text-center">{wholes}</div>}
@@ -96,7 +114,8 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
               <div
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop("fraction", e)}
-                className="border-2 border-purple-400 rounded-2xl p-6 min-h-[140px]"
+                className={`border-2 ${isDragging === "fraction" ? "border-purple-600 bg-purple-50" : "border-purple-400"}
+                  rounded-2xl p-6 min-h-[140px] transition-colors duration-200`}
               >
                 <h4 className="text-purple-500 font-medium tracking-widest mb-4 text-lg">FRACTION</h4>
                 {fraction && (
