@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useCallback } from 'react';
 import { MessageContext, Message, useMessageContext } from './MessageContext';
 import { WifiOff, Wifi } from 'lucide-react';
-import { AudioContext } from './utils/audio_stream';
+import { AudioContext } from './utils/cartesia_audio_stream';
 
 const SPEAKOUT = process.env.NEXT_PUBLIC_PROD === 'true';
 
