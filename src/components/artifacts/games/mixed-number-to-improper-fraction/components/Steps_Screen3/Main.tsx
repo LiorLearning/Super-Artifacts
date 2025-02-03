@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { MixedFraction } from '../../game-state';
 import Image from 'next/image';
 import DirectionArrows from '@/assets/direction.png';
+import { useGameState } from '../../state-utils';
+import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 interface FractionBoxProps {
   mixedFraction: MixedFraction;
@@ -139,14 +141,17 @@ interface MainProps {
   mixedFraction2: MixedFraction;
 }
 
-const Main: React.FC<MainProps> = ({ 
-  mixedFraction1, 
-  mixedFraction2
-}) => {
+const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2 }) => {
+  const { setGameStateRef } = useGameState();
   const [showSecondFraction, setShowSecondFraction] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleFirstFractionComplete = () => {
     setShowSecondFraction(true);
+  };
+
+  const handleSecondFractionComplete = () => {
+    setShowSuccess(true);
   };
 
   return (
@@ -162,9 +167,17 @@ const Main: React.FC<MainProps> = ({
         {showSecondFraction && (
           <FractionBox 
             mixedFraction={mixedFraction2}
+            onFractionComplete={handleSecondFractionComplete}
           />
         )}
       </div>
+      
+      {/* Success animation overlay */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-50">
+          <SuccessAnimation />
+        </div>
+      )}
     </div>
   );
 };

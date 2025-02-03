@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import GameLayout from "../GameLayout"
-import type { MixedFraction } from "../../../game-state"
+import type { MixedFraction, GameState } from "../../../game-state"
+import { useGameState } from "../../../state-utils"
 
 interface Step4Props {
   mixedFraction: MixedFraction
@@ -8,6 +9,7 @@ interface Step4Props {
 }
 
 const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete }) => {
+  const { setGameStateRef } = useGameState();
   const [selectedPieces, setSelectedPieces] = useState(0)
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
 
@@ -18,6 +20,29 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete }) => {
       setSelectedPieces(0)
     }
   }
+
+  const handleDoneClick = () => {
+    console.log('Done button clicked');
+    
+    setGameStateRef(prevState => {
+      const newState: GameState = {
+        ...prevState,
+        screen: 'second' as const,
+        state1: {
+          ...prevState.state1,
+          step: 4
+        },
+        state2: {
+          ...prevState.state2,
+          step: 0,
+          mixedFraction: mixedFraction
+        }
+      };
+      
+      console.log('New state:', newState);
+      return newState;
+    });
+  };
 
   const renderSliceLines = (numSlices: number) => {
     const lines = []
@@ -142,11 +167,11 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete }) => {
           {/* Next step button */}
           {selectedPieces === mixedFraction.numerator && (
             <button
-            onClick={onComplete}
-            className="mt-4 w-full bg-pink-500 text-white py-2 rounded-xl font-medium tracking-wide text-base sm:text-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:opacity-90 transition-opacity"
-          >
-            Done
-          </button>
+              onClick={handleDoneClick}
+              className="mt-4 w-full bg-pink-500 text-white py-2 rounded-xl font-medium tracking-wide text-base sm:text-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:opacity-90 transition-opacity"
+            >
+              Done
+            </button>
           )}
         </div>
       </div>

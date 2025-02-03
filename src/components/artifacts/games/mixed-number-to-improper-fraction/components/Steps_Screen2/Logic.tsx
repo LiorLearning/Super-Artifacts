@@ -63,6 +63,14 @@ const QuickHack2 = () => {
     </div>
   );
 
+  const handleNextLevel = () => {
+    setGameStateRef(prev => ({
+      ...prev,
+      screen: 'third' as const,
+      state2: { ...prev.state2, step: 1 }
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-pink-50 flex flex-col">
       <div className="w-full max-w-[600px] mx-auto p-4 flex flex-col gap-8">
@@ -257,6 +265,18 @@ const QuickHack2 = () => {
                   We get the same answer as with pies
                 </div>
               </div>
+            </div>
+
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={handleNextLevel}
+                className="px-6 py-3 bg-[#ECFF40] text-black font-bold text-xl hover:bg-[#d9eb37] relative"
+                style={{
+                  boxShadow: '-4px 4px 0px 0px rgba(0,0,0,1)'
+                }}
+              >
+                Next Level &gt;&gt;
+              </button>
             </div>
           </div>
         )}
