@@ -1,10 +1,36 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { useGameState } from '../../state-utils';
 import type { MixedFraction } from '../../game-state';
 
-const QuickHack = () => {
+interface WelcomeProps {
+  mixedFraction: MixedFraction;
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
+}
+
+const Welcome: React.FC<WelcomeProps> = ({ mixedFraction, sendAdminMessage }) => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { mixedFraction } = gameStateRef.current.state2;
   const { whole, numerator, denominator } = mixedFraction;
+  const messageShown = useRef(false);
+  const [showTryButton, setShowTryButton] = useState(false);
+
+  useEffect(() => {
+    if (!messageShown.current) {
+      sendAdminMessage(
+        "agent",
+        "Here's a reward for your last quest, a quick way to make improper fraction.",
+        () => {
+          setTimeout(() => {
+            sendAdminMessage(
+              "agent",
+              "Let's try out the same question, and see if we can get to the answer faster",
+              () => setShowTryButton(true)
+            )
+          }, 1000)
+        }
+      )
+      messageShown.current = true;
+    }
+  }, []);
 
   const handleTryClick = () => {
     setGameStateRef(prev => ({
@@ -54,24 +80,25 @@ const QuickHack = () => {
       </div>
 
       {/* Try button with shadow effect */}
-      <div className="flex justify-center">
-        <div className="relative w-[250px]">
-          {/* Black shadow boxes */}
-          <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
-          <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
-          
-          {/* Main button */}
-          <button 
-            onClick={handleTryClick}
-            className="relative w-full border-[12.69px] border-[#FF497C] py-3 bg-white"
-          >
-            <span className="text-[#FF497C] text-[35px] tracking-wide">Try &gt;&gt;</span>
-          </button>
+      {showTryButton && (
+        <div className="flex justify-center">
+          <div className="relative w-[250px]">
+            {/* Black shadow boxes */}
+            <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
+            <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
+            
+            {/* Main button */}
+            <button 
+              onClick={handleTryClick}
+              className="relative w-full border-[12.69px] border-[#FF497C] py-3 bg-white"
+            >
+              <span className="text-[#FF497C] text-[35px] tracking-wide">Try &gt;&gt;</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
 
-export default QuickHack
-
+export default Welcome

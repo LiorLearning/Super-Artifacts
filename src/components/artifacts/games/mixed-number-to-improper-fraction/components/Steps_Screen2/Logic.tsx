@@ -1,7 +1,8 @@
 import { useGameState } from '../../state-utils';
+import type { MixedFraction } from '../../game-state';
 import LockIcon from '@/assets/Lock.png';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface ExpressionWithAdditionProps {
   leftNumber: number;
@@ -11,9 +12,13 @@ interface ExpressionWithAdditionProps {
   };
 }
 
-const QuickHack2 = () => {
+interface QuickHack2Props {
+  mixedFraction: MixedFraction;
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
+}
+
+const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage }) => {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { mixedFraction } = gameStateRef.current.state2;
   const { whole, numerator, denominator } = mixedFraction;
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -21,12 +26,43 @@ const QuickHack2 = () => {
   const [topAnswer, setTopAnswer] = useState('');
   const [bottomAnswer, setBottomAnswer] = useState('');
   const [showNextStep3, setShowNextStep3] = useState(false);
+  const [showSecondBox, setShowSecondBox] = useState(false);
+  const initialMessageShown = useRef(false);
+
+  useEffect(() => {
+    if (!initialMessageShown.current) {
+      // Initial narration
+      sendAdminMessage(
+        "agent",
+        "Okay, the steps are locked. To unlock, keep filling the boxes",
+        () => {
+          // Second narration after a delay
+          setTimeout(() => {
+            sendAdminMessage(
+              "agent",
+              "First up! Multiply denominator with the whole. The hint is right there",
+              () => {
+                setShowSecondBox(true);
+              }
+            );
+          }, 1000);
+        }
+      );
+      initialMessageShown.current = true;
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
     if (parseInt(value) === denominator * whole) {
-      setShowNextStep(true);
+      sendAdminMessage(
+        "agent",
+        "Listen carefully! Now add the numerator to your last answer. But remember to keep the denominator same!",
+        () => {
+          setShowNextStep(true);
+        }
+      );
     }
   };
 
@@ -34,14 +70,21 @@ const QuickHack2 = () => {
     const expectedTop = (denominator * whole) + numerator;
     const expectedBottom = denominator;
 
-    console.log('Expected:', expectedTop, expectedBottom); 
-    console.log('Current:', topAnswer, bottomAnswer); 
-
     if (Number(topAnswer) === expectedTop && Number(bottomAnswer) === expectedBottom) {
-      setShowNextStep(false);
-      setShowNextStep3(true);
+      sendAdminMessage(
+        "agent",
+        "What a hack! We have the same answer as earlier.",
+        () => {
+          setShowNextStep(false);
+          setShowNextStep3(true);
+        }
+      );
     }
   };
+
+  useEffect(() => {
+    checkAnswers();
+  }, [topAnswer, bottomAnswer]);
 
   const ExpressionWithAddition: React.FC<ExpressionWithAdditionProps> = ({ leftNumber, fraction }) => (
     <div className="flex items-center">
@@ -106,62 +149,64 @@ const QuickHack2 = () => {
           </div>
         </div>
 
-        {/* Bottom instruction container */}
-        <div className="bg-[#FF497C] rounded-[20px] p-3 flex items-center">
-          <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
-            <Image src={LockIcon} alt="Lock" width={35} height={35} />
-          </div>
+        {showSecondBox && (
+          /* Bottom instruction container */
+          <div className="bg-[#FF497C] rounded-[20px] p-3 flex items-center">
+            <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
+              <Image src={LockIcon} alt="Lock" width={35} height={35} />
+            </div>
 
-          <div className="text-white text-[20px] mx-4 flex-1">
-            Multiply denominator and <br /> wholes
-          </div>
+            <div className="text-white text-[20px] mx-4 flex-1">
+              Multiply denominator and <br /> wholes
+            </div>
 
-          {/* Expression boxes */}
-          <div className="flex items-center gap-3">
-            <div className="bg-white rounded-xl px-4 py-2">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl -mt-3">{whole}</span>
-                <Image 
-                  src="/img/Multiply.png" 
-                  alt="multiply" 
-                  width={40} 
-                  height={40} 
-                  className="w-10 h-10"
-                />
-                <div className="inline-flex flex-col items-center">
-                  <span className="text-2xl">{numerator}</span>
-                  <div className="h-[2px] w-4 bg-black"></div>
-                  <span className="text-2xl">{denominator}</span>
+            {/* Expression boxes */}
+            <div className="flex items-center gap-3">
+              <div className="bg-white rounded-xl px-4 py-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl -mt-3">{whole}</span>
+                  <Image 
+                    src="/img/Multiply.png" 
+                    alt="multiply" 
+                    width={40} 
+                    height={40} 
+                    className="w-10 h-10"
+                  />
+                  <div className="inline-flex flex-col items-center">
+                    <span className="text-2xl">{numerator}</span>
+                    <div className="h-[2px] w-4 bg-black"></div>
+                    <span className="text-2xl">{denominator}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Result box */}
+              <div className="relative">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-white text-lg whitespace-nowrap">
+                  {denominator} * {whole}
+                </div>
+                <div className="bg-white rounded-xl w-[60px] overflow-hidden">
+                  {showInput ? (
+                    <div className="relative">
+                      <input
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        className="w-full h-[60px] text-center text-3xl bg-transparent outline-none"
+                      />
+                    </div>
+                  ) : (
+                    <div 
+                      onClick={() => setShowInput(true)}
+                      className="h-[60px] flex items-center justify-center cursor-pointer"
+                    >
+                      <span className="text-3xl">?</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-
-            {/* Result box */}
-            <div className="relative">
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-white text-lg whitespace-nowrap">
-                {denominator} * {whole}
-              </div>
-              <div className="bg-white rounded-xl w-[60px] overflow-hidden">
-                {showInput ? (
-                  <div className="relative">
-                    <input
-                      value={inputValue}
-                      onChange={handleInputChange}
-                      className="w-full h-[60px] text-center text-3xl bg-transparent outline-none"
-                    />
-                  </div>
-                ) : (
-                  <div 
-                    onClick={() => setShowInput(true)}
-                    className="h-[60px] flex items-center justify-center cursor-pointer"
-                  >
-                    <span className="text-3xl">?</span>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
-        </div>
+        )}
 
         {/* Appears when correct */}
         {showNextStep && (

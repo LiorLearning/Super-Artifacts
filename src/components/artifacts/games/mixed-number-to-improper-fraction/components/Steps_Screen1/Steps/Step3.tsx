@@ -1,17 +1,32 @@
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import GameLayout from "../GameLayout"
 import type { MixedFraction } from "../../../game-state"
 
 interface Step3Props {
   mixedFraction: MixedFraction
   onComplete: () => void
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
 }
 
-const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
+const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
   const [piecesInput, setPiecesInput] = useState("")
   const [showAwesome, setShowAwesome] = useState(false)
+  const [showStepButton, setShowStepButton] = useState(false)
+  const messageShown = useRef(false)
+  const timeoutRef = useRef<NodeJS.Timeout>()
+  const lastMessage = useRef<string>("")
 
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
+
+  useEffect(() => {
+    if (!messageShown.current) {
+      sendAdminMessage(
+        "agent",
+        "Time for a counting adventure! Can you help me count all the slices in these pies? Put your answer in the box!"
+      )
+      messageShown.current = true
+    }
+  }, [])
 
   const renderSliceLines = (numSlices: number) => {
     const center = 50
@@ -68,12 +83,54 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
     const value = e.target.value
     setPiecesInput(value)
 
-    if (Number.parseInt(value) === totalPieces) {
-      setShowAwesome(true)
-    } else {
-      setShowAwesome(false)
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    const totalPiecesStr = totalPieces.toString()
+    
+    // Only check answer if input length matches or exceeds answer length
+    if (value.length >= totalPiecesStr.length) {
+      // Set new timeout to check answer after 1 second
+      timeoutRef.current = setTimeout(() => {
+        if (Number.parseInt(value) === totalPieces) {
+          setShowAwesome(true)
+          const message = "Wow! You're an amazing slice counter! That's exactly right!"
+          if (lastMessage.current !== message) {
+            sendAdminMessage("agent", message, () => {
+              setTimeout(() => {
+                sendAdminMessage(
+                  "agent",
+                  "Ready for the next exciting step? Click on Step 4 to continue our fraction adventure!",
+                  () => {
+                    setShowStepButton(true)
+                  }
+                )
+              }, 1000)
+            })
+            lastMessage.current = message
+          }
+        } else if (value !== "") {
+          const message = "Hmm... Let's count those slices one more time! You can do it!"
+          if (lastMessage.current !== message) {
+            sendAdminMessage("agent", message)
+            lastMessage.current = message
+          }
+          setShowAwesome(false)
+        }
+      }, 1000)
     }
   }
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
 
   return (
     <GameLayout
@@ -135,20 +192,17 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
       </div>
 
       {/* Next step button */}
-      {showAwesome && (
+      {showAwesome && showStepButton && (
         <div className="mt-8 flex justify-center pb-8">
           <div className="relative w-[180px] h-[90px]">
-
-          <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
-          <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>
-
-          {/* Main button */}
-          <button 
-            onClick={onComplete}
-            className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
-          >
-            <span className="text-[#FF497C] text-[32px] tracking-wide font-bold">STEP 2 &gt;&gt;</span>
-          </button>
+            <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
+            <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>
+            <button 
+              onClick={onComplete}
+              className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
+            >
+              <span className="text-[#FF497C] text-[32px] tracking-wide font-bold">STEP 4 &gt;&gt;</span>
+            </button>
           </div>
         </div>
       )}
