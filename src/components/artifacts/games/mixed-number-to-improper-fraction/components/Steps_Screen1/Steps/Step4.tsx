@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import GameLayout from "../GameLayout"
 import type { MixedFraction, GameState } from "../../../game-state"
 import { useGameState } from "../../../state-utils"
@@ -6,16 +6,49 @@ import { useGameState } from "../../../state-utils"
 interface Step4Props {
   mixedFraction: MixedFraction
   onComplete: () => void
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
 }
 
-const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete }) => {
+const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
   const { setGameStateRef } = useGameState();
   const [selectedPieces, setSelectedPieces] = useState(0)
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
+  const messageShown = useRef(false)
+  const [shouldShowSuccess, setShouldShowSuccess] = useState(false)
+
+  // Initial message
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!messageShown.current) {
+        sendAdminMessage(
+          "agent",
+          "Now select the remaining pieces to complete our fraction. Click on the pie to select pieces!"
+        )
+        messageShown.current = true
+      }
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Success message
+  useEffect(() => {
+    if (shouldShowSuccess) {
+      sendAdminMessage(
+        "agent",
+        "Perfect! You've selected the right number of pieces. Click Done to continue!"
+      )
+      setShouldShowSuccess(false)
+    }
+  }, [shouldShowSuccess])
 
   const handlePieClick = () => {
     if (selectedPieces < mixedFraction.numerator) {
-      setSelectedPieces((prev) => prev + 1)
+      setSelectedPieces((prev) => {
+        if (prev + 1 === mixedFraction.numerator) {
+          setShouldShowSuccess(true)
+        }
+        return prev + 1
+      })
     } else {
       setSelectedPieces(0)
     }

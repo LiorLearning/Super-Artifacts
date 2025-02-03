@@ -3,12 +3,12 @@ import { useRef } from 'react';
 import FirstScreen from './screen/first';
 import SecondScreen from './screen/second';
 import { useGameState } from './state-utils';
-import { DevHelper } from './utils/helper';
+import { DevHelper } from './utils/helper'; 
 import ThirdScreen from './screen/third';
 
 
 interface GameProps {
-  sendAdminMessage: (role: string, content: string, onComplete: () => void) => void;
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
 }
 
 export default function Game({sendAdminMessage}: GameProps) {
@@ -29,9 +29,9 @@ export default function Game({sendAdminMessage}: GameProps) {
     <div className="mx-auto game font-jersey">
       <DevHelper />
       {/* Game screens */}
-      {screen === 'first' && <FirstScreen />}
-      {screen === 'second' && <SecondScreen />}
-      {screen === 'third' && <ThirdScreen />}
+      {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
       
       {/* Select font */}
       <style jsx global>{`

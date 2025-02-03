@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Image from 'next/image';
 import GameLayout from "../GameLayout"
 import type { MixedFraction } from "../../../game-state"
@@ -6,17 +6,35 @@ import type { MixedFraction } from "../../../game-state"
 interface Step2Props {
   mixedFraction: MixedFraction
   onComplete: () => void
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
 }
 
-interface SlicerOption {
-  value: number;
-  text: string;
-  icon: string;
-}
 
-const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete }) => {
+const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
   const [selectedSlice, setSelectedSlice] = useState(mixedFraction.denominator)
   const [isSliced, setIsSliced] = useState(false)
+  const messageShown = useRef(false)
+  const wrongAttempts = useRef(0)
+  const [showStepButton, setShowStepButton] = useState(false)
+
+  useEffect(() => {
+    if (!messageShown.current) {
+      // First message
+      sendAdminMessage(
+        "agent",
+        `This is what ${mixedFraction.whole} wholes look like. Can you slice them up into 1/${mixedFraction.denominator}th sized pieces?`,
+        () => {
+          // Send second message after first one completes
+          
+            sendAdminMessage(
+              "agent",
+              "Choose the right slicer to slice them perfectly!"
+            )
+        }
+      )
+      messageShown.current = true
+    }
+  }, [])
 
   const slicerOptions = [
     { 
@@ -39,6 +57,34 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete }) => {
   const handleSlice = () => {
     if (selectedSlice === mixedFraction.denominator) {
       setIsSliced(true)
+      sendAdminMessage(
+        "agent",
+        "Perfect! Now we can see how many pieces are in each whole",
+        () => {
+          setTimeout(() => {
+            sendAdminMessage(
+              "agent",
+              "Click on Step 3 to proceed",
+              () => {
+                setShowStepButton(true)
+              }
+            )
+          }, 1000)
+        }
+      )
+    } else {
+      wrongAttempts.current += 1;
+      if (wrongAttempts.current === 1) {
+        sendAdminMessage(
+          "agent",
+          `We have to divide the pie in 1/${mixedFraction.denominator}th piece each`
+        )
+      } else {
+        sendAdminMessage(
+          "agent",
+          "Choose the slicer to divide in as many pieces as the denominator!"
+        )
+      }
     }
   }
 
@@ -146,21 +192,18 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete }) => {
           </div>
         </div>
 
-        {isSliced && (
+        {isSliced && showStepButton && (
           <div className="mt-8 flex justify-center pb-8">
             <div className="relative w-[180px] h-[90px]">
-
               <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
               <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>
-
-              {/* Main button */}
               <button 
                 onClick={onComplete}
                 className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
               >
-                <span className="text-[#FF497C] text-[32px] tracking-wide font-bold">STEP 2 &gt;&gt;</span>
+                <span className="text-[#FF497C] text-[32px] tracking-wide font-bold">STEP 3 &gt;&gt;</span>
               </button>
-              </div>
+            </div>
           </div>
         )}
     </GameLayout>
