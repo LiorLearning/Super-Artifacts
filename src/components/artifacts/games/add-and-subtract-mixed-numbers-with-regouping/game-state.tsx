@@ -74,7 +74,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  screen: 'third',
+  screen: 'first',
   state1: {
     step: 0,
     question1: {
@@ -102,7 +102,7 @@ export const initialGameState: GameState = {
     },
   },
   state3: {
-    step: 10,
+    step: 0,
     question1: {
       whole: 3,
       numerator: 1,
