@@ -14,31 +14,54 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
 
   const renderSliceLines = (numSlices: number) => {
-    const lines = []
     const center = 50
     const radius = 48
+    const strokeWidth = 3
 
-    // Generate lines based on number of slices
-    for (let i = 0; i < numSlices; i++) {
-      const angle = (i * 360) / numSlices
-      const radians = (angle * Math.PI) / 180
-      const x = center + radius * Math.cos(radians)
-      const y = center + radius * Math.sin(radians)
-
-      lines.push(
-        <line
-          key={i}
-          x1={center}
-          y1={center}
-          x2={x}
-          y2={y}
-          stroke="black"
-          strokeWidth="0.5"
+    return (
+      <>
+        {/* Base circle with black outline */}
+        <circle 
+          cx={center} 
+          cy={center} 
+          r={radius} 
+          fill="#D3EA00" 
+          stroke="black" 
+          strokeWidth="1"
         />
-      )
-    }
+        
+        {/* Draw cross lines with only white gaps */}
+        {/* Vertical line */}
+        <line 
+          x1={center} 
+          y1={center - radius} 
+          x2={center} 
+          y2={center + radius} 
+          stroke="white" 
+          strokeWidth={strokeWidth} 
+        />
 
-    return lines
+        {/* Horizontal line */}
+        <line 
+          x1={center - radius} 
+          y1={center} 
+          x2={center + radius} 
+          y2={center} 
+          stroke="white" 
+          strokeWidth={strokeWidth} 
+        />
+
+        {/* Outer circle to maintain clean edge */}
+        <circle 
+          cx={center} 
+          cy={center} 
+          r={radius} 
+          fill="none" 
+          stroke="black" 
+          strokeWidth="1"
+        />
+      </>
+    )
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,15 +89,6 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
           {[...Array(mixedFraction.whole)].map((_, index) => (
             <div key={index} className="w-28 h-28">
               <svg viewBox="0 0 100 100" className="w-full h-full">
-                <circle 
-                  cx="50" 
-                  cy="50" 
-                  r="48" 
-                  fill="#C2F542" 
-                  stroke="black" 
-                  strokeWidth="0.5" 
-                />
-                {/* Use the same slice rendering as Step2 */}
                 {renderSliceLines(mixedFraction.denominator)}
               </svg>
             </div>
@@ -122,19 +136,19 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
 
       {/* Next step button */}
       {showAwesome && (
-        <div className="mt-8 flex justify-center">
-          <div className="relative w-[180px]">
-            {/* Black shadow boxes */}
-            <div className="absolute -bottom-1.5 -left-1.5 w-full h-full bg-black"></div>
-            <div className="absolute -bottom-1.5 -left-1.5 w-full h-full bg-black opacity-60"></div>
-            
-            {/* Main button */}
-            <button 
-              onClick={onComplete}
-              className="relative w-full border-[8px] border-[#FF497C] py-1.5 bg-white"
-            >
-              <span className="text-[#FF497C] text-[24px] tracking-wide">STEP 3 &gt;&gt;</span>
-            </button>
+        <div className="mt-8 flex justify-center pb-8">
+          <div className="relative w-[180px] h-[90px]">
+
+          <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
+          <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>
+
+          {/* Main button */}
+          <button 
+            onClick={onComplete}
+            className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
+          >
+            <span className="text-[#FF497C] text-[32px] tracking-wide font-bold">STEP 2 &gt;&gt;</span>
+          </button>
           </div>
         </div>
       )}

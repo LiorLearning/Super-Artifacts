@@ -45,56 +45,126 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete }) => {
   };
 
   const renderSliceLines = (numSlices: number) => {
-    const lines = []
     const center = 50
     const radius = 48
+    const strokeWidth = 3
 
-    // Generate lines based on number of slices
-    for (let i = 0; i < numSlices; i++) {
-      const angle = (i * 360) / numSlices
-      const radians = (angle * Math.PI) / 180
-      const x = center + radius * Math.cos(radians)
-      const y = center + radius * Math.sin(radians)
-
-      lines.push(
-        <line
-          key={i}
-          x1={center}
-          y1={center}
-          x2={x}
-          y2={y}
-          stroke="black"
-          strokeWidth="0.5"
+    return (
+      <>
+        {/* Base circle with black outline */}
+        <circle 
+          cx={center} 
+          cy={center} 
+          r={radius} 
+          fill="#D3EA00" 
+          stroke="black" 
+          strokeWidth="1"
         />
-      )
-    }
+        
+        {/* Draw cross lines with only white gaps */}
+        {/* Vertical line */}
+        <line 
+          x1={center} 
+          y1={center - radius} 
+          x2={center} 
+          y2={center + radius} 
+          stroke="white" 
+          strokeWidth={strokeWidth} 
+        />
 
-    return lines
+        {/* Horizontal line */}
+        <line 
+          x1={center - radius} 
+          y1={center} 
+          x2={center + radius} 
+          y2={center} 
+          stroke="white" 
+          strokeWidth={strokeWidth} 
+        />
+
+        {/* Outer circle to maintain clean edge */}
+        <circle 
+          cx={center} 
+          cy={center} 
+          r={radius} 
+          fill="none" 
+          stroke="black" 
+          strokeWidth="1"
+        />
+      </>
+    )
   }
 
-  const renderSelectedSlices = (numSelected: number, totalSlices: number) => {
-    const slices = []
-    const anglePerSlice = 360 / totalSlices
+  const renderSelectedSlices = (count: number, total: number) => {
+    const center = 50
+    const radius = 48
+    const strokeWidth = 3
 
-    for (let i = 0; i < numSelected; i++) {
-      const startAngle = i * anglePerSlice
-      const endAngle = startAngle + anglePerSlice
-      const startRad = (startAngle * Math.PI) / 180
-      const endRad = (endAngle * Math.PI) / 180
-      
-      slices.push(
-        <path
-          key={i}
-          d={`M 50 50 
-              L ${50 + 48 * Math.cos(startRad)} ${50 + 48 * Math.sin(startRad)} 
-              A 48 48 0 0 1 ${50 + 48 * Math.cos(endRad)} ${50 + 48 * Math.sin(endRad)} 
-              Z`}
-          fill="#C2F542"
+    // First draw the base circle with slices
+    return (
+      <>
+        {/* Base circle */}
+        <circle 
+          cx={center} 
+          cy={center} 
+          r={radius} 
+          fill="white" 
+          stroke="black" 
+          strokeWidth="1"
         />
-      )
-    }
+        
+        {/* Draw cross lines */}
+        <line 
+          x1={center} 
+          y1={center - radius} 
+          x2={center} 
+          y2={center + radius} 
+          stroke="white" 
+          strokeWidth={strokeWidth} 
+        />
+        <line 
+          x1={center - radius} 
+          y1={center} 
+          x2={center + radius} 
+          y2={center} 
+          stroke="white" 
+          strokeWidth={strokeWidth} 
+        />
 
-    return slices
+        {/* Draw selected slices */}
+        {[...Array(count)].map((_, i) => {
+          const startAngle = (i * 360) / total
+          const endAngle = ((i + 1) * 360) / total
+          const startRad = (startAngle * Math.PI) / 180
+          const endRad = (endAngle * Math.PI) / 180
+
+          return (
+            <path
+              key={i}
+              d={`
+                M ${center} ${center}
+                L ${center + radius * Math.cos(startRad)} ${center + radius * Math.sin(startRad)}
+                A ${radius} ${radius} 0 0 1 ${center + radius * Math.cos(endRad)} ${center + radius * Math.sin(endRad)}
+                Z
+              `}
+              fill="#D3EA00"
+              stroke="black"
+              strokeWidth="1"
+            />
+          )
+        })}
+
+        {/* Outer circle for clean edge */}
+        <circle 
+          cx={center} 
+          cy={center} 
+          r={radius} 
+          fill="none" 
+          stroke="black" 
+          strokeWidth="1"
+        />
+      </>
+    )
   }
 
   return (
@@ -107,20 +177,12 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete }) => {
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20">
         {/* Left side - Whole number pies */}
         <div>
-          {/* Pies container with white background */}
+
           <div className="bg-white w-full p-8">
             <div className="flex justify-center gap-8">
               {[...Array(mixedFraction.whole)].map((_, index) => (
                 <div key={index} className="w-28 h-28">
                   <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <circle 
-                      cx="50" 
-                      cy="50" 
-                      r="48" 
-                      fill="#C2F542" 
-                      stroke="black" 
-                      strokeWidth="0.5" 
-                    />
                     {renderSliceLines(mixedFraction.denominator)}
                   </svg>
                 </div>
@@ -135,24 +197,16 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete }) => {
           </div>
         </div>
 
-        {/* Plus sign */}
+
         <div className="text-4xl font-bold">+</div>
 
         {/* Right side - Fraction selection */}
         <div className="bg-white rounded-2xl p-8">
-          <div className="text-sm text-gray-500 mb-4 text-center">
+          <div className="text-sm text-[#FF2763] mb-4 text-center">
             Select {mixedFraction.numerator}/{mixedFraction.denominator}ths here
           </div>
           <div className="w-28 h-28 cursor-pointer mx-auto" onClick={handlePieClick}>
             <svg viewBox="0 0 100 100" className="w-full h-full">
-              <circle 
-                cx="50" 
-                cy="50" 
-                r="48" 
-                fill="white" 
-                stroke="black" 
-                strokeWidth="0.5" 
-              />
               {renderSliceLines(mixedFraction.denominator)}
               {renderSelectedSlices(selectedPieces, mixedFraction.denominator)}
             </svg>

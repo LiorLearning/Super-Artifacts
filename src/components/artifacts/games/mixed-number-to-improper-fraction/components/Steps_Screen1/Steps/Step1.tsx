@@ -17,7 +17,6 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
     e.dataTransfer.setData("type", type)
     setIsDragging(type)
     
-    // Create a custom drag image
     const dragElement = e.currentTarget.cloneNode(true) as HTMLDivElement
     dragElement.style.transform = 'rotate(4deg)'
     dragElement.style.opacity = '0.8'
@@ -59,13 +58,10 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
       level={1}
       stepTitle="Sum of WHOLES & FRACTIONS"
     >
-
-        {/* Main content with background split */}
-        <div  className=" min-h-screen grid grid-cols-2 -mx-4">
-          {/* Left side - Pink background */}
-          <div className="bg-pink-100 p-8 flex flex-col items-center">
-            <div className="flex flex-col items-center gap-8">
-              {/* Whole number */}
+      <div className="max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 -mx-4">
+          <div className="bg-pink-100 p-4 flex flex-col items-center min-h-[320px]">
+            <div className="flex flex-col items-center gap-6">
               <div
                 draggable
                 onDragStart={(e) => handleDragStart("whole", e)}
@@ -91,20 +87,19 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
                 <span className="text-3xl">{mixedFraction.denominator}</span>
               </div>
             </div>
-            <span className="text-[#FF497C] mt-8 text-lg">pick from here</span>
+            <span className="text-[#FF497C] mt-4 text-lg">pick from here</span>
           </div>
 
-          {/* Right side - White background */}
-          <div className="bg-white p-8">
-            <div className="flex flex-col gap-8">
+          <div className="bg-white p-4 min-h-[320px]">
+            <div className="flex flex-col gap-4">
               {/* Wholes drop zone */}
               <div
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop("whole", e)}
                 className={`border-2 ${isDragging === "whole" ? "border-green-600 bg-green-50" : "border-green-400"} 
-                  rounded-2xl p-6 min-h-[140px] transition-colors duration-200`}
+                  rounded-2xl p-4 min-h-[100px] transition-colors duration-200`}
               >
-                <h4 className="text-green-500 font-medium tracking-widest mb-4 text-lg">WHOLES</h4>
+                <h4 className="text-green-500 font-medium tracking-widest mb-2 text-lg">WHOLES</h4>
                 {wholes !== null && <div className="text-4xl text-center">{wholes}</div>}
               </div>
 
@@ -115,9 +110,9 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop("fraction", e)}
                 className={`border-2 ${isDragging === "fraction" ? "border-purple-600 bg-purple-50" : "border-purple-400"}
-                  rounded-2xl p-6 min-h-[140px] transition-colors duration-200`}
+                  rounded-2xl p-4 min-h-[100px] transition-colors duration-200`}
               >
-                <h4 className="text-purple-500 font-medium tracking-widest mb-4 text-lg">FRACTION</h4>
+                <h4 className="text-purple-500 font-medium tracking-widest mb-2 text-lg">FRACTION</h4>
                 {fraction && (
                   <div className="flex flex-col items-center">
                     <span className="text-3xl">{fraction.numerator}</span>
@@ -127,42 +122,45 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete }) => {
                 )}
               </div>
             </div>
-            <span className="text-[#FF497C] mt-8 block text-center text-lg">drop here</span>
+            <span className="text-[#FF497C] mt-4 block text-center text-lg">drop here</span>
           </div>
         </div>
 
         {/* Complete state */}
         {isComplete && (
-          <div className="mt-12 flex flex-col items-center gap-6">
-            <div className="text-3xl text-center tracking-wide flex items-center justify-center gap-4">
-              {mixedFraction.whole}
-              <div className="flex flex-col items-center">
-                <span>{mixedFraction.numerator}</span>
-                <div className="w-6 h-0.5 bg-black"></div>
-                <span>{mixedFraction.denominator}</span>
-              </div>
-              = <span className="text-green-600">{mixedFraction.whole} wholes</span> +
-              <div className="flex flex-col items-center">
-                <span>{mixedFraction.numerator}</span>
-                <div className="w-6 h-0.5 bg-black"></div>
-                <span>{mixedFraction.denominator}</span>
+          <div className="mt-8 flex flex-col items-center gap-6 pb-8">
+            <div className="bg-white px-8 py-4 rounded-xl">
+              <div className="text-3xl text-[#FF497C] text-center tracking-wide flex items-center justify-center gap-4">
+                {mixedFraction.whole}
+                <div className="flex flex-col items-center">
+                  <span className="text-[#FF497C]">{mixedFraction.numerator}</span>
+                  <div className="w-6 h-0.5 bg-[#FF497C]"></div>
+                  <span className="text-[#FF497C]">{mixedFraction.denominator}</span>
+                </div>
+                = <span className="text-green-600">{mixedFraction.whole} wholes</span> +
+                <div className="flex flex-col items-center ">
+                  <span className="text-[#FF497C]">{mixedFraction.numerator}</span>
+                  <div className="w-6 h-0.5 bg-[#FF497C]"></div>
+                  <span className="text-[#FF497C]">{mixedFraction.denominator}</span>
+                </div>
               </div>
             </div>
-            <div className="relative w-[250px]">
-          {/* Black shadow boxes */}
-          <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
-          <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
-          
-          {/* Main button */}
-          <button 
-            onClick={onComplete}
-            className="relative w-full border-[12.69px] border-[#FF497C] py-3 bg-white"
-          >
-            <span className="text-[#FF497C] text-[35px] tracking-wide">STEP 2 &gt;&gt;</span>
-          </button>
-        </div>
+            <div className="relative w-[180px] h-[90px]">
+
+              <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
+              <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>
+              
+              {/* Main button */}
+              <button 
+                onClick={onComplete}
+                className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
+              >
+                <span className="text-[#FF497C] text-[32px] tracking-wide font-bold">STEP 2 &gt;&gt;</span>
+              </button>
+            </div>
           </div>
         )}
+      </div>
     </GameLayout>
   )
 }

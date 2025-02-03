@@ -89,23 +89,26 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
   }
 
   return (
-    <div className="flex h-[89px]" style={{ backgroundColor: "#FF497C", borderRadius: "16px" }}>
+    <div 
+      className="w-[565px] h-[120px] mx-auto flex items-center"
+      style={{ backgroundColor: "#FF497C", borderRadius: "16px" }}
+    >
       <div className="flex items-center w-full">
         {/* Level indicator */}
-        <div className="text-white text-2xl font-bold px-6">
+        <div className="text-white text-3xl font-bold px-8">
           Level 1
         </div>
 
-        {/* Math problem */}
-        <div className="bg-white rounded-xl mx-2 h-[75px] flex-grow flex items-center justify-center">
-          <div className="text-2xl font-bold">
+        {/* Math problem - center section */}
+        <div className="bg-white rounded-xl mx-2 h-[100px] flex-grow flex items-center justify-center">
+          <div className="text-4xl font-bold">
             {renderEquation()}
           </div>
         </div>
 
         {/* Emoji container */}
-        <div className="bg-white rounded-xl w-[89px] h-[75px] mr-2 flex items-center justify-center">
-          <span className="text-3xl">{getEmoji()}</span>
+        <div className="bg-white rounded-xl w-[100px] h-[100px] mr-2 flex items-center justify-center">
+          <span className="text-5xl">{getEmoji()}</span>
         </div>
       </div>
     </div>

@@ -19,33 +19,34 @@ const GameLayout: React.FC<GameLayoutProps> = ({
 }) => {
   return (
     <div className="min-h-screen bg-pink-50 flex flex-col items-center">
-      <div className="w-full max-w-[600px] mx-auto pt-8 px-4">
+      <div className="w-full mx-auto pt-12">
         {/* Level component */}
         <div className="mb-14">
           <Level mixedFraction={mixedFraction} stepNumber={stepNumber} />
         </div>
 
-        {/* Step header */}
-        <div className="flex items-center gap-5 mb-12">
+        <div className="w-[793px] mx-auto flex items-center gap-6">
           <div
-            className="bg-white border-[3px] rounded-lg px-8 py-2 text-xl font-medium"
+            className="bg-white border-[4px] rounded-xl px-6 py-3"
             style={{ borderColor: "#FF497C" }}
           >
-            Step {stepNumber}
+            <span className="text-[28px] font-bold tracking-wide">Step {stepNumber}</span>
           </div>
+
+          {/* Title box */}
           <div
-            className="text-white rounded-lg px-8 py-2 text-xl font-medium"
+            className="text-white rounded-xl px-8 py-3 flex-1"
             style={{ backgroundColor: "#FF497C" }}
           >
-            {stepTitle}
+            <span className="text-[28px] font-bold tracking-wide">{stepTitle}</span>
           </div>
         </div>
 
-        {/* Divider line */}
-        <div className="border-b border-gray-300 mb-12"></div>
+        <div className="w-[793px] mx-auto border-b border-gray-300 my-8"></div>
 
-        {/* Main content */}
-        {children}
+        <div className="w-[793px] mx-auto">
+          {children}
+        </div>
       </div>
     </div>
   )

@@ -8,7 +8,7 @@ import ThirdScreen from './screen/third';
 
 
 interface GameProps {
-  sendAdminMessage: (role: string, content: string) => void;
+  sendAdminMessage: (role: string, content: string, onComplete: () => void) => void;
 }
 
 export default function Game({sendAdminMessage}: GameProps) {

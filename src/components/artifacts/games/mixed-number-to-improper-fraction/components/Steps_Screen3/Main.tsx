@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MixedFraction } from '../../game-state';
 import Image from 'next/image';
 import DirectionArrows from '@/assets/direction.png';
@@ -146,6 +146,17 @@ const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2 }) => {
   const [showSecondFraction, setShowSecondFraction] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  useEffect(() => {
+    if (showSuccess) {
+      // Just hide success animation after 5 seconds
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess]);
+
   const handleFirstFractionComplete = () => {
     setShowSecondFraction(true);
   };
@@ -155,29 +166,26 @@ const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2 }) => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6">
-      <h1 className="text-3xl font-bold text-pink-500 text-center mb-20">
-        Let's do some more now!
-      </h1>
-      <div className="space-y-8">
-        <FractionBox 
-          mixedFraction={mixedFraction1} 
-          onFractionComplete={handleFirstFractionComplete}
-        />
-        {showSecondFraction && (
+    <div className={showSuccess ? 'pointer-events-none' : ''}>
+      <div className="w-full max-w-4xl mx-auto px-6">
+        <h1 className="text-3xl font-bold text-pink-500 text-center mb-20">
+          Let's do some more now!
+        </h1>
+        <div className="space-y-8">
           <FractionBox 
-            mixedFraction={mixedFraction2}
-            onFractionComplete={handleSecondFractionComplete}
+            mixedFraction={mixedFraction1} 
+            onFractionComplete={handleFirstFractionComplete}
           />
-        )}
-      </div>
-      
-      {/* Success animation overlay */}
-      {showSuccess && (
-        <div className="fixed inset-0 z-50">
-          <SuccessAnimation />
+          {showSecondFraction && (
+            <FractionBox 
+              mixedFraction={mixedFraction2}
+              onFractionComplete={handleSecondFractionComplete}
+            />
+          )}
         </div>
-      )}
+        
+        {showSuccess && <SuccessAnimation />}
+      </div>
     </div>
   );
 };
