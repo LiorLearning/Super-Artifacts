@@ -101,7 +101,7 @@ const Game = ({sendAdminMessage}: GameProps) => {
     setUserAnswer(answer);
     setShowAnswer(true);
 
-    if (answer !== `${fraction1.num}/${fraction1.denom}`) {
+    if (answer !== `${correctAnswer.num}/${correctAnswer.denom}`) {
       sendAdminMessage('agent', `Oops, try comparing them visually. Which one looks bigger?`);
     } else {
       sendAdminMessage('agent', `Great, let's move on to the next question`);
