@@ -13,7 +13,7 @@ interface Step2Props {
 const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
   const [selectedSlice, setSelectedSlice] = useState(mixedFraction.denominator)
   const [isSliced, setIsSliced] = useState(false)
-  const [showSliceButton, setShowSliceButton] = useState(false)
+  const [canSlice, setCanSlice] = useState(false)
   const messageShown = useRef(false)
   const wrongAttempts = useRef(0)
   const [showStepButton, setShowStepButton] = useState(false)
@@ -31,7 +31,7 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
             "agent",
             "Choose the right slicer to slice them perfectly!",
             () => {
-              setShowSliceButton(true)
+              setCanSlice(true)
             }
           )
         }
@@ -65,6 +65,8 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
   ]
 
   const handleSlice = () => {
+    if (!canSlice) return;
+    
     if (selectedSlice === mixedFraction.denominator) {
       setIsSliced(true)
       sendAdminMessage(
@@ -162,44 +164,58 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
         </div>
 
         {/* Slicer options */}
-        <div className="bg-white rounded-2xl p-8 ">
+        <div className="bg-white rounded-2xl p-8">
           <h3 className="font-bold text-xl mb-8">Choose your slicer</h3>
-          <div className="bg-black bg-opacity-5 p-6 rounded-lg">
-            <div className="flex flex-col gap-6 mb-8">
-              {slicerOptions.map((option) => (
-                <div
-                  key={option.value}
-                  className="flex items-center gap-6 cursor-pointer"
-                  onClick={() => setSelectedSlice(option.value)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                      {selectedSlice === option.value && (
-                        <div className="w-3 h-3 rounded-full bg-gray-600" />
-                      )}
+          <div className="border-2 border-black rounded-lg p-6">
+            {/* Container for aligned images and text */}
+            <div className="flex gap-6">
+              {/* Vertical box for slicer images with divider lines */}
+              <div className="border-2 border-black rounded-lg bg-white">
+                {slicerOptions.map((option, index) => (
+                  <React.Fragment key={option.value}>
+                    <div className="p-4">
+                      <Image 
+                        src={option.icon} 
+                        alt="slicer" 
+                        width={32} 
+                        height={32} 
+                        className="w-8 h-8"
+                      />
                     </div>
-                    <Image 
-                      src={option.icon} 
-                      alt="slicer" 
-                      width={32} 
-                      height={32} 
-                      className="w-8 h-8"
-                    />
+                    {index !== slicerOptions.length - 1 && (
+                      <div className="w-full h-[1px] bg-black" />
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Clickable text options aligned with images */}
+              <div className="flex flex-col justify-between py-4">
+                {slicerOptions.map((option) => (
+                  <div
+                    key={option.value}
+                    className={`cursor-pointer text-lg ${
+                      selectedSlice === option.value ? 'text-blue-600 font-medium' : 'text-gray-600'
+                    }`}
+                    onClick={() => {
+                      setSelectedSlice(option.value);
+                    }}
+                  >
+                    {option.text}
                   </div>
-                  <span className="text-blue-600 text-lg">{option.text}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
-            <div className="flex justify-end">
-              {showSliceButton && (
-                <button
-                  onClick={handleSlice}
-                  className="bg-[#FF497C] text-white px-12 py-3 rounded-xl text-lg font-medium hover:bg-opacity-90 transition-colors"
-                >
-                  Slice
-                </button>
-              )}
+            {/* Slice button */}
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={handleSlice}
+                className={`bg-[#FF497C] text-white px-12 py-3 rounded-xl text-lg font-medium transition-colors shadow-md
+                  ${canSlice ? 'hover:bg-opacity-90' : 'opacity-50 cursor-not-allowed'}`}
+              >
+                Slice
+              </button>
             </div>
           </div>
         </div>

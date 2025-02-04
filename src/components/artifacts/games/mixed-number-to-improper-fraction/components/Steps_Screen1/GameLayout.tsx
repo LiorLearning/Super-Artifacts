@@ -26,18 +26,15 @@ const GameLayout: React.FC<GameLayoutProps> = ({
         </div>
 
         <div className="w-[793px] mx-auto flex items-center gap-6">
-          <div
-            className="bg-white border-[4px] rounded-xl px-6 py-3"
-            style={{ borderColor: "#FF497C" }}
-          >
+          {/* Step box */}
+          <div className="bg-white border-[4px] rounded-xl px-6 py-3"
+            style={{ borderColor: "#FF497C" }}>
             <span className="text-[28px] font-bold tracking-wide">Step {stepNumber}</span>
           </div>
 
           {/* Title box */}
-          <div
-            className="text-white rounded-xl px-8 py-3 flex-1"
-            style={{ backgroundColor: "#FF497C" }}
-          >
+          <div className="text-white rounded-xl px-8 py-3 flex-1 h-[98px] flex items-center"
+            style={{ backgroundColor: "#FF497C" }}>
             <span className="text-[28px] font-bold tracking-wide">{stepTitle}</span>
           </div>
         </div>
