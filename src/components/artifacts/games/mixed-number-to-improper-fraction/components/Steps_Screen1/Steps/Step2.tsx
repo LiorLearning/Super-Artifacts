@@ -138,7 +138,7 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
                       cx="50" 
                       cy="50" 
                       r="48" 
-                      fill="#C2F542" 
+                      fill="#90EE90" 
                       stroke="black" 
                       strokeWidth="0.5"
                     />

@@ -9,64 +9,91 @@ interface Step3Props {
 }
 
 const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
-  const [piecesInput, setPiecesInput] = useState("")
+  const [selectedSlices, setSelectedSlices] = useState<Set<string>>(new Set())
   const [showAwesome, setShowAwesome] = useState(false)
   const [showStepButton, setShowStepButton] = useState(false)
   const messageShown = useRef(false)
-  const timeoutRef = useRef<NodeJS.Timeout>()
   const lastMessage = useRef<string>("")
-
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
 
   useEffect(() => {
     if (!messageShown.current) {
       sendAdminMessage(
         "agent",
-        "Time for a counting adventure! Can you help me count all the slices in these pies? Put your answer in the box!"
+        "Click on each slice to count them. Let's see how many pieces we have in total!"
       )
       messageShown.current = true
     }
   }, [])
 
-  const renderSliceLines = (numSlices: number) => {
+  const handlePieceClick = (pieIndex: number, sliceIndex: number) => {
+    const sliceId = `${pieIndex}-${sliceIndex}`
+    if (selectedSlices.has(sliceId)) return
+
+    const newSelectedSlices = new Set(selectedSlices)
+    newSelectedSlices.add(sliceId)
+    setSelectedSlices(newSelectedSlices)
+    
+    if (newSelectedSlices.size === totalPieces) {
+      setShowAwesome(true)
+      sendAdminMessage("agent", "Wow! You've counted all the pieces perfectly!", () => {
+        setTimeout(() => {
+          sendAdminMessage(
+            "agent",
+            "Ready for the next exciting step? Click on Step 4 to continue our fraction adventure!",
+            () => {
+              setShowStepButton(true)
+            }
+          )
+        }, 1000)
+      })
+    }
+  }
+
+  const renderSliceLines = (pieIndex: number) => {
     const center = 50
     const radius = 48
     const strokeWidth = 3
+    const slices = Array(mixedFraction.denominator).fill(0)
 
     return (
       <>
-        {/* Base circle with black outline */}
+        {/* Base circle */}
         <circle 
           cx={center} 
           cy={center} 
           r={radius} 
-          fill="#D3EA00" 
+          fill="#90EE90" 
           stroke="black" 
           strokeWidth="1"
         />
         
-        {/* Draw cross lines with only white gaps */}
-        {/* Vertical line */}
-        <line 
-          x1={center} 
-          y1={center - radius} 
-          x2={center} 
-          y2={center + radius} 
-          stroke="white" 
-          strokeWidth={strokeWidth} 
-        />
+        {/* Clickable slices */}
+        {slices.map((_, index) => {
+          const sliceId = `${pieIndex}-${index}`
+          const isSelected = selectedSlices.has(sliceId)
+          const angle = (360 / mixedFraction.denominator) * index
+          const nextAngle = (360 / mixedFraction.denominator) * (index + 1)
+          const startX = center + radius * Math.cos((angle - 90) * Math.PI / 180)
+          const startY = center + radius * Math.sin((angle - 90) * Math.PI / 180)
+          const endX = center + radius * Math.cos((nextAngle - 90) * Math.PI / 180)
+          const endY = center + radius * Math.sin((nextAngle - 90) * Math.PI / 180)
 
-        {/* Horizontal line */}
-        <line 
-          x1={center - radius} 
-          y1={center} 
-          x2={center + radius} 
-          y2={center} 
-          stroke="white" 
-          strokeWidth={strokeWidth} 
-        />
+          return (
+            <path
+              key={index}
+              d={`M ${center} ${center} L ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY} Z`}
+              fill={isSelected ? "#D3EA00" : "#90EE90"}
+              stroke="white"
+              strokeWidth={strokeWidth}
+              style={{ cursor: 'pointer' }}
+              onClick={() => handlePieceClick(pieIndex, index)}
+              className="transition-colors duration-200"
+            />
+          )
+        })}
 
-        {/* Outer circle to maintain clean edge */}
+        {/* Outer circle border */}
         <circle 
           cx={center} 
           cy={center} 
@@ -79,112 +106,47 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
     )
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setPiecesInput(value)
-
-    // Clear any existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    const totalPiecesStr = totalPieces.toString()
-    
-    // Only check answer if input length matches or exceeds answer length
-    if (value.length >= totalPiecesStr.length) {
-      // Set new timeout to check answer after 1 second
-      timeoutRef.current = setTimeout(() => {
-        if (Number.parseInt(value) === totalPieces) {
-          setShowAwesome(true)
-          const message = "Wow! You're an amazing slice counter! That's exactly right!"
-          if (lastMessage.current !== message) {
-            sendAdminMessage("agent", message, () => {
-              setTimeout(() => {
-                sendAdminMessage(
-                  "agent",
-                  "Ready for the next exciting step? Click on Step 4 to continue our fraction adventure!",
-                  () => {
-                    setShowStepButton(true)
-                  }
-                )
-              }, 1000)
-            })
-            lastMessage.current = message
-          }
-        } else if (value !== "") {
-          const message = "Hmm... Let's count those slices one more time! You can do it!"
-          if (lastMessage.current !== message) {
-            sendAdminMessage("agent", message)
-            lastMessage.current = message
-          }
-          setShowAwesome(false)
-        }
-      }, 1000)
-    }
-  }
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-    }
-  }, [])
-
   return (
     <GameLayout
       mixedFraction={mixedFraction}
       stepNumber={3}
       level={1}
-      stepTitle="Add the Fraction"
+      stepTitle="Count the Pieces"
     >
-
       {/* Pies container with white background */}
       <div className="bg-white w-full p-8 mb-12">
         <div className="flex justify-center gap-8">
           {[...Array(mixedFraction.whole)].map((_, index) => (
             <div key={index} className="w-28 h-28">
               <svg viewBox="0 0 100 100" className="w-full h-full">
-                {renderSliceLines(mixedFraction.denominator)}
+                {renderSliceLines(index)}
               </svg>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Input section */}
+      {/* Display section */}
       <div className="bg-white rounded-2xl p-8">
         <div className="flex flex-col gap-8">
-          {/* Question and input */}
           <div className="flex items-center justify-center gap-3 text-xl">
             <span>So there are</span>
-            <input
-              type="text"
-              value={piecesInput}
-              onChange={handleInputChange}
-              className="w-16 h-12 border-2 border-gray-300 rounded-lg text-center text-xl"
-            />
+            <div className="w-16 h-12 border-2 border-gray-300 rounded-lg flex items-center justify-center text-xl">
+              {selectedSlices.size}
+            </div>
             <span>
               <sup>1</sup>⁄<sub>{mixedFraction.denominator}</sub> sized pieces in {mixedFraction.whole} wholes
             </span>
           </div>
 
-          {/* Awesome feedback */}
+          {/* Success feedback */}
           {showAwesome && (
             <div className="flex flex-col items-center gap-4">
               <div className="w-96 bg-[#d9f7be] py-3 text-center font-bold rounded-lg text-xl">
                 AWESOME
               </div>
               <div className="w-96 bg-[#fffbe6] p-6 text-center rounded-lg text-xl">
-                {mixedFraction.whole} wholes =
-                <input
-                  type="text"
-                  className="w-16 mx-2 text-center border-2 border-gray-300 rounded-lg"
-                  readOnly
-                  value={totalPieces}
-                />
-                /{mixedFraction.denominator}
+                {mixedFraction.whole} wholes = {totalPieces}/{mixedFraction.denominator}
               </div>
             </div>
           )}
