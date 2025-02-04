@@ -13,7 +13,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [showAwesome, setShowAwesome] = useState(false)
   const [showStepButton, setShowStepButton] = useState(false)
   const messageShown = useRef(false)
-  const lastMessage = useRef<string>("")
+  const stepButtonRef = useRef<HTMLDivElement>(null)
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
 
   useEffect(() => {
@@ -25,6 +25,12 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       messageShown.current = true
     }
   }, [])
+
+  useEffect(() => {
+    if (showStepButton && stepButtonRef.current) {
+      stepButtonRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [showStepButton])
 
   const handlePieceClick = (pieIndex: number, sliceIndex: number) => {
     const sliceId = `${pieIndex}-${sliceIndex}`
@@ -155,7 +161,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
       {/* Next step button */}
       {showAwesome && showStepButton && (
-        <div className="mt-8 flex justify-center pb-8">
+        <div ref={stepButtonRef} className="mt-8 flex justify-center pb-8">
           <div className="relative w-[180px] h-[90px]">
             <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
             <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>

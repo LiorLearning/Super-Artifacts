@@ -15,6 +15,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [isDragging, setIsDragging] = useState<"whole" | "fraction" | null>(null)
   const [showStepButton, setShowStepButton] = useState(false)
   const messageShown = useRef(false)
+  const stepButtonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!messageShown.current) {
@@ -26,6 +27,12 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       messageShown.current = true
     }
   }, [])
+
+  useEffect(() => {
+    if (showStepButton && stepButtonRef.current) {
+      stepButtonRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [showStepButton]);
 
   const handleDragStart = (type: "whole" | "fraction", e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("type", type)
@@ -66,7 +73,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       })
       sendAdminMessage(
         "agent",
-        `Correct! ${mixedFraction.whole} ${mixedFraction.numerator}/${mixedFraction.denominator}ths is a sum of ${mixedFraction.whole} wholes and ${mixedFraction.numerator}/${mixedFraction.denominator}ths. Now let's change ${mixedFraction.whole} wholes to fraction, so that we can add these two easily`,
+        `Correct! ${mixedFraction.whole} ${mixedFraction.numerator}/${mixedFraction.denominator}th is a sum of ${mixedFraction.whole} wholes and ${mixedFraction.numerator}/${mixedFraction.denominator}th. Now let's change ${mixedFraction.whole} wholes to fraction, so that we can add these two easily`,
         () => {
           setShowStepButton(true)
           setTimeout(() => {
@@ -186,7 +193,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
         {/* Complete state */}
         {isComplete && showStepButton && (
-          <div className="mt-8 flex flex-col items-center gap-6 pb-8">
+          <div ref={stepButtonRef} className="mt-8 flex flex-col items-center gap-6 pb-8">
             <div className="bg-white px-8 py-4 rounded-xl">
               <div className="text-3xl text-[#FF497C] text-center tracking-wide flex items-center justify-center gap-4">
                 {mixedFraction.whole}

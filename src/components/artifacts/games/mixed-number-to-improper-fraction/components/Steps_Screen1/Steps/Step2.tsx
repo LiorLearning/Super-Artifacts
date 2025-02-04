@@ -13,9 +13,11 @@ interface Step2Props {
 const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
   const [selectedSlice, setSelectedSlice] = useState(mixedFraction.denominator)
   const [isSliced, setIsSliced] = useState(false)
+  const [showSliceButton, setShowSliceButton] = useState(false)
   const messageShown = useRef(false)
   const wrongAttempts = useRef(0)
   const [showStepButton, setShowStepButton] = useState(false)
+  const stepButtonRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!messageShown.current) {
@@ -25,16 +27,24 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
         `This is what ${mixedFraction.whole} wholes look like. Can you slice them up into 1/${mixedFraction.denominator}th sized pieces?`,
         () => {
           // Send second message after first one completes
-          
-            sendAdminMessage(
-              "agent",
-              "Choose the right slicer to slice them perfectly!"
-            )
+          sendAdminMessage(
+            "agent",
+            "Choose the right slicer to slice them perfectly!",
+            () => {
+              setShowSliceButton(true)
+            }
+          )
         }
       )
       messageShown.current = true
     }
   }, [])
+
+  useEffect(() => {
+    if (showStepButton && stepButtonRef.current) {
+      stepButtonRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [showStepButton]);
 
   const slicerOptions = [
     { 
@@ -182,18 +192,20 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
             </div>
 
             <div className="flex justify-end">
-              <button
-                onClick={handleSlice}
-                className="bg-[#FF497C] text-white px-12 py-3 rounded-xl text-lg font-medium hover:bg-opacity-90 transition-colors"
-              >
-                Slice
-              </button>
+              {showSliceButton && (
+                <button
+                  onClick={handleSlice}
+                  className="bg-[#FF497C] text-white px-12 py-3 rounded-xl text-lg font-medium hover:bg-opacity-90 transition-colors"
+                >
+                  Slice
+                </button>
+              )}
             </div>
           </div>
         </div>
 
         {isSliced && showStepButton && (
-          <div className="mt-8 flex justify-center pb-8">
+          <div ref={stepButtonRef} className="mt-8 flex justify-center pb-8">
             <div className="relative w-[180px] h-[90px]">
               <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
               <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>
