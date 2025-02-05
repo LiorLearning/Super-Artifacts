@@ -14,7 +14,7 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
           <span>{mixedFraction.whole}</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
           <span>=</span>
@@ -33,7 +33,7 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
           <span>{mixedFraction.whole}</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
           <span>=</span>
@@ -41,7 +41,7 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
           <span>+</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
         </div>
@@ -54,19 +54,19 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
           <span>{mixedFraction.whole}</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
           <span>=</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.denominator * mixedFraction.whole}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
           <span>+</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
         </div>
