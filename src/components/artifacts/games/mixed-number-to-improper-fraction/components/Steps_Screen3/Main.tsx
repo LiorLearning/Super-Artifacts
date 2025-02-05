@@ -52,20 +52,59 @@ const FractionBox: React.FC<FractionBoxProps> = ({
   };
 
   const handleNumeratorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isComplete) return;
-    const value = e.target.value;
+    const value = e.target.value.replace(/\D/g, '');
     setNumerator(value);
-    if (denominator) {
-      checkAnswer(value, denominator);
+
+    const expectedNumerator = (mixedFraction.denominator * mixedFraction.whole) + mixedFraction.numerator;
+
+    // Only show messages if input length >= expected length
+    if (value.length >= expectedNumerator.toString().length) {
+      if (Number(value) === expectedNumerator) {
+        sendAdminMessage(
+          "agent",
+          "Perfect! That's the right numerator. Now enter the denominator.",
+        );
+      } else {
+        sendAdminMessage(
+          "agent",
+          "That's not quite right. Remember to multiply the denominator with the whole number and add the numerator!"
+        );
+      }
     }
   };
 
   const handleDenominatorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isComplete) return;
-    const value = e.target.value;
+    const value = e.target.value.replace(/\D/g, '');
     setDenominator(value);
-    if (numerator) {
-      checkAnswer(numerator, value);
+
+    const expectedDenominator = mixedFraction.denominator;
+    const expectedNumerator = (mixedFraction.denominator * mixedFraction.whole) + mixedFraction.numerator;
+
+    // Only show messages if input length >= expected length
+    if (value.length >= expectedDenominator.toString().length) {
+      if (Number(value) === expectedDenominator) {
+        if (Number(numerator) === expectedNumerator) {
+          sendAdminMessage(
+            "agent",
+            "Excellent! You've converted the mixed number correctly!",
+            () => {
+              setTimeout(() => {
+                onFractionComplete?.();
+              }, 1000);
+            }
+          );
+        } else {
+          sendAdminMessage(
+            "agent",
+            "Good! The denominator is correct. Check your numerator again."
+          );
+        }
+      } else {
+        sendAdminMessage(
+          "agent",
+          "Remember, the denominator stays the same as the original fraction!"
+        );
+      }
     }
   };
 
@@ -100,11 +139,12 @@ const FractionBox: React.FC<FractionBoxProps> = ({
   );
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-3 gap-6">
       {/* Mixed Form */}
-      <div className="bg-pink-200 rounded-lg overflow-hidden">
-        <h2 className="text-xl font-bold px-4 py-3 bg-pink-300">Mixed Form</h2>
-        <div className="bg-pink-100 p-6 flex justify-center items-center min-h-[140px]">
+      <div className="bg-pink-200 text-center rounded-lg overflow-hidden">
+        <h2 className="text-xl px-4 py-3 bg-[#FF467A] bg-opacity-10">Mixed Form</h2>
+
+        <div className="bg-pink-100 p-6 flex justify-center items-center min-h-[200px]">
           <div className="bg-white p-4 rounded-lg">
             <div className="flex">
               <span className="text-2xl font-medium self-center">{mixedFraction.whole}</span>
@@ -119,46 +159,66 @@ const FractionBox: React.FC<FractionBoxProps> = ({
       </div>
 
       {/* Improper Form */}
-      <div className="bg-pink-200 rounded-lg overflow-hidden">
-        <h2 className="text-xl font-bold px-4 py-3 bg-pink-300">Improper Form</h2>
-        <div className="bg-pink-100 p-6 flex justify-center items-center min-h-[140px]">
-          <div className="flex flex-col items-center">
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={numerator}
-              onChange={handleNumeratorChange}
-              disabled={isComplete}
-              className="w-14 h-14 text-center text-xl border border-gray-300 rounded-md disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-400 [appearance:textfield]"
-              placeholder=""
-            />
-            <div className="w-14 h-0.5 bg-black my-1"></div>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={denominator}
-              onChange={handleDenominatorChange}
-              disabled={isComplete}
-              className="w-14 h-14 text-center text-xl border border-gray-300 rounded-md disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-400 [appearance:textfield]"
-              placeholder=""
-            />
+      <div className="bg-pink-200 rounded-lg text-center overflow-hidden">
+        <h2 className="text-xl px-4 py-3 bg-pink-300">Improper Form</h2>
+        <div className="bg-pink-100 p-6 flex justify-center items-center min-h-[200px]">
+          <div className="flex flex-col items-center gap-4">
+            {/* Top input with shadow */}
+            <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-md"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-md"></div>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={numerator}
+                onChange={handleNumeratorChange}
+                disabled={isComplete}
+                className="relative w-14 h-14 text-center text-xl border border-gray-300 rounded-md disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-400 [appearance:textfield] bg-white"
+                placeholder=""
+              />
+            </div>
+
+            {/* Fraction line */}
+            <div className="w-14 h-0.5 bg-black"></div>
+
+            {/* Bottom input with shadow */}
+            <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-md"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-md"></div>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={denominator}
+                onChange={handleDenominatorChange}
+                disabled={isComplete}
+                className="relative w-14 h-14 text-center text-xl border border-gray-300 rounded-md disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-400 [appearance:textfield] bg-white"
+                placeholder=""
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Hint */}
-      <div className="bg-amber-50 rounded-lg overflow-hidden">
-        <h2 className="text-xl font-bold px-4 py-3 bg-amber-100">Hint</h2>
-        <div className="p-6 flex justify-center items-center min-h-[140px] bg-[#fff3e0]">
+      <div className="bg-amber-50 text-center rounded-lg overflow-hidden">
+        <h2 className="text-xl px-4 py-3 bg-amber-100">Hint</h2>
+        <div className="p-6 flex justify-center items-center min-h-[200px] bg-[#fff3e0]">
           {showHint ? renderHint() : (
-            <button
-              className="px-6 py-2 bg-white border border-amber-200 rounded-md hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-300"
-              onClick={handleHintClick}
-            >
-              See hint
-            </button>
+
+            <div className="relative">
+
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-md"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-md"></div>
+              <button
+                className="relative px-6 py-2 bg-white border border-amber-200 rounded-md hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-300"
+                onClick={handleHintClick}
+              >
+                See hint
+              </button>
+            </div>
+
           )}
         </div>
       </div>
@@ -208,7 +268,7 @@ const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2, sendAdminMe
   return (
     <div className={showSuccess ? 'pointer-events-none' : ''}>
       <div className="w-full max-w-4xl mx-auto px-6">
-        <h1 className="text-3xl font-bold text-pink-500 text-center mb-20">
+        <h1 className="text-3xl text-pink-500 text-center mb-20">
           Let's do some more now!
         </h1>
         <div className="space-y-8">

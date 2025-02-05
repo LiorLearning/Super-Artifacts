@@ -11,30 +11,44 @@ interface Step2Props {
 
 
 const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
-  const [selectedSlice, setSelectedSlice] = useState(mixedFraction.denominator)
+
+  const [selectedSlice, setSelectedSlice] = useState<number | null>(null)
   const [isSliced, setIsSliced] = useState(false)
+  const [canSlice, setCanSlice] = useState(false)
   const messageShown = useRef(false)
   const wrongAttempts = useRef(0)
   const [showStepButton, setShowStepButton] = useState(false)
+  const stepButtonRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!messageShown.current) {
-      // First message
+
       sendAdminMessage(
         "agent",
         `This is what ${mixedFraction.whole} wholes look like. Can you slice them up into 1/${mixedFraction.denominator}th sized pieces?`,
         () => {
-          // Send second message after first one completes
-          
-            sendAdminMessage(
-              "agent",
-              "Choose the right slicer to slice them perfectly!"
-            )
+
+          sendAdminMessage(
+            "agent",
+            "Choose the right slicer to slice them perfectly!",
+            () => {
+              setCanSlice(true)
+            }
+          )
+
         }
       )
       messageShown.current = true
     }
   }, [])
+
+
+  useEffect(() => {
+    if (showStepButton && stepButtonRef.current) {
+      stepButtonRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [showStepButton]);
+
 
   const slicerOptions = [
     { 
@@ -55,6 +69,8 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
   ]
 
   const handleSlice = () => {
+    if (!canSlice) return;
+    
     if (selectedSlice === mixedFraction.denominator) {
       setIsSliced(true)
       sendAdminMessage(
@@ -93,7 +109,7 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
     const center = 50
     const radius = 48
 
-    // Generate lines based on number of slices
+    // Generate lines based on  of slices
     for (let i = 0; i < numSlices; i++) {
       const angle = (i * 360) / numSlices
       const radians = (angle * Math.PI) / 180
@@ -138,11 +154,11 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
                       cx="50" 
                       cy="50" 
                       r="48" 
-                      fill="#C2F542" 
+                      fill="#D3EA00" 
                       stroke="black" 
                       strokeWidth="0.5"
                     />
-                    {isSliced && renderSliceLines(selectedSlice)}
+                    {isSliced && renderSliceLines(selectedSlice as number)}
                   </svg>
                 </div>
               ))}
@@ -152,56 +168,85 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
         </div>
 
         {/* Slicer options */}
-        <div className="bg-white rounded-2xl p-8 ">
-          <h3 className="font-bold text-xl mb-8">Choose your slicer</h3>
-          <div className="bg-black bg-opacity-5 p-6 rounded-lg">
-            <div className="flex flex-col gap-6 mb-8">
-              {slicerOptions.map((option) => (
-                <div
-                  key={option.value}
-                  className="flex items-center gap-6 cursor-pointer"
-                  onClick={() => setSelectedSlice(option.value)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                      {selectedSlice === option.value && (
-                        <div className="w-3 h-3 rounded-full bg-gray-600" />
-                      )}
+        <div className="bg-white rounded-2xl p-8">
+          <h3 className="text-2xl mb-8">Choose your slicer</h3>
+          <div className="border-2 border-black rounded-lg p-6">
+            <div className="flex gap-8">
+              <div className="border-2 border-black rounded-lg bg-white">
+                {slicerOptions.map((option, index) => (
+                  <React.Fragment key={option.value}>
+                    <div className="p-6 flex items-center justify-center">
+                      <Image 
+                        src={option.icon} 
+                        alt="slicer" 
+                        width={48} 
+                        height={48} 
+                        className="w-12 h-12"
+                      />
                     </div>
-                    <Image 
-                      src={option.icon} 
-                      alt="slicer" 
-                      width={32} 
-                      height={32} 
-                      className="w-8 h-8"
-                    />
+                    {index !== slicerOptions.length - 1 && (
+                      <div className="flex justify-center">
+                        <div className="w-3/4 h-[2px] bg-black" />
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Clickable text options aligned with images */}
+              <div className="flex flex-col justify-between py-4">
+                {slicerOptions.map((option) => (
+                  <div
+                    key={option.value}
+                    className={`cursor-pointer text-xl h-[72px] flex items-center ${
+                      selectedSlice === option.value ? 'text-blue-600' : 'text-gray-700'
+                    }`}
+                    onClick={() => {
+                      setSelectedSlice(option.value);
+                    }}
+                  >
+                    {option.text}
                   </div>
-                  <span className="text-blue-600 text-lg">{option.text}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
-            <div className="flex justify-end">
-              <button
-                onClick={handleSlice}
-                className="bg-[#FF497C] text-white px-12 py-3 rounded-xl text-lg font-medium hover:bg-opacity-90 transition-colors"
-              >
-                Slice
-              </button>
+            {/* Slice button with shadow effect */}
+            <div className="flex justify-end mt-6">
+              <div className="relative">
+                <div className={`absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl ${
+                  canSlice && selectedSlice !== null ? 'hover:bg-opacity-90' : 'opacity-50 cursor-not-allowed'
+                }`}></div>
+                <div className={`absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl ${
+                  canSlice && selectedSlice !== null ? 'hover:bg-opacity-90' : 'opacity-50 cursor-not-allowed'
+                }`}></div>
+                <button
+                  onClick={handleSlice}
+
+                  className={`relative bg-[#FF497C] text-white px-16 py-4 rounded-xl text-xl font-medium transition-colors
+                    ${canSlice && selectedSlice !== null ? 'hover:bg-opacity-90' : 'opacity-50 cursor-not-allowed'}`}
+                >
+                  Slice
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         {isSliced && showStepButton && (
-          <div className="mt-8 flex justify-center pb-8">
+
+          <div ref={stepButtonRef} className="mt-8 flex justify-center pb-8">
             <div className="relative w-[180px] h-[90px]">
-              <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
-              <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>
+            <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
+            <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
+
               <button 
                 onClick={onComplete}
                 className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
               >
-                <span className="text-[#FF497C] text-[32px] tracking-wide font-bold">STEP 3 &gt;&gt;</span>
+
+                <span className="text-[#FF497C] text-[32px] tracking-wide ">STEP 3 &gt;&gt;</span>
+
               </button>
             </div>
           </div>
