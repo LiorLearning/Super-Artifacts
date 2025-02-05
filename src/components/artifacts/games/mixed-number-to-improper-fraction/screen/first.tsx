@@ -60,7 +60,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
                 
                 {/* Yellow box with text */}
                 <div className="relative bg-[#ECFF40] p-6 text-center">
-                  <h1 className="text-black text-4xl font-bold">
+                  <h1 className="text-black text-4xl">
                     Mixed number to improper fraction
                   </h1>
                 </div>
@@ -69,15 +69,16 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
               <div className="w-full mb-8">
                 <Header 
                   mixedFraction={mixedFraction} 
-                  level={1}
                 />
               </div>
 
               {showStartButton && (
-                <div className="flex justify-center w-full">
+                <div className="flex justify-center w-full ">
                   <div 
-                    className="relative w-[300px] cursor-pointer"
+                    className="relative w-[300px] cursor-pointer -right-6"
                     onClick={() => updateStep(1)}
+
+
                   >
                     <div className="relative w-[250px]">
                       {/* Black shadow boxes */}

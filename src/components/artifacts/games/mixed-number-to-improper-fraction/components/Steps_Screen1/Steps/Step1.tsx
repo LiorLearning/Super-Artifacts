@@ -19,7 +19,6 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
   useEffect(() => {
     if (!messageShown.current) {
-      // Initial instruction when step loads
       sendAdminMessage(
         "agent",
         "Can you drag and drop the numbers in the matching colour blocks below"
@@ -104,90 +103,85 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       <div className="max-w-4xl mx-auto">
         <div className="grid grid-cols-2 -mx-4">
           <div className="bg-pink-100 p-4 flex flex-col items-center min-h-[320px]">
-            <div className="flex flex-col items-center gap-6">
-              {/* Whole number with shadow */}
+            <div className="flex items-center justify-center gap-12 mb-8 mt-12">
               <div className="relative">
-                {/* Shadow boxes */}
-                <div className="absolute -bottom-1 -right-1 w-full h-full bg-black rounded-2xl"></div>
-                <div className="absolute -bottom-1 -right-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
                 
-                {/* Main draggable box */}
                 <div
                   draggable
                   onDragStart={(e) => handleDragStart("whole", e)}
                   onDragEnd={handleDragEnd}
-                  className={`w-20 h-20 bg-white rounded-2xl flex items-center justify-center cursor-move relative
+                  className={`w-28 h-28 bg-white rounded-2xl flex items-center justify-center cursor-move relative
                     ${isDragging === "whole" ? "opacity-50 scale-95" : ""} 
                     transition-all duration-200`}
                 >
-                  <span className="text-green-500 text-5xl font-bold">{mixedFraction.whole}</span>
-                  <span className="absolute bottom-1 right-2 text-lg">+</span>
+                  <span className="text-green-500 text-7xl">{mixedFraction.whole}</span>
+                  <span className="absolute bottom-2 right-3 text-2xl">+</span>
                 </div>
               </div>
 
-              {/* Fraction with shadow */}
               <div className="relative">
-                {/* Shadow boxes */}
-                <div className="absolute -bottom-1 -right-1 w-full h-full bg-black rounded-2xl"></div>
-                <div className="absolute -bottom-1 -right-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
                 
-                {/* Main draggable box */}
                 <div
                   draggable
                   onDragStart={(e) => handleDragStart("fraction", e)}
                   onDragEnd={handleDragEnd}
-                  className={`flex flex-col items-center bg-white rounded-2xl p-4 cursor-move relative
+                  className={`flex flex-col items-center bg-white rounded-2xl p-6 cursor-move relative
                     ${isDragging === "fraction" ? "opacity-50 scale-95" : ""}
                     transition-all duration-200`}
                 >
-                  <span className="text-3xl text-purple-500 font-bold">{mixedFraction.numerator}</span>
-                  <div className="w-8 h-0.5 bg-black my-1"></div>
-                  <span className="text-3xl text-purple-500 font-bold">{mixedFraction.denominator}</span>
-                  <span className="absolute bottom-1 right-2 text-lg">+</span>
+                  <span className="text-4xl text-purple-500">{mixedFraction.numerator}</span>
+                  <div className="w-10 h-0.5 bg-black my-2"></div>
+                  <span className="text-4xl text-purple-500">{mixedFraction.denominator}</span>
+                  <span className="absolute bottom-2 right-3 text-2xl">+</span>
                 </div>
               </div>
             </div>
-            <span className="text-[#FF497C] mt-4 text-lg">pick from here</span>
+            
+            <span className="text-[#FF497C] text-3xl mt-10">pick from here</span>
           </div>
 
-          <div className="bg-white p-4 min-h-[320px]">
-            {/* Drop zones with shadow effect */}
-            <div className="relative">
-              {/* Black shadow box */}
-              <div className="absolute -right-1 -bottom-1 w-full h-full bg-black opacity-20 rounded-2xl"></div>
-              
-              {/* Main drop zones */}
-              <div className="flex flex-col gap-4 relative">
-                {/* Wholes drop zone */}
+          <div className="bg-white p-4 min-h-[320px] flex flex-col justify-center">
+            <div className="flex flex-col gap-8">
+              <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
                 <div
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop("whole", e)}
                   className={`border-2 ${isDragging === "whole" ? "border-green-600 bg-green-50" : "border-green-400"} 
-                    rounded-2xl p-4 min-h-[100px] transition-colors duration-200 bg-white`}
+                    rounded-2xl p-6 min-h-[120px] transition-colors duration-200 bg-white relative`}
                 >
-                  <h4 className="text-green-500 font-medium tracking-widest mb-2 text-lg">WHOLES</h4>
-                  {wholes !== null && <div className="text-4xl text-center text-green-500 font-bold">{wholes}</div>}
+                  <h4 className="text-green-500 font-medium tracking-widest mb-4 text-2xl">WHOLES</h4>
+                  {wholes !== null && <div className="text-5xl text-center text-green-500">{wholes}</div>}
                 </div>
+              </div>
 
-                {/* Fraction drop zone */}
+              <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
                 <div
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop("fraction", e)}
+
                   className={`border-2 ${isDragging === "fraction" ? "border-purple-600 bg-purple-50" : "border-purple-400"}
-                    rounded-2xl p-4 min-h-[100px] transition-colors duration-200 bg-white`}
+                    rounded-2xl p-6 min-h-[120px] transition-colors duration-200 bg-white relative`}
                 >
-                  <h4 className="text-purple-500 font-medium tracking-widest mb-2 text-lg">FRACTION</h4>
+                  <h4 className="text-purple-500 font-medium tracking-widest mb-4 text-2xl">FRACTION</h4>
                   {fraction && (
                     <div className="flex flex-col items-center">
-                      <span className="text-3xl text-purple-500 font-bold">{fraction.numerator}</span>
-                      <div className="w-8 h-0.5 bg-black my-1"></div>
-                      <span className="text-3xl text-purple-500 font-bold">{fraction.denominator}</span>
+                      <span className="text-4xl text-purple-500">{fraction.numerator}</span>
+                      <div className="w-10 h-0.5 bg-black my-2"></div>
+                      <span className="text-4xl text-purple-500">{fraction.denominator}</span>
                     </div>
                   )}
                 </div>
               </div>
             </div>
-            <span className="text-[#FF497C] mt-4 block text-center text-lg">drop here</span>
+            <span className="text-[#FF497C] mt-8 text-center text-3xl">drop here</span>
           </div>
         </div>
 
@@ -212,15 +206,15 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
             </div>
             <div className="relative w-[180px] h-[90px]">
 
-              <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
-              <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>
+            <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
+                <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
               
               {/* Main button */}
               <button 
                 onClick={onComplete}
                 className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
               >
-                <span className="text-[#FF497C] text-[32px] tracking-wide font-bold">STEP 2 &gt;&gt;</span>
+                <span className="text-[#FF497C] text-[32px] tracking-wide">STEP 2 &gt;&gt;</span>
               </button>
             </div>
           </div>

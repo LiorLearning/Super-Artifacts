@@ -11,7 +11,7 @@ interface Step4Props {
 
 const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
   const { setGameStateRef } = useGameState();
-  const [selectedPieces, setSelectedPieces] = useState(0)
+  const [selectedPieces, setSelectedPieces] = useState<Set<string>>(new Set())
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
   const messageShown = useRef(false)
   const [shouldShowSuccess, setShouldShowSuccess] = useState(false)
@@ -41,16 +41,16 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
     }
   }, [shouldShowSuccess])
 
-  const handlePieClick = () => {
-    if (selectedPieces < mixedFraction.numerator) {
-      setSelectedPieces((prev) => {
-        if (prev + 1 === mixedFraction.numerator) {
-          setShouldShowSuccess(true)
-        }
-        return prev + 1
-      })
-    } else {
-      setSelectedPieces(0)
+  const handlePieClick = (index: number) => {
+    const newSelectedPieces = new Set(selectedPieces)
+    if (newSelectedPieces.has(index.toString())) {
+      newSelectedPieces.delete(index.toString())
+    } else if (newSelectedPieces.size < mixedFraction.numerator) {
+      newSelectedPieces.add(index.toString())
+    }
+    setSelectedPieces(newSelectedPieces)
+    if (newSelectedPieces.size === mixedFraction.numerator) {
+      setShouldShowSuccess(true)
     }
   }
 
@@ -77,127 +77,63 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
     });
   };
 
-  const renderSliceLines = (numSlices: number) => {
+  const renderSliceLines = (denominator: number) => {
+    const lines = []
     const center = 50
     const radius = 48
-    const strokeWidth = 3
 
-    return (
-      <>
-        {/* Base circle with black outline */}
-        <circle 
-          cx={center} 
-          cy={center} 
-          r={radius} 
-          fill="#D3EA00" 
-          stroke="black" 
-          strokeWidth="1"
-        />
-        
-        {/* Draw cross lines with only white gaps */}
-        {/* Vertical line */}
-        <line 
-          x1={center} 
-          y1={center - radius} 
-          x2={center} 
-          y2={center + radius} 
-          stroke="white" 
-          strokeWidth={strokeWidth} 
-        />
+    // Generate lines based on number of slices
+    for (let i = 0; i < denominator; i++) {
+      const angle = (i * 360) / denominator
+      const radians = (angle * Math.PI) / 180
+      const x = center + radius * Math.cos(radians)
+      const y = center + radius * Math.sin(radians)
 
-        {/* Horizontal line */}
-        <line 
-          x1={center - radius} 
-          y1={center} 
-          x2={center + radius} 
-          y2={center} 
-          stroke="white" 
-          strokeWidth={strokeWidth} 
+      lines.push(
+        <line
+          key={i}
+          x1={center}
+          y1={center}
+          x2={x}
+          y2={y}
+          stroke="black"
+          strokeWidth="0.5"
         />
+      )
+    }
 
-        {/* Outer circle to maintain clean edge */}
-        <circle 
-          cx={center} 
-          cy={center} 
-          r={radius} 
-          fill="none" 
-          stroke="black" 
-          strokeWidth="1"
-        />
-      </>
-    )
+    return lines
   }
 
-  const renderSelectedSlices = (count: number, total: number) => {
+  const renderSelectableSlices = () => {
+    const slices = []
     const center = 50
     const radius = 48
     const strokeWidth = 3
 
-    // First draw the base circle with slices
-    return (
-      <>
-        {/* Base circle */}
-        <circle 
-          cx={center} 
-          cy={center} 
-          r={radius} 
-          fill="white" 
-          stroke="black" 
-          strokeWidth="1"
-        />
-        
-        {/* Draw cross lines */}
-        <line 
-          x1={center} 
-          y1={center - radius} 
-          x2={center} 
-          y2={center + radius} 
-          stroke="white" 
-          strokeWidth={strokeWidth} 
-        />
-        <line 
-          x1={center - radius} 
-          y1={center} 
-          x2={center + radius} 
-          y2={center} 
-          stroke="white" 
-          strokeWidth={strokeWidth} 
-        />
+    for (let i = 0; i < mixedFraction.denominator; i++) {
+      const angle = (360 / mixedFraction.denominator) * i
+      const nextAngle = (360 / mixedFraction.denominator) * (i + 1)
+      const startX = center + radius * Math.cos((angle - 90) * Math.PI / 180)
+      const startY = center + radius * Math.sin((angle - 90) * Math.PI / 180)
+      const endX = center + radius * Math.cos((nextAngle - 90) * Math.PI / 180)
+      const endY = center + radius * Math.sin((nextAngle - 90) * Math.PI / 180)
 
-        {/* Draw selected slices */}
-        {[...Array(count)].map((_, i) => {
-          const startAngle = (i * 360) / total
-          const endAngle = ((i + 1) * 360) / total
-          const startRad = (startAngle * Math.PI) / 180
-          const endRad = (endAngle * Math.PI) / 180
-
-          return (
-            <path
-              key={i}
-              d={`
-                M ${center} ${center}
-                L ${center + radius * Math.cos(startRad)} ${center + radius * Math.sin(startRad)}
-                A ${radius} ${radius} 0 0 1 ${center + radius * Math.cos(endRad)} ${center + radius * Math.sin(endRad)}
-                Z
-              `}
-              fill="#D3EA00"
-              stroke="black"
-              strokeWidth="1"
-            />
-          )
-        })}
-
-        {/* Outer circle for clean edge */}
-        <circle 
-          cx={center} 
-          cy={center} 
-          r={radius} 
-          fill="none" 
-          stroke="black" 
-          strokeWidth="1"
+      slices.push(
+        <path
+          key={i}
+          d={`M ${center} ${center} L ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY} Z`}
+          fill={selectedPieces.has(i.toString()) ? "#98D400" : "#D3EA00"}
+          stroke="white"
+          strokeWidth={strokeWidth}
+          style={{ cursor: 'pointer' }}
+          onClick={() => handlePieClick(i)}
+          className="transition-colors duration-200"
         />
-      </>
-    )
+      )
+    }
+
+    return slices
   }
 
   return (
@@ -207,60 +143,85 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
       level={1}
       stepTitle="ADD THE FRACTION"
     >
-      <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20">
-        {/* Left side - Whole number pies */}
-        <div>
-
-          <div className="bg-white w-full p-8">
-            <div className="flex justify-center gap-8">
-              {[...Array(mixedFraction.whole)].map((_, index) => (
-                <div key={index} className="w-28 h-28">
-                  <svg viewBox="0 0 100 100" className="w-full h-full">
-                    {renderSliceLines(mixedFraction.denominator)}
-                  </svg>
+      <div className="max-w-4xl mx-auto">
+        {/* Left side - Wholes */}
+        <div className="bg-[#FFD9D9] p-8 rounded-2xl">
+          <div className="flex justify-center items-center gap-12">
+            {/* Left box with circles */}
+            <div className="bg-white border-2 border-gray-200 rounded-2xl p-6 flex-1 max-w-md">
+              <div className="flex items-center justify-center gap-4">
+                {[...Array(mixedFraction.whole)].map((_, index) => (
+                  <div key={index} className="w-24 h-24">
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                      <circle 
+                        cx="50" 
+                        cy="50" 
+                        r="48" 
+                        fill="#98D400" 
+                        stroke="black" 
+                        strokeWidth="1"
+                      />
+                      {renderSliceLines(mixedFraction.denominator)}
+                    </svg>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-center mt-4">
+                <div className="text-2xl">
+                  {totalPieces}/{mixedFraction.denominator}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
-          <div className="text-center mt-2 relative">
-            <div className="h-0.5 w-full bg-black"></div>
-            <div className="pt-2 text-lg">
-              {totalPieces}/{mixedFraction.denominator}
+
+            {/* Plus sign */}
+            <div className="flex items-center text-4xl font-bold">
+              +
+            </div>
+
+            {/* Right box for selecting fraction */}
+            <div className="bg-white border-2 border-gray-200 rounded-2xl p-6 flex-1 max-w-[280px] text-center">
+              <div className="text-[#FF497C] text-2xl mb-4">
+                Select {mixedFraction.numerator}/{mixedFraction.denominator}ths here
+              </div>
+              <div className="w-28 h-28 mx-auto">
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                  {/* Base circle */}
+                  <circle 
+                    cx="50" 
+                    cy="50" 
+                    r="48" 
+                    fill="#D3EA00" 
+                    stroke="black" 
+                    strokeWidth="1"
+                  />
+                  {/* Partition lines */}
+                  {renderSliceLines(mixedFraction.denominator)}
+                  {/* Selectable slices */}
+                  {renderSelectableSlices()}
+                </svg>
+              </div>
+              <div className="flex justify-center mt-4">
+                <div className="text-2xl">
+                  {selectedPieces.size}/{mixedFraction.denominator}
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-
-        <div className="text-4xl font-bold">+</div>
-
-        {/* Right side - Fraction selection */}
-        <div className="bg-white rounded-2xl p-8">
-          <div className="text-sm text-[#FF2763] mb-4 text-center">
-            Select {mixedFraction.numerator}/{mixedFraction.denominator}ths here
-          </div>
-          <div className="w-28 h-28 cursor-pointer mx-auto" onClick={handlePieClick}>
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              {renderSliceLines(mixedFraction.denominator)}
-              {renderSelectedSlices(selectedPieces, mixedFraction.denominator)}
-            </svg>
-          </div>
-          <div className="text-center mt-4 relative">
-            <div className="h-0.5 w-16 bg-black absolute top-0 left-1/2 -translate-x-1/2"></div>
-            <div className="pt-2 text-lg">
-              {selectedPieces}/{mixedFraction.denominator}
-            </div>
-          </div>
-          
-          {/* Next step button */}
-          {selectedPieces === mixedFraction.numerator && (
+        {/* Done button */}
+        {selectedPieces.size === mixedFraction.numerator && (
+          <div className="relative mt-6 w-[140px] mx-auto">
+            <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+            <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
             <button
               onClick={handleDoneClick}
-              className="mt-4 w-full bg-pink-500 text-white py-2 rounded-xl font-medium tracking-wide text-base sm:text-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:opacity-90 transition-opacity"
+              className="relative w-full bg-[#FF497C] text-white px-8 py-3 rounded-xl text-xl"
             >
               Done
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </GameLayout>
   )

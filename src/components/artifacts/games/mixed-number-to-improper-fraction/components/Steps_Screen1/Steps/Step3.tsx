@@ -15,6 +15,10 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const messageShown = useRef(false)
   const stepButtonRef = useRef<HTMLDivElement>(null)
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
+  const [inputValue, setInputValue] = useState<string>('')
+  const [countMethod, setCountMethod] = useState<'click' | 'manual'>('click')
+  const [autoSelectedCount, setAutoSelectedCount] = useState<number>(0)
+  const [hasChecked, setHasChecked] = useState(false)
 
   useEffect(() => {
     if (!messageShown.current) {
@@ -32,9 +36,16 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
     }
   }, [showStepButton])
 
+  useEffect(() => {
+    setHasChecked(false)
+    setAutoSelectedCount(0)
+  }, [countMethod])
+
   const handlePieceClick = (pieIndex: number, sliceIndex: number) => {
+    if (countMethod === 'manual') return;
+    
     const sliceId = `${pieIndex}-${sliceIndex}`
-    if (selectedSlices.has(sliceId)) return
+    if (selectedSlices.has(sliceId)) return;
 
     const newSelectedSlices = new Set(selectedSlices)
     newSelectedSlices.add(sliceId)
@@ -56,12 +67,50 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
     }
   }
 
+  const handleManualSubmit = () => {
+    setHasChecked(true)
+    const value = parseInt(inputValue) || 0
+    
+    if (value <= totalPieces) {
+      setAutoSelectedCount(value)
+    } else {
+      setAutoSelectedCount(0)
+    }
+
+    if (value === totalPieces) {
+      setShowAwesome(true)
+      sendAdminMessage("agent", "Perfect! That's exactly right!", () => {
+        setTimeout(() => {
+          sendAdminMessage(
+            "agent",
+            "Ready for the next exciting step? Click on Step 4 to continue our fraction adventure!",
+            () => {
+              setShowStepButton(true)
+            }
+          )
+        }, 1000)
+      })
+    } else {
+      sendAdminMessage("agent", "That's not quite right. Try counting again or use the click method!")
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setInputValue(value)
+    setHasChecked(false)
+  }
+
   const renderSliceLines = (pieIndex: number) => {
     const center = 50
     const radius = 48
     const strokeWidth = 3
     const slices = Array(mixedFraction.denominator).fill(0)
-
+    
+    const piecesPerPie = mixedFraction.denominator
+    const fullPiesColored = Math.floor(autoSelectedCount / piecesPerPie)
+    const remainingPieces = autoSelectedCount % piecesPerPie
+    
     return (
       <>
         {/* Base circle */}
@@ -69,7 +118,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
           cx={center} 
           cy={center} 
           r={radius} 
-          fill="#90EE90" 
+          fill="#98D400" 
           stroke="black" 
           strokeWidth="1"
         />
@@ -77,7 +126,13 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
         {/* Clickable slices */}
         {slices.map((_, index) => {
           const sliceId = `${pieIndex}-${index}`
-          const isSelected = selectedSlices.has(sliceId)
+          const isManuallySelected = countMethod === 'manual' && 
+            hasChecked &&
+            parseInt(inputValue) <= totalPieces &&
+            ((pieIndex < fullPiesColored) || 
+             (pieIndex === fullPiesColored && index < remainingPieces))
+          const isClickSelected = countMethod === 'click' && selectedSlices.has(sliceId)
+          const isSelected = isManuallySelected || isClickSelected
           const angle = (360 / mixedFraction.denominator) * index
           const nextAngle = (360 / mixedFraction.denominator) * (index + 1)
           const startX = center + radius * Math.cos((angle - 90) * Math.PI / 180)
@@ -89,10 +144,10 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
             <path
               key={index}
               d={`M ${center} ${center} L ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY} Z`}
-              fill={isSelected ? "#D3EA00" : "#90EE90"}
+              fill={isSelected ? "#98D400" : "#D3EA00"}
               stroke="white"
               strokeWidth={strokeWidth}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: countMethod === 'click' ? 'pointer' : 'default' }}
               onClick={() => handlePieceClick(pieIndex, index)}
               className="transition-colors duration-200"
             />
@@ -135,11 +190,68 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       {/* Display section */}
       <div className="bg-white rounded-2xl p-8">
         <div className="flex flex-col gap-8">
+          <div className="flex justify-center gap-4">
+            <div className="relative">
+            <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+            <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
+              <button
+                className={`relative px-6 py-3 rounded-xl text-lg transition-colors ${
+                  countMethod === 'click' 
+                    ? 'bg-[#FF497C] text-white' 
+                    : 'bg-white text-[#FF497C] border-2 border-[#FF497C]'
+                }`}
+                onClick={() => setCountMethod('click')}
+              >
+                Click to Count
+              </button>
+            </div>
+
+            {/* Enter Manually button with shadow */}
+            <div className="relative">
+            <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+            <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
+              <button
+                className={`relative px-6 py-3 rounded-xl text-lg transition-colors ${
+                  countMethod === 'manual' 
+                    ? 'bg-[#FF497C] text-white' 
+                    : 'bg-white text-[#FF497C] border-2 border-[#FF497C]'
+                }`}
+                onClick={() => setCountMethod('manual')}
+              >
+                Enter Manually
+              </button>
+            </div>
+          </div>
+
           <div className="flex items-center justify-center gap-3 text-xl">
             <span>So there are</span>
-            <div className="w-16 h-12 border-2 border-gray-300 rounded-lg flex items-center justify-center text-xl">
-              {selectedSlices.size}
-            </div>
+            {countMethod === 'click' ? (
+              <div className="w-16 h-12 border-2 border-gray-300 rounded-lg flex items-center justify-center text-xl">
+                {selectedSlices.size}
+              </div>
+            ) : (
+              <div className="flex items-center gap-4">
+                <input
+                  type="number"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  className="w-16 h-12 border-2 border-gray-300 rounded-lg text-center text-xl"
+                  placeholder="?"
+                  min="0"
+                  max={totalPieces}
+                />
+                <div className="relative">
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-lg"></div>
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-lg"></div>
+                  <button
+                    onClick={handleManualSubmit}
+                    className="relative bg-[#FF497C] text-white px-4 py-2 rounded-lg text-lg"
+                  >
+                    Check
+                  </button>
+                </div>
+              </div>
+            )}
             <span>
               <sup>1</sup>⁄<sub>{mixedFraction.denominator}</sub> sized pieces in {mixedFraction.whole} wholes
             </span>
@@ -148,7 +260,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
           {/* Success feedback */}
           {showAwesome && (
             <div className="flex flex-col items-center gap-4">
-              <div className="w-96 bg-[#d9f7be] py-3 text-center font-bold rounded-lg text-xl">
+              <div className="w-96 bg-[#d9f7be] py-3 text-center rounded-lg text-xl">
                 AWESOME
               </div>
               <div className="w-96 bg-[#fffbe6] p-6 text-center rounded-lg text-xl">
@@ -163,13 +275,13 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       {showAwesome && showStepButton && (
         <div ref={stepButtonRef} className="mt-8 flex justify-center pb-8">
           <div className="relative w-[180px] h-[90px]">
-            <div className="absolute -bottom-2 left-2 w-full h-full bg-black"></div>
-            <div className="absolute -bottom-2 left-2 w-full h-full bg-black opacity-60"></div>
+          <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
+          <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
             <button 
               onClick={onComplete}
               className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
             >
-              <span className="text-[#FF497C] text-[32px] tracking-wide font-bold">STEP 4 &gt;&gt;</span>
+              <span className="text-[#FF497C] text-[32px] tracking-wide">STEP 4 &gt;&gt;</span>
             </button>
           </div>
         </div>

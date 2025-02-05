@@ -1,40 +1,39 @@
 import React from 'react';
-import { MixedFraction } from '../../game-state';
 
 interface HeaderProps {
-  mixedFraction: MixedFraction;
-  level: number;
+  mixedFraction: {
+    whole: number;
+    numerator: number;
+    denominator: number;
+  };
 }
 
-const Header: React.FC<HeaderProps> = ({ mixedFraction, level }) => {
+const Header: React.FC<HeaderProps> = ({ mixedFraction }) => {
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-4">
-      <div className="relative">
-        <div className="border-4 border-pink-500 bg-white flex">
-          <div className="w-32 p-6 border-r-4 border-pink-500">
-            <span className="text-pink-500 text-2xl font-bold">
-              Level {level}
-            </span>
-          </div>
-          
-          <div className="flex-1 p-6 flex items-center justify-center">
-            <div className="flex items-center space-x-4 text-3xl">
-              <span className="flex items-center">
-                {mixedFraction.whole}
-                <div className="inline-flex flex-col items-center ml-1">
-                  <span>{mixedFraction.numerator}</span>
-                  <div className="h-0.5 w-4 bg-black my-0.5"></div>
-                  <span>{mixedFraction.denominator}</span>
-                </div>
-              </span>
-              
-              <span>=</span>
-              
-              <div className="inline-flex flex-col items-center">
-                <span>?</span>
-                <div className="h-0.5 w-4 bg-black my-0.5"></div>
-                <span>?</span>
-              </div>
+    <div className='flex justify-center items-center m-[64px]'>
+      <div className="flex h-[250px] bg-white">
+        {/* Level Box */}
+        <div className="w-[200px] h-full border-[15.62px] border-[#FF497C] flex items-center justify-center">
+          <h2 className="text-[#FF497C] text-[38px]">Level 1</h2>
+        </div>
+
+        {/* Equation Box */}
+        <div className="flex items-center justify-center gap-4 px-12 border-[15.62px] border-l-0 border-[#FF497C]">
+          <div className="flex items-center gap-4 text-[48px]">
+            {/* Mixed Number */}
+
+            <span>{mixedFraction.whole}</span>
+            <div className="flex flex-col items-center justify-center text-center">
+              <span className="border-b-[3px] border-black px-2">{mixedFraction.numerator}</span>
+              <span>{mixedFraction.denominator}</span>
+            </div>
+
+            <span>=</span>
+
+            {/* Question Marks */}
+            <div className="flex flex-col items-center justify-center text-center">
+              <span className="border-b-[3px] border-black px-2">?</span>
+              <span>?</span>
             </div>
           </div>
         </div>
