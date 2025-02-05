@@ -4,6 +4,7 @@ import StepCreateBox from "../../components/stepcreatebox";
 import { useGameState } from "../../state-utils";
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 import Bar from "../../components/bar";
+import { goToScreen } from "../../utils/helper";
 
 export default function Screen1Step2() {
 
@@ -15,16 +16,14 @@ export default function Screen1Step2() {
   useEffect(() => {
     if (bar === fraction.numerator * whole) {
       setTimeout(() => {
-        setGameStateRef({ ...gameStateRef.current, screen: 'second' });
+        goToScreen('second', setGameStateRef);
       }, 4000)
     }
   }, [bar])
 
   return (
     <div className="flex flex-col min-h-screen">
-      <FractionHeader level={1} whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} onClick={() => {
-        setGameStateRef({ ...gameStateRef.current, state1: { ...gameStateRef.current.state1, step: gameStateRef.current.state1.step } });
-      }}/>
+      <FractionHeader level={1} whole={whole} numerator={fraction.numerator} denominator={fraction.denominator}/>
       <StepCreateBox step={2} numerator={fraction.numerator} denominator={fraction.denominator} heading={"MULTIPLY BY WHOLES"} />
 
       <div className="flex max-w-screen-md my-4 mx-auto w-full justify-center items-center min-w-52">

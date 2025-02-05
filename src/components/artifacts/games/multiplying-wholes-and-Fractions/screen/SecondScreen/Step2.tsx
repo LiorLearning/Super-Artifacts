@@ -4,6 +4,7 @@ import FractionHeader from "../../components/fractionheader";
 import StepCreateBox from "../../components/stepcreatebox";
 import { useGameState } from "../../state-utils";
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
+import { goToScreen } from "../../utils/helper";
 
 export default function Screen2Step2() {
 
@@ -39,7 +40,7 @@ export default function Screen2Step2() {
   useEffect(() => {
     if (example1State.firstInput && example1State.secondInput && example1State.thirdInput && example2State.firstInput && example2State.secondInput) {
       setTimeout(() => {
-        setGameStateRef({ ...gameStateRef.current, screen: 'third'});
+        goToScreen('third', setGameStateRef)
       }, 4000);
     }
   }, [example1State, example2State]);
@@ -72,9 +73,7 @@ export default function Screen2Step2() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <FractionHeader level={2} whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} onClick={() => {
-        setGameStateRef({ ...gameStateRef.current, state1: { ...gameStateRef.current.state2, step: gameStateRef.current.state2.step + 1 } });
-      }} />
+      <FractionHeader level={2} whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} />
       <StepCreateBox step={2} numerator={fraction.numerator} denominator={fraction.denominator} heading={"MULTIPLY BY WHOLES"} />
 
       <div className="flex max-w-screen-md my-4 mx-auto w-full justify-center items-center min-w-52">
