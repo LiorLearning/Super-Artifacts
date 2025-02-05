@@ -11,6 +11,8 @@ import CommonDenominatorGame from './games/common-denominators/game';
 import CompareFractionGame from './games/compare-fractions-with-different-numerator-and-denominator/game';
 import DecimalGame from './games/fraction-to-decimal/game';
 import MixedNumberToImproperFractionGame from './games/mixed-number-to-improper-fraction/game';
+import CommonDecimalsAndFractionsGame from './games/Common-Decimals-And-Fractions/game';
+
 
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/add-fractions-with-common-denominator/state-utils'
@@ -24,12 +26,14 @@ import { GameStateProvider as MixedFractionGameStateProvider, useGameState as Mi
 import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fractions-with-different-numerator-and-denominator/state-utils'
 import { GameStateProvider as DecimalGameStateProvider, useGameState as DecimalGameState } from './games/fraction-to-decimal/state-utils'
 import { GameStateProvider as MixedNumberToImproperFractionGameStateProvider, useGameState as MixedNumberToImproperFractionGameState } from './games/mixed-number-to-improper-fraction/state-utils'
+import { GameStateProvider as CommonDecimalsAndFractionsGameStateProvider, useGameState as CommonDecimalsAndFractionsGameState } from './games/Common-Decimals-And-Fractions/state-utils'
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string> }>;
   useState: any;
   provider: React.ComponentType<{ children: React.ReactNode }>;
 }
+
 
 export const gameInfo: Record<string, GameInfo> = {
   'addition-within-20-using-ten-frames': {
@@ -91,5 +95,10 @@ export const gameInfo: Record<string, GameInfo> = {
     game: MixedNumberToImproperFractionGame,
     useState: MixedNumberToImproperFractionGameState,
     provider: MixedNumberToImproperFractionGameStateProvider
+  },
+  'common-decimals-and-fractions': {
+    game: CommonDecimalsAndFractionsGame,
+    useState: CommonDecimalsAndFractionsGameState,
+    provider: CommonDecimalsAndFractionsGameStateProvider
   }
 };
