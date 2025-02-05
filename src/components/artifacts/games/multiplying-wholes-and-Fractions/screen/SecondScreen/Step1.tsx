@@ -4,9 +4,9 @@ import FractionHeader from "../../components/fractionheader";
 import StepCreateBox from "../../components/stepcreatebox";
 import ChocolateBar from "../../components/chocolatebar";
 
-export default function Screen1Step1() {
+export default function Screen2Step1() {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { fraction, whole } = gameStateRef.current.state1;
+  const { fraction, whole } = gameStateRef.current.state2;
 
   const [bar, setBar] = useState({ numerator: 0, denominator: 1 });
   const [active, setActive] = useState(true);
@@ -14,17 +14,16 @@ export default function Screen1Step1() {
   useEffect(() => {
     if (bar.numerator === fraction.numerator && bar.denominator === fraction.denominator) {
       setActive(false);
-      setGameStateRef(prev => ({...prev, state1: {...prev.state1, step: prev.state1.step + 1}
+      setGameStateRef(prev => ({...prev, state2: {...prev.state2, step: prev.state2.step + 1}
       }));
     }
   }, [bar.numerator]);
 
   return (
     <div className="flex flex-col min-h-screen">
-      <FractionHeader level={1}  whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} onClick={() => {
-          setGameStateRef({ ...gameStateRef.current, state1: { ...gameStateRef.current.state1, step: gameStateRef.current.state1.step + 1 } });
-        }
-      }/>
+      <FractionHeader level={2}  whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} onClick={() => {
+        setGameStateRef({ ...gameStateRef.current, state2: { ...gameStateRef.current.state2, step: gameStateRef.current.state2.step + 1 } });
+      }}/>
       <StepCreateBox step={1} numerator={fraction.numerator} denominator={fraction.denominator} />
       <div className="flex flex-col items-center gap-4 my-8">
         <ChocolateBar 

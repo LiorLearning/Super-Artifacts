@@ -6,7 +6,7 @@ interface QuestionBoxProps {
 
 export default function QuestionBox({ whole, numerator, denominator }: QuestionBoxProps) {
   return (
-    <div className="flex justify-center items-center my-20 h-[125px] gap-8">
+    <div className="flex justify-center items-center my-12 h-[125px] gap-8">
       <div className="px-6 py-7 border-[15px] border-[#b9550b] text-4xl text-[#b9550b]">
         QUESTION
       </div>
