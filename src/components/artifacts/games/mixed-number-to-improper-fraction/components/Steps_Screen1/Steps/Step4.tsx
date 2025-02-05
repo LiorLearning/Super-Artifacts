@@ -144,7 +144,6 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
       stepTitle="ADD THE FRACTION"
     >
       <div className="max-w-4xl mx-auto">
-        {/* Left side - Wholes */}
         <div className="bg-[#FFD9D9] p-8 rounded-2xl">
           <div className="flex justify-center items-center gap-12">
             {/* Left box with circles */}
@@ -167,8 +166,10 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
                 ))}
               </div>
               <div className="flex justify-center mt-4">
-                <div className="text-2xl">
-                  {totalPieces}/{mixedFraction.denominator}
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl">{totalPieces}</span>
+                  <div className="h-[2px] w-5 bg-black"></div>
+                  <span className="text-2xl">{mixedFraction.denominator}</span>
                 </div>
               </div>
             </div>
@@ -185,7 +186,6 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
               </div>
               <div className="w-28 h-28 mx-auto">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
-                  {/* Base circle */}
                   <circle 
                     cx="50" 
                     cy="50" 
@@ -194,15 +194,15 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
                     stroke="black" 
                     strokeWidth="1"
                   />
-                  {/* Partition lines */}
                   {renderSliceLines(mixedFraction.denominator)}
-                  {/* Selectable slices */}
                   {renderSelectableSlices()}
                 </svg>
               </div>
               <div className="flex justify-center mt-4">
-                <div className="text-2xl">
-                  {selectedPieces.size}/{mixedFraction.denominator}
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl">{selectedPieces.size}</span>
+                  <div className="h-[2px] w-5 bg-black"></div>
+                  <span className="text-2xl">{mixedFraction.denominator}</span>
                 </div>
               </div>
             </div>

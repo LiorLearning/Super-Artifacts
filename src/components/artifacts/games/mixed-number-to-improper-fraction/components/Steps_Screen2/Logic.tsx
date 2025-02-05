@@ -41,7 +41,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         () => {
           setShowSecondBox(true);
           
-          setTimeout(() => {
+            setTimeout(() => {
             sendAdminMessage(
               "agent",
               "First up! Multiply denominator with the whole. The hint is right there"

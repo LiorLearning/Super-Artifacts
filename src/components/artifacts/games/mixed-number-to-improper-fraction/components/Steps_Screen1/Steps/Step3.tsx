@@ -252,9 +252,12 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
                 </div>
               </div>
             )}
-            <span>
-              <sup>1</sup>⁄<sub>{mixedFraction.denominator}</sub> sized pieces in {mixedFraction.whole} wholes
-            </span>
+            <div className="flex flex-col items-center">
+              <span className="text-xl">1</span>
+              <div className="h-[2px] w-5 bg-black"></div>
+              <span className="text-xl">{mixedFraction.denominator}</span>
+            </div>
+            <span>sized pieces in {mixedFraction.whole} wholes</span>
           </div>
 
           {/* Success feedback */}
@@ -263,8 +266,13 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
               <div className="w-96 bg-[#d9f7be] py-3 text-center rounded-lg text-xl">
                 AWESOME
               </div>
-              <div className="w-96 bg-[#fffbe6] p-6 text-center rounded-lg text-xl">
-                {mixedFraction.whole} wholes = {totalPieces}/{mixedFraction.denominator}
+              <div className="w-96 bg-[#fffbe6] p-6 text-center rounded-lg text-xl flex items-center justify-center gap-2">
+                {mixedFraction.whole} wholes = 
+                <div className="flex flex-col items-center">
+                  <span>{totalPieces}</span>
+                  <div className="h-[2px] w-5 bg-black"></div>
+                  <span>{mixedFraction.denominator}</span>
+                </div>
               </div>
             </div>
           )}

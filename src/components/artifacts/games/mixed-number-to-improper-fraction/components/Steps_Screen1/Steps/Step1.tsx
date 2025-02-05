@@ -101,7 +101,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       stepTitle="Sum of WHOLES & FRACTIONS"
     >
       <div className="max-w-4xl mx-auto">
-        <div className="grid grid-cols-2 -mx-4">
+        <div className="grid grid-cols-2 -mx-4 relative">
           <div className="bg-pink-100 p-4 flex flex-col items-center min-h-[320px]">
             <div className="flex items-center justify-center gap-12 mb-8 mt-12">
               <div className="relative">
@@ -145,7 +145,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
           </div>
 
           <div className="bg-white p-4 min-h-[320px] flex flex-col justify-center">
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-2">
               <div className="relative">
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
@@ -155,9 +155,13 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   className={`border-2 ${isDragging === "whole" ? "border-green-600 bg-green-50" : "border-green-400"} 
                     rounded-2xl p-6 min-h-[120px] transition-colors duration-200 bg-white relative`}
                 >
-                  <h4 className="text-green-500 font-medium tracking-widest mb-4 text-2xl">WHOLES</h4>
+                  <h4 className="text-green-500 font-medium tracking-widest mb-2 text-2xl">WHOLES</h4>
                   {wholes !== null && <div className="text-5xl text-center text-green-500">{wholes}</div>}
                 </div>
+              </div>
+
+              <div className="flex justify-center">
+                <div className="text-black text-5xl">+</div>
               </div>
 
               <div className="relative">
@@ -166,7 +170,6 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                 <div
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop("fraction", e)}
-
                   className={`border-2 ${isDragging === "fraction" ? "border-purple-600 bg-purple-50" : "border-purple-400"}
                     rounded-2xl p-6 min-h-[120px] transition-colors duration-200 bg-white relative`}
                 >
