@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useRef } from 'react';
 import FirstScreen from './screen/FirstScreen/first';
-import SecondScreen from './screen/second';
+import SecondScreen from './screen/SecondScreen/second';
+import ThirdScreen from './screen/ThirdScreen/third';
 import { useGameState } from './state-utils';
 import { DevHelper } from './utils/helper';
 
@@ -15,6 +16,7 @@ export default function Game({sendAdminMessage}: GameProps) {
   const { screen } = gameStateRef.current;
   const { step: step1 } = gameStateRef.current.state1;
   const { step: step2 } = gameStateRef.current.state2;
+  const { step: step3 } = gameStateRef.current.state3;
   
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -22,7 +24,7 @@ export default function Game({sendAdminMessage}: GameProps) {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [step1, step2]);
+  }, [step1, step2, step3]);
 
   return (
     <div className="mx-auto game font-jersey">
@@ -31,7 +33,7 @@ export default function Game({sendAdminMessage}: GameProps) {
       {/* Game screens */}
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
-
+      {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
       
       {/* Select font */}
       <style jsx global>{`

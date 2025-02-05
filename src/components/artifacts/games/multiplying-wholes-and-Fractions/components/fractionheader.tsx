@@ -5,10 +5,11 @@ interface FractionHeaderProps {
   level: number,
   whole: number,
   numerator: number,
-  denominator: number
+  denominator: number,
+  onClick: () => void
 }
 
-export default function FractionHeader({ level, whole, numerator, denominator } : FractionHeaderProps) {
+export default function FractionHeader({ level, whole, numerator, denominator, onClick } : FractionHeaderProps) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
 
@@ -48,9 +49,7 @@ export default function FractionHeader({ level, whole, numerator, denominator } 
           </div>
         </div>
       </div>
-      <div className='text-4xl bg-white rounded-full p-3 leading-none shadow-[-3px_3px_0px_0px_rgba(0,0,0)] cursor-pointer' onClick={() => {
-        setGameStateRef({ ...gameStateRef.current, state1: { ...gameStateRef.current.state1, step: gameStateRef.current.state1.step + 1 } });
-      }}>
+      <div className='text-4xl bg-white rounded-full p-3 leading-none shadow-[-3px_3px_0px_0px_rgba(0,0,0)] cursor-pointer' onClick={onClick}>
         {`>>`}
       </div>
     </div>

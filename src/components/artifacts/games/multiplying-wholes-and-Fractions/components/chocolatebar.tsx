@@ -34,7 +34,7 @@ const ChocolateBar = (
   }
 
   return (
-    <div className="flex max-w-screen-md my-4 mx-auto w-full relative -space-x-[3px] min-w-52">
+    <div className="flex max-w-screen-md my-4 mx-auto w-[60%] relative -space-x-[3px] min-w-52">
       <Fraction numerator={numerator} denominator={denominator} className='absolute right-[calc(100%+25px)] text-4xl text-black leading-none px-4 -top-2 flex items-center border-4 border-[#b9550b] mr-4' />
       <div className="flex w-full -space-x-[3px] min-w-52">
         {[...Array(denominator)].map((_, index) => (
@@ -53,7 +53,7 @@ const ChocolateBar = (
           </div>
         ))}
       </div>
-      <div className="absolute -top-3 left-full flex flex-col gap-4 pl-8 items-end">
+      <div className="absolute -top-3 left-full flex flex-col gap-4 px-8 items-end">
         <Button
           id="split-button"
           className={`${active ? 'bg-[#fef149] hover:bg-[#fef149]/80' : 'bg-red-100 hover:bg-red-200/80'} text-black text-2xl px-4 py-2 flex items-center rounded-sm gap-2 shadow-[-3px_3px_0px_0px_rgba(0,0,0)]`}
