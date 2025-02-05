@@ -15,6 +15,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [isDragging, setIsDragging] = useState<"whole" | "fraction" | null>(null)
   const [showStepButton, setShowStepButton] = useState(false)
   const messageShown = useRef(false)
+
   const stepButtonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,11 +28,13 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
     }
   }, [])
 
+
   useEffect(() => {
     if (showStepButton && stepButtonRef.current) {
       stepButtonRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [showStepButton]);
+
 
   const handleDragStart = (type: "whole" | "fraction", e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("type", type)
@@ -73,6 +76,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       sendAdminMessage(
         "agent",
         `Correct! ${mixedFraction.whole} ${mixedFraction.numerator}/${mixedFraction.denominator}th is a sum of ${mixedFraction.whole} wholes and ${mixedFraction.numerator}/${mixedFraction.denominator}th. Now let's change ${mixedFraction.whole} wholes to fraction, so that we can add these two easily`,
+
         () => {
           setShowStepButton(true)
           setTimeout(() => {
@@ -103,6 +107,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       <div className="max-w-4xl mx-auto">
         <div className="grid grid-cols-2 -mx-4 relative">
           <div className="bg-pink-100 p-4 flex flex-col items-center min-h-[320px]">
+
             <div className="flex items-center justify-center gap-12 mb-8 mt-12">
               <div className="relative">
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
@@ -125,10 +130,12 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
                 
+
                 <div
                   draggable
                   onDragStart={(e) => handleDragStart("fraction", e)}
                   onDragEnd={handleDragEnd}
+
                   className={`flex flex-col items-center bg-white rounded-2xl p-6 cursor-move relative
                     ${isDragging === "fraction" ? "opacity-50 scale-95" : ""}
                     transition-all duration-200`}
@@ -137,6 +144,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   <div className="w-10 h-0.5 bg-black my-2"></div>
                   <span className="text-4xl text-purple-500">{mixedFraction.denominator}</span>
                   <span className="absolute bottom-2 right-3 text-2xl">+</span>
+
                 </div>
               </div>
             </div>
@@ -144,15 +152,18 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
             <span className="text-[#FF497C] text-3xl mt-10">pick from here</span>
           </div>
 
+
           <div className="bg-white p-4 min-h-[320px] flex flex-col justify-center">
             <div className="flex flex-col gap-2">
               <div className="relative">
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
+
                 <div
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop("whole", e)}
                   className={`border-2 ${isDragging === "whole" ? "border-green-600 bg-green-50" : "border-green-400"} 
+
                     rounded-2xl p-6 min-h-[120px] transition-colors duration-200 bg-white relative`}
                 >
                   <h4 className="text-green-500 font-medium tracking-widest mb-2 text-2xl">WHOLES</h4>
@@ -167,6 +178,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
               <div className="relative">
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
+
                 <div
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop("fraction", e)}
@@ -179,6 +191,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                       <span className="text-4xl text-purple-500">{fraction.numerator}</span>
                       <div className="w-10 h-0.5 bg-black my-2"></div>
                       <span className="text-4xl text-purple-500">{fraction.denominator}</span>
+
                     </div>
                   )}
                 </div>
@@ -190,7 +203,9 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
         {/* Complete state */}
         {isComplete && showStepButton && (
+
           <div ref={stepButtonRef} className="mt-8 flex flex-col items-center gap-6 pb-8">
+
             <div className="bg-white px-8 py-4 rounded-xl">
               <div className="text-3xl text-[#FF497C] text-center tracking-wide flex items-center justify-center gap-4">
                 {mixedFraction.whole}

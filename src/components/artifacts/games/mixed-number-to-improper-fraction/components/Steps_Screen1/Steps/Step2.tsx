@@ -11,6 +11,7 @@ interface Step2Props {
 
 
 const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
+
   const [selectedSlice, setSelectedSlice] = useState<number | null>(null)
   const [isSliced, setIsSliced] = useState(false)
   const [canSlice, setCanSlice] = useState(false)
@@ -21,10 +22,12 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
   useEffect(() => {
     if (!messageShown.current) {
+
       sendAdminMessage(
         "agent",
         `This is what ${mixedFraction.whole} wholes look like. Can you slice them up into 1/${mixedFraction.denominator}th sized pieces?`,
         () => {
+
           sendAdminMessage(
             "agent",
             "Choose the right slicer to slice them perfectly!",
@@ -32,17 +35,20 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
               setCanSlice(true)
             }
           )
+
         }
       )
       messageShown.current = true
     }
   }, [])
 
+
   useEffect(() => {
     if (showStepButton && stepButtonRef.current) {
       stepButtonRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [showStepButton]);
+
 
   const slicerOptions = [
     { 
@@ -228,15 +234,19 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
         </div>
 
         {isSliced && showStepButton && (
+
           <div ref={stepButtonRef} className="mt-8 flex justify-center pb-8">
             <div className="relative w-[180px] h-[90px]">
             <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
             <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
+
               <button 
                 onClick={onComplete}
                 className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
               >
+
                 <span className="text-[#FF497C] text-[32px] tracking-wide ">STEP 3 &gt;&gt;</span>
+
               </button>
             </div>
           </div>

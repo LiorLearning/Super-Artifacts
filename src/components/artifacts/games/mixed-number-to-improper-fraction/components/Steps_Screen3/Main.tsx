@@ -206,6 +206,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
         <h2 className="text-xl px-4 py-3 bg-amber-100">Hint</h2>
         <div className="p-6 flex justify-center items-center min-h-[200px] bg-[#fff3e0]">
           {showHint ? renderHint() : (
+
             <div className="relative">
 
               <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-md"></div>
@@ -217,6 +218,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
                 See hint
               </button>
             </div>
+
           )}
         </div>
       </div>

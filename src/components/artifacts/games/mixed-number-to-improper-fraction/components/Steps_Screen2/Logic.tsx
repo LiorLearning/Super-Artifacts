@@ -28,6 +28,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const [showNextStep3, setShowNextStep3] = useState(false);
   const [showSecondBox, setShowSecondBox] = useState(false);
   const initialMessageShown = useRef(false);
+
   const [hasShownError, setHasShownError] = useState(false);
   const [hasShownFirstError, setHasShownFirstError] = useState(false);
   const [topSuccess, setTopSuccess] = useState(false);
@@ -35,16 +36,19 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
 
   useEffect(() => {
     if (!initialMessageShown.current) {
+
       sendAdminMessage(
         "agent",
         "Okay, the steps are locked. To unlock, keep filling the boxes",
         () => {
+
           setShowSecondBox(true);
           
             setTimeout(() => {
             sendAdminMessage(
               "agent",
               "First up! Multiply denominator with the whole. The hint is right there"
+
             );
           }, 1000);
         }
@@ -56,6 +60,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
+
     
     const expectedValue = denominator * whole;
     
@@ -139,6 +144,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
     // Final success check
     if (Number(value) === expectedTop && Number(bottomAnswer) === expectedBottom && bottomSuccess) {
       handleSuccess();
+
     }
   };
 
@@ -148,6 +154,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
     
     const expectedTop = (denominator * whole) + numerator;
     const expectedBottom = denominator;
+
 
     // Error check
     if (value.length >= expectedBottom.toString().length && 
@@ -175,10 +182,12 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         }
       );
       setBottomSuccess(true);
+
     }
   };
 
   useEffect(() => {
+
     setHasShownError(false);
   }, [topAnswer, bottomAnswer]);
 
@@ -190,6 +199,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
     setTopSuccess(false);
     setBottomSuccess(false);
     setHasShownError(false);
+
   }, [topAnswer, bottomAnswer]);
 
   const ExpressionWithAddition: React.FC<ExpressionWithAdditionProps> = ({ leftNumber, fraction }) => (
@@ -262,6 +272,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
               <Image src={LockIcon} alt="Lock" width={35} height={35} />
             </div>
 
+
             <div className="text-white text-[20px] mx-4 flex-1">
               Multiply denominator and <br /> wholes
             </div>
@@ -317,6 +328,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                       </div>
                     )}
                   </div>
+
                 </div>
               </div>
             </div>
