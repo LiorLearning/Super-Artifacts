@@ -84,7 +84,7 @@ const Step2: React.FC<Step2Props> = ({
             
             <div className="bg-[#8E3D00] text-white rounded-lg flex items-center relative w-full h-[61px]">
               <div className="pl-10">
-                <span className="text-[35px] font-bold tracking-wide">LEVEL 4</span>
+                <span className="text-[35px] tracking-wide">LEVEL 4</span>
               </div>
               
               <div className="absolute -right-1 h-full flex items-center">
@@ -94,7 +94,7 @@ const Step2: React.FC<Step2Props> = ({
                 </div>
                 
                 <div className="bg-white text-[#8E3D00] px-8 h-full flex items-center justify-center rounded-lg border-[3px] border-[#8E3D00] relative min-w-[220px]">
-                  <span className="text-[35px] font-bold tracking-wide">PRACTICE</span>
+                  <span className="text-[35px] tracking-wide">PRACTICE</span>
                 </div>
               </div>
             </div>
@@ -102,15 +102,15 @@ const Step2: React.FC<Step2Props> = ({
         </div>
 
         {/* Question with Fraction */}
-        <div className="text-center mt-16 w-[381px] mx-auto text-[32px] font-medium">
-          <span>What is </span>
-          <span className="inline-flex flex-col items-center justify-center mx-2">
-            <span>{numerator}</span>
+        <div className="text-center mt-16 w-[381px] mx-auto text-[32px] font-medium flex items-center justify-center gap-4">
+          <span>What is</span>
+          <div className="inline-flex flex-col items-center justify-center">
+            <span className="text-[30px] leading-tight">{numerator}</span>
+            <div className="w-8 h-[3px] bg-black"></div>
+            <span className="text-[30px] leading-tight">{denominator}</span>
+          </div>
 
-            <div className="w-6 h-0.5 bg-black my-1"></div>
-            <span>{denominator}</span>
-          </span>
-          <span> in decimals ?</span>
+          <span>in decimals ?</span>
         </div>
       </div>
 

@@ -41,6 +41,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
     }
   }, [shouldShowSuccess])
 
+
   const handlePieClick = (index: number) => {
     const newSelectedPieces = new Set(selectedPieces)
     if (newSelectedPieces.has(index.toString())) {
@@ -51,6 +52,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
     setSelectedPieces(newSelectedPieces)
     if (newSelectedPieces.size === mixedFraction.numerator) {
       setShouldShowSuccess(true)
+
     }
   }
 

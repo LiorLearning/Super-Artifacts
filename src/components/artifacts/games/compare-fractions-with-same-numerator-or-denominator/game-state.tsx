@@ -31,7 +31,7 @@ export interface GameState {
 export const initialGameState: GameState = {
   screen: 1,
   state1: {
-    fraction1: { num: 1, denom: 2 },
-    fraction2: { num: 1, denom: 3 },
+    fraction1: { num: 2, denom: 6 },
+    fraction2: { num: 2, denom: 4 },
   }
 };

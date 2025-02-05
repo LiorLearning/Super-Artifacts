@@ -9,11 +9,13 @@ interface Step3Props {
 }
 
 const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
+
   const [selectedSlices, setSelectedSlices] = useState<Set<string>>(new Set())
   const [showAwesome, setShowAwesome] = useState(false)
   const [showStepButton, setShowStepButton] = useState(false)
   const messageShown = useRef(false)
   const stepButtonRef = useRef<HTMLDivElement>(null)
+
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
   const [inputValue, setInputValue] = useState<string>('')
   const [countMethod, setCountMethod] = useState<'click' | 'manual'>('click')
@@ -77,6 +79,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       setAutoSelectedCount(0)
     }
 
+
     if (value === totalPieces) {
       setShowAwesome(true)
       sendAdminMessage("agent", "Perfect! That's exactly right!", () => {
@@ -102,6 +105,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   }
 
   const renderSliceLines = (pieIndex: number) => {
+
     const center = 50
     const radius = 48
     const strokeWidth = 3
@@ -166,6 +170,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       </>
     )
   }
+
 
   return (
     <GameLayout
@@ -281,15 +286,19 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
       {/* Next step button */}
       {showAwesome && showStepButton && (
+
         <div ref={stepButtonRef} className="mt-8 flex justify-center pb-8">
           <div className="relative w-[180px] h-[90px]">
           <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
           <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
+
             <button 
               onClick={onComplete}
               className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
             >
+
               <span className="text-[#FF497C] text-[32px] tracking-wide">STEP 4 &gt;&gt;</span>
+
             </button>
           </div>
         </div>

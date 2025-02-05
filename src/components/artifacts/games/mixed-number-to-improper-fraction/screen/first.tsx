@@ -73,10 +73,12 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
               </div>
 
               {showStartButton && (
+
                 <div className="flex justify-center w-full ">
                   <div 
                     className="relative w-[300px] cursor-pointer -right-6"
                     onClick={() => updateStep(1)}
+
 
 
                   >
