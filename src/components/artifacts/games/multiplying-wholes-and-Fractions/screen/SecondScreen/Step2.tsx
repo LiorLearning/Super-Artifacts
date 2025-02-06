@@ -4,8 +4,11 @@ import FractionHeader from "../../components/fractionheader";
 import StepCreateBox from "../../components/stepcreatebox";
 import { useGameState } from "../../state-utils";
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
+import { goToScreen } from "../../utils/helper";
+import NewInput from '@/components/ui/newinput';
+import { BaseProps } from "../../utils/types";
 
-export default function Screen2Step2() {
+export default function Screen2Step2({sendAdminMessage}: BaseProps) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction, whole } = gameStateRef.current.state2;
@@ -26,6 +29,24 @@ export default function Screen2Step2() {
     secondInput: false, // fraction.denominator
   });
 
+  const [inputs, setInputs] = useState({
+    example1First: '',
+    example1Second: '',
+    example1Third: '',
+    example2First: '',
+    example2Second: ''
+  });
+
+  const onIncorrect = () => {
+    sendAdminMessage('agent', "Hmmm, let's give that another try!");
+  }
+
+  const onCorrect = () => {
+    sendAdminMessage('agent', "Great job! That's correct!");
+  }
+
+  const inputStyling = 'w-10 text-center outline-none';
+
   useEffect(() => {
     if (totalSelected === fraction.numerator * whole && examplesRef.current) {
       setTimeout(() => {
@@ -39,7 +60,7 @@ export default function Screen2Step2() {
   useEffect(() => {
     if (example1State.firstInput && example1State.secondInput && example1State.thirdInput && example2State.firstInput && example2State.secondInput) {
       setTimeout(() => {
-        setGameStateRef({ ...gameStateRef.current, screen: 'third'});
+        goToScreen('third', setGameStateRef)
       }, 4000);
     }
   }, [example1State, example2State]);
@@ -72,9 +93,7 @@ export default function Screen2Step2() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <FractionHeader level={2} whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} onClick={() => {
-        setGameStateRef({ ...gameStateRef.current, state1: { ...gameStateRef.current.state2, step: gameStateRef.current.state2.step + 1 } });
-      }} />
+      <FractionHeader level={2} whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} />
       <StepCreateBox step={2} numerator={fraction.numerator} denominator={fraction.denominator} heading={"MULTIPLY BY WHOLES"} />
 
       <div className="flex max-w-screen-md my-4 mx-auto w-full justify-center items-center min-w-52">
@@ -136,7 +155,7 @@ export default function Screen2Step2() {
 
       
       {totalSelected === fraction.numerator * whole &&
-        <div className="flex flex-col items-center justify-center my-12">
+        <div className="flex flex-col items-center justify-center">
           <div className='flex justify-between items-center gap-4 bg-[#b9550b] shadow-[-3px_3px_0px_0px_rgba(0,0,0)] mx-auto p-2 mt-12 text-3xl text-white px-16 py-7' ref={examplesRef}>
             SOME EXAMPLES
           </div>
@@ -144,61 +163,63 @@ export default function Screen2Step2() {
           <div className="my-12 w-full bg-[#fff0e5] p-10 flex items-center justify-center gap-4 text-4xl leading-none text-black">
             <div>3</div>
             <div>x</div>
-            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b]  px-4 leading-none">
+
+            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b] px-4 leading-none">
               <div className="p-3 border-b-2 border-black">{fraction.numerator}</div>
               <div className="p-3">{fraction.denominator}</div>
             </div>
             <div>=</div>
-            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b]  px-4 leading-none">
+            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b] px-4 leading-none">
               <div className="p-2 border-b-2 border-black">
-                <input
-                  type="text"
-                  className={`w-10 text-center outline-none ${example1State.firstInput ? 'bg-green-100' : ''}`}
-                  placeholder="?"
-                  onChange={(e) => {
-                    if(e.target.value === '3') {
-                      setExample1State(prev => ({ ...prev, firstInput: true }));
-                      e.target.parentElement?.parentElement?.nextElementSibling?.nextElementSibling?.querySelector('input')?.focus();
-                    } else {
-                      setExample1State(prev => ({ ...prev, firstInput: false }));
-                    }
+                <NewInput
+                  value={inputs.example1First}
+                  onValueChange={(value) => setInputs(prev => ({ ...prev, example1First: value }))}
+                  correctValue="3"
+                  useColor={true}
+                  onCorrect={() => {
+                    onCorrect();
+                    setExample1State(prev => ({ ...prev, firstInput: true }));
+                    (document.querySelector('[id="example1-second"]') as HTMLInputElement)?.focus();
                   }}
+                  onIncorrect={onIncorrect}
+                  placeholder="?"
+                  className={inputStyling}
                 /> x <span className="p-2">{fraction.numerator}</span>
               </div>
               <div className="p-3">{fraction.denominator}</div>
             </div>
             <div>=</div>
-            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b]  px-4 leading-none">
+            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b] px-4 leading-none">
               <div className="p-2 border-b-2 border-black">
-                <input
-                  type="text"
-                  className={`w-10 p-1 text-center outline-none ${example1State.secondInput ? 'bg-green-100' : ''}`}
-                  placeholder="?"
-                  onChange={(e) => {
-                    if(e.target.value === (3 * fraction.numerator).toString()) {
-                      setExample1State(prev => ({ ...prev, secondInput: true }));
-                      e.target.parentElement?.nextElementSibling?.querySelector('input')?.focus();
-                    } else {
-                      setExample1State(prev => ({ ...prev, secondInput: false }));
-                    }
+                <NewInput
+                  id="example1-second"
+                  value={inputs.example1Second}
+                  onValueChange={(value) => setInputs(prev => ({ ...prev, example1Second: value }))}
+                  correctValue={(3 * fraction.numerator).toString()}
+                  useColor={true}
+                  onCorrect={() => {
+                    setExample1State(prev => ({ ...prev, secondInput: true }));
+                    (document.querySelector('[id="example1-third"]') as HTMLInputElement)?.focus();
                   }}
+                  placeholder="?"
+                  className={inputStyling}
                 />
               </div>
               <div className="p-2">
-                <input
-                  type="text"
-                  className={`w-10 p-1 text-center outline-none ${example1State.thirdInput ? 'bg-green-100' : ''}`}
-                  placeholder="?"
-                  onChange={(e) => {
-                    if(e.target.value === fraction.denominator.toString()) {
-                      setExample1State(prev => ({ ...prev, thirdInput: true }));
-                      if (example1State.firstInput && example1State.secondInput) {
-                        (document.querySelector('.second-example input') as HTMLInputElement)?.focus();
-                      }
-                    } else {
-                      setExample1State(prev => ({ ...prev, thirdInput: false }));
+                <NewInput
+                  id="example1-third"
+                  value={inputs.example1Third}
+                  onValueChange={(value) => setInputs(prev => ({ ...prev, example1Third: value }))}
+                  correctValue={fraction.denominator.toString()}
+                  useColor={true}
+                  onCorrect={() => {
+                    setExample1State(prev => ({ ...prev, thirdInput: true }));
+                    if (example1State.firstInput && example1State.secondInput) {
+                      (document.querySelector('[id="example2-first"]') as HTMLInputElement)?.focus();
                     }
                   }}
+                  placeholder="?"
+                  className={inputStyling}
                 />
               </div>
             </div>
@@ -207,39 +228,39 @@ export default function Screen2Step2() {
           <div className="w-full bg-[#fff0e5] p-10 flex items-center justify-center gap-4 text-4xl leading-none text-black second-example">
             <div>4</div>
             <div>x</div>
-            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b]  px-4 leading-none">
+            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b] px-4 leading-none">
               <div className="p-3 border-b-2 border-black">{fraction.numerator}</div>
               <div className="p-3">{fraction.denominator}</div>
             </div>
             <div>=</div>
-            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b]  px-4 leading-none">
+            <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b] px-4 leading-none">
               <div className="p-2 border-b-2 border-black">
-                <input
-                  type="text"
-                  className={`w-10 p-1 text-center outline-none ${example2State.firstInput ? 'bg-green-100' : ''}`}
-                  placeholder="?"
-                  onChange={(e) => {
-                    if(e.target.value === (4 * fraction.numerator).toString()) {
-                      setExample2State(prev => ({ ...prev, firstInput: true }));
-                      e.target.parentElement?.nextElementSibling?.querySelector('input')?.focus();
-                    } else {
-                      setExample2State(prev => ({ ...prev, firstInput: false }));
-                    }
+                <NewInput
+                  id="example2-first"
+                  value={inputs.example2First}
+                  onValueChange={(value) => setInputs(prev => ({ ...prev, example2First: value }))}
+                  correctValue={(4 * fraction.numerator).toString()}
+                  useColor={true}
+                  onCorrect={() => {
+                    setExample2State(prev => ({ ...prev, firstInput: true }));
+                    (document.querySelector('[id="example2-second"]') as HTMLInputElement)?.focus();
                   }}
+                  placeholder="?"
+                  className={inputStyling}
                 />
               </div>
               <div className="p-2">
-                <input
-                  type="text"
-                  className={`w-10 p-1 text-center outline-none ${example2State.secondInput ? 'bg-green-100' : ''}`}
-                  placeholder="?"
-                  onChange={(e) => {
-                    if(e.target.value === fraction.denominator.toString()) {
-                      setExample2State(prev => ({ ...prev, secondInput: true }));
-                    } else {
-                      setExample2State(prev => ({ ...prev, secondInput: false }));
-                    }
+                <NewInput
+                  id="example2-second"
+                  value={inputs.example2Second}
+                  onValueChange={(value) => setInputs(prev => ({ ...prev, example2Second: value }))}
+                  correctValue={fraction.denominator.toString()}
+                  useColor={true}
+                  onCorrect={() => {
+                    setExample2State(prev => ({ ...prev, secondInput: true }));
                   }}
+                  placeholder="?"
+                  className={inputStyling}
                 />
               </div>
             </div>

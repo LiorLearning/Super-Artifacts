@@ -25,6 +25,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, sendAdminMessage, onComple
   const [isAnswerComplete, setIsAnswerComplete] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null);
 
+
   // Initial message
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -184,6 +185,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, sendAdminMessage, onComple
           "Remember, the denominator stays the same when adding fractions with the same denominator!"
         )
       }
+
     }
   }
 
@@ -280,6 +282,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, sendAdminMessage, onComple
                     <span className="text-2xl">{totalPieces}</span>
                     <div className="h-[2px] w-5 bg-black"></div>
                     <span className="text-2xl">{mixedFraction.denominator}</span>
+
                   </div>
                 </div>
               </div>
@@ -327,9 +330,9 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, sendAdminMessage, onComple
               >
                 Done
               </button>
+
             </div>
           )}
-
           {showFinalContent && (
             <div className="bg-[#FFD9D9] p-8 rounded-2xl mt-8">
               <div className="flex items-center justify-center gap-10 text-5xl">
@@ -343,6 +346,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, sendAdminMessage, onComple
                 <span className=" tracking-wider">+</span>
 
                 {/* Second fraction */}
+
                 <div className="flex flex-col items-center">
                   <span className=" tracking-wider">{mixedFraction.numerator}</span>
                   <div className="w-12 h-[2px] bg-black my-1"></div>
@@ -432,6 +436,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, sendAdminMessage, onComple
         </div>
       </GameLayout>
     </div>
+
   )
 }
 

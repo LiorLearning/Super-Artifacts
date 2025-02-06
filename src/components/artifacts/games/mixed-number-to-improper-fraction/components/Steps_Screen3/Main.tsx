@@ -25,6 +25,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
   const [canEnterDenominator, setCanEnterDenominator] = useState(false)
   const [hasUsedHint, setHasUsedHint] = useState(false)
 
+
   useEffect(() => {
     if (numerator === '' && denominator === '' && !hintMessageShown.current) {
       return () => {

@@ -132,6 +132,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const isComplete = wholes !== null && fraction !== null
 
   return (
+
     <div ref={containerRef} className="w-full">
       <GameLayout
         mixedFraction={mixedFraction}
@@ -154,6 +155,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   <span className="text-[#FF497C]">{mixedFraction.numerator}</span>
                   <div className="w-6 h-0.5 bg-[#FF497C]"></div>
                   <span className="text-[#FF497C]">{mixedFraction.denominator}</span>
+
                 </div>
               </div>
             </div>
@@ -229,6 +231,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   <div className="text-black text-5xl">+</div>
                 </div>
 
+
                 <div className="relative">
                 <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
                 <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
@@ -277,6 +280,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   </span>
                 </button>
               </div>
+
             </div>
           )}
         </div>

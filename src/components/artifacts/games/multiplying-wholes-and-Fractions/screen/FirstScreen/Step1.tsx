@@ -3,6 +3,7 @@ import { useGameState } from "../../state-utils";
 import FractionHeader from "../../components/fractionheader";
 import StepCreateBox from "../../components/stepcreatebox";
 import ChocolateBar from "../../components/chocolatebar";
+import { goToStep } from "../../utils/helper";
 
 export default function Screen1Step1() {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -14,8 +15,7 @@ export default function Screen1Step1() {
   useEffect(() => {
     if (bar.numerator === fraction.numerator && bar.denominator === fraction.denominator) {
       setActive(false);
-      setGameStateRef(prev => ({...prev, state1: {...prev.state1, step: prev.state1.step + 1}
-      }));
+      goToStep('first', setGameStateRef, 2)
     }
   }, [bar.numerator]);
 

@@ -6,7 +6,7 @@ interface FractionHeaderProps {
   whole: number,
   numerator: number,
   denominator: number,
-  onClick: () => void
+  onClick?: () => void
 }
 
 export default function FractionHeader({ level, whole, numerator, denominator, onClick } : FractionHeaderProps) {
