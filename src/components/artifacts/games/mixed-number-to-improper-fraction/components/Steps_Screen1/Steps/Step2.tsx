@@ -229,8 +229,10 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
                 {/* Slice button */}
                 <div className="absolute right-6 top-1/2 -translate-y-1/2">
-                  <div className="relative">
-                    {/* Black shadow boxes - always visible */}
+                  <div className={`relative transition-opacity ${
+                    !canSlice || selectedSlice === null ? 'opacity-40' : ''
+                  }`}>
+                    {/* Black shadow boxes */}
                     <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
                     <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
                     
@@ -238,10 +240,7 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
                     <button
                       onClick={handleSlice}
                       disabled={!canSlice || selectedSlice === null}
-                      className={`relative px-12 py-3 rounded-xl text-xl font-medium transition-all
-                        ${!canSlice || selectedSlice === null 
-                          ? 'bg-[#FF497C] text-white filter blur-[1px]' 
-                          : 'bg-[#FF497C] text-white '}`}
+                      className="relative px-12 py-3 rounded-xl text-xl font-medium bg-[#FF497C] text-white transition-all"
                     >
                       Slice
                     </button>

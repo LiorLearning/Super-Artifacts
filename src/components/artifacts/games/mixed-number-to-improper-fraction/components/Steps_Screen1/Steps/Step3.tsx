@@ -207,6 +207,12 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
         {/* Display section */}
         <div className="bg-white rounded-2xl p-8">
           <div className="flex flex-col items-center gap-6">
+            {countMethod === 'click' && (
+              <div className="text-[#FF497C] text-xl">
+                click pieces to count
+              </div>
+            )}
+
             {/* Text and input section */}
             <div className="flex items-center justify-center gap-3 text-xl">
               <span>So there are</span>
@@ -233,32 +239,47 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
               <span>sized pieces in {mixedFraction.whole} wholes</span>
             </div>
 
-            {/* Enter Manually button with shadow */}
-            {countMethod === 'click' && (
-              <div className="relative">
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-                <button
-                  onClick={() => setCountMethod('manual')}
-                  className="relative px-8 py-3 rounded-xl text-xl border-2 border-[#FF497C] text-[#FF497C] bg-white hover:bg-[#FF497C] hover:text-white transition-colors"
-                >
-                  Enter Manually
-                </button>
-              </div>
-            )}
+            {/* Button section */}
+            <div className="flex gap-4">
+              {countMethod === 'manual' && (
+                <>
+                  <div className="relative">
+                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+                    <button
+                      onClick={() => setCountMethod('click')}
+                      className="relative px-8 py-3 rounded-xl text-xl border-2 border-[#FF497C] text-[#FF497C] bg-white hover:bg-[#FF497C] hover:text-white transition-colors"
+                    >
+                      Click to Count
+                    </button>
+                  </div>
 
-            {countMethod === 'manual' && (
-              <div className="relative">
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-                <button
-                  onClick={handleManualSubmit}
-                  className="relative bg-[#FF497C] text-white px-8 py-3 rounded-xl text-xl"
-                >
-                  Check
-                </button>
-              </div>
-            )}
+                  <div className="relative">
+                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+                    <button
+                      onClick={handleManualSubmit}
+                      className="relative bg-[#FF497C] text-white px-8 py-3 rounded-xl text-xl"
+                    >
+                      Check
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {countMethod === 'click' && (
+                <div className="relative">
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+                  <button
+                    onClick={() => setCountMethod('manual')}
+                    className="relative px-8 py-3 rounded-xl text-xl border-2 border-[#FF497C] text-[#FF497C] bg-white hover:bg-[#FF497C] hover:text-white transition-colors"
+                  >
+                    Enter Manually
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Success feedback */}
             {showAwesome && (
