@@ -6,9 +6,10 @@ import { useGameState } from "../../../state-utils"
 interface Step4Props {
   mixedFraction: MixedFraction
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
+  onComplete: () => void
 }
 
-const Step4: React.FC<Step4Props> = ({ mixedFraction, sendAdminMessage }) => {
+const Step4: React.FC<Step4Props> = ({ mixedFraction, sendAdminMessage, onComplete }) => {
   const { setGameStateRef } = useGameState();
   const [selectedPieces, setSelectedPieces] = useState<Set<string>>(new Set())
   const totalPieces = mixedFraction.whole * mixedFraction.denominator
@@ -89,6 +90,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, sendAdminMessage }) => {
         mixedFraction: mixedFraction
       }
     }));
+    onComplete();
   }
 
   const handleCheckAnswer = () => {
