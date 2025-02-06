@@ -23,17 +23,11 @@ const FractionBox: React.FC<FractionBoxProps> = ({
   const inputTimer = useRef<NodeJS.Timeout>();
   const hintMessageShown = useRef(false);
   const [canEnterDenominator, setCanEnterDenominator] = useState(false)
+  const [hasUsedHint, setHasUsedHint] = useState(false)
+
 
   useEffect(() => {
     if (numerator === '' && denominator === '' && !hintMessageShown.current) {
-      inputTimer.current = setTimeout(() => {
-        sendAdminMessage(
-          "agent",
-          "When in doubt, take a hint"
-        );
-        hintMessageShown.current = true;
-      }, 10000);
-
       return () => {
         if (inputTimer.current) {
           clearTimeout(inputTimer.current);
@@ -120,6 +114,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
 
   const handleHintClick = () => {
     setShowHint(true);
+    setHasUsedHint(true);
     sendAdminMessage(
       "agent",
       "Remember? Wholes times denominator plus the numerator and keep the denominator same"
