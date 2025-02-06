@@ -1,6 +1,7 @@
 import QuestionBox from "../../components/QuestionBox";
 import { useGameState } from "../../state-utils";
 import Header from "../../components/header";
+import { goToStep } from "../../utils/helper";
 
 export default function Screen1Step0() {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -9,7 +10,7 @@ export default function Screen1Step0() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header level={1} heading="Multiplying Wholes and Fractions" onClick={() => {
-        setGameStateRef({ ...gameStateRef.current, state1: { ...gameStateRef.current.state1, step: 1 } });
+        goToStep('first', setGameStateRef, 1)
       }}/>
       <div className="my-8">  
         <QuestionBox 
