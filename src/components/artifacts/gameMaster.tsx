@@ -126,8 +126,8 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
 
   return (
     <div className="flex h-screen">
-      <div className="w-[75%] border-r-border flex flex-col overflow-auto">
-        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 max-h-full max-w-full">
+      <div className="w-[75%] border-r-border flex flex-col h-full overflow-auto">
+        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 h-full max-w-full">
           <div className="mb-4 flex items-center gap-2">
             <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
               <SelectTrigger className="p-2 border-border rounded-md flex-1">
@@ -160,9 +160,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               currentGame && (
                 <div className="relative h-full w-full">
                   <div className="relative h-full w-full overflow-auto">
-                    <div className="">
                       <GameComponent currentGame={currentGame} sendAdminMessage={sendAdminMessage} />
-                    </div>
                   </div>
                 </div>
               )
