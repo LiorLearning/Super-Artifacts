@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = (({ fraction1, fraction2, type, version })
         </div>
       </div>
       {version === 2 &&
-        <div className="flex items-center justify-center gap-4 mt-8 py-4 bg-[#F97315] bg-opacity-20">
+        <div className="flex items-center justify-center gap-4 my-8 py-4 bg-[#F97315] bg-opacity-20">
           <div className="flex bg-[#FFC5C6] p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg shadow-[-2px_2px_1px_rgba(0,0,0,0.7)]">
             <span className='bg-white rounded-lg border-2 border-gray-500 flex items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
               <MixedFraction
