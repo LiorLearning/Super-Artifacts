@@ -15,7 +15,7 @@ export default function Screen2Step1() {
   useEffect(() => {
     if (bar.numerator === fraction.numerator && bar.denominator === fraction.denominator) {
       setActive(false);
-      goToStep('second', setGameStateRef, 2)
+      goToStep('second', setGameStateRef, 2);
     }
   }, [bar.numerator]);
 

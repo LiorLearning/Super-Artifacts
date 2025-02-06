@@ -14,7 +14,7 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
           <span>{mixedFraction.whole}</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
           <span>=</span>
@@ -33,7 +33,7 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
           <span>{mixedFraction.whole}</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
           <span>=</span>
@@ -41,7 +41,7 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
           <span>+</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
         </div>
@@ -54,19 +54,19 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
           <span>{mixedFraction.whole}</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
           <span>=</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.denominator * mixedFraction.whole}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
           <span>+</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="w-4 h-[1.5px] bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
         </div>
@@ -89,30 +89,32 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
   }
 
   return (
-    <div 
-      className="w-[565px] h-[120px] mx-auto flex items-center"
-      style={{ backgroundColor: "#FF497C", borderRadius: "16px" }}
-    >
-      <div className="flex items-center w-full">
-        {/* Level indicator */}
-        <div className="text-white text-3xl font-bold px-8">
-          Level 1
+    <div className="flex justify-center items-center mt-[20px] mb-[60px]">
+      <div className="flex items-center justify-center bg-[#FF497C] rounded-[20px] border-[7px] border-[#FF497C] overflow-hidden relative">
+        {/* Level section */}
+        <div className="w-[150px] h-[100px] bg-[#FF497C] flex flex-col items-center justify-center text-[45px] font-normal">
+          <h2 className="text-white font-normal h-12">Level</h2>
+          <h2 className="text-white font-normal">1</h2>
         </div>
 
-        {/* Math problem - center section */}
-        <div className="bg-white rounded-xl mx-2 h-[100px] flex-grow flex items-center justify-center">
-          <div className="text-4xl font-bold">
+        {/* Fraction section */}
+        <div className="w-fit pr-44 h-[150px] bg-white flex items-center justify-left text-[45px] px-8 rounded-l-[20px]">
+          <div className="flex items-center gap-4">
             {renderEquation()}
           </div>
         </div>
 
-        {/* Emoji container */}
-        <div className="bg-white rounded-xl w-[100px] h-[100px] mr-2 flex items-center justify-center">
-          <span className="text-5xl">{getEmoji()}</span>
+        {/* Emoji section */}
+        <div className="w-[152px] h-[164px] border-[7px] border-r-0 border-[#FF497C] rounded-[20px] rounded-r-none bg-white flex items-center justify-center absolute right-0">
+          <span className="text-[80px]">{getEmoji()}</span>
         </div>
       </div>
     </div>
   )
 }
+
+// Update fraction styles in renderEquation
+const fractionStyle = "w-[52px] flex flex-col items-center justify-center text-center";
+const lineStyle = "w-full border-b-4 border-black";
 
 export default Level

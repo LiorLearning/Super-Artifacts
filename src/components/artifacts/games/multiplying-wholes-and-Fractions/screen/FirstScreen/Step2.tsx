@@ -6,6 +6,7 @@ import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 import Bar from "../../components/bar";
 import { goToScreen } from "../../utils/helper";
 
+
 export default function Screen1Step2() {
 
   const { gameStateRef, setGameStateRef } = useGameState();

@@ -29,21 +29,26 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const [showSecondBox, setShowSecondBox] = useState(false);
   const initialMessageShown = useRef(false);
 
+  const [hasShownError, setHasShownError] = useState(false);
+  const [hasShownFirstError, setHasShownFirstError] = useState(false);
+  const [topSuccess, setTopSuccess] = useState(false);
+  const [bottomSuccess, setBottomSuccess] = useState(false);
+
   useEffect(() => {
     if (!initialMessageShown.current) {
-      // Initial narration
+
       sendAdminMessage(
         "agent",
         "Okay, the steps are locked. To unlock, keep filling the boxes",
         () => {
-          // Second narration after a delay
-          setTimeout(() => {
+
+          setShowSecondBox(true);
+          
+            setTimeout(() => {
             sendAdminMessage(
               "agent",
-              "First up! Multiply denominator with the whole. The hint is right there",
-              () => {
-                setShowSecondBox(true);
-              }
+              "First up! Multiply denominator with the whole. The hint is right there"
+
             );
           }, 1000);
         }
@@ -55,35 +60,146 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
-    if (parseInt(value) === denominator * whole) {
+
+    
+    const expectedValue = denominator * whole;
+    
+    // Check for incorrect input
+    if (value.length >= expectedValue.toString().length && 
+        parseInt(value) !== expectedValue && 
+        !hasShownFirstError) {
       sendAdminMessage(
         "agent",
-        "Listen carefully! Now add the numerator to your last answer. But remember to keep the denominator same!",
+        "That's not right. Try multiplying the denominator with the whole number!"
+      );
+      setHasShownFirstError(true);
+    }
+    
+    // Check for correct input
+    if (parseInt(value) === expectedValue) {
+      sendAdminMessage(
+        "agent",
+        "Great job! You've got the first step right!",
         () => {
-          setShowNextStep(true);
+          setTimeout(() => {
+            sendAdminMessage(
+              "agent",
+              "Now add the numerator to your last answer. But remember to keep the denominator same!",
+              () => {
+                setShowNextStep(true);
+              }
+            );
+          }, 1000);
         }
       );
     }
   };
 
-  const checkAnswers = () => {
+  const handleSuccess = () => {
+    sendAdminMessage(
+      "agent",
+      "Perfect! You've mastered the quick hack!",
+      () => {
+        setTimeout(() => {
+          sendAdminMessage(
+            "agent",
+            "See? We got the same answer as with the pies method!",
+            () => {
+              setShowNextStep(false);
+              setShowNextStep3(true);
+            }
+          );
+        }, 1000);
+      }
+    );
+  };
+
+  const handleTopAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setTopAnswer(value);
+    
     const expectedTop = (denominator * whole) + numerator;
     const expectedBottom = denominator;
 
-    if (Number(topAnswer) === expectedTop && Number(bottomAnswer) === expectedBottom) {
+    // Error check
+    if (value.length >= expectedTop.toString().length && 
+        Number(value) !== expectedTop && 
+        !hasShownError) {
       sendAdminMessage(
         "agent",
-        "What a hack! We have the same answer as earlier.",
+        "That's not quite right. Remember to add the numerator to your previous answer!"
+      );
+      setHasShownError(true);
+    }
+
+    // Success check for top number only
+    if (Number(value) === expectedTop && !topSuccess) {
+      sendAdminMessage(
+        "agent",
+        "Great! Now enter the denominator. Remember, it stays the same!"
+      );
+      setTopSuccess(true);
+    }
+
+    // Final success check
+    if (Number(value) === expectedTop && Number(bottomAnswer) === expectedBottom && bottomSuccess) {
+      handleSuccess();
+
+    }
+  };
+
+  const handleBottomAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setBottomAnswer(value);
+    
+    const expectedTop = (denominator * whole) + numerator;
+    const expectedBottom = denominator;
+
+
+    // Error check
+    if (value.length >= expectedBottom.toString().length && 
+        Number(value) !== expectedBottom && 
+        !hasShownError) {
+      sendAdminMessage(
+        "agent",
+        "Remember, the denominator stays the same!"
+      );
+      setHasShownError(true);
+    }
+
+    // Success check for bottom number only
+    if (Number(value) === expectedBottom && !bottomSuccess) {
+      sendAdminMessage(
+        "agent",
+        "Great job! You've got the denominator right!",
         () => {
-          setShowNextStep(false);
-          setShowNextStep3(true);
+          if (Number(topAnswer) === expectedTop) {
+
+            setTimeout(() => {
+              handleSuccess();
+            }, 1000);
+          }
         }
       );
+      setBottomSuccess(true);
+
     }
   };
 
   useEffect(() => {
-    checkAnswers();
+
+    setHasShownError(false);
+  }, [topAnswer, bottomAnswer]);
+
+  useEffect(() => {
+    setHasShownFirstError(false);
+  }, [inputValue]);
+
+  useEffect(() => {
+    setTopSuccess(false);
+    setBottomSuccess(false);
+    setHasShownError(false);
+
   }, [topAnswer, bottomAnswer]);
 
   const ExpressionWithAddition: React.FC<ExpressionWithAdditionProps> = ({ leftNumber, fraction }) => (
@@ -156,52 +272,63 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
               <Image src={LockIcon} alt="Lock" width={35} height={35} />
             </div>
 
+
             <div className="text-white text-[20px] mx-4 flex-1">
               Multiply denominator and <br /> wholes
             </div>
 
             {/* Expression boxes */}
             <div className="flex items-center gap-3">
-              <div className="bg-white rounded-xl px-4 py-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl -mt-3">{whole}</span>
-                  <Image 
-                    src="/img/Multiply.png" 
-                    alt="multiply" 
-                    width={40} 
-                    height={40} 
-                    className="w-10 h-10"
-                  />
-                  <div className="inline-flex flex-col items-center">
-                    <span className="text-2xl">{numerator}</span>
-                    <div className="h-[2px] w-4 bg-black"></div>
-                    <span className="text-2xl">{denominator}</span>
+              {/* Left expression box with shadow */}
+              <div className="relative">
+                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+                <div className="bg-white rounded-xl px-4 py-2 relative">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl -mt-3">{whole}</span>
+                    <Image 
+                      src="/img/Multiply.png" 
+                      alt="multiply" 
+                      width={40} 
+                      height={40} 
+                      className="w-10 h-10"
+                    />
+                    <div className="inline-flex flex-col items-center">
+                      <span className="text-2xl">{numerator}</span>
+                      <div className="h-[2px] w-4 bg-black"></div>
+                      <span className="text-2xl">{denominator}</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Result box */}
-              <div className="relative">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-white text-lg whitespace-nowrap">
+              {/* Result box with shadow */}
+              <div className="relative -bottom-2.5">
+                <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-white text-lg whitespace-nowrap">
                   {denominator} * {whole}
                 </div>
-                <div className="bg-white rounded-xl w-[60px] overflow-hidden">
-                  {showInput ? (
-                    <div className="relative">
-                      <input
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        className="w-full h-[60px] text-center text-3xl bg-transparent outline-none"
-                      />
-                    </div>
-                  ) : (
-                    <div 
-                      onClick={() => setShowInput(true)}
-                      className="h-[60px] flex items-center justify-center cursor-pointer"
-                    >
-                      <span className="text-3xl">?</span>
-                    </div>
-                  )}
+                <div className="relative">
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+                  <div className="bg-white rounded-xl w-[60px] overflow-hidden relative">
+                    {showInput ? (
+                      <div className="relative">
+                        <input
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          className="w-full h-[60px] text-center text-3xl bg-transparent outline-none"
+                        />
+                      </div>
+                    ) : (
+                      <div 
+                        onClick={() => setShowInput(true)}
+                        className="h-[60px] flex items-center justify-center cursor-pointer"
+                      >
+                        <span className="text-3xl">?</span>
+                      </div>
+                    )}
+                  </div>
+
                 </div>
               </div>
             </div>
@@ -211,7 +338,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         {/* Appears when correct */}
         {showNextStep && (
           <div className="w-full">
-            {/* Top instruction container */}
             <div className="bg-[#FF497C] rounded-t-[20px] p-3 flex items-center pb-16">
               <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
                 <Image src={LockIcon} alt="Lock" width={35} height={35} />
@@ -221,51 +347,40 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                 Add the numerator,<br />Denominator remains same
               </div>
 
-              {/* White box with expression */}
-              <div className="bg-white rounded-xl px-6 py-3">
+              <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+              <div className="bg-white rounded-xl px-6 py-3 relative">
                 <ExpressionWithAddition 
                   leftNumber={denominator * whole}
+
                   fraction={{ numerator, denominator }}
                 />
               </div>
+              </div>
             </div>
+
 
             {/* Bottom answer container */}
             <div className="bg-[#B40033] rounded-b-[20px] -mt-10 p-8 pt-16">
               <div className="flex flex-col items-center gap-4">
                 <div className="relative w-[80px] h-[80px]">
-                  <div className="absolute inset-0 bg-black rounded-xl translate-x-1 translate-y-1 z-0"></div>
+                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
                   <input
                     value={topAnswer}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '');
-                      setTopAnswer(value);
-                      const expectedTop = (denominator * whole) + numerator;
-                      const expectedBottom = denominator;
-                      if (Number(value) === expectedTop && Number(bottomAnswer) === expectedBottom) {
-                        setShowNextStep(false);
-                        setShowNextStep3(true);
-                      }
-                    }}
+                    onChange={handleTopAnswerChange}
                     className="absolute inset-0 bg-white rounded-xl border-4 border-white text-center text-3xl outline-none z-10"
                     placeholder="?"
                   />
                 </div>
                 <div className="h-[3px] w-24 bg-white"></div>
                 <div className="relative w-[80px] h-[80px]">
-                  <div className="absolute inset-0 bg-black rounded-xl translate-x-1 translate-y-1 z-0"></div>
+                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
                   <input
                     value={bottomAnswer}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '');
-                      setBottomAnswer(value);
-                      const expectedTop = (denominator * whole) + numerator;
-                      const expectedBottom = denominator;
-                      if (Number(topAnswer) === expectedTop && Number(value) === expectedBottom) {
-                        setShowNextStep(false);
-                        setShowNextStep3(true);
-                      }
-                    }}
+                    onChange={handleBottomAnswerChange}
                     className="absolute inset-0 bg-white rounded-xl border-4 border-white text-center text-3xl outline-none z-10"
                     placeholder="?"
                   />
@@ -315,7 +430,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
             <div className="flex justify-center mt-8">
               <button
                 onClick={handleNextLevel}
-                className="px-6 py-3 bg-[#ECFF40] text-black font-bold text-xl hover:bg-[#d9eb37] relative"
+                className="px-4 py-2 bg-white text-black border-[11px] border-[#FF497C] text-2xl relative"
                 style={{
                   boxShadow: '-4px 4px 0px 0px rgba(0,0,0,1)'
                 }}

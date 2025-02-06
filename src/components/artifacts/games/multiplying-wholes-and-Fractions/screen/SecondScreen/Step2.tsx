@@ -163,6 +163,7 @@ export default function Screen2Step2({sendAdminMessage}: BaseProps) {
           <div className="my-12 w-full bg-[#fff0e5] p-10 flex items-center justify-center gap-4 text-4xl leading-none text-black">
             <div>3</div>
             <div>x</div>
+
             <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b] px-4 leading-none">
               <div className="p-3 border-b-2 border-black">{fraction.numerator}</div>
               <div className="p-3">{fraction.denominator}</div>

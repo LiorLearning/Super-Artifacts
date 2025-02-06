@@ -1,5 +1,4 @@
 import { useGameState } from '../state-utils';
-import QuickHack1 from '../components/Steps_Screen2/Welcome';
 import QuickHack2 from '../components/Steps_Screen2/Logic';
 import Welcome from '../components/Steps_Screen2/Welcome';
 
