@@ -204,7 +204,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
                   <PizzaSlices
                     numerator={pizza.numerator}
                     denominator={pizza.denominator}
-                    color={pizza === fraction1 ? ["pink", "black", "#CA8A04"] : ["yellow", "black", "#CA8A04"]}
+                    color={pizza === fraction1 ? ['#FFC5C6', '#E65A5A'] : ['#FFC98F','#E6DF5A']}
                   />
                   
                 </div>
