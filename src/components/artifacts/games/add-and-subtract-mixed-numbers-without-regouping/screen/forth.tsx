@@ -115,7 +115,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   return (
     <div className="w-full">
       <Header fraction1={fraction1} fraction2={fraction2} version={1} type='subtraction' />
-      <div className="flex flex-col gap-8 items-center">
+      <div className="flex flex-col items-center">
         <Intro text="Now that you know how to add, you can easily subtract as well..." />
         <div className="flex flex-col gap-8 items-center w-full bg-lime-100 p-8 ">
           <p className="text-2xl font-bold">
@@ -134,7 +134,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                       min={0}
                       max={10}
                       placeholder="?"
-                      className="w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded"
+                      className={`w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole1 ? (whole1===fraction1.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
                     />
                     <span className="text-2xl font-bold">
                       {step === 0 ? '' : '-'}
@@ -146,7 +146,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                       min={0}
                       max={10}
                       placeholder="?"
-                      className="w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded"
+                      className={`w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole2 ? ( whole2===fraction2.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
                     />
                   </div>
                 </div>
@@ -172,7 +172,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                         min={0}
                         max={10}
                         placeholder="?"
-                        className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                        className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator1 ? (numerator1===fraction1.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                       />
                       <div className="w-full my-1 h-[2px] bg-black" />
                       <input
@@ -182,7 +182,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                         min={0}
                         max={10}
                         placeholder="?"
-                        className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                        className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator1 ? (denominator1===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                       />
                     </div>
                     <span className="text-2xl font-bold">
@@ -196,7 +196,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                         min={0}
                         max={10}
                         placeholder="?"
-                        className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                        className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator2 ? (numerator2===fraction2.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                       />
                       <div className="w-full my-1 h-[2px] bg-black" />
                       <input
@@ -206,7 +206,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                         min={0}
                         max={10}
                         placeholder="?"
-                        className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                        className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator2 ? (denominator2===fraction2.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                       />
                     </div>
                   </div>
@@ -231,7 +231,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                   min={0}
                   max={10}
                   placeholder="?"
-                  className="w-14 h-14 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded"
+                  className={`w-14 h-14 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole3 ? (whole3===(fraction1.whole - fraction2.whole) ? 'bg-green-200' : 'bg-red-200') : ''}`}
                 />
                 
                 <div className="flex flex-col items-center">
@@ -242,7 +242,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-14 mx-2 h-14 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-14 mx-2 h-14 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator3 ? (numerator3===(fraction1.numerator - fraction2.numerator) ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                   <div className="w-full my-1 h-[2px] bg-black" />
                   <input
@@ -252,7 +252,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-14 mx-2 h-14 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-14 mx-2 h-14 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator3 ? (denominator3===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                 </div>
               </div>
@@ -263,7 +263,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       </div>
 
       {step >= 2 && 
-            <div className='w-full font-bold text-5xl text-center bg-lime-200 py-16'>
+            <div className='w-full font-bold text-5xl text-center bg-lime-100 py-16'>
               <SuccessAnimation />
               <p> Congratulations! You did it! 🎉</p>
             </div>

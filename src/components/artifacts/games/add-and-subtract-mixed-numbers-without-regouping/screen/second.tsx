@@ -4,10 +4,13 @@ import { BaseProps, MixedFractionProps } from '../utils/types';
 import MixedFraction from '../components/mixedFraction';
 import Proceed from '../components/proceed';
 import QuestionDescription from '../components/questionDescription';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Intro from '../components/intro';
 import { Button } from '@/components/ui/button';
+import DragDropPizza from '../components/dragDropPizza';
+
 import { QuestionDescriptionProps } from '../game-state';
+import { goToStep } from '../utils/helper';
 
 export default function SecondScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -32,15 +35,23 @@ export default function SecondScreen({ sendAdminMessage }: BaseProps) {
 const Step1 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { fraction1, fraction2 } = gameStateRef.current.state2;
+  const start = useRef(false);
+
+  useEffect(() => {
+    if (!start.current) {
+      sendAdminMessage("agent","Come on! Let's complete another order! Click next to start");
+    }
+    start.current = true;
+  }, []);
   return (
     <div className="flex gap-8 flex-col w-full">
       <div className="w-full max-w-3xl mx-auto mt-20">
-        <div className="bg-[#F97315] text-white text-2xl py-4 mb-[2px] border-2 font-extrabold border-gray-800 px-4  text-center">
+        <div className="bg-[#F97315] text-white text-2xl py-4 mb-[2px] border-2 font-extrabold border-gray-800 px-4  text-center shadow-[-2px_2px_0px_rgba(0,0,0,1)]">
           PIZZA ORDER
         </div>
-        <div className="flex items-center justify-center gap-4 p-8 border-2 border-gray-800">
-          <div className="flex bg-[#F97315] p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg">
-            <span className='bg-white rounded-lg border-2 border-gray-500 flex shadow-sm items-center'>
+        <div className="flex items-center justify-center gap-4 mt-8 shadow-[inset_-3px_3px_1px_rgba(0,0,0,0.3)] p-8 border-2 border-gray-800">
+          <div className="flex bg-[#FFC5C6] p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg shadow-[-2px_2px_1px_rgba(0,0,0,0.7)]">
+            <span className='bg-white rounded-lg border-2 border-gray-500 flex items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
               <MixedFraction
                 whole={fraction1.whole}
                 numerator={fraction1.numerator}
@@ -48,16 +59,16 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
                 className='text-xl font-extrabold p-2'
               />
             </span>
-            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center'>
-              <div className={`flex flex-col items-center justify-center p-1 rounded-full border-2 border-pink-800 bg-pink-200`}>
-                <div className={`w-12 h-12 bg-pink-600 border-2 border-pink-800 rounded-full`} />
+            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
+              <div className={`flex flex-col items-center justify-center p-1 rounded-full border-[1px] border-black bg-[#FFC98F]`}>
+                <div className={`w-12 h-12 bg-[#E65A5A] border-[1px] shadow-[inset_0px_0px_4px_0px_rgba(0,0,0,0.5)] border-black rounded-full`} />
               </div>
               Pepperoni Pizza
             </p>
           </div>
-          <span className="text-5xl font-bold text-yellow-200">+</span>
-          <div className="flex bg-yellow-200 p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg">
-            <span className='bg-white rounded-lg border-2 border-gray-500 flex shadow-sm items-center'>
+          <span className="text-5xl font-bold text-black">+</span>
+          <div className="flex bg-yellow-200 p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg shadow-[-1px_1px_0px_rgba(0,0,0,0.7)]">
+            <span className='bg-white rounded-lg border-2 border-gray-500 flex items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
               <MixedFraction
                 whole={fraction2.whole}
                 numerator={fraction2.numerator}
@@ -65,19 +76,22 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
                 className='text-xl font-extrabold p-2'
               />
             </span>
-            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center'>
-              <div className={`flex flex-col items-center justify-center p-1 rounded-full border-2 border-yellow-800 bg-yellow-200`}>
-                <div className={`w-12 h-12 bg-yellow-600 border-2 border-yellow-800 rounded-full`} />
+            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
+              <div className={`flex flex-col items-center justify-center p-1 rounded-full border-[1px] border-black bg-[#FFC98F]`}>
+                <div className={`w-12 h-12 bg-yellow-200 border-[1px] shadow-[inset_0px_0px_4px_0px_rgba(0,0,0,0.5)] border-black rounded-full`} />
               </div>
-              Pepperoni Pizza
+              Cheese Pizza
             </p>
           </div>
         </div>
-      </div>  
+      </div>
       <Button 
-        onClick={() => setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: 1 } }))} 
-        className='m-2 p-6 mx-auto bg-[#F97315] border-2 text-3xl border-black text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] hover:bg-[#F97315] max-w-3xl rounded-none'>
-        Next
+      onClick={() => {
+        goToStep(2, setGameStateRef, 1); 
+        sendAdminMessage('agent', "The pepperoni wholes are in front of you, let's rush now!")}
+      } 
+      className='m-2 p-6 mx-auto bg-[#F97315] text-3xl text-white shadow-[-3px_3px_0px_rgba(0,0,0,1)] hover:bg-[#F97315] max-w-3xl rounded-none'>
+        Next &gt;&gt;
       </Button>
     </div>
   );
@@ -86,6 +100,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
 const Step2 = ({ sendAdminMessage }: BaseProps) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { substep } = gameStateRef.current.state2
+  const [useEffectTrigger, setUseEffectTrigger] = useState(0);
   const setSubStep = (value: number) => {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, substep: value } }));
   }
@@ -109,9 +124,57 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     inputDenominator: '',
   } as QuestionDescriptionProps);
 
+  useEffect(() => {
+    if (question1description.showSecondRow === true && useEffectTrigger === 0) {
+      setUseEffectTrigger(1);
+      sendAdminMessage('agent', "Now the slices");
+    }
+  }, [question1description.showSecondRow]);
+
+  useEffect(() => {
+    if (useEffectTrigger === 1 && question2description.showThirdRow === true) {
+      setUseEffectTrigger(2);
+      sendAdminMessage('agent', "Now quickly fill in the cheeze order");
+      
+    }
+  }, [useEffectTrigger]);
+
+  useEffect(() => {
+    if (question1description.inputWhole !== '' && parseInt(question1description.inputWhole)!=fraction1.whole){
+      sendAdminMessage('agent', `Count the pepperoni pizzas in the box.`);
+    }
+  }, [question1description.inputWhole]);
+
+  useEffect(() => {
+    if (question1description.inputNumerator !== '' && parseInt(question1description.inputNumerator)!=fraction1.numerator){
+      sendAdminMessage('agent', `Almost! Count the leftover slices carefully—how many do you see?`);
+    }
+  }, [question1description.inputNumerator]);
+
+  useEffect(() => {
+    if (question1description.inputDenominator !== '' && parseInt(question1description.inputDenominator)!=fraction1.denominator){
+      sendAdminMessage('agent', `Not quite! Think about how many slices make up a whole pizza. Try again!`);
+    }
+  }, [question1description.inputDenominator]);
+
+  useEffect(() => {
+    if (question1description.inputWhole !== '' && parseInt(question1description.inputWhole)===fraction2.whole){
+      sendAdminMessage('agent', `Yes! There is ${fraction2.whole} whole cheeze pizza. Great job counting!`);
+    } else if (question2description.inputWhole !== '' && parseInt(question2description.inputWhole)!=fraction2.whole){
+      sendAdminMessage('agent', `Oops! Remember, whole pizzas are the complete ones. Look at the illustration with yellow pizzas and try again!`);
+    }
+  }, [question2description.inputWhole]);
+
+  useEffect(() => {
+    if((question2description.inputNumerator !== '' && parseInt(question2description.inputNumerator)!=fraction2.numerator) || (question2description.inputDenominator !== '' && parseInt(question2description.inputDenominator)!=fraction2.denominator)){
+      sendAdminMessage('agent', `take a hint from the slices in the yellow box`);
+    }
+  }, [question2description.inputNumerator, question2description.inputDenominator]);
+
+
   return(
-    <div className='flex flex-col gap-4 max-w-3xl mx-auto'>
-    <div className={`flex p-8 gap-8 ${substep<2 && 'flex-col'} w-full`}>
+    <div className='flex flex-col gap-4 w-full'>
+    <div className={`flex p-8 gap-8 ${substep<2 && 'flex-col'} max-w-3xl mx-auto`}>
     { substep >= 0 &&
         <QuestionDescription 
           showFirstRow={question1description.showFirstRow}
@@ -132,8 +195,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           numerator={fraction1.numerator} 
           denominator={fraction1.denominator} 
           pizzaName='pepperoni' 
-          color='pink' 
-          pizzacolor={['pink', 'black', '#DB2777']}
+          color={['#FFE6E6','#E65A5A','#FFF0F0','#E65A5A']}
+          pizzacolor={['#FFC5C6', '#E65A5A']}
 
           onComplete={() => {
             setSubStep(1)
@@ -169,10 +232,13 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           denominator={fraction2.denominator} 
           pizzaName='Cheese' 
 
-          color='yellow' 
-          pizzacolor={['yellow', 'black', '#CA8A04']}
+          color={['#FFFDD1', '#DBD556', '#FFFEE6', '#D39400']}
+          pizzacolor={['#FFC98F','#E6DF5A']}
 
-          onComplete={() => setSubStep(2)} 
+          onComplete={() => {
+            sendAdminMessage('agent', `Perfect! You've broken down the order, Can you rearrange the wholes and slices together?`);
+            setSubStep(2)
+          }}
         />
       }
       </div>
@@ -283,7 +349,6 @@ export const CombineFractionInput: React.FC<{
       parseInt(denominator3) === fraction1.denominator
     ) {
       sendAdminMessage('agent', "You are on a roll! Final one to practice now!");
-      sendAdminMessage('agent', "You are on a roll! Final one to practice now!");
       onComplete();
     }
   }
@@ -311,7 +376,7 @@ export const CombineFractionInput: React.FC<{
                   min={0}
                   max={10}
                   placeholder="?"
-                  className="w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded"
+                  className={`w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole1!=='' ? ( parseInt(whole1)===fraction1.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
                 />
                 <span className="text-2xl font-bold">+</span>
                 <input
@@ -321,7 +386,7 @@ export const CombineFractionInput: React.FC<{
                   min={0}
                   max={10}
                   placeholder="?"
-                  className="w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded"
+                  className={`w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole2!=='' ? ( parseInt(whole2)===fraction2.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
                 />
               </div>
             </div>
@@ -345,7 +410,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator1!=='' ? ( parseInt(numerator1)===fraction1.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -355,7 +420,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator1!=='' ? ( parseInt(denominator1)===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                 </div>
                 <span className="text-2xl font-bold">+</span>
@@ -367,7 +432,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator2!=='' ? ( parseInt(numerator2)===fraction2.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -377,7 +442,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator2!=='' ? ( parseInt(denominator2)===fraction2.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                 </div>
               </div>
@@ -404,7 +469,7 @@ export const CombineFractionInput: React.FC<{
                   min={0}
                   max={10}
                   placeholder="?"
-                  className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded"
+                  className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole3!=='' ? ( parseInt(whole3)===(fraction1.whole + fraction2.whole) ? 'bg-green-200' : 'bg-red-200') : ''}`}
                 />
                 
                 <div className="flex flex-col items-center">
@@ -415,7 +480,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator3!=='' ? ( parseInt(numerator3)===(fraction1.numerator + fraction2.numerator) ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -425,7 +490,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className="w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded"
+                    className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator3!=='' ? ( parseInt(denominator3)===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                 </div>
               </div>
