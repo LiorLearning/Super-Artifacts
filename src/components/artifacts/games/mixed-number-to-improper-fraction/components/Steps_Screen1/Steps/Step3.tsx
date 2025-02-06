@@ -26,7 +26,8 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
     if (!messageShown.current) {
       sendAdminMessage(
         "agent",
-        "Click on each slice to count them. Let's see how many pieces we have in total!"
+        "Click on each slice to count them. Let's see how many pieces we have in total! You can either:\n\n" +
+        "Use 'Click to Count': Click each slice one by one to count or Use 'Enter Manually': Type the total number directly"
       )
       messageShown.current = true
     }
