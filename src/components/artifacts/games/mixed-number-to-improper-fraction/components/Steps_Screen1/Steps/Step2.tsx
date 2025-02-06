@@ -171,6 +171,7 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
                       />
                       {isSliced && renderSliceLines(selectedSlice as number)}
                     </svg>
+
                   </div>
                 ))}
               </div>
@@ -210,6 +211,7 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
                       </React.Fragment>
                     ))}
                   </div>
+
 
                   {/* Text options */}
                   <div className="flex flex-col justify-between">

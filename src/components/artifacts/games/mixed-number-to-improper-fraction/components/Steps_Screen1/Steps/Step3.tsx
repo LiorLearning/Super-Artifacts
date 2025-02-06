@@ -28,6 +28,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       sendAdminMessage(
         "agent",
         `Can you count how many 1/${mixedFraction.denominator}th pieces does ${mixedFraction.whole} wholes have? You can either click on the pieces to count, or just enter the number manually`
+
       )
       messageShown.current = true
 

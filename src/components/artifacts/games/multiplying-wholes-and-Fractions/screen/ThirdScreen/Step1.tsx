@@ -30,9 +30,7 @@ export default function Screen3Step1() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <FractionHeader level={1} whole={questions[currentQuestionIndex].whole} numerator={questions[currentQuestionIndex].fraction.numerator} denominator={questions[currentQuestionIndex].fraction.denominator} onClick={() => {
-        setGameStateRef({ ...gameStateRef.current, state1: { ...gameStateRef.current.state1, step: gameStateRef.current.state1.step } });
-      }} />
+      <FractionHeader level={3} whole={questions[currentQuestionIndex].whole} numerator={questions[currentQuestionIndex].fraction.numerator} denominator={questions[currentQuestionIndex].fraction.denominator} />
       <div className={``}>
         <SolveQuestionBox
           whole={questions[currentQuestionIndex].whole}
