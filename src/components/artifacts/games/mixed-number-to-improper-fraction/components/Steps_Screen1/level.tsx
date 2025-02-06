@@ -41,7 +41,7 @@ const Level: React.FC<LevelProps> = ({ mixedFraction, stepNumber = 1 }) => {
           <span>+</span>
           <div className="flex flex-col items-center">
             <span>{mixedFraction.numerator}</span>
-            <div className="h-[px] w-5 bg-black"></div>
+            <div className="h-[2px] w-5 bg-black"></div>
             <span>{mixedFraction.denominator}</span>
           </div>
         </div>

@@ -181,9 +181,10 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
                         alt="slicer" 
                         width={48} 
                         height={48} 
-                        className="w-12 h-12"
+                        className="w-16 h-14"
                       />
                     </div>
+
                     {index !== slicerOptions.length - 1 && (
                       <div className="flex justify-center">
                         <div className="w-3/4 h-[2px] bg-black" />
@@ -215,10 +216,10 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
             <div className="flex justify-end mt-6">
               <div className="relative">
                 <div className={`absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl ${
-                  canSlice && selectedSlice !== null ? 'hover:bg-opacity-90' : 'opacity-50 cursor-not-allowed'
+                  canSlice && selectedSlice !== null ? 'hover:bg-opacity-90' : 'cursor-not-allowed'
                 }`}></div>
                 <div className={`absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl ${
-                  canSlice && selectedSlice !== null ? 'hover:bg-opacity-90' : 'opacity-50 cursor-not-allowed'
+                  canSlice && selectedSlice !== null ? 'hover:bg-opacity-90' : 'cursor-not-allowed'
                 }`}></div>
                 <button
                   onClick={handleSlice}

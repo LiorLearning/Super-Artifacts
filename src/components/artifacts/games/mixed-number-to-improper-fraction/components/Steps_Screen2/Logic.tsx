@@ -33,6 +33,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const [hasShownFirstError, setHasShownFirstError] = useState(false);
   const [topSuccess, setTopSuccess] = useState(false);
   const [bottomSuccess, setBottomSuccess] = useState(false);
+  const [canEnterDenominator, setCanEnterDenominator] = useState(false)
 
   useEffect(() => {
     if (!initialMessageShown.current) {
@@ -98,28 +99,20 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const handleSuccess = () => {
     sendAdminMessage(
       "agent",
-      "Perfect! You've mastered the quick hack!",
+      "See? We got the same answer as with the pies method!",
       () => {
-        setTimeout(() => {
-          sendAdminMessage(
-            "agent",
-            "See? We got the same answer as with the pies method!",
-            () => {
               setShowNextStep(false);
               setShowNextStep3(true);
             }
           );
-        }, 1000);
-      }
-    );
   };
+
 
   const handleTopAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '');
     setTopAnswer(value);
     
     const expectedTop = (denominator * whole) + numerator;
-    const expectedBottom = denominator;
 
     // Error check
     if (value.length >= expectedTop.toString().length && 
@@ -132,29 +125,31 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
       setHasShownError(true);
     }
 
-    // Success check for top number only
+    // Success check for top number
     if (Number(value) === expectedTop && !topSuccess) {
+      setCanEnterDenominator(true)  // Enable denominator input
       sendAdminMessage(
         "agent",
-        "Great! Now enter the denominator. Remember, it stays the same!"
+        "Perfect! Now enter the denominator. Remember, it stays the same!"
       );
       setTopSuccess(true);
-    }
-
-    // Final success check
-    if (Number(value) === expectedTop && Number(bottomAnswer) === expectedBottom && bottomSuccess) {
-      handleSuccess();
-
     }
   };
 
   const handleBottomAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!canEnterDenominator) {
+      sendAdminMessage(
+        "agent",
+        "First enter the correct numerator above!"
+      );
+      return;
+    }
+
     const value = e.target.value.replace(/\D/g, '');
     setBottomAnswer(value);
     
     const expectedTop = (denominator * whole) + numerator;
     const expectedBottom = denominator;
-
 
     // Error check
     if (value.length >= expectedBottom.toString().length && 
@@ -167,14 +162,13 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
       setHasShownError(true);
     }
 
-    // Success check for bottom number only
+    // Success check for bottom number
     if (Number(value) === expectedBottom && !bottomSuccess) {
       sendAdminMessage(
         "agent",
         "Great job! You've got the denominator right!",
         () => {
           if (Number(topAnswer) === expectedTop) {
-
             setTimeout(() => {
               handleSuccess();
             }, 1000);
@@ -182,7 +176,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         }
       );
       setBottomSuccess(true);
-
     }
   };
 
@@ -381,8 +374,10 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                   <input
                     value={bottomAnswer}
                     onChange={handleBottomAnswerChange}
-                    className="absolute inset-0 bg-white rounded-xl border-4 border-white text-center text-3xl outline-none z-10"
+                    className={`absolute inset-0 bg-white rounded-xl border-4 border-white text-center text-3xl outline-none z-10 
+                      ${!canEnterDenominator ? 'cursor-not-allowed' : ''}`}
                     placeholder="?"
+                    disabled={!canEnterDenominator}
                   />
                 </div>
               </div>

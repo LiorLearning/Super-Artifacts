@@ -15,6 +15,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [isDragging, setIsDragging] = useState<"whole" | "fraction" | null>(null)
   const [showStepButton, setShowStepButton] = useState(false)
   const messageShown = useRef(false)
+  const [showCompleteState, setShowCompleteState] = useState(false)
 
   const stepButtonRef = useRef<HTMLDivElement>(null);
 
@@ -64,29 +65,54 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
     if (type === "whole" && zone === "whole") {
       setWholes(mixedFraction.whole)
-      sendAdminMessage(
-        "agent",
-        "Great! You've placed the whole number correctly"
-      )
+      if (fraction !== null) {
+        setShowCompleteState(true)
+        sendAdminMessage(
+          "agent",
+          `Correct! ${mixedFraction.whole} ${mixedFraction.numerator}/${mixedFraction.denominator}th is a sum of ${mixedFraction.whole} wholes and ${mixedFraction.numerator}/${mixedFraction.denominator}th. Now let's change ${mixedFraction.whole} wholes to fraction, so that we can add these two easily`,
+          () => {
+            setShowStepButton(true)
+            setTimeout(() => {
+              sendAdminMessage(
+                "agent",
+                "Click on Step 2 to proceed"
+              )
+            }, 1000)
+          }
+        )
+      } else {
+        sendAdminMessage(
+          "agent",
+          "Great! You've placed the whole number correctly"
+        )
+      }
     } else if (type === "fraction" && zone === "fraction") {
       setFraction({
         numerator: mixedFraction.numerator,
         denominator: mixedFraction.denominator,
       })
-      sendAdminMessage(
-        "agent",
-        `Correct! ${mixedFraction.whole} ${mixedFraction.numerator}/${mixedFraction.denominator}th is a sum of ${mixedFraction.whole} wholes and ${mixedFraction.numerator}/${mixedFraction.denominator}th. Now let's change ${mixedFraction.whole} wholes to fraction, so that we can add these two easily`,
-
-        () => {
-          setShowStepButton(true)
-          setTimeout(() => {
-            sendAdminMessage(
-              "agent",
-              "Click on Step 2 to proceed"
-            )
-          }, 1000)
-        }
-      )
+      
+      if (wholes !== null) {
+        setShowCompleteState(true)
+        sendAdminMessage(
+          "agent",
+          `Correct! ${mixedFraction.whole} ${mixedFraction.numerator}/${mixedFraction.denominator}th is a sum of ${mixedFraction.whole} wholes and ${mixedFraction.numerator}/${mixedFraction.denominator}th. Now let's change ${mixedFraction.whole} wholes to fraction, so that we can add these two easily`,
+          () => {
+            setShowStepButton(true)
+            setTimeout(() => {
+              sendAdminMessage(
+                "agent",
+                "Click on Step 2 to proceed"
+              )
+            }, 1000)
+          }
+        )
+      } else {
+        sendAdminMessage(
+          "agent",
+          "Great! You've placed the fraction correctly"
+        )
+      }
     } else {
       sendAdminMessage(
         "agent",
@@ -105,6 +131,25 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       stepTitle="Sum of WHOLES & FRACTIONS"
     >
       <div className="max-w-4xl mx-auto">
+        {showCompleteState && (
+          <div className="bg-white px-8 py-4 rounded-xl mb-8">
+            <div className="text-3xl text-[#FF497C] text-center tracking-wide flex items-center justify-center gap-4">
+              {mixedFraction.whole}
+              <div className="flex flex-col items-center">
+                <span className="text-[#FF497C]">{mixedFraction.numerator}</span>
+                <div className="w-6 h-0.5 bg-[#FF497C]"></div>
+                <span className="text-[#FF497C]">{mixedFraction.denominator}</span>
+              </div>
+              = <span className="text-green-600">{mixedFraction.whole} wholes</span> +
+              <div className="flex flex-col items-center ">
+                <span className="text-[#FF497C]">{mixedFraction.numerator}</span>
+                <div className="w-6 h-0.5 bg-[#FF497C]"></div>
+                <span className="text-[#FF497C]">{mixedFraction.denominator}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 -mx-4 relative">
           <div className="bg-pink-100 p-4 flex flex-col items-center min-h-[320px]">
 
@@ -201,38 +246,26 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
           </div>
         </div>
 
-        {/* Complete state */}
         {isComplete && showStepButton && (
-
           <div ref={stepButtonRef} className="mt-8 flex flex-col items-center gap-6 pb-8">
-
-            <div className="bg-white px-8 py-4 rounded-xl">
-              <div className="text-3xl text-[#FF497C] text-center tracking-wide flex items-center justify-center gap-4">
-                {mixedFraction.whole}
-                <div className="flex flex-col items-center">
-                  <span className="text-[#FF497C]">{mixedFraction.numerator}</span>
-                  <div className="w-6 h-0.5 bg-[#FF497C]"></div>
-                  <span className="text-[#FF497C]">{mixedFraction.denominator}</span>
-                </div>
-                = <span className="text-green-600">{mixedFraction.whole} wholes</span> +
-                <div className="flex flex-col items-center ">
-                  <span className="text-[#FF497C]">{mixedFraction.numerator}</span>
-                  <div className="w-6 h-0.5 bg-[#FF497C]"></div>
-                  <span className="text-[#FF497C]">{mixedFraction.denominator}</span>
-                </div>
-              </div>
-            </div>
             <div className="relative w-[180px] h-[90px]">
-
-            <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
-                <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
+              <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
+              <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
               
-              {/* Main button */}
               <button 
                 onClick={onComplete}
-                className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
+                disabled={!isComplete || !showStepButton}
+                className={`relative w-full h-full border-[10px] flex items-center justify-center
+                  ${isComplete && showStepButton 
+                    ? "border-[#FF497C] bg-white cursor-pointer" 
+                    : "border-gray-400 bg-gray-100 cursor-not-allowed"
+                  }`}
               >
-                <span className="text-[#FF497C] text-[32px] tracking-wide">STEP 2 &gt;&gt;</span>
+                <span className={`text-[32px] tracking-wide
+                  ${isComplete && showStepButton ? "text-[#FF497C]" : "text-gray-400"}`}
+                >
+                  STEP 2 &gt;&gt;
+                </span>
               </button>
             </div>
           </div>
