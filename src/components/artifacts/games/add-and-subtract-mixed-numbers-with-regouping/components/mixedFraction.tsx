@@ -32,6 +32,14 @@ export function MixedFractionBox({ whole, numerator, denominator, onClick, type=
     );
 }
 
+export const checkEquivalentfraction = (fraction1: MixedFractionProps, fraction2: MixedFractionProps) => {
+  const improperFraction1 = (fraction1.whole * fraction1.denominator + fraction1.numerator) / fraction1.denominator;
+  const improperFraction2 = (fraction2.whole * fraction2.denominator + fraction2.numerator) / fraction2.denominator;
+
+  if (fraction1.denominator !== fraction2.denominator) return false;
+  return improperFraction1 === improperFraction2;
+}
+
 MixedFraction.defaultProps = {
     whole: 0,
     numerator: 0,

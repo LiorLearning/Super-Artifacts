@@ -11,13 +11,30 @@ export function BlueBox({ children, className, onClick }: { children: ReactNode;
 
 export function DoubleBlueBox({ first, second, className , widthratio = 50}: { first: ReactNode; second: ReactNode; className?: string; widthratio?: number }) {
   return (
-    <div className={`flex gap-2 bg-[#0C88C4] p-2 text-white rounded-lg ${className}`} >
-      <div className="bg-white"
+    <div className={`flex gap-2 bg-[#0C88C4] text-[#0C88C4] p-2 rounded-lg ${className}`} >
+      <div className="bg-white rounded-lg"
         style={{ width: `${widthratio}%` }}
       >
         {first}
       </div>
-      <div className="bg-white"
+      <div className="bg-white rounded-lg"
+        style={{ width: `${100 - widthratio}%` }}
+      >
+        {second}
+      </div>
+    </div>
+  )
+}
+
+export function DoubleBlueBox2({ first, second, className , widthratio = 50}: { first: ReactNode; second: ReactNode; className?: string; widthratio?: number }) {
+  return (
+    <div className={`flex gap-2 bg-[#0C88C4] text-[#0C88C4] p-2 rounded-lg ${className}`} >
+      <div className="bg-white rounded-lg"
+        style={{ width: `${widthratio}%` }}
+      >
+        {first}
+      </div>
+      <div 
         style={{ width: `${100 - widthratio}%` }}
       >
         {second}

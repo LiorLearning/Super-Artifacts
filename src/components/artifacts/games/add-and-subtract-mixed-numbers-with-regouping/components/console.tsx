@@ -24,7 +24,24 @@ export function consoletofraction(unit: ConsoleUnit[]) {
   return { whole, numerator, denominator };
 }
 
-const Pieces = ({type, number = [1,2,3,4], index, selected, selectedSegments, onSelect}:{
+export function fractiontoconsole(fraction: { whole: number; numerator: number; denominator: number; }) {
+    const value: ConsoleUnit[] = [];
+    
+    // Add whole number units (type 1)
+    for (let i = 0; i < fraction.whole; i++) {
+      value.push({ type: 1, number: [1] });
+    }
+
+    // Add fractional unit (type 2) if there's a numerator
+    if (fraction.numerator > 0) {
+      const segments = Array.from({ length: fraction.numerator }, (_, i) => i);
+      value.push({ type: 2, number: segments });
+    }
+
+    return value;
+}
+
+export const Pieces = ({type, number = [1,2,3,4], index, selected, selectedSegments, onSelect}:{
   type: 1 | 2,
   number: number[],
   index: number,
@@ -34,80 +51,29 @@ const Pieces = ({type, number = [1,2,3,4], index, selected, selectedSegments, on
 }) => {
   if (type === 1) return (
     <div 
-      className={`flex w-14 h-14 bg-[#FFF52F] rounded-full border-[1px] ${selected ? 'ring-4 ring-blue-500' : 'shadow-[-1px_1px_rgba(0,_0,_0,_1)]'} border-black relative group cursor-pointer transition-all`}
+      className={`w-16 h-16 rounded-full border-black cursor-pointer border-2 ${selected ? 'bg-[#ffd92f]' : 'bg-[#FFF52F]'}`}
       onClick={() => onSelect(index)}
-    >
-      <span className="absolute top-[-25px] left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-        1      
-      </span>
+    />
+  )
+
+  return (
+    <div className="relative w-16 h-16">
+      <svg viewBox="0 0 100 100" className="w-full h-full">
+        <circle cx="50" cy="50" r="48" fill="none" stroke="black" strokeWidth="2"/>
+        {number.map((n) => (
+          <path
+            key={n}
+            d={`M 50 50 L ${50 + 48 * Math.cos(n * Math.PI / 2)} ${50 + 48 * Math.sin(n * Math.PI / 2)} A 48 48 0 0 0 ${50 + 48 * Math.cos((n - 1) * Math.PI / 2)} ${50 + 48 * Math.sin((n - 1) * Math.PI / 2)} Z`}
+            fill={selectedSegments?.includes(n) ? '#ffd92f' : '#FFF52F'}
+            stroke="black"
+            strokeWidth="1"
+            className="cursor-pointer"
+            onClick={() => onSelect(index, n)}
+          />
+        ))}
+      </svg>
     </div>
-  );
-
-  else if (type === 2) {
-    const segments = 4;
-    const radius = 30;
-    const center = radius + 5; 
-    const size = (center * 2);
-    
-    return (
-      <div className="relative group">
-        <svg 
-          width={size} 
-          height={size} 
-          viewBox={`0 0 ${size} ${size}`}
-        >
-          {[...Array(segments)].map((_, i) => {
-            const startAngle = (i * 360) / segments;
-            const endAngle = ((i + 1) * 360) / segments;
-            const startRad = (startAngle * Math.PI) / 180;
-            const endRad = (endAngle * Math.PI) / 180;
-
-            const flag = number.includes(i);
-            
-            const x1 = center + radius * Math.cos(startRad);
-            const y1 = center + radius * Math.sin(startRad);
-            const x2 = center + radius * Math.cos(endRad);
-            const y2 = center + radius * Math.sin(endRad);
-            
-            const largeArc = endAngle - startAngle <= 180 ? 0 : 1;
-
-            const d = [
-              `M ${center} ${center}`,
-              `L ${x1} ${y1}`,
-              `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
-              'Z'
-            ].join(' ');
-            
-            const isSelected = selected && selectedSegments?.includes(i);
-            
-            return (
-              <g key={i}>
-                {isSelected && (
-                  <path
-                    d={d}
-                    fill="rgba(59, 130, 246, 1)"
-                    stroke="none"
-                    transform="translate(2, 2)"
-                  />
-                )}
-                <path
-                  d={d}
-                  fill={flag ? "#FFF52F" : "white"}
-                  stroke={isSelected ? "#3B82F6" : (flag ? "black" : "black")}
-                  strokeWidth={isSelected ? "2" : "1"}
-                  className={`cursor-pointer transition-all hover:brightness-110`}
-                  onClick={() => onSelect(index, i)}
-                />
-              </g>
-            );
-          })}
-        </svg>
-        <span className="absolute top-[-25px] left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          {number.length}/{segments}
-        </span>
-      </div>
-    );
-  }
+  )
 }
 
 export function Console({
@@ -115,56 +81,21 @@ export function Console({
   units,
   setUnits,
   variant = 1,
-  hidden = false
+  hidden = false,
+  active = true,
 }:{
   fraction?: {whole: number, numerator: number, denominator: number},
   units: ConsoleUnit[],
   setUnits: React.Dispatch<React.SetStateAction<ConsoleUnit[]>>
   variant?: number
   hidden?: boolean
+  active?: boolean
 }){
   const [selected, setSelected] = useState<{index: number, segments?: number[]} | null>(null);
 
   const handleadd = () => {
     const newUnit = {type: 1 as const, number: [1]};
     setUnits(prevUnits => [...prevUnits, newUnit]);
-  }
-
-  const handledelete = () => {
-    if (selected && units[selected.index]) {
-      if (units[selected.index].type === 2 && selected.segments?.length) {
-        // Remove the selected segments from the number array
-        const newNumber = units[selected.index].number.filter(n => !selected.segments?.includes(n));
-        if (newNumber.length === 0) {
-          // If no segments left, remove the whole unit
-          setUnits(units.filter((_, i) => i !== selected.index));
-        } else {
-          // Otherwise update the unit with remaining segments
-          const newUnits = [...units];
-          newUnits[selected.index] = { ...newUnits[selected.index], number: newNumber };
-          setUnits(newUnits);
-        }
-      } else {
-        setUnits(units.filter((_, i) => i !== selected.index));
-      }
-      setSelected(null);
-    }
-  }
-
-  const handlemerge = () => {
-    if (selected && units[selected.index] && selected.segments?.length === 4) {
-      const newUnits = units.filter((_, i) => i !== selected.index);
-      setUnits([...newUnits, {type: 1, number: [1]}]);
-      setSelected(null);
-    }
-  }
-
-  const handlesplit = () => {
-    if (selected && units[selected.index]) {
-      setUnits(units.filter((_, i) => i !== selected.index));
-      setUnits(prevUnits => [...prevUnits, {type: 2, number: [0,1,2,3]}]);
-      setSelected(null);
-    }
   }
 
   const handleSelect = (index: number, segment?: number) => {
@@ -197,7 +128,7 @@ export function Console({
   };
 
   return(
-    <div className="bg-[#E8F5FF] p-3 w-full max-w-screen-md rounded-lg shadow-[-3px_3px_1px_1px_rgba(0,_0,_0,_0.5)]">
+    <div className="bg-[#E8F5FF] p-3 w-full max-w-screen-md rounded-lg shadow-[-3px_3px_1px_1px_rgba(0,_0,_0,_0.5)]" style={{cursor: active ? "default" : "not-allowed", opacity: active ? 1 : 0.5}}>
       <div className="bg-white flex flex-col p-3 shadow-[inset_-3px_3px_1px_1px_rgba(0,_0,_0,_0.5)] rounded-md">
         
         {variant !== 2 &&
@@ -214,10 +145,14 @@ export function Console({
               <Add 
                 onClick={handleadd}
               />
-              <Delete 
-                onClick={handledelete} 
-                disabled={!selected || !units[selected.index]}
-              />
+              { variant != 3 && (
+                <Delete 
+                  selected={selected}
+                  setSelected={setSelected}
+                  units={units}
+                  setUnits={setUnits}
+                />
+              )}
             </div>
           </div>
         }
@@ -237,18 +172,24 @@ export function Console({
         </ div>
 
       </div>
-      <div className="p-2 flex justify-between w-full rounded-md min-h-[100px]">
+      <div className="p-2 flex justify-between w-full rounded-md">
         { variant !== 3 &&
           <div className="flex gap-2 items-center">
             <Merge 
-              onClick={handlemerge}
+              selected={selected}
+              setSelected={setSelected}
+              units={units}
+              setUnits={setUnits}
               disabled={!selected?.segments || selected.segments.length !== 4}
             />
 
             <Split 
-              onClick={handlesplit} 
-            disabled={!selected || !units[selected.index] || units[selected.index].type !== 1}
-          />
+              selected={selected}
+              setSelected={setSelected}
+              units={units}
+              setUnits={setUnits}
+              disabled={!selected || !units[selected.index] || units[selected.index].type !== 1}
+            />
           </div>
         }
         { variant === 2 &&
@@ -356,12 +297,43 @@ export function Add({
 export function Delete({ 
   disabled = false,
   active = true,
-  onClick = () => {}
-}: ButtonProps ){
-  if (active) return(
+  selected,
+  setSelected,
+  units,
+  setUnits
+}: ButtonProps & {
+  selected: { index: number; segments?: number[] } | null;
+  setSelected: React.Dispatch<React.SetStateAction<{ index: number; segments?: number[] } | null>>
+  units: ConsoleUnit[]
+  setUnits: React.Dispatch<React.SetStateAction<ConsoleUnit[]>>
+} ){
+  if (!active) return;
+
+  const handledelete = () => {
+    if (selected && units[selected.index]) {
+      if (units[selected.index].type === 2 && selected.segments?.length) {
+        // Remove the selected segments from the number array
+        const newNumber = units[selected.index].number.filter(n => !selected.segments?.includes(n));
+        if (newNumber.length === 0) {
+          // If no segments left, remove the whole unit
+          setUnits(units.filter((_, i) => i !== selected.index));
+        } else {
+          // Otherwise update the unit with remaining segments
+          const newUnits = [...units];
+          newUnits[selected.index] = { ...newUnits[selected.index], number: newNumber };
+          setUnits(newUnits);
+        }
+      } else {
+        setUnits(units.filter((_, i) => i !== selected.index));
+      }
+      setSelected(null);
+    }
+  }
+  
+  return(
     <div 
       className={`border-[1px] shadow-[-3px_3px_rgba(0,_0,_0,_0.5)] border-black p-1 rounded-lg origin-center ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
-      onClick={!disabled ? onClick : () => {}}
+      onClick={!disabled ? handledelete : () => {}}
     >
     <div className="flex items-center p-2 rounded-full gap-4 bg-red-400">
       <Trash className="text-white fill-white" />
@@ -373,63 +345,99 @@ export function Delete({
 export function Merge({
   disabled = false,
   active = true,
-  onClick = () => {}
-}:ButtonProps){
-  if (active) return(
-    <div 
-      className={`border-[1px] shadow-[-3px_3px_rgba(0,_0,_0,_0.5)] border-black scale-75 p-2 rounded-lg origin-center ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
-      onClick={!disabled ? onClick : () => {}} 
-    >
-    <svg width="89" height="60" viewBox="0 0 89 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g filter="url(#filter0_d_0_1)">
-      <path d="M88.5138 28.7979C88.5138 44.3984 75.8671 57.0451 60.2667 57.0451C44.6662 57.0451 32.0195 44.3984 32.0195 28.7979C32.0195 13.1975 44.6662 0.550781 60.2667 0.550781C75.8671 0.550781 88.5138 13.1975 88.5138 28.7979Z" fill="#496AFF"/>
-      </g>
-      <g filter="url(#filter1_d_0_1)">
-      <circle cx="31.5323" cy="28.794" r="28.2471" fill="#496AFF"/>
-      </g>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M45.9014 53.1203C54.2111 48.2028 59.7833 39.1489 59.7833 28.7936C59.7833 18.4382 54.2111 9.38432 45.9014 4.4668C37.5918 9.38432 32.0195 18.4382 32.0195 28.7936C32.0195 39.1489 37.5918 48.2028 45.9014 53.1203Z" fill="#183AD0"/>
-      <defs>
-      <filter id="filter0_d_0_1" x="29.0848" y="0.550781" width="59.4309" height="59.4289" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape"/>
-      </filter>
-      <filter id="filter1_d_0_1" x="0.350389" y="0.546875" width="59.4309" height="59.4289" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape"/>
-      </filter>
-      </defs>
-    </svg>
-  </div>
-  )
+  selected,
+  setSelected,
+  units,
+  setUnits
+}:ButtonProps & {
+  selected: { index: number; segments?: number[] } | null;
+  setSelected: React.Dispatch<React.SetStateAction<{ index: number; segments?: number[] } | null>>
+  units: ConsoleUnit[]
+  setUnits: React.Dispatch<React.SetStateAction<ConsoleUnit[]>>
+}){
+  if (active) {
+    const handleMerge = () => {
+      if (selected && units[selected.index] && selected.segments?.length === 4) {
+        const newUnits = units.filter((_, i) => i !== selected.index);
+        setUnits([...newUnits, {type: 1, number: [1]}]);
+        setSelected(null);
+      }
+    }
+
+    return(
+      <div 
+        className={`border-[1px] shadow-[-3px_3px_rgba(0,_0,_0,_0.5)] border-black scale-75 p-2 rounded-lg origin-center ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
+        onClick={!disabled ? handleMerge : () => {}}
+      >
+      <svg width="89" height="60" viewBox="0 0 89 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g filter="url(#filter0_d_0_1)">
+        <path d="M88.5138 28.7979C88.5138 44.3984 75.8671 57.0451 60.2667 57.0451C44.6662 57.0451 32.0195 44.3984 32.0195 28.7979C32.0195 13.1975 44.6662 0.550781 60.2667 0.550781C75.8671 0.550781 88.5138 13.1975 88.5138 28.7979Z" fill="#496AFF"/>
+        </g>
+        <g filter="url(#filter1_d_0_1)">
+        <circle cx="31.5323" cy="28.794" r="28.2471" fill="#496AFF"/>
+        </g>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M45.9014 53.1203C54.2111 48.2028 59.7833 39.1489 59.7833 28.7936C59.7833 18.4382 54.2111 9.38432 45.9014 4.4668C37.5918 9.38432 32.0195 18.4382 32.0195 28.7936C32.0195 39.1489 37.5918 48.2028 45.9014 53.1203Z" fill="#183AD0"/>
+        <defs>
+        <filter id="filter0_d_0_1" x="29.0848" y="0.550781" width="59.4309" height="59.4289" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape"/>
+        </filter>
+        <filter id="filter1_d_0_1" x="0.350389" y="0.546875" width="59.4309" height="59.4289" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape"/>
+        </filter>
+        </defs>
+      </svg>
+    </div>
+    )
+  }
 }
 
 export function Split({
   disabled = false,
   active = true,
-  onClick = () => {}
-}:ButtonProps){
-  if (active) return(
-    <div 
-      className={`border-[1px] shadow-[-3px_3px_rgba(0,_0,_0,_0.5)] border-black scale-75 p-2 rounded-lg origin-center ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
-      onClick={!disabled ? onClick : () => {}}
-    >
-    <svg width="119" height="111" viewBox="0 0 119 111" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g filter="url(#filter1_d_1387_111)">
-      <path d="M89.2951 52.4091C89.2951 57.9959 87.6384 63.4572 84.5346 68.1024C81.4307 72.7476 77.0191 76.3681 71.8576 78.5061C66.6961 80.644 61.0166 81.2034 55.5372 80.1135C50.0578 79.0236 45.0246 76.3333 41.0742 72.3829C37.1237 68.4324 34.4335 63.3993 33.3435 57.9199C32.2536 52.4404 32.813 46.7609 34.951 41.5994C37.0889 36.4379 40.7094 32.0263 45.3547 28.9225C49.9999 25.8186 55.4612 24.162 61.0479 24.162L61.0479 52.4091L89.2951 52.4091Z" fill="#E449FF"/>
-      </g>
-      <g filter="url(#filter2_d_1387_111)">
-      <path d="M91.8932 49.9518C91.8932 46.2216 91.1585 42.5279 89.731 39.0817C88.3035 35.6354 86.2112 32.5041 83.5736 29.8665C80.9359 27.2288 77.8046 25.1365 74.3584 23.7091C70.9121 22.2816 67.2185 21.5469 63.4883 21.5469V49.9518H91.8932Z" fill="#C929E5"/>
-      </g>
-      <defs>
-      <filter id="filter0_d_1387_111" x="0.150471" y="0" width="118.842" height="110.355" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      {/* <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1387_111" result="shape"/> */}
-      </filter>
-      <filter id="filter1_d_1387_111" x="29.866" y="24.1621" width="59.4309" height="59.4289" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1387_111" result="shape"/>
-      </filter>
-      <filter id="filter2_d_1387_111" x="62.1823" y="21.5469" width="29.7122" height="29.7103" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1387_111" result="shape"/>
-      </filter>
-      </defs>
-    </svg>
-  </div>
-  )
+  selected,
+  setSelected,
+  units,
+  setUnits
+}:ButtonProps & {
+  selected: { index: number; segments?: number[] } | null;
+  setSelected: React.Dispatch<React.SetStateAction<{ index: number; segments?: number[] } | null>>
+  units: ConsoleUnit[]
+  setUnits: React.Dispatch<React.SetStateAction<ConsoleUnit[]>>
+}){
+  if (active) {
+    const handleSplit = () => {
+      if (selected && units[selected.index]) {
+        setUnits(units.filter((_, i) => i !== selected.index));
+        setUnits(prevUnits => [...prevUnits, {type: 2, number: [0,1,2,3]}]);
+        setSelected(null);
+      }
+    }
+
+    return(
+      <div 
+        className={`border-[1px] shadow-[-3px_3px_rgba(0,_0,_0,_0.5)] border-black scale-75 p-2 rounded-lg origin-center ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
+        onClick={!disabled ? handleSplit : () => {}}
+      >
+      <svg width="119" height="111" viewBox="0 0 119 111" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g filter="url(#filter1_d_1387_111)">
+        <path d="M89.2951 52.4091C89.2951 57.9959 87.6384 63.4572 84.5346 68.1024C81.4307 72.7476 77.0191 76.3681 71.8576 78.5061C66.6961 80.644 61.0166 81.2034 55.5372 80.1135C50.0578 79.0236 45.0246 76.3333 41.0742 72.3829C37.1237 68.4324 34.4335 63.3993 33.3435 57.9199C32.2536 52.4404 32.813 46.7609 34.951 41.5994C37.0889 36.4379 40.7094 32.0263 45.3547 28.9225C49.9999 25.8186 55.4612 24.162 61.0479 24.162L61.0479 52.4091L89.2951 52.4091Z" fill="#E449FF"/>
+        </g>
+        <g filter="url(#filter2_d_1387_111)">
+        <path d="M91.8932 49.9518C91.8932 46.2216 91.1585 42.5279 89.731 39.0817C88.3035 35.6354 86.2112 32.5041 83.5736 29.8665C80.9359 27.2288 77.8046 25.1365 74.3584 23.7091C70.9121 22.2816 67.2185 21.5469 63.4883 21.5469V49.9518H91.8932Z" fill="#C929E5"/>
+        </g>
+        <defs>
+        <filter id="filter0_d_1387_111" x="0.150471" y="0" width="118.842" height="110.355" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        {/* <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1387_111" result="shape"/> */}
+        </filter>
+        <filter id="filter1_d_1387_111" x="29.866" y="24.1621" width="59.4309" height="59.4289" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1387_111" result="shape"/>
+        </filter>
+        <filter id="filter2_d_1387_111" x="62.1823" y="21.5469" width="29.7122" height="29.7103" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1387_111" result="shape"/>
+        </filter>
+        </defs>
+      </svg>
+    </div>
+    )
+  }
 }

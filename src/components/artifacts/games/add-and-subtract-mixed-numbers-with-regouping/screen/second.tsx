@@ -1,7 +1,7 @@
 import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps } from '../utils/types';
-import { ConsoleUnit, Console} from '../components/console';
+import { ConsoleUnit, Console, fractiontoconsole} from '../components/console';
 import { BlueBox, BlueText, DoubleBlueBox } from '../components/blue';
 import { MixedFractionBox } from '../components/mixedFraction';
 import { useState, useEffect, useRef } from 'react';
@@ -43,20 +43,7 @@ function Phase1({ sendAdminMessage }: BaseProps) {
   }, []);
 
   useEffect(() => {
-    const value: ConsoleUnit[] = [];
-    
-    // Add whole number units (type 1)
-    for (let i = 0; i < question1.whole; i++) {
-      value.push({ type: 1, number: [1] });
-    }
-
-    // Add fractional unit (type 2) if there's a numerator
-    if (question1.numerator > 0) {
-      const segments = Array.from({ length: question1.numerator }, (_, i) => i);
-      value.push({ type: 2, number: segments });
-    }
-
-    setUnits(value);
+    setUnits(fractiontoconsole(question1));
   }, [question1]);
 
   useEffect(() => {
@@ -228,26 +215,7 @@ function Phase2({ sendAdminMessage }: BaseProps) {
   }, []);
 
   useEffect(() => {
-    const value: ConsoleUnit[] = [];
-    
-    // Add whole number units (type 1)
-    for (let i = 0; i < question2.whole; i++) {
-      value.push({ type: 1, number: [1] });
-    }
-
-    // Add fractional unit (type 2) if there's a numerator
-    if (question2.numerator > 0) {
-      const noofwholes = Math.floor(question2.numerator / question2.denominator);
-      for (let i = 0; i < noofwholes; i++) {
-        value.push({ type: 2, number: [0,1,2,3] });
-      }
-
-      
-      const segments = Array.from({ length: question2.numerator % question2.denominator }, (_, i) => i);
-      value.push({ type: 2, number: segments });
-
-    }
-    setUnits(value);
+    setUnits(fractiontoconsole(question2));
   }, [question2]);
 
   useEffect(() => {
@@ -413,8 +381,6 @@ function Phase2({ sendAdminMessage }: BaseProps) {
           </div>
         )
       }
-
-
 
       </div>
     </Bg>

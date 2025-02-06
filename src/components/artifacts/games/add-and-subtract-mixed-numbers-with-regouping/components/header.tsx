@@ -1,7 +1,7 @@
 
 export default function Header({
   text,
-  active
+  active = true
 }:{ 
   text: string, 
   active: boolean 
