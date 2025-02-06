@@ -104,7 +104,7 @@ export interface GameState {
 }
 
 export const initialGameState: GameState = {
-  screen: 'fourth',
+  screen: 'first',
   state1: {
     step: 0,
     question1: {
