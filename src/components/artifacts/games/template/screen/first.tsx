@@ -2,7 +2,7 @@ import { useGameState } from '../state-utils';
 import { BaseProps } from '../utils/types';
 import { ReactNode } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 interface ChangelogEntry {
   date: string;
@@ -13,7 +13,7 @@ const Code = ({children, className}: {children: ReactNode, className?: string}) 
   return (
     <SyntaxHighlighter
       language="typescript"
-      style={tomorrow}
+      style={vscDarkPlus}
       customStyle={{
         display: 'inline',
         padding: '0.25rem 0.5rem',
@@ -31,7 +31,7 @@ const CodeBlock = ({children, className}: {children: ReactNode, className?: stri
   return (
     <SyntaxHighlighter
       language="typescript" 
-      style={tomorrow}
+      style={vscDarkPlus}
       customStyle={{
         borderRadius: '0.5rem',
         padding: '1rem',
