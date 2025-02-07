@@ -48,14 +48,6 @@ const changelog: ChangelogEntry[] = [
     date: '2025-02-07',
     changes: [
       <div key="1">
-        use <Code>goToStep(screen, stepNumber)</Code> to navigate between screens, 
-        instead of <Code>goToStep(screen, setGameStateRef, stepNumber)</Code>
-      </div>,
-      <div key="2">
-        use <Code>goToScreen(screen)</Code> to navigate between screens, 
-        instead of <Code>goToScreen(screen, setGameStateRef)</Code>
-      </div>,
-      <div key="3">
         use <Code>setGameState(newState)</Code> to update the game state, 
         instead of <Code>setGameStateRef(newState)</Code>. No need to write
 <CodeBlock>{`setGameStateRef(prev => ({
@@ -69,6 +61,9 @@ const changelog: ChangelogEntry[] = [
   }
 })`}</CodeBlock>
         instead use <CodeBlock>{`setGameState({ state1: {questions: {question2: 8} } })`}</CodeBlock>
+      </div>,
+      <div key="2">
+        added state-limits.tsx to check if the game state is valid, need to create for each game before adding to product
       </div>
     ]
   }

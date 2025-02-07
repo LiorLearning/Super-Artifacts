@@ -23,13 +23,13 @@ export const DevHelper = () => {
   const handleDirectStepChange = () => {
     const stepNumber = parseInt(directStep);
     if (!isNaN(stepNumber)) {
-      goToStep(screen, stepNumber);
+      goToStep(screen, setGameStateRef, stepNumber);
     }
   }
 
   return (
     <div className="flex justify-between mt-4">
-      <Button className='m-2' onClick={() => prevStep(screen)}>Previous Step</Button>
+      <Button className='m-2' onClick={() => prevStep(screen, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
         <Select 
           value={screen} 
@@ -61,16 +61,15 @@ export const DevHelper = () => {
         />
         <Button onClick={handleDirectStepChange}>Go to Step</Button>
       </div>
-      <Button className='m-2' onClick={() => nextStep(screen)}>Next Step</Button>
+      <Button className='m-2' onClick={() => nextStep(screen, setGameStateRef)}>Next Step</Button>
     </div>
   );
 };
 
 export const nextStep = (
   screen: GameScreen, 
-  // setGameStateRef: (newState: (prevState: GameState) => GameState) => void
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void
 ) => {
-  const { setGameStateRef } = useGameState();
   if (screen === 'first') {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
   } else {
@@ -80,9 +79,9 @@ export const nextStep = (
 
 export const goToStep = (
   screen: GameScreen, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
   step: number
 ) => {
-  const { setGameStateRef } = useGameState();
   if (screen === 'first') {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step } }));
   } else {
@@ -92,15 +91,15 @@ export const goToStep = (
 
 export const goToScreen = (
   screen: GameScreen, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void
 ) => {
-  const { setGameStateRef } = useGameState();
   setGameStateRef(prev => ({ ...prev, screen }));
 }
 
 export const prevStep = (
   screen: GameScreen, 
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void
 ) => {
-  const { setGameStateRef } = useGameState();
   if (screen === 'first') {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: Math.max(prev.state1.step - 1, 0) } }));
   } else {
