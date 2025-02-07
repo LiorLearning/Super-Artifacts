@@ -1,11 +1,14 @@
+import { fetchGameState } from "@/hooks/get-game-state";
 import { GameState, initialGameState, descriptions } from "./game-state";
-import { createContext, useContext, useReducer, useRef, ReactNode } from 'react';
-
+import { createContext, useContext, useReducer, useRef, ReactNode, useEffect } from 'react';
+import { mergeGameState } from "@/hooks/merge-game-state";
+import  checkGameStateLimits  from './state-limits';
 
 const GameStateContext = createContext<{
     gameStateRef: React.MutableRefObject<GameState>;
     setGameStateRef: (newState: ((prevState: GameState) => GameState) | Partial<GameState>) => void;
     getDescription: () => string;
+    setGameState: (newState: Partial<GameState>) => void;
   } | undefined>(undefined);
   
   const gameStateReducer = (state: GameState, action: Partial<GameState> | ((prevState: GameState) => GameState)): GameState => {
@@ -18,6 +21,9 @@ const GameStateContext = createContext<{
 export const GameStateProvider: React.FC<{ 
   children: ReactNode 
 }> = ({ children }) => {
+  const queryParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const id = queryParams.get('id');
+
   const gameStateRef = useRef<GameState>(initialGameState);
   const [, dispatch] = useReducer(gameStateReducer, initialGameState);
   
@@ -36,6 +42,26 @@ export const GameStateProvider: React.FC<{
     }
   };
 
+  const setGameState = (newState: Partial<GameState>) => {
+    setGameStateRef(mergeGameState(gameStateRef.current, newState))
+  }
+
+
+  useEffect(() => {
+    const loadGameState = async () => {
+      if (id) {
+        const fetchedGameState = await fetchGameState(id);
+        const updatedGameState = mergeGameState(initialGameState, fetchedGameState || {});
+        if (checkGameStateLimits(updatedGameState)) {
+          console.log('updatedGameState', updatedGameState);
+          setGameStateRef(updatedGameState);
+        }
+      }
+    };
+    loadGameState();
+  }, [id]);
+  
+
   const getDescription = () => {
     const description = descriptions.find(d => d.title === gameStateRef.current.screen)?.description;
     return description || '';
@@ -45,7 +71,8 @@ export const GameStateProvider: React.FC<{
     <GameStateContext.Provider value={{ 
       gameStateRef,
       setGameStateRef,
-      getDescription
+      getDescription,
+      setGameState
     }}>
       {children}
     </GameStateContext.Provider>

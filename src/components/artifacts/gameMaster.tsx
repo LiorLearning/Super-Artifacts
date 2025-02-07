@@ -19,8 +19,11 @@ interface GameComponentProps {
 
 // Get the current game component
 const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) => {
-  const Provider = gameInfo[currentGame].provider;
-  const Game = gameInfo[currentGame].game;
+  // If the game doesn't exist in gameInfo, fallback to template
+  const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
+  const Provider = gameInfo[gameKey].provider;
+  const Game = gameInfo[gameKey].game;
+  
   return (
     <Provider>
       <Game sendAdminMessage={sendAdminMessage} />
@@ -39,13 +42,13 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const gameParam = searchParams.get('game') as GameKey;
-  const [currentGame, setCurrentGame] = useState<GameKey>('template-game');
+  const [currentGame, setCurrentGame] = useState<GameKey>(gameParam || 'template-game');
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected, reconnectWebSocket } = useWebSocketLogger()
 
   useEffect(() => {
     setIsClient(true);
-    if (gameParam !== currentGame) {
+    if (gameParam && gameParam !== currentGame) {
       reconnectWebSocket();
       setCurrentGame(gameParam);
     }
