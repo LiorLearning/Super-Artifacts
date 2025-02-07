@@ -18,7 +18,7 @@ export default function Screen3Step1({ sendAdminMessage }: BaseProps) {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent', 
-        `Great job learning! Now, practice multiplying whole numbers by fractions to become a math master! 🎯💡`
+        `Great job learning! Now, we practice multiplying whole numbers by fractions to become a math master! 🎯💡`
       );
     }
   }, []);

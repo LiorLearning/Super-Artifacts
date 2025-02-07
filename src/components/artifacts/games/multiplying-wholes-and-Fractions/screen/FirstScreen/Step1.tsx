@@ -79,6 +79,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
           handleJoinClick={() => {
             if (bar.denominator > 1) {
               setBar(prev => ({ ...prev, denominator: prev.denominator - 1 }));
+              setIsDoneActive(true);
             }
           }}
           active={true}

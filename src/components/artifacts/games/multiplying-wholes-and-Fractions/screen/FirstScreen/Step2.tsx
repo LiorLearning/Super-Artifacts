@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import FractionHeader from "../../components/fractionheader";
 import StepCreateBox from "../../components/stepcreatebox";
 import { useGameState } from "../../state-utils";
@@ -29,7 +29,6 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
 
   function handleDone() {
     if (bar === fraction.numerator * whole) {
-      ansRef.current?.scrollIntoView({ behavior: 'smooth' });
       sendAdminMessage('agent', `Perfect! You've selected ${bar} pieces. That means ${whole} times ${fraction.numerator}/${fraction.denominator}th is equal to ${bar}/${fraction.denominator}th 🎉`, () => goToScreen('second', setGameStateRef));
       setSuccess(true);
     } else {
@@ -41,6 +40,11 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
     }
     setIsDoneActive(false);
   }
+
+  useEffect(() => {
+    if(success)
+      ansRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [success]);
 
   return (
     <div className="flex flex-col min-h-screen">

@@ -74,15 +74,6 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
   const inputStyling = 'w-10 text-center outline-none';
 
 
-
-  useEffect(() => {
-    if (example1State.firstInput && example1State.secondInput && example1State.thirdInput && example2State.firstInput && example2State.secondInput) {
-      setTimeout(() => {
-        goToScreen('third', setGameStateRef)
-      }, 4000);
-    }
-  }, [example1State, example2State]);
-
   useEffect(() => {
     if (!hasStartedRef.current) {
       hasStartedRef.current = true;
@@ -141,7 +132,10 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
       sendAdminMessage('agent',
         `Perfect! You've selected ${totalSelected} pieces in total. 
         That means ${whole} times ${fraction.numerator}/${fraction.denominator} = ${totalSelected}/${fraction.denominator}. 
-        Now let's try some examples to practice! 🎉`
+        Now let's try some examples to practice! 🎉`, () => setShowExamples({
+          example1: true,
+          example2: false
+        })
       );
 
       setTimeout(() => {
