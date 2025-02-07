@@ -30,7 +30,7 @@ export const DevHelper = () => {
   }
 
   return (
-    <div className="flex justify-between mt-4">
+    <div className="flex items-center justify-between my-2">
       <Button className='m-2' onClick={() => prevStep(screen, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
         <Select 
@@ -64,6 +64,7 @@ export const DevHelper = () => {
         />
         <Button onClick={handleDirectStepChange}>Go to Step</Button>
       </div>
+      <div className="text-center">Current Step: {getCurrentStep()}</div>
       <Button className='m-2' onClick={() => nextStep(screen, setGameStateRef)}>Next Step</Button>
     </div>
   );

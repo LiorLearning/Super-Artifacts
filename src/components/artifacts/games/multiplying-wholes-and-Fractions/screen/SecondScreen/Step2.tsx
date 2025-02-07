@@ -43,7 +43,7 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
     example2Second: ''
   });
 
-  const onIncorrect = (attempt: string, correctAnswer: string, inputType: string) => {
+  const onIncorrect = (attempt: string, correctAnswer: string, inputType: string, wholeNumber? : string) => {
     const diff = parseInt(attempt) - parseInt(correctAnswer);
     
     switch(inputType) {
@@ -52,9 +52,9 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
         break;
       case 'numerator':
         if (diff > 0) {
-          sendAdminMessage('agent', `${attempt} is too high! When we multiply ${whole} × ${fraction.numerator}, we get a smaller number. Try again! 🔄`);
+          sendAdminMessage('agent', `${attempt} is too high! When we multiply ${wholeNumber} × ${fraction.numerator}, we get a smaller number. Try again! 🔄`);
         } else {
-          sendAdminMessage('agent', `${attempt} is too low! When we multiply ${whole} × ${fraction.numerator}, we get a larger number. Try again! 🔄`);
+          sendAdminMessage('agent', `${attempt} is too low! When we multiply ${wholeNumber} × ${fraction.numerator}, we get a larger number. Try again! 🔄`);
         }
         break;
       case 'denominator':
@@ -285,7 +285,7 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
                     (document.querySelector('[id="example1-third"]') as HTMLInputElement)?.focus();
                   }}
                   placeholder="?"
-                  onIncorrect={(attempt) => onIncorrect(attempt, (3 * fraction.numerator).toString(), 'numerator')}  
+                  onIncorrect={(attempt) => onIncorrect(attempt, (3 * fraction.numerator).toString(), 'numerator', 3+"")}  
                   className={inputStyling}
                 />
               </div>
@@ -334,7 +334,7 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
                     (document.querySelector('[id="example2-second"]') as HTMLInputElement)?.focus();
                   }}
                   placeholder="?"
-                  onIncorrect={(attempt) => onIncorrect(attempt, (4 * fraction.numerator).toString(), 'numerator')}
+                  onIncorrect={(attempt) => onIncorrect(attempt, (4 * fraction.numerator).toString(), 'numerator', 4+"")}
                   className={inputStyling}
                 />
               </div>
