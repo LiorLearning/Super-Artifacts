@@ -50,11 +50,20 @@ export const GameStateProvider: React.FC<{
   useEffect(() => {
     const loadGameState = async () => {
       if (id) {
-        const fetchedGameState = await fetchGameState(id);
+        // const fetchedGameState = await fetchGameState(id);
+        const fetchedGameState = {
+          state1: {
+            step: 3,
+            variable: 0
+          }
+        }
+
         const updatedGameState = mergeGameState(initialGameState, fetchedGameState || {});
         if (checkGameStateLimits(updatedGameState)) {
           console.log('updatedGameState', updatedGameState);
           setGameStateRef(updatedGameState);
+        } else {
+          alert('checkGameStateLimits failed');
         }
       }
     };

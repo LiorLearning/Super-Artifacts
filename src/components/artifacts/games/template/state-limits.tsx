@@ -8,7 +8,7 @@ export default function checkGameStateLimits(state?: Partial<GameState>): boolea
   }
 
   if (state.state1) {
-    if (typeof state.state1.step !== 'number' || state.state1.step < 0) {
+    if (typeof state.state1.step !== 'number' || state.state1.step < 0 || state.state1.step > 2) {
       return false;
     }
     if (typeof state.state1.variable !== 'number') {
