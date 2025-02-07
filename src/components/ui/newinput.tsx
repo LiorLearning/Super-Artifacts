@@ -6,7 +6,7 @@ export interface NewInputProps extends React.InputHTMLAttributes<HTMLInputElemen
   onValueChange: (value: string) => void;
   nthIncorrect?: number;
   onCorrect?: () => void;
-  onIncorrect?: () => void;
+  onIncorrect?: (attempt: string, correctAnswer: string) => void;
   correctValue?: string;
   useColor?: boolean;
 }
@@ -64,14 +64,20 @@ export default function NewInput({
       if(getState(value, correctValue) === INCORRECT) {
         nthIncorrectValue.current++;
         if(nthIncorrect && nthIncorrectValue.current >= nthIncorrect) {
-          onIncorrect?.();
+          onIncorrect?.(value, correctValue);
         }
       }
       if(getState(value, correctValue) === CORRECT) {
         onCorrect?.();
       }
-    } 
-    onValueChange(value);
+    }
+    if (correctValue) {
+      if (value.length <= correctValue?.length) {
+        onValueChange(value);
+      }
+    } else {
+      onValueChange(value);
+    }
   }
 
   return (
