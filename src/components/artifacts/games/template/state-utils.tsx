@@ -49,24 +49,32 @@ export const GameStateProvider: React.FC<{
 
   useEffect(() => {
     const loadGameState = async () => {
-      if (id) {
-        const fetchedGameState = await fetchGameState(id);
-        // const fetchedGameState = {
-        //   state1: {
-        //     step: 2,
-        //     variable: 0
-        //   }
-        // }
+      const currentGame = window.location.search.split('game=')[1]?.split('&')[0] || 'template-game';
 
-        const updatedGameState = mergeGameState(initialGameState, fetchedGameState || {});
+      if (id) {
+        const fetchedGameState = await fetchGameState(id) as Partial<GameState>;
+        const updatedGameState = mergeGameState(initialGameState, fetchedGameState);
         if (checkGameStateLimits(updatedGameState)) {
-          console.log('updatedGameState', updatedGameState);
           setGameStateRef(updatedGameState);
         } else {
           alert('checkGameStateLimits failed');
         }
+
+      } else if (localStorage.getItem(currentGame)) {
+        try {
+          const fetchedGameState = JSON.parse(localStorage.getItem(currentGame) || '{}');
+          const updatedGameState = mergeGameState(initialGameState, fetchedGameState);
+          if (checkGameStateLimits(updatedGameState)) {
+            setGameStateRef(updatedGameState);
+          } else {
+            alert('checkGameStateLimits failed');
+          }
+        } catch (e) {
+          console.error('Error parsing game state from localStorage:', e);
+        }
       }
     };
+
     loadGameState();
   }, [id]);
   
