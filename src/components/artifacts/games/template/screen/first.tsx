@@ -1,45 +1,25 @@
 import { useGameState } from '../state-utils';
 import { BaseProps } from '../utils/types';
 import { ReactNode } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 interface ChangelogEntry {
   date: string;
   changes: React.ReactNode[];
 }
 
-const Code = ({children, className}: {children: ReactNode, className?: string}) => {
+const Code = ({children}: {children: ReactNode}) => {
   return (
-    <SyntaxHighlighter
-      language="typescript"
-      style={vscDarkPlus}
-      customStyle={{
-        display: 'inline',
-        padding: '0.25rem 0.5rem',
-        borderRadius: '0.5rem',
-        margin: 0,
-        background: '#1e1e1e'
-      }}
-    >
-      {children as string}
-    </SyntaxHighlighter>
+    <code className="bg-slate-800 text-white px-2 py-1 rounded-md font-mono text-sm">
+      {children}
+    </code>
   );
 }
 
-const CodeBlock = ({children, className}: {children: ReactNode, className?: string}) => {
+const CodeBlock = ({children}: {children: ReactNode}) => {
   return (
-    <SyntaxHighlighter
-      language="typescript" 
-      style={vscDarkPlus}
-      customStyle={{
-        borderRadius: '0.5rem',
-        padding: '1rem',
-        background: '#1e1e1e'
-      }}
-    >
-      {children as string}
-    </SyntaxHighlighter>
+    <pre className="bg-slate-800 text-white p-4 rounded-lg font-mono text-sm my-2 overflow-x-auto">
+      <code>{children}</code>
+    </pre>
   );
 }
 
