@@ -28,7 +28,7 @@ const changelog: ChangelogEntry[] = [
     date: '2025-02-08',
     changes: [
       <div key="1">
-        added  "Edit GameState" button to the game to test game limits and contextualization
+        added "Edit GameState" button to the game to test game limits and contextualization
       </div>
     ]
   },
