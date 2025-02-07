@@ -20,15 +20,6 @@ export default function SolveQuestionBox({ whole, numerator, denominator, lastqu
   });
   const [isCorrect, setIsCorrect] = useState(false);
 
-  const onIncorrectAnswer = () => {
-
-    if (!hint) {
-      if (hintValue.current < 1)
-        sendAdminMessage('agent', `Oops! That’s not quite right. You can use HINT! 🤔💡`)
-      hintValue.current += 1;
-    } else
-      sendAdminMessage('admin', `User answered incprrectly, correct answer is ${whole * numerator}/${denominator} but user answered ${inputs.numerator}/${inputs.denominator}, Now find the difference between the user input and the correct answer and then tell the correct answer accordingly. Diagonise socratically.`);
-  }
 
   const onIncorrect = (attempt: string, correctAnswer: string, inputType: string) => {
 
@@ -41,14 +32,10 @@ export default function SolveQuestionBox({ whole, numerator, denominator, lastqu
 
       switch (inputType) {
         case 'numerator':
-          if (diff > 0) {
-            sendAdminMessage('agent', `${attempt} is too high! When we multiply ${whole} × ${numerator}, we get a smaller number. Try again! 🔄`);
-          } else {
-            sendAdminMessage('agent', `${attempt} is too low! When we multiply ${whole} × ${numerator}, we get a larger number. Try again! 🔄`);
-          }
+          sendAdminMessage('admin', `User answered incorrectly for the numerator, correct answer is ${whole * numerator} but user answered ${attempt}, Help user solve the problem. Diagnose socratically.`);
           break;
         case 'denominator':
-          sendAdminMessage('agent', `Remember, the denominator stays the same when multiplying by a whole number! Try again! 🎯`);
+          sendAdminMessage('admin', `User answered incorrectly for the denominator , correct answer is ${denominator} but user answered ${attempt}, Help user solve the problem. Diagnose socratically.`);
           break;
       }
     }
