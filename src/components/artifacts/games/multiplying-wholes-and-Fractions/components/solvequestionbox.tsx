@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import NewInput from '@/components/ui/newinput';
+import { BaseProps } from "../utils/types";
 
-interface SolveQuestionBoxProps {
+interface SolveQuestionBoxProps extends BaseProps {
   whole: number;
   numerator: number;
   denominator: number;
@@ -8,19 +10,29 @@ interface SolveQuestionBoxProps {
   onCorrectAnswer: () => void;
 }
 
-export default function SolveQuestionBox({ whole, numerator, denominator, lastquestion, onCorrectAnswer }: SolveQuestionBoxProps) {
+export default function SolveQuestionBox({ whole, numerator, denominator, lastquestion, onCorrectAnswer, sendAdminMessage }: SolveQuestionBoxProps) {
   const [hint, setHint] = useState<boolean>(false);
+  const [complete, setIsComplete] = useState<boolean>(false)
+  const hintValue = useRef(0)
   const [inputs, setInputs] = useState({
     numerator: '',
     denominator: ''
   });
   const [isCorrect, setIsCorrect] = useState(false);
 
-  useEffect(() => {
-    const correctNumerator = (whole * numerator).toString();
-    const correctDenominator = denominator.toString();
+  const onIncorrectAnswer = () => {
 
-    if (inputs.numerator === correctNumerator && inputs.denominator === correctDenominator) {
+    if(!hint) {
+      if(hintValue.current < 1)
+        sendAdminMessage('agent', `Oops! That’s not quite right. You can use HINT! 🤔💡`)
+        hintValue.current += 1;
+    } else 
+    sendAdminMessage('admin',`User answered incprrectly, correct answer is ${whole*numerator}/${denominator} but user answered ${inputs.numerator}/${inputs.denominator}, Now find the difference between the user input and the correct answer and then tell the correct answer accordingly. Diagonise socratically.`);
+  }
+
+  useEffect(() => {
+    if (inputs.numerator === (whole * numerator).toString() && 
+        inputs.denominator === denominator.toString()) {
       setIsCorrect(true);
 
       if(!lastquestion) {
@@ -28,23 +40,32 @@ export default function SolveQuestionBox({ whole, numerator, denominator, lastqu
           onCorrectAnswer();
           setInputs({ numerator: '', denominator: '' });
           setHint(false);
+          hintValue.current = 0;
           setIsCorrect(false);
         }, 1000);
       } else {
         setTimeout(() => {
           onCorrectAnswer();
-          setIsCorrect(false);
           setHint(false);
+          setIsCorrect(false);
+          setIsComplete(true);
+          hintValue.current = 0;
         }, 1000);
       }
     }
-  }, [inputs, whole, numerator, denominator]);
+  }, [inputs, , lastquestion]);
+
+  useEffect(() => {
+    (document.querySelector('[id="numerator-input"]') as HTMLElement)?.focus();
+  }, [whole, numerator, denominator])
+
+  const inputStyling = "w-12 p-2 text-center outline-none transition-colors duration-300";
 
   return (
     <div className={`flex flex-col justify-center items-center my-12 transition-opacity duration-500 ${isCorrect ? 'opacity-50' : 'opacity-100'}`}>
-      <div className="text-black text-4xl text-center p-6">SOLVE THIS</div>
+      <div className="text-black text-3xl text-center p-6">SOLVE THIS</div>
 
-      <div className="bg-[#b9550b] text-black text-4xl leading-none flex items-center gap-4 p-6 px-16 m-4 rounded-md shadow-[-4px_4px_0px_0px_rgba(0,0,0)]">
+      <div className="bg-[#b9550b] text-black text-2xl leading-none flex items-center gap-4 p-4 px-8 m-4 rounded-md shadow-[-4px_4px_0px_0px_rgba(0,0,0)]">
         <div className="p-2 px-4 bg-white">{whole}</div>
         <div className="text-white">x</div>
         <div className="bg-white flex flex-col justify-center items-center p-2 px-4">
@@ -62,31 +83,49 @@ export default function SolveQuestionBox({ whole, numerator, denominator, lastqu
         }
         <div className="text-white">=</div>
         <div className="flex flex-col justify-center items-center bg-white p-2">
-          <input
-            type="text"
-            placeholder="?"
+          <NewInput
             value={inputs.numerator}
-            disabled={isCorrect}
-            className="w-12 p-2 text-center outline-none transition-colors duration-300"
-            onChange={(e) => !isCorrect && setInputs(prev => ({ ...prev, numerator: e.target.value }))}
+            id='numerator-input'
+            onValueChange={(value) => !isCorrect && setInputs(prev => ({ ...prev, numerator: value }))}
+            correctValue={(whole * numerator).toString()}
+            useColor={true}
+            nthIncorrect={2}
+            placeholder="?"
+            className={inputStyling}
+            onCorrect={() => {
+              if (inputs.denominator === denominator.toString()) {
+                setIsCorrect(true);
+              } else {
+                (document.querySelector('[id="denominator-input"]') as HTMLElement)?.focus();
+              }
+            }}
+            onIncorrect={onIncorrectAnswer}
           />
           <div className="border-t-2 border-black w-full h-0"></div>
-          <input
-            type="text"
-            placeholder="?"
+          <NewInput
+            id="denominator-input"
             value={inputs.denominator}
-            disabled={isCorrect}
-            className="w-12 p-2 text-center outline-none transition-colors duration-300"
-            onChange={(e) => !isCorrect && setInputs(prev => ({ ...prev, denominator: e.target.value }))}
+            onValueChange={(value) => !isCorrect && setInputs(prev => ({ ...prev, denominator: value }))}
+            correctValue={denominator.toString()}
+            useColor={true}
+            nthIncorrect={2}
+            placeholder="?"
+            className={inputStyling}
+            onCorrect={() => {
+              if (inputs.numerator === (whole * numerator).toString()) {
+                setIsCorrect(true);
+              }
+            }}
+            onIncorrect={onIncorrectAnswer}
           />
         </div>
       </div>
 
       <div 
-        className={`bg-[#b9550b] text-white text-4xl leading-none py-5 px-6 shadow-[-4px_4px_0px_0px_rgba(0,0,0)] cursor-pointer m-10 transition-opacity duration-300 ${isCorrect ? 'opacity-50' : 'hover:opacity-90'}`}
+        className={`bg-[#b9550b] text-white text-2xl leading-none py-5 px-6 shadow-[-4px_4px_0px_0px_rgba(0,0,0)] cursor-pointer m-10 transition-opacity duration-300 ${isCorrect ? 'opacity-50' : 'hover:opacity-90'}`}
         onClick={() => !isCorrect && setHint(prev => !prev)}
       >
-        NEED A HINT ?
+        {complete ? `That's right! 👍` : (hint ? `GO BACK <<` : `NEED A HINT ?`)}
       </div>
     </div>
   );

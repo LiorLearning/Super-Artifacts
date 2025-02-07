@@ -19,20 +19,20 @@ interface question {
 export const descriptions: Description[] = [
   {
     title: 'first',
-    oneliner: 'First screen',
-    description: 'First screen description'
+    oneliner: 'Create and Multiply Fractions',
+    description: 'Learn how to create and multiply fractions with whole numbers'
   },
   {
     title: 'second',
-    oneliner: 'Second screen',
-    description: 'Second screen description'
+    oneliner: 'Practice with Examples',
+    description: 'Practice multiplying fractions with whole numbers through examples'
   }, 
   {
     title: 'third',
-    oneliner: 'Third screen',
-    description: 'Third screen description'
+    oneliner: 'Solve Problems by multiplying whole by fractions',
+    description: 'Test your understanding by solving multiplication problems. The first problem is to multipy 3 by 2/5 and the seond problem is to multply 4 by 3/7. We also have a need hint if user enters wrong answer'
   }
-]
+];
 
 interface State1 {
   step: number;
@@ -50,9 +50,6 @@ interface State3 {
   step: number;
   questions: question[]
 }
-
-
-
 
 export interface GameState {
   screen: GameScreen;
