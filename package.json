@@ -31,7 +31,6 @@
     "lucide-react": "^0.454.0",
     "matter-js": "^0.20.0",
     "next": "^15.1.4",
-    "prism": "link:react-syntax-highlighter/dist/esm/styles/prism",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.1.2",
