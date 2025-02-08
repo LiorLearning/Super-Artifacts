@@ -6,6 +6,7 @@ import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 import Bar from "../../components/bar";
 import { goToScreen } from "../../utils/helper";
 import { BaseProps } from "../../utils/types";
+import DropDown from "../../components/dropdown";
 
 
 export default function Screen1Step2({sendAdminMessage} : BaseProps) {
@@ -17,8 +18,17 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
   const hasStartedRef = useRef(false);
   const [success, setSuccess] = useState(false);
   const ansRef = useRef<HTMLDivElement>(null);
-  
+  const [showDropDown, setShowDropDown] = useState(false);
+  const [selectedFraction, setSelectedFraction] = useState({
+    numerator: '?',
+    denominator: '?',
+  });
 
+  function generateArray(center: number): string[] {
+    const start = center - 1;
+    return Array.from({ length: 3 }, (_, i) => (start + i).toString());
+  }
+  
   useEffect(() => {
     if (!hasStartedRef.current) {
       hasStartedRef.current = true;
@@ -28,9 +38,17 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
 
 
   function handleDone() {
-    if (bar === fraction.numerator * whole) {
-      sendAdminMessage('agent', `Perfect! You've selected ${bar} pieces. That means ${whole} times ${fraction.numerator}/${fraction.denominator}th is equal to ${bar}/${fraction.denominator}th 🎉`, () => goToScreen('second', setGameStateRef));
-      setSuccess(true);
+
+    if(showDropDown) {
+      if (selectedFraction.numerator === (whole * fraction.numerator).toString() && selectedFraction.denominator === fraction.denominator.toString()) {
+        setSuccess(true);
+        sendAdminMessage('agent', `Great job! 🎉 You've successfully multiplied ${whole} times ${fraction.numerator}/${fraction.denominator}th. Let's move on to the next step! 🚀`, () => goToScreen('second', setGameStateRef));
+      } else {
+        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${whole * fraction.numerator}/${fraction.denominator} but user answered ${selectedFraction.numerator}/${selectedFraction.denominator}, Help user solve the problem. Diagnose socratically.`);
+      }
+    } else if (bar === fraction.numerator * whole) {
+      sendAdminMessage('agent', `Sweet! This is ${whole} times ${fraction.numerator}/${fraction.denominator}th. Now enter the fraction it represents`);
+      setShowDropDown(true);
     } else {
       if (bar < fraction.numerator * whole) {
         sendAdminMessage('agent', `Not quite! You've selected less than the required pieces. We need to select 1/${fraction.denominator} piece ${whole * fraction.numerator} times. Try again! 🔄`);
@@ -85,13 +103,18 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
                 setIsDoneActive(true);
               }} />
           </div>
-          <div>=</div>
-          <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b] px-4 leading-none">
-            { bar == 0 ? <div className="p-2 border-b-2 border-black">?</div> : <div className="p-2 border-b-2 border-black">{bar}</div>}
-            <div className="p-2">{fraction.denominator}</div>
+          <div className="text-3xl">=</div>
+          <div className={`flex flex-col items-center justify-center gap-2 ${!showDropDown ? 'opacity-50' : ''}`}>
+            <DropDown options={generateArray(fraction.numerator * whole)} selected={selectedFraction.numerator} showDropDown={showDropDown} onSelect={(selected) => {
+              setSelectedFraction((prev) => ({...prev, numerator: selected}));
+            }} />
+            <div className="h-0 px-8 border-b-2 border-black"></div>
+            <DropDown options={generateArray(fraction.denominator)} selected={selectedFraction.denominator} showDropDown={showDropDown} onSelect={(selected) => {
+              setSelectedFraction((prev) => ({...prev, denominator: selected}));
+              setIsDoneActive(true);
+            }} />
           </div>
         </div>
-
         <div className={`bg-[#b9550b] text-center mx-auto w-fit text-white text-2xl leading-none p-3 px-12 shadow-[-3px_3px_0px_0px_rgba(0,0,0)] mt-4 cursor-pointer ${!isDoneActive ? 'opacity-50' : ''}`} onClick={handleDone}>DONE</div>
       </div>
 
@@ -103,13 +126,13 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
           <div>{whole}</div>
           <div>times</div>
           <div className="flex flex-col items-center justify-center">
-            <div className="border-b-2 px-2 border-white">{fraction.numerator}</div>
-            <div>{fraction.denominator}</div>
+            <div className="border-b-2 px-2 p-1 border-white">{fraction.numerator}</div>
+            <div className="p-1">{fraction.denominator}</div>
           </div>
           <div>=</div>
           <div className="flex flex-col items-center justify-center">
-            <div className="border-b-2 px-2 border-white">{fraction.numerator * whole}</div>
-            <div>{fraction.denominator}</div>
+            <div className="border-b-2 px-2 p-1 border-white">{fraction.numerator * whole}</div>
+            <div className="p-1">{fraction.denominator}</div>
           </div>
         </div>
       </div>}</div>
