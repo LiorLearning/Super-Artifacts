@@ -31,19 +31,19 @@ export const FinalAnswer = ({ numerator, denominator, nextStep, sendAdminMessage
   };
 
   const verifyMixedFraction = () => {
-    const expectedNumerator = parseInt(mixedFraction.integer) * parseInt(mixedFraction.denominator) + parseInt(mixedFraction.numerator);
-    const expectedDenominator = parseInt(mixedFraction.denominator);
+    const ansNumerator = parseInt(mixedFraction.integer) * parseInt(mixedFraction.denominator) + parseInt(mixedFraction.numerator);
+    const ansDenominator = parseInt(mixedFraction.denominator);
     const expectedWhole = Math.floor(numerator / denominator);
     const expectedRemainder = numerator % denominator;
     if (
-      expectedNumerator === numerator && 
-      expectedDenominator === denominator && 
+      ansNumerator === numerator && 
+      ansDenominator === denominator && 
       parseInt(mixedFraction.numerator) < parseInt(mixedFraction.denominator)
     ) {
       sendAdminMessage('agent', `Wow, you nailed it! The answer is - ${expectedWhole} whole and ${expectedRemainder}/${denominator}th leftover. Great job!`);
       nextStep();
     } else {
-      sendAdminMessage('admin', `Diagnose socratically, user slected ${mixedFraction.integer} as the whole number, ${mixedFraction.numerator} as the numerator, and ${mixedFraction.denominator} as the denominator but the answer is ${expectedWhole} whole and ${expectedRemainder}/${denominator}ths.`);
+      sendAdminMessage('admin', `Explain socratically, user slected ${mixedFraction.integer} as the whole number, ${mixedFraction.numerator} as the numerator, and ${mixedFraction.denominator} as the denominator but the answer is ${expectedWhole} whole and ${expectedRemainder}/${denominator}ths. Ask questions of the form: "Let's think about it together. When you divided ${mixedFraction.numerator} by ${mixedFraction.denominator}, how many wholes did you get and what fraction was left over?"`);
     }
   };
 
