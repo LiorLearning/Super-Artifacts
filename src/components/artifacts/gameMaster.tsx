@@ -9,7 +9,6 @@ import { Edit2Icon, RefreshCw, TimerResetIcon } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 import { gameInfo } from './gameInfo';
-import { initialGameState as templateInitialState } from './games/template/game-state';
 
 type GameKey = keyof typeof gameInfo;
 
@@ -160,7 +159,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               gameKey={currentGame}
               isOpen={isEditorOpen}
               onClose={() => setIsEditorOpen(false)}
-              initialState={gameInfo[currentGame]?.useState?.initialGameState || templateInitialState}
+              initialState={gameInfo[currentGame]?.initialGameState}
             />
             <Button 
               variant="outline" 
@@ -226,7 +225,7 @@ interface GameStateEditorProps {
 export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: GameStateEditorProps) {
   const [testState, setTestState] = useState(() => {
     const savedState = localStorage.getItem(gameKey);
-    return savedState || JSON.stringify(initialState || templateInitialState, null, 2);
+    return savedState || JSON.stringify(initialState, null, 2);
   });
   const [error, setError] = useState<string>("");
 
@@ -235,10 +234,16 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   const handleApply = () => {
     try {
       const parsedState = JSON.parse(testState);
-      localStorage.setItem(gameKey, testState);
-      window.location.reload();
+      const validator = gameInfo[gameKey]?.validator || gameInfo['template-game'].validator;
+      
+      if (validator.validateState(parsedState)) {
+        localStorage.setItem(gameKey, testState);
+        window.location.reload();
+      } else {
+        setError("State validation failed - invalid state structure");
+      }
     } catch (e) {
-      setError("Invalid JSON");
+      setError("Invalid JSON format");
     }
   };
 
