@@ -18,7 +18,7 @@ export default function Screen1Step0({ sendAdminMessage }: BaseProps) {
       sendAdminMessage('agent',
         `Let's multiply wholes and fractions visually. Let's start 🎯💡`,
       () => {
-        setNext(true);
+        goToStep('first', setGameStateRef, 1);
       });
     }
   }, []);

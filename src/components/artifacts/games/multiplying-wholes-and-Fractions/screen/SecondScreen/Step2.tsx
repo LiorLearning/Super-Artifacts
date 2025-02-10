@@ -65,9 +65,9 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
         break;
       case 'numerator':
         if (diff > 0) {
-          sendAdminMessage('agent', `${attempt} is too high! When we multiply ${wholeNumber} × ${fraction.numerator}, we get a smaller number. Try again! 🔄`);
+          sendAdminMessage('agent', `${attempt} is too high! When we multiply ${wholeNumber} times ${fraction.numerator}, we get a smaller number. Try again! 🔄`);
         } else {
-          sendAdminMessage('agent', `${attempt} is too low! When we multiply ${wholeNumber} × ${fraction.numerator}, we get a larger number. Try again! 🔄`);
+          sendAdminMessage('agent', `${attempt} is too low! When we multiply ${wholeNumber} times ${fraction.numerator}, we get a larger number. Try again! 🔄`);
         }
         break;
       case 'denominator':
@@ -115,6 +115,7 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
       setBars([...bars, 0]);
       setIsDoneActive(false);
     }
+    firstWrongAttemptRef.current = 1;
   }
 
   const handlePieceClick = (barIndex: number, selectedPieces: number) => {
@@ -137,12 +138,9 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
       firstWrongAttemptRef.current = 1;
       sendAdminMessage('agent',
         `Oops! You've selected too many pieces (${totalSelected}). 
-        We need exactly ${fraction.numerator * whole} pieces in total. 
-        Try selecting fewer pieces! 🔄`
+        We need less pieces in total. Try selecting fewer pieces! 🔄`
       );
     } else {
-
-      const remainingPieces = fraction.numerator * whole - totalSelected;
 
       if (totalSelected < targetValue && firstWrongAttemptRef.current === 0) {
         firstWrongAttemptRef.current = 1;
@@ -151,9 +149,7 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
         );
       } else {
         sendAdminMessage('agent',
-          `Almost there! You've selected ${totalSelected} pieces, 
-          but we need ${fraction.numerator * whole} pieces in total. 
-          Select ${remainingPieces} more pieces! 🔄`
+          `Almost there! You've selected ${totalSelected} pieces. Select few more pieces! 🔄`
         );
       }
     }
@@ -187,7 +183,7 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
         <div
           onClick={canAddMoreBars ? addBar : undefined}
           className={`bg-[#b7611c] text-white py-3 px-6 leading-none text-2xl absolute right-8 bottom-8 shadow-[-3px_3px_0px_0px_rgba(0,0,0)] shadow-black 
-            ${firstWrongAttemptRef.current && canAddMoreBars ? 'cursor-pointer hover:opacity-90' : 'opacity-30 cursor-default'}`}
+            ${canAddMoreBars ? 'cursor-pointer hover:opacity-90' : 'opacity-30 cursor-default'}`}
         >
           ADD BAR +
         </div>
@@ -217,13 +213,16 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
               onIncorrect={() => {
                 sendAdminMessage('agent', `Think about it: we're multiplying ${whole} by ${fraction.numerator}. What would that give us? 🤔`);
               }}
+              onCorrect={() => {
+                sendAdminMessage('agent', `That's correct! Now, let's select the denominator of the fraction! 📝🔢`);
+              }}
             />
             <div className="h-0 px-8 border-b-2 border-black"></div>
             <DropDown options={generateArray(fraction.denominator)} selected={selectedFraction.denominator} correctValue={fraction.denominator + ""} showDropDown={showDropDown} onSelect={(selected) => {
               setSelectedFraction((prev) => ({ ...prev, denominator: selected }));
             }}
               onCorrect={() => {
-                sendAdminMessage('agent', `Great job! Now, let's write ${whole} times ${fraction.numerator}/${fraction.denominator} as a fraction! 📝🔢`);
+                sendAdminMessage('agent', `Right!, can you replace the question mark ❓`);
                 setShowProcess(true);
               }}
               onIncorrect={() => {
@@ -252,7 +251,7 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
                   }}
                   onCorrect={() => {
                     sendAdminMessage('agent',
-                      `Perfect! this means ${whole} times ${fraction.numerator}/${fraction.denominator} = ${totalSelected}/${fraction.denominator}. 
+                      `Perfect! this means ${whole} times ${fraction.numerator}/${fraction.denominator} equals ${totalSelected}/${fraction.denominator}. 
                       Now let's try some examples to practice! 🎉`);
 
                     setTimeout(() => {
