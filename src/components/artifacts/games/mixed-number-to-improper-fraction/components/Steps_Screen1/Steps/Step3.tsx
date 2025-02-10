@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from "react"
 import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
+
 import Image from "next/image"
 import redSlicer from "../../../../../../../../public/img/red-Slicer.png"
+
 
 interface Step3Props {
   mixedFraction: MixedFraction
   onComplete: () => void
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
 }
+
 
 const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
   const [showOptions, setShowOptions] = useState(false)
@@ -72,6 +75,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
       )
     }
     return lines
+
   }
 
   return (
@@ -79,6 +83,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
       <Level mixedFraction={mixedFraction} />
 
       <div className="w-full">
+
         <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-black">
           <div className="flex justify-center gap-8 py-16">
             {/* Whole pies */}
@@ -232,8 +237,10 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
           </div>
         )}
       </div>
-    </div>
-  )
-}
 
-export default Step3
+    </div>
+  );
+};
+
+
+export default Step3;
