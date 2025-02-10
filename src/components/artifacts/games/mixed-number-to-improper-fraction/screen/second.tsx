@@ -47,7 +47,7 @@ export default function SecondScreen({ sendAdminMessage }: SecondScreenProps) {
               tabIndex={-1} 
               className="outline-none"
             />
-            <QuickHack2 mixedFraction={mixedFraction} sendAdminMessage={sendAdminMessage}/>
+            <QuickHack2 mixedFraction={mixedFraction}/>
           </div>
         );
     }
