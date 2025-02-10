@@ -25,7 +25,7 @@ export default function Screen2Step0({sendAdminMessage} : BaseProps) {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header level={2} heading="Multiplying Wholes and Fractions" nextStep={next} onClick={() => {
+      <Header level={2} heading="Multiplying Wholes and Fractions" onClick={() => {
         goToStep('second', setGameStateRef, 1);
       }} />
       <div className="my-8">
