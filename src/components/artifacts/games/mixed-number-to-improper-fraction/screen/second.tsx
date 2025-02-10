@@ -8,27 +8,56 @@ interface SecondScreenProps {
 }
 
 export default function SecondScreen({ sendAdminMessage }: SecondScreenProps) {
-  const { gameStateRef } = useGameState();
+  const { gameStateRef, setGameStateRef } = useGameState();
   const { step, mixedFraction } = gameStateRef.current.state2;
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const topFocusRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
+    if (step >= 0) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'auto'
       });
+      topFocusRef.current?.focus();
     }
   }, [step]);
 
+  const renderStep = () => {
+    switch(step) {
+      case 0:
+        return (
+          <div className="min-h-screen bg-pink-50">
+            <div 
+              ref={topFocusRef} 
+              tabIndex={-1} 
+              className="outline-none"
+            />
+            <Welcome 
+              mixedFraction={mixedFraction}
+              sendAdminMessage={sendAdminMessage}
+            />
+          </div>
+        );
+      case 1:
+        return (
+          <div className="min-h-screen bg-pink-50">
+            <div 
+              ref={topFocusRef} 
+              tabIndex={-1} 
+              className="outline-none"
+            />
+            <QuickHack2 mixedFraction={mixedFraction}/>
+          </div>
+        );
+    }
+  };
+
   return (
-    <div ref={containerRef} className="w-full">
-      <div className="min-h-screen bg-pink-50">
-        <div style={{ transform: 'scale(0.65)', transformOrigin: 'top center' }}>
-          {step === 0 && <Welcome mixedFraction={mixedFraction} sendAdminMessage={sendAdminMessage} />}
-          {step === 1 && <QuickHack2 mixedFraction={mixedFraction} sendAdminMessage={sendAdminMessage}/>}
-        </div>
-      </div>
+    <div ref={containerRef} className="w-full min-h-screen bg-pink-50">
+      {renderStep()}
+
     </div>
   );
 }

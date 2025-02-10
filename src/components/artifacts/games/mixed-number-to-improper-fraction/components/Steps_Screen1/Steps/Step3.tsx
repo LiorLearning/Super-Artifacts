@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from "react"
-import GameLayout from "../GameLayout"
 import type { MixedFraction } from "../../../game-state"
+import Level from "../level"
+import PieVisualization from "../PieVisualization"
+import redSlicer from "../../../../../../../../public/img/red-Slicer.png"
+import Image from "next/image"
 
 interface Step3Props {
   mixedFraction: MixedFraction
@@ -8,321 +11,205 @@ interface Step3Props {
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
 }
 
-const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
 
-  const [selectedSlices, setSelectedSlices] = useState<Set<string>>(new Set())
-  const [showAwesome, setShowAwesome] = useState(false)
-  const [showStepButton, setShowStepButton] = useState(false)
-  const messageShown = useRef(false)
-  const stepButtonRef = useRef<HTMLDivElement>(null)
+const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-
-  const totalPieces = mixedFraction.whole * mixedFraction.denominator
-  const [inputValue, setInputValue] = useState<string>('')
-  const [countMethod, setCountMethod] = useState<'click' | 'manual'>('click')
-  const [autoSelectedCount, setAutoSelectedCount] = useState<number>(0)
-  const [hasChecked, setHasChecked] = useState(false)
+  const [wholeInput, setWholeInput] = useState("")
+  const [showHelp, setShowHelp] = useState(false)
+  const [showHelpUI, setShowHelpUI] = useState(false)
+  const [showOptions, setShowOptions] = useState(false)
+  const timerRef = useRef<NodeJS.Timeout>()
+  const [selectedOption, setSelectedOption] = useState<number | null>(null)
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
-    if (!messageShown.current) {
-      sendAdminMessage(
-        "agent",
-        `Can you count how many 1/${mixedFraction.denominator}th pieces does ${mixedFraction.whole} wholes have? You can either click on the pieces to count, or just enter the number manually`
+    timerRef.current = setTimeout(() => {
+      setShowHelp(true)
+    }, 10000)
 
-      )
-      messageShown.current = true
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
 
     }
   }, [])
 
-  useEffect(() => {
-    if (showStepButton && stepButtonRef.current) {
-      stepButtonRef.current.scrollIntoView({ behavior: 'smooth' })
+  const handleWholeInput = (value: string) => {
+    setWholeInput(value)
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
     }
-  }, [showStepButton])
-
-  useEffect(() => {
-    setHasChecked(false)
-    setAutoSelectedCount(0)
-  }, [countMethod])
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      })
-    }
-  }, [])
-
-  const handlePieceClick = (pieIndex: number, sliceIndex: number) => {
-    if (countMethod === 'manual') return;
     
-    const sliceId = `${pieIndex}-${sliceIndex}`
-    if (selectedSlices.has(sliceId)) return;
-
-    const newSelectedSlices = new Set(selectedSlices)
-    newSelectedSlices.add(sliceId)
-    setSelectedSlices(newSelectedSlices)
+    const correctAnswer = (mixedFraction.whole * mixedFraction.denominator).toString()
     
-    if (newSelectedSlices.size === totalPieces) {
-      setShowAwesome(true)
-      sendAdminMessage("agent", "Wow! You've counted all the pieces perfectly!", () => {
-        setTimeout(() => {
-          sendAdminMessage(
-            "agent",
-            "Ready for the next exciting step? Click on Step 4 to continue our fraction adventure!",
-            () => {
-              setShowStepButton(true)
-            }
-          )
-        }, 1000)
-      })
-    }
-  }
-
-  const handleManualSubmit = () => {
-    setHasChecked(true)
-    const value = parseInt(inputValue) || 0
-    
-    if (value <= totalPieces) {
-      setAutoSelectedCount(value)
+    if (value.length >= correctAnswer.length) {
+      if (value === correctAnswer) {
+        setShowHelp(false)
+        onComplete()
+      } else {
+        setShowHelp(true)
+      }
     } else {
-      setAutoSelectedCount(0)
+      setShowHelp(false)
+      timerRef.current = setTimeout(() => {
+        setShowHelp(true)
+      }, 10000)
     }
+  }
 
+  const handleHelpClick = () => {
+    setShowHelp(false)
+    setShowHelpUI(true)
+  }
 
-    if (value === totalPieces) {
-      setShowAwesome(true)
-      sendAdminMessage("agent", "Perfect! That's exactly right!", () => {
-        setTimeout(() => {
-          sendAdminMessage(
-            "agent",
-            "Ready for the next exciting step? Click on Step 4 to continue our fraction adventure!",
-            () => {
-              setShowStepButton(true)
-            }
-          )
-        }, 1000)
-      })
+  const handleSlicerClick = () => {
+    setShowOptions(prev => !prev)
+  }
+
+  const handleOptionClick = (value: number) => {
+    setSelectedOption(value)
+    setShowOptions(false)
+    
+    if (value !== mixedFraction.denominator) {
+      setIsError(true)
     } else {
-      sendAdminMessage("agent", "That's not quite right. Try counting again or use the click method!")
+      setIsError(false)
     }
   }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setInputValue(value)
-    setHasChecked(false)
-  }
-
-  const renderSliceLines = (pieIndex: number) => {
-
-    const center = 50
-    const radius = 48
-    const strokeWidth = 3
-    const slices = Array(mixedFraction.denominator).fill(0)
-    
-    const piecesPerPie = mixedFraction.denominator
-    const fullPiesColored = Math.floor(autoSelectedCount / piecesPerPie)
-    const remainingPieces = autoSelectedCount % piecesPerPie
-    
-    return (
-      <>
-        {/* Base circle */}
-        <circle 
-          cx={center} 
-          cy={center} 
-          r={radius} 
-          fill="#98D400" 
-          stroke="black" 
-          strokeWidth="1"
-        />
-        
-        {/* Clickable slices */}
-        {slices.map((_, index) => {
-          const sliceId = `${pieIndex}-${index}`
-          const isManuallySelected = countMethod === 'manual' && 
-            hasChecked &&
-            parseInt(inputValue) <= totalPieces &&
-            ((pieIndex < fullPiesColored) || 
-             (pieIndex === fullPiesColored && index < remainingPieces))
-          const isClickSelected = countMethod === 'click' && selectedSlices.has(sliceId)
-          const isSelected = isManuallySelected || isClickSelected
-          const angle = (360 / mixedFraction.denominator) * index
-          const nextAngle = (360 / mixedFraction.denominator) * (index + 1)
-          const startX = center + radius * Math.cos((angle - 90) * Math.PI / 180)
-          const startY = center + radius * Math.sin((angle - 90) * Math.PI / 180)
-          const endX = center + radius * Math.cos((nextAngle - 90) * Math.PI / 180)
-          const endY = center + radius * Math.sin((nextAngle - 90) * Math.PI / 180)
-
-          return (
-            <path
-              key={index}
-              d={`M ${center} ${center} L ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY} Z`}
-              fill={isSelected ? "#98D400" : "#D3EA00"}
-              stroke="white"
-              strokeWidth={strokeWidth}
-              style={{ cursor: countMethod === 'click' ? 'pointer' : 'default' }}
-              onClick={() => handlePieceClick(pieIndex, index)}
-              className="transition-colors duration-200"
-            />
-          )
-        })}
-
-        {/* Outer circle border */}
-        <circle 
-          cx={center} 
-          cy={center} 
-          r={radius} 
-          fill="none" 
-          stroke="black" 
-          strokeWidth="1"
-        />
-      </>
-    )
-  }
-
 
   return (
-    <div ref={containerRef} className="w-full">
-      <GameLayout
-        mixedFraction={mixedFraction}
-        stepNumber={3}
-        level={1}
-        stepTitle="Count the Pieces"
-      >
-        {/* Pies container with white background */}
-        <div className="bg-white w-full p-8 mb-12">
-          <div className="flex justify-center gap-8">
-            {[...Array(mixedFraction.whole)].map((_, index) => (
-              <div key={index} className="w-28 h-28">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
-                  {renderSliceLines(index)}
-                </svg>
-              </div>
-            ))}
-          </div>
-        </div>
+    <div ref={containerRef} className="w-full min-h-screen bg-pink-50 pt-16">
+      <Level mixedFraction={mixedFraction} />
 
-        {/* Display section */}
-        <div className="bg-white rounded-2xl p-8">
-          <div className="flex flex-col items-center gap-6">
-            {countMethod === 'click' && (
-              <div className="text-[#FF497C] text-xl">
-                click pieces to count
-              </div>
-            )}
-
-            {/* Text and input section */}
-            <div className="flex items-center justify-center gap-3 text-xl">
-              <span>So there are</span>
-              {countMethod === 'click' ? (
-                <div className="w-16 h-12 border-2 border-gray-300 rounded-lg flex items-center justify-center text-xl">
-                  {selectedSlices.size}
+      <div className="w-full">
+        <PieVisualization mixedFraction={mixedFraction} />
+        {showHelpUI && (
+          <div className="relative flex flex-col items-center mt-4">
+            <button 
+              onClick={handleSlicerClick}
+              className="relative inline-flex"
+            >
+              <div className="relative px-24 py-8 bg-black rounded-2xl">
+                <div className="absolute inset-0 flex items-center justify-center bg-white border-2 border-[#FF497C] rounded-2xl -translate-x-1 -translate-y-1">
+                  <Image 
+                    src={redSlicer} 
+                    alt="slicer" 
+                    width={44} 
+                    height={44} 
+                    className="w-11 h-11" 
+                  />
                 </div>
-              ) : (
-                <input
-                  type="number"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  className="w-16 h-12 border-2 border-gray-300 rounded-lg text-center text-xl"
-                  placeholder="?"
-                  min="0"
-                  max={totalPieces}
-                />
-              )}
-              <div className="flex flex-col items-center">
-                <span className="text-xl">1</span>
-                <div className="h-[2px] w-5 bg-black"></div>
-                <span className="text-xl">{mixedFraction.denominator}</span>
               </div>
-              <span>sized pieces in {mixedFraction.whole} wholes</span>
-            </div>
-
-            {/* Button section */}
-            <div className="flex gap-4">
-              {countMethod === 'manual' && (
-                <>
-                  <div className="relative">
-                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-                    <button
-                      onClick={() => setCountMethod('click')}
-                      className="relative px-8 py-3 rounded-xl text-xl border-2 border-[#FF497C] text-[#FF497C] bg-white hover:bg-[#FF497C] hover:text-white transition-colors"
-                    >
-                      Click to Count
-                    </button>
-                  </div>
-
-                  <div className="relative">
-                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-                    <button
-                      onClick={handleManualSubmit}
-                      className="relative bg-[#FF497C] text-white px-8 py-3 rounded-xl text-xl"
-                    >
-                      Check
-                    </button>
-                  </div>
-                </>
+              {selectedOption && (
+                <div className="absolute -right-14 top-1/2 -translate-y-1/2 bg-[#FF497C] text-white px-5 py-3 text-2xl rounded-lg">
+                  {selectedOption}
+                </div>
               )}
+            </button>
 
-              {countMethod === 'click' && (
-                <div className="relative">
-                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-                  <button
-                    onClick={() => setCountMethod('manual')}
-                    className="relative px-8 py-3 rounded-xl text-xl border-2 border-[#FF497C] text-[#FF497C] bg-white hover:bg-[#FF497C] hover:text-white transition-colors"
+            {showOptions && (
+              <div className="absolute top-full mt-2 flex flex-col gap-2 items-center">
+                {[mixedFraction.denominator - 1, mixedFraction.denominator, mixedFraction.denominator + 1].map((value) => (
+                  <button 
+                    key={value}
+                    onClick={() => handleOptionClick(value)}
+                    className="w-16 h-12 bg-white border-2 border-[#FF497C] rounded-lg text-xl font-medium shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                   >
-                    Enter Manually
+                    {value}
                   </button>
-                </div>
-              )}
-            </div>
-
-            {/* Success feedback */}
-            {showAwesome && (
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-96 bg-[#d9f7be] py-3 text-center rounded-lg text-xl">
-                  AWESOME
-                </div>
-                <div className="w-96 bg-[#fffbe6] p-6 text-center rounded-lg text-xl flex items-center justify-center gap-2">
-                  {mixedFraction.whole} wholes = 
-                  <div className="flex flex-col items-center">
-                    <span>{totalPieces}</span>
-                    <div className="h-[2px] w-5 bg-black"></div>
-                    <span>{mixedFraction.denominator}</span>
-                  </div>
-                </div>
+                ))}
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Next step button */}
-        {showAwesome && showStepButton && (
-
-          <div ref={stepButtonRef} className="mt-8 flex justify-center pb-8">
-            <div className="relative w-[180px] h-[90px]">
-            <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
-            <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
-
-              <button 
-                onClick={onComplete}
-                className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
-              >
-
-                <span className="text-[#FF497C] text-[32px] tracking-wide">STEP 4 &gt;&gt;</span>
-
-              </button>
-            </div>
           </div>
         )}
-      </GameLayout>
-    </div>
-  )
-}
+      </div>
 
-export default Step3
+      {showHelpUI ? (
+        <div className={`w-full max-w-4xl mx-auto mt-6`}>
+          <div className={`flex items-center justify-center gap-5 text-5xl py-8 ${
+            isError ? 'bg-[#FFB9B9]' : 
+            selectedOption === mixedFraction.denominator ? 'bg-[#C9FFE0]' : 
+            'bg-white'
+          }`}>
+            <div className="flex items-center">
+              {mixedFraction.whole}
+              <div className="flex flex-col mx-2 justify-center items-center">
+                <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
+                <span>{mixedFraction.denominator}</span>
+              </div>
+            </div>
+
+            <span className="mx-4">=</span>
+
+            <div className="flex items-center">
+              <div className="flex flex-col mx-2 justify-center items-center">
+                <span className="border-b-2 border-black w-10">&nbsp;</span>
+                <span className={
+                  isError && selectedOption ? 'text-red-500' : 
+                  selectedOption === mixedFraction.denominator ? 'text-[#009C43]' :
+                  ''
+                }>
+                  {selectedOption || mixedFraction.denominator}
+                </span>
+              </div>
+              <span className="mx-4">+</span>
+              <div className="flex flex-col mx-2 justify-center items-center">
+                <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
+                <span>{mixedFraction.denominator}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // Original input UI
+        <div className="w-full max-w-4xl mx-auto mt-8">
+          <div className="flex items-center justify-center text-5xl py-8 bg-white">
+            <div className="flex items-center">
+              <span>{mixedFraction.whole} wholes = </span>
+              <div className="flex flex-col items-center ml-4">
+                <div className="relative mb-2">
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-lg"></div>
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-lg"></div>
+                  <input
+                    type="text"
+                    value={wholeInput}
+                    onChange={(e) => handleWholeInput(e.target.value)}
+                    className="relative w-16 h-16 border-2 border-gray-300 rounded-lg text-center text-4xl"
+                  />
+                </div>
+
+                <div className="border-t-2 border-black w-20 text-center">{mixedFraction.denominator}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedOption === mixedFraction.denominator && (
+        <div className="w-full max-w-4xl mx-auto mt-8 flex justify-center">
+          <button 
+            onClick={onComplete}
+            className="px-16 py-4 bg-white border-2 border-[#FF497C] text-[#FF497C] text-3xl font-medium rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF497C] hover:text-white transition-colors"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
+      {showHelp && (
+        <div className="w-full max-w-4xl mx-auto mt-8 flex justify-center">
+          <button 
+            onClick={handleHelpClick}
+            className="px-6 py-2 bg-white border-2 border-[#FF497C] text-[#FF497C] text-2xl rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          >
+            Need help!
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+export default Step3;

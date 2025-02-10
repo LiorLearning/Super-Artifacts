@@ -9,7 +9,9 @@ interface ThirdScreenProps {
 const ThirdScreen: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
   const { gameStateRef } = useGameState();
   const { mixedFraction1, mixedFraction2 } = gameStateRef.current.state3;
-  const containerRef = useRef<HTMLDivElement>(null);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
 
   useEffect(() => {
     if (containerRef.current) {
@@ -18,7 +20,9 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
         block: 'start'
       });
     }
-  }, []);  // Will scroll to top when screen mounts
+
+  }, []); 
+
 
   return (
     <div ref={containerRef} className="w-full">
@@ -28,7 +32,8 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
             <Main
               mixedFraction1={mixedFraction1}
               mixedFraction2={mixedFraction2}
-              sendAdminMessage={sendAdminMessage}
+
+
             />
           </main>
         </div>
