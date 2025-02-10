@@ -76,7 +76,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
   const handleDoneClick = () => {
     if (numerator === piecesAtYOne) {
       setIsIncorrect(false);
-      sendAdminMessage('agent', `Woohoo! You built ${numerator}/${denominator}th perfectly! Now let’s see what happens next!`);
+      // sendAdminMessage('agent', `Woohoo! You built ${numerator}/${denominator}th perfectly! Now let’s see what happens next!`);
       goToStep(1, setGameStateRef, 3);
     } else {
       setIsIncorrect(true);
@@ -95,7 +95,7 @@ const Footer = ({sendAdminMessage}: GameProps) => {
   useEffect(() => {
     if (step === 6) {
       setTimeout(() => {
-        sendAdminMessage('agent', "Now let’s connect the math! Quotient goes in the purple box. Remainder in the green box.");
+        sendAdminMessage('agent', "Now let's connect the math by filling in the boxes!");
         showStep6Ans.current = true;
       }, 7000);
     }
@@ -214,21 +214,21 @@ export default function FirstScreen({sendAdminMessage}: GameProps) {
     useEffect(() => {
       if (!hasGameStartedRef.current && step === 0) {
         hasGameStartedRef.current = true;
-        sendAdminMessage('agent', "Let’s build something fun! We’ll use legos to understand mixed numbers. Ready to start?");
+        // sendAdminMessage('agent', "Let’s build something fun! We’ll use legos to understand mixed numbers. Ready to start?");
       } else if (step === 1) {
         sendAdminMessage('agent', `Which holder would you choose to make groups of ${fraction.denominator}?`);
       } else if (step === 2) {
-        sendAdminMessage('agent', `Alright, builder! That was correct, let's create fresh legos by copying and dragging the green one. Our mission is to make ${fraction.numerator}/${fraction.denominator}th!`);
+        // sendAdminMessage('agent', `Alright, builder! That was correct, let's create fresh legos by copying and dragging the green one. Our mission is to make ${fraction.numerator}/${fraction.denominator}th!`);
+        sendAdminMessage('agent', `Alright, builder, let's create fresh legos by copying and dragging the green one. Our mission is to make ${fraction.numerator}/${fraction.denominator}th!`);
       } else if (step === 3) {
-        setTimeout(() => {
-          nextStep(1, setGameStateRef);
-        }, 7000);
+        nextStep(1, setGameStateRef);
       } else if (step === 4) {
-        sendAdminMessage('agent', `Now that we have ${fraction.numerator}/${fraction.denominator}th, how many holders can you fill with green legos?`);
+        sendAdminMessage('agent', `Amazing, now that we have ${fraction.numerator}/${fraction.denominator}th, how many holders can you fill with green legos?`);
       } else if (step === 5) {
         sendAdminMessage('agent', `Let's find out if your guess is correct. Start by dropping the legos in the holder.`);
       } else if (step === 6) {
-        sendAdminMessage('agent', `This is exactly what happens when you divide ${fraction.numerator} by ${fraction.denominator}: ${Math.floor(fraction.numerator / fraction.denominator)} whole and ${fraction.numerator % fraction.denominator}/${fraction.denominator}th left!`);
+        // sendAdminMessage('agent', `This is exactly what happens when you divide ${fraction.numerator} by ${fraction.denominator}: ${Math.floor(fraction.numerator / fraction.denominator)} whole and ${fraction.numerator % fraction.denominator}/${fraction.denominator}th left!`);
+        sendAdminMessage('agent', `Awesome! ${fraction.numerator}/${fraction.denominator}th gives you ${Math.floor(fraction.numerator / fraction.denominator)} whole and ${fraction.numerator % fraction.denominator}/${fraction.denominator}th left!`);
       }
     }, [step]);
 
