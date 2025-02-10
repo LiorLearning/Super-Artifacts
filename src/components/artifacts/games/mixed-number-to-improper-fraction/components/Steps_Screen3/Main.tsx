@@ -8,13 +8,12 @@ import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 interface FractionBoxProps {
   mixedFraction: MixedFraction;
   onFractionComplete?: () => void;
-  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
+  
 }
 
 const FractionBox: React.FC<FractionBoxProps> = ({ 
   mixedFraction, 
-  onFractionComplete,
-  sendAdminMessage
+  onFractionComplete
 }) => {
   const [numerator, setNumerator] = useState<string>('');
   const [denominator, setDenominator] = useState<string>('');
@@ -52,31 +51,15 @@ const FractionBox: React.FC<FractionBoxProps> = ({
 
     const expectedNumerator = (mixedFraction.denominator * mixedFraction.whole) + mixedFraction.numerator;
 
-    // Only show messages if input length >= expected length
     if (value.length >= expectedNumerator.toString().length) {
       if (Number(value) === expectedNumerator) {
         setCanEnterDenominator(true)  // Enable denominator input
-        sendAdminMessage(
-          "agent",
-          "Perfect! That's the right numerator. Now enter the denominator.",
-        );
-      } else {
-        sendAdminMessage(
-          "agent",
-          "That's not quite right. Remember to multiply the denominator with the whole number and add the numerator!"
-        );
       }
     }
   };
 
   const handleDenominatorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!canEnterDenominator) {
-      sendAdminMessage(
-        "agent",
-        "First enter the correct numerator above!"
-      );
-      return;
-    }
+    if (!canEnterDenominator) return;
 
     const value = e.target.value.replace(/\D/g, '');
     setDenominator(value);
@@ -84,30 +67,13 @@ const FractionBox: React.FC<FractionBoxProps> = ({
     const expectedDenominator = mixedFraction.denominator;
     const expectedNumerator = (mixedFraction.denominator * mixedFraction.whole) + mixedFraction.numerator;
 
-    // Only show messages if input length >= expected length
     if (value.length >= expectedDenominator.toString().length) {
       if (Number(value) === expectedDenominator) {
         if (Number(numerator) === expectedNumerator) {
-          sendAdminMessage(
-            "agent",
-            "Excellent! You've converted the mixed number correctly!",
-            () => {
-              setTimeout(() => {
-                onFractionComplete?.();
-              }, 1000);
-            }
-          );
-        } else {
-          sendAdminMessage(
-            "agent",
-            "Good! The denominator is correct. Check your numerator again."
-          );
+          setTimeout(() => {
+            onFractionComplete?.();
+          }, 1000);
         }
-      } else {
-        sendAdminMessage(
-          "agent",
-          "Remember, the denominator stays the same as the original fraction!"
-        );
       }
     }
   };
@@ -115,10 +81,6 @@ const FractionBox: React.FC<FractionBoxProps> = ({
   const handleHintClick = () => {
     setShowHint(true);
     setHasUsedHint(true);
-    sendAdminMessage(
-      "agent",
-      "Remember? Wholes times denominator plus the numerator and keep the denominator same"
-    );
   };
 
   const renderHint = () => (
@@ -248,24 +210,11 @@ const FractionBox: React.FC<FractionBoxProps> = ({
 interface MainProps {
   mixedFraction1: MixedFraction;
   mixedFraction2: MixedFraction;
-  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
 }
 
-const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2, sendAdminMessage }) => {
-  const { setGameStateRef } = useGameState();
+const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2 }) => {
   const [showSecondFraction, setShowSecondFraction] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const messageShown = useRef(false);
-
-  useEffect(() => {
-    if (!messageShown.current) {
-      sendAdminMessage(
-        "agent",
-        "You know the secret now! Let's try it out with more mixed numbers"
-      );
-      messageShown.current = true;
-    }
-  }, []);
 
   const handleFirstFractionComplete = () => {
     setShowSecondFraction(true);
@@ -273,15 +222,9 @@ const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2, sendAdminMe
 
   const handleSecondFractionComplete = () => {
     setShowSuccess(true);
-    sendAdminMessage(
-      "agent",
-      "You have conquered this question. Now you know how to convert mixed numbers to improper fractions. Hurray!!",
-      () => {
-        setTimeout(() => {
-          setShowSuccess(false);
-        }, 1000);
-      }
-    );
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 1000);
   };
 
   return (
@@ -294,13 +237,11 @@ const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2, sendAdminMe
           <FractionBox 
             mixedFraction={mixedFraction1} 
             onFractionComplete={handleFirstFractionComplete}
-            sendAdminMessage={sendAdminMessage}
           />
           {showSecondFraction && (
             <FractionBox 
               mixedFraction={mixedFraction2}
               onFractionComplete={handleSecondFractionComplete}
-              sendAdminMessage={sendAdminMessage}
             />
           )}
         </div>
