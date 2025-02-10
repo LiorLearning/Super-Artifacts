@@ -5,10 +5,11 @@ import { useWebSocketLogger } from '../websocket';
 import { AdminRequestMessage, AssistanceResponseMessage } from '../MessageContext';
 import GameLoader from '../utils/gameLoader';
 import { Button } from '../custom_ui/button';
-import { RefreshCw } from 'lucide-react';
+import { Edit2Icon, RefreshCw, TimerResetIcon } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 import { gameInfo } from './gameInfo';
+import { initialGameState as templateInitialState } from './games/template/game-state';
 
 type GameKey = keyof typeof gameInfo;
 
@@ -19,8 +20,11 @@ interface GameComponentProps {
 
 // Get the current game component
 const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) => {
-  const Provider = gameInfo[currentGame].provider;
-  const Game = gameInfo[currentGame].game;
+  // If the game doesn't exist in gameInfo, fallback to template
+  const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
+  const Provider = gameInfo[gameKey].provider;
+  const Game = gameInfo[gameKey].game;
+  
   return (
     <Provider>
       <Game sendAdminMessage={sendAdminMessage} />
@@ -39,13 +43,14 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const gameParam = searchParams.get('game') as GameKey;
-  const [currentGame, setCurrentGame] = useState<GameKey>('template-game');
+  const [currentGame, setCurrentGame] = useState<GameKey>(gameParam || 'template-game');
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected, reconnectWebSocket } = useWebSocketLogger()
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    if (gameParam !== currentGame) {
+    if (gameParam && gameParam !== currentGame) {
       reconnectWebSocket();
       setCurrentGame(gameParam);
     }
@@ -122,12 +127,13 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
     }
   };
 
+
   if (!isClient) return null;
 
   return (
     <div className="flex h-screen">
-      <div className="w-[75%] border-r-border flex flex-col overflow-auto">
-        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 max-h-full max-w-full">
+      <div className="w-[75%] border-r-border flex flex-col h-full overflow-auto">
+        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 h-full max-w-full">
           <div className="mb-4 flex items-center gap-2">
             <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
               <SelectTrigger className="p-2 border-border rounded-md flex-1">
@@ -141,6 +147,34 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
                 ))}
               </SelectContent>
             </Select>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditorOpen(true)}
+              className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
+              title="Edit GameState"
+            >
+              <Edit2Icon className="h-4 w-4" />
+              <span>Edit GameState</span>
+            </Button>
+            <GameStateEditor 
+              gameKey={currentGame}
+              isOpen={isEditorOpen}
+              onClose={() => setIsEditorOpen(false)}
+              initialState={gameInfo[currentGame]?.useState?.initialGameState || templateInitialState}
+            />
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                localStorage.removeItem(currentGame);
+                window.location.reload();
+              }}
+              className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
+              title="Reset GameState"
+              disabled={localStorage.getItem(currentGame) === null}
+            >
+              <TimerResetIcon className="h-4 w-4" />
+              <span>Reset GameState</span>
+            </Button>
             <Button 
               variant="outline" 
               onClick={handleReloadGame}
@@ -160,9 +194,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               currentGame && (
                 <div className="relative h-full w-full">
                   <div className="relative h-full w-full overflow-auto">
-                    <div className="">
                       <GameComponent currentGame={currentGame} sendAdminMessage={sendAdminMessage} />
-                    </div>
                   </div>
                 </div>
               )
@@ -182,3 +214,57 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
 };
 
 export default MathGamesContainer;
+
+
+interface GameStateEditorProps {
+  isOpen: boolean;
+  onClose: () => void;
+  gameKey: string;
+  initialState: any;
+}
+
+export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: GameStateEditorProps) {
+  const [testState, setTestState] = useState(() => {
+    const savedState = localStorage.getItem(gameKey);
+    return savedState || JSON.stringify(initialState || templateInitialState, null, 2);
+  });
+  const [error, setError] = useState<string>("");
+
+  if (!isOpen) return null;
+
+  const handleApply = () => {
+    try {
+      const parsedState = JSON.parse(testState);
+      localStorage.setItem(gameKey, testState);
+      window.location.reload();
+    } catch (e) {
+      setError("Invalid JSON");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg max-w-3xl w-full mx-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Edit Game State</h2>
+          <Button variant="ghost" onClick={onClose}>×</Button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <h3 className="mb-2 font-semibold">Test State:</h3>
+            <textarea 
+              value={testState}
+              onChange={(e) => setTestState(e.target.value)}
+              className="w-full h-48 font-mono text-sm p-4 border rounded-lg"
+            />
+          </div>
+          {error && <p className="text-red-500">{error}</p>}
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button onClick={handleApply}>Apply Test State</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+} 

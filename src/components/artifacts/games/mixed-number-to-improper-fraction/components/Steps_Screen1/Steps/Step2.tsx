@@ -18,13 +18,16 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const containerRef = useRef<HTMLDivElement>(null)
   const messageShown = useRef(false)
 
+
   const handleWholeInput = (value: string) => {
     setWholeInput(value)
     if (value === mixedFraction.whole.toString()) {
       setCanEnterNumerator(true)
       sendAdminMessage("agent", "Great! Now enter the numerator")
     }
+
   }
+
 
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
@@ -106,5 +109,6 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
     </div>
   );
 };
+
 
 export default Step2;

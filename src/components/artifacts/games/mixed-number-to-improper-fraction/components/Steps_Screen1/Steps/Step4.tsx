@@ -8,6 +8,7 @@ interface Step4Props {
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
 }
 
+
 const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
   const [numeratorInput, setNumeratorInput] = useState("")
   const [isError, setIsError] = useState(false)
@@ -17,15 +18,18 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
     Array(mixedFraction.whole).fill([]).map(() => Array(4).fill(false))
   )
 
+
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
     const correctAnswer = (mixedFraction.whole * mixedFraction.denominator).toString()
     
+
     if (value.length >= correctAnswer.length) {
       if (value === correctAnswer) {
         onComplete()
       } else {
         setErrorCount(prev => prev + 1)
+
       }
     }
   }
@@ -50,6 +54,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
     const correctAnswer = (mixedFraction.whole * mixedFraction.denominator).toString()
     if (newValue === correctAnswer) {
       onComplete()
+
     }
   }
 
@@ -89,6 +94,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
   }
 
   return (
+
     <div className="w-full min-h-screen bg-pink-50 pt-16">
       <Level mixedFraction={mixedFraction} />
 
@@ -138,9 +144,9 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   );
                 })}
               </svg>
+
             </div>
           </div>
-        </div>
 
         <div className="w-full max-w-4xl mx-auto mt-6">
           <div className="flex items-center justify-center gap-5 text-5xl py-8 bg-white">
@@ -166,9 +172,11 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
                     className="relative w-16 h-16 border-2 border-[black] rounded-lg text-center text-4xl"
                     placeholder="?"
                   />
+
                 </div>
                 <span className="text-[#009C43]">{mixedFraction.denominator}</span>
               </div>
+
               <span className="mx-4">+</span>
               <div className="flex flex-col mx-2 justify-center items-center">
                 <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
@@ -179,6 +187,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
         </div>
       </div>
     </div>
+
   )
 }
 

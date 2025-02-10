@@ -52,8 +52,8 @@ const LegoGame = ({sendAdminMessage}: GameProps) => {
         containerAssignmentsRef.current = new Array(11).fill(null).map((_, index) => 
           index < 4 ? null : containerAssignmentsRef.current[index]
         );
-        sendAdminMessage('agent', "Wow, that’s 1 whole! It turned purple! Now let’s move to the next holder.");
-        showConfettiRef.current = true;
+        // sendAdminMessage('agent', "Wow, that’s 1 whole! It turned purple! Now let’s move to the next holder.");
+        // showConfettiRef.current = true;
       }
       if (count === 0) {
         goToStep(6);

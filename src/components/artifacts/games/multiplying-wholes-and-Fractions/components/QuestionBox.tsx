@@ -7,11 +7,11 @@ interface QuestionBoxProps {
 export default function QuestionBox({ whole, numerator, denominator }: QuestionBoxProps) {
   return (
     <div className="flex justify-center items-center my-12 h-[125px] gap-8">
-      <div className="px-6 py-7 border-[15px] border-[#b9550b] text-4xl text-[#b9550b]">
+      <div className="p-7 border-[15px] border-[#b9550b] text-2xl text-[#b9550b]">
         QUESTION
       </div>
 
-      <div className="text-black bg-[#b9550b] text-4xl leading-none flex items-center gap-4 px-6 h-full">
+      <div className="text-black bg-[#b9550b] text-2xl leading-none flex items-center gap-4 px-6 py-4">
         <div className="p-4 text-center bg-white">
           {whole}
         </div>
@@ -45,7 +45,5 @@ export default function QuestionBox({ whole, numerator, denominator }: QuestionB
 
       </div>
     </div>
-
-
   );
 } 

@@ -11,12 +11,14 @@ interface Step1Props {
 }
 
 const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
+
   const [wholeCount, setWholeCount] = useState(0);
   const [quarterCount, setQuarterCount] = useState(0);
   const [canAddQuarters, setCanAddQuarters] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const messageShown = useRef(false);
+
 
   useEffect(() => {
     if (!messageShown.current) {
@@ -32,6 +34,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       }
     }
   };
+
 
   const handleQuarterClick = () => {
     if (!canAddQuarters) {
@@ -192,6 +195,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   + Quarters
                 </button>
               </div>
+              <span className="text-[#FF497C] mt-8 text-center text-3xl">drop here</span>
             </div>
           </div>
         </div>
@@ -199,6 +203,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
     </div>
   );
 };
+
 
 export default Step1
 
