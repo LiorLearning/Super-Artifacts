@@ -91,15 +91,15 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
   return (
     <div className="w-full min-h-screen bg-pink-50 pt-16">
       <Level mixedFraction={mixedFraction} />
-
+      
       <div className="w-full">
-        {errorCount >= 2 && (
-          <div className="text-center text-xl mb-4 text-[#FF497C]">
-            click pieces to count
-          </div>
-        )}
-        
-        <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-black">
+        <div className="bg-white w-full max-w-4xl mx-auto min-h-[400px] border-2 border-black flex flex-col justify-between">
+          {errorCount >= 2 && (
+            <div className="text-center text-xl mb-4 text-[#FF497C]">
+              click pieces to count
+            </div>
+          )}
+          
           <div className="flex justify-center items-center gap-8 py-16">
             {[...Array(mixedFraction.whole)].map((_, index) => (
               <div key={`whole-${index}`} className="w-28 h-28">
@@ -140,39 +140,39 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
               </svg>
             </div>
           </div>
-        </div>
 
-        <div className="w-full max-w-4xl mx-auto mt-6">
-          <div className="flex items-center justify-center gap-5 text-5xl py-8 bg-white">
-            <div className="flex items-center">
-              {mixedFraction.whole}
-              <div className="flex flex-col mx-2 justify-center items-center">
-                <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
-                <span>{mixedFraction.denominator}</span>
-              </div>
-            </div>
-
-            <span className="mx-4">=</span>
-
-            <div className="flex items-center">
-              <div className="flex flex-col mx-2 justify-center items-center">
-                <div className="relative mb-2">
-                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-lg"></div>
-                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-lg"></div>
-                  <input
-                    type="text"
-                    value={numeratorInput}
-                    onChange={(e) => handleNumeratorInput(e.target.value)}
-                    className="relative w-16 h-16 border-2 border-[black] rounded-lg text-center text-4xl"
-                    placeholder="?"
-                  />
+          <div className="w-full max-w-4xl mx-auto mt-6">
+            <div className="flex items-center justify-center gap-5 text-5xl py-8 bg-white">
+              <div className="flex items-center">
+                {mixedFraction.whole}
+                <div className="flex flex-col mx-2 justify-center items-center">
+                  <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
+                  <span>{mixedFraction.denominator}</span>
                 </div>
-                <span className="text-[#009C43]">{mixedFraction.denominator}</span>
               </div>
-              <span className="mx-4">+</span>
-              <div className="flex flex-col mx-2 justify-center items-center">
-                <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
-                <span>{mixedFraction.denominator}</span>
+
+              <span className="mx-4">=</span>
+
+              <div className="flex items-center">
+                <div className="flex flex-col mx-2 justify-center items-center">
+                  <div className="relative mb-2">
+                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-lg"></div>
+                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-lg"></div>
+                    <input
+                      type="text"
+                      value={numeratorInput}
+                      onChange={(e) => handleNumeratorInput(e.target.value)}
+                      className="relative w-16 h-16 border-2 border-[black] rounded-lg text-center text-4xl"
+                      placeholder="?"
+                    />
+                  </div>
+                  <span className="text-[#009C43]">{mixedFraction.denominator}</span>
+                </div>
+                <span className="mx-4">+</span>
+                <div className="flex flex-col mx-2 justify-center items-center">
+                  <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
+                  <span>{mixedFraction.denominator}</span>
+                </div>
               </div>
             </div>
           </div>
