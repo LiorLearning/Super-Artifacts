@@ -83,10 +83,10 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
             A ${radius} ${radius} 0 0 1 ${50 + radius * Math.cos(endAngle * Math.PI / 180)} ${50 + radius * Math.sin(endAngle * Math.PI / 180)}
             Z
           `}
-          fill={isClicked ? "#D3EA00" : "transparent"}
+          fill={isClicked ? "#98D400" : "transparent"}
           stroke="black"
           strokeWidth="0.5"
-          className="cursor-pointer hover:fill-[#D3EA00] transition-colors"
+          className="cursor-pointer hover:fill-[#98D400] transition-colors"
           onClick={() => handleQuarterClick(pieIndex, i)}
         />
       )
@@ -109,7 +109,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
             {[...Array(mixedFraction.whole)].map((_, index) => (
               <div key={`whole-${index}`} className="w-28 h-28">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <circle cx="50" cy="50" r="48" fill="#98D400" stroke="black" strokeWidth="0.5"/>
+                  <circle cx="50" cy="50" r="48" fill="white" stroke="black" strokeWidth="0.5"/>
                   {renderSliceLines()}
                   {errorCount >= 2 && renderClickableQuarters(index)}
                 </svg>
@@ -120,7 +120,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
             <div className="w-28 h-28 opacity-50">
               <svg viewBox="0 0 100 100" className="w-full h-full">
-                <circle cx="50" cy="50" r="48" fill="#98D400" stroke="black" strokeWidth="0.5"/>
+                <circle cx="50" cy="50" r="48" fill="white" stroke="black" strokeWidth="0.5"/>
                 {renderSliceLines()}
                 {[...Array(mixedFraction.numerator)].map((_, i) => {
                   const startAngle = i * (360 / mixedFraction.denominator);
@@ -136,7 +136,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
                         A ${radius} ${radius} 0 0 1 ${50 + radius * Math.cos(endAngle * Math.PI / 180)} ${50 + radius * Math.sin(endAngle * Math.PI / 180)}
                         Z
                       `}
-                      fill="#D3EA00"
+                      fill="#98D400"
                       stroke="black"
                       strokeWidth="0.5"
                     />

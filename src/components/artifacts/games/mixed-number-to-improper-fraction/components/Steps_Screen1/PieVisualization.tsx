@@ -29,8 +29,8 @@ const PieVisualization: React.FC<PieVisualizationProps> = ({ mixedFraction }) =>
 
           <div className="w-28 h-28">
             <svg viewBox="0 0 100 100" className="w-full h-full">
-              <circle cx="50" cy="50" r="48" fill="#98D400" stroke="black" strokeWidth="0.5"/>
-              {renderSliceLines()}
+              <circle cx="50" cy="50" r="48" fill="white" stroke="black" strokeWidth="0.5"/>
+              {renderSliceLines()}  
               {[...Array(mixedFraction.numerator)].map((_, i) => {
                 const startAngle = i * (360 / mixedFraction.denominator);
                 const endAngle = (i + 1) * (360 / mixedFraction.denominator);
@@ -45,7 +45,7 @@ const PieVisualization: React.FC<PieVisualizationProps> = ({ mixedFraction }) =>
                       A ${radius} ${radius} 0 0 1 ${50 + radius * Math.cos(endAngle * Math.PI / 180)} ${50 + radius * Math.sin(endAngle * Math.PI / 180)}
                       Z
                     `}
-                    fill="#D3EA00"
+                    fill="#98D400"
                     stroke="black"
                     strokeWidth="0.5"
                   />

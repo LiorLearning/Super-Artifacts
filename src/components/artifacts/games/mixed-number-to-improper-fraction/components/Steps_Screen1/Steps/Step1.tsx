@@ -125,19 +125,19 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
               </div>
             ))}
 
-            {wholeCount === mixedFraction.whole && quarterCount > 0 && (
+            {wholeCount === mixedFraction.whole && (
               <div className="w-28 h-28">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   <circle 
                     cx="50" 
                     cy="50" 
                     r="48" 
-                    fill="#98D400" 
+                    fill="white" 
                     stroke="black" 
                     strokeWidth="0.5"
                   />
                   {renderSliceLines()}
-                  {[...Array(quarterCount)].map((_, i) => {
+                  {quarterCount > 0 && [...Array(quarterCount)].map((_, i) => {
                     const startAngle = i * (360 / mixedFraction.denominator);
                     const endAngle = (i + 1) * (360 / mixedFraction.denominator);
                     const radius = 48;
@@ -151,7 +151,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                           A ${radius} ${radius} 0 0 1 ${50 + radius * Math.cos(endAngle * Math.PI / 180)} ${50 + radius * Math.sin(endAngle * Math.PI / 180)}
                           Z
                         `}
-                        fill="#D3EA00"
+                        fill="#98D400"
                         stroke="black"
                         strokeWidth="0.5"
                       />
@@ -164,7 +164,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
           <div className="pb-16">
             <div className="flex justify-center gap-4">
-              <div className="relative">
+              <div className={`relative ${wholeCount === mixedFraction.whole ? 'opacity-50' : ''}`}>
                 <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
                 <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
                 <button
@@ -172,7 +172,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   disabled={wholeCount === mixedFraction.whole}
                   className={`relative px-8 py-3 rounded-xl text-2xl ${
                     wholeCount === mixedFraction.whole
-                      ? 'bg-white text-[#FF497C] border-2 border-[#FF497C] opacity-50'
+                      ? 'bg-white text-[#FF497C] border-2 border-[#FF497C]'
                       : 'bg-[white] border-2 border-[#FF497C] text-[#FF497C]'
                   }`}
                 >
@@ -188,7 +188,7 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   disabled={!canAddQuarters || quarterCount === mixedFraction.numerator}
                   className={`relative px-8 py-3 rounded-xl text-2xl ${
                     !canAddQuarters || quarterCount === mixedFraction.numerator
-                      ? 'bg-black text-[#FF497C]'
+                      ? 'bg-white text-[#FF497C] border-2 border-[#FF497C]'
                       : 'border-2 border-[#FF497C] text-[#FF497C] bg-white'
                   }`}
                 >

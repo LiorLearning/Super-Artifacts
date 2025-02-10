@@ -41,7 +41,7 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
   )
 
   const renderColoredQuarters = () => {
-    return [...Array(2)].map((_, i) => {
+    return [...Array(4)].map((_, i) => {
       const startAngle = i * 90
       const endAngle = (i + 1) * 90
       const radius = 48
@@ -55,7 +55,7 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
             A ${radius} ${radius} 0 0 1 ${50 + radius * Math.cos(endAngle * Math.PI / 180)} ${50 + radius * Math.sin(endAngle * Math.PI / 180)}
             Z
           `}
-          fill="#D3EA00"
+          fill={i < 2 ? "#98D400" : "white"}
           stroke="black"
           strokeWidth="0.5"
         />
@@ -74,7 +74,14 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
               {[...Array(mixedFraction.whole + 1)].map((_, index) => (
                 <div key={`whole-${index}`} className="w-28 h-28">
                   <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <circle cx="50" cy="50" r="48" fill="#98D400" stroke="black" strokeWidth="0.5"/>
+                    <circle 
+                      cx="50" 
+                      cy="50" 
+                      r="48" 
+                      fill={index === mixedFraction.whole ? "white" : "#98D400"}
+                      stroke="black" 
+                      strokeWidth="0.5"
+                    />
                     {renderSliceLines()}
                     {index === mixedFraction.whole && renderColoredQuarters()}
                   </svg>
@@ -148,7 +155,14 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
               {[...Array(mixedFraction.whole + 1)].map((_, index) => (
                 <div key={`whole-${index}`} className="w-28 h-28">
                   <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <circle cx="50" cy="50" r="48" fill="#98D400" stroke="black" strokeWidth="0.5"/>
+                    <circle 
+                      cx="50" 
+                      cy="50" 
+                      r="48" 
+                      fill={index === mixedFraction.whole ? "white" : "#98D400"}
+                      stroke="black" 
+                      strokeWidth="0.5"
+                    />
                     {renderSliceLines()}
                     {index === mixedFraction.whole && renderColoredQuarters()}
                   </svg>
