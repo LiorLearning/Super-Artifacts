@@ -19,7 +19,6 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
   const [isDoneActive, setIsDoneActive] = useState(false);
   const hasStartedRef = useRef(false);
   const [showProcess, setShowProcess] = useState(false);
-  const [showCorrect, setShowCorrect] = useState(false);
   const [showExamples, setShowExamples] = useState({
     example1: false,
     example2: false
@@ -29,7 +28,8 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
     denominator: '?',
   });
   const [showDropDown, setShowDropDown] = useState(false);
-  const [questionMarkValue, setQuestionMarkValue] = useState('?');
+  const [questionMarkValue, setQuestionMarkValue] = useState('');
+  const firstWrongAttemptRef = useRef(0);
 
   function generateArray(center: number): string[] {
     const start = center - 1;
@@ -105,10 +105,10 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
 
   const targetValue = fraction.numerator * whole;
   const maxPiecesWithCurrentBars = bars.length * fraction.denominator;
-  const isCurrentBarsFull = () => {
-    return bars.every(bar => bar === fraction.denominator);
-  };
-  const canAddMoreBars = maxPiecesWithCurrentBars < targetValue && isCurrentBarsFull();
+  // const isCurrentBarsFull = () => {
+  //   return bars.every(bar => bar === fraction.denominator);
+  // };
+  const canAddMoreBars = maxPiecesWithCurrentBars < targetValue;
 
   function addBar() {
     if (canAddMoreBars) {
@@ -124,63 +124,38 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
 
     const total = newBars.reduce((sum, pieces) => sum + pieces, 0);
     setTotalSelected(total);
-
-    // Check if we need more bars
-    if (total < targetValue && selectedPieces === fraction.denominator) {
-      sendAdminMessage('agent',
-        `Good progress! You've filled this bar completely. 
-        Click ADD BAR + to add another bar and continue selecting pieces! 🔄`
-      );
-    }
-
     setIsDoneActive(true);
   };
 
   function handleDone() {
 
-    if(showProcess) {
-      if (questionMarkValue === (whole).toString()) {
-        sendAdminMessage('agent',
-          `Perfect! this means ${whole} times ${fraction.numerator}/${fraction.denominator} = ${totalSelected}/${fraction.denominator}. 
-          Now let's try some examples to practice! 🎉`); 
-        
-        setTimeout(() => {
-          setShowExamples({
-            example1: true,
-            example2: false
-          })
-        }, 3000);
-        setShowCorrect(true);
-      } else {
-        sendAdminMessage('agent', `Not quite! Remember, ${whole} times ${fraction.numerator}/${fraction.denominator} can be written as ${whole} x ${fraction.numerator}/${fraction.denominator}. Try again! 🔄`);
-      }
-    }
-    else if (showDropDown) {
-      if (selectedFraction.numerator === (whole * fraction.numerator).toString() && selectedFraction.denominator === fraction.denominator.toString()) {
-        sendAdminMessage('agent', `Awesome, that's correct! 🎉 Can you replace the question mark?`);
-        setShowProcess(true)
-      } else {
-        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${whole * fraction.numerator}/${fraction.denominator} but user answered ${selectedFraction.numerator}/${selectedFraction.denominator}, Help user solve the problem. Diagnose socratically.`);
-      }
-    } else if (totalSelected === fraction.numerator * whole) {
+    if (totalSelected === fraction.numerator * whole) {
       sendAdminMessage('agent',
-        `Perfect! You've selected ${totalSelected} pieces in total. 
-        That means ${whole} times ${fraction.numerator}/${fraction.denominator} = ${totalSelected}/${fraction.denominator}. 
-        Now enter the fraction it represents! 📝🔢`);
+        `Perfect! You've selected ${whole * fraction.numerator} pieces in total. Now enter the fraction it represents! 📝🔢`);
       setShowDropDown(true);
     } else if (totalSelected > fraction.numerator * whole) {
+      firstWrongAttemptRef.current = 1;
       sendAdminMessage('agent',
         `Oops! You've selected too many pieces (${totalSelected}). 
         We need exactly ${fraction.numerator * whole} pieces in total. 
         Try selecting fewer pieces! 🔄`
       );
     } else {
+
       const remainingPieces = fraction.numerator * whole - totalSelected;
-      sendAdminMessage('agent',
-        `Almost there! You've selected ${totalSelected} pieces, 
-        but we need ${fraction.numerator * whole} pieces in total. 
-        Select ${remainingPieces} more pieces! 🔄`
-      );
+
+      if (totalSelected < targetValue && firstWrongAttemptRef.current === 0) {
+        firstWrongAttemptRef.current = 1;
+        sendAdminMessage('agent',
+          `Looks like you need more pieces! You can use the Add Bar ➕ button to select more pieces. Try adding another bar! 🎯`
+        );
+      } else {
+        sendAdminMessage('agent',
+          `Almost there! You've selected ${totalSelected} pieces, 
+          but we need ${fraction.numerator * whole} pieces in total. 
+          Select ${remainingPieces} more pieces! 🔄`
+        );
+      }
     }
     setIsDoneActive(false);
   }
@@ -191,13 +166,17 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
     }
   }, [showExamples]);
 
+
   return (
     <div className="flex flex-col min-h-screen">
       <FractionHeader level={2} whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} />
       <StepCreateBox step={2} numerator={fraction.numerator} denominator={fraction.denominator} heading={"MULTIPLY BY WHOLES"} />
 
-      <div className="flex max-w-screen-md my-4 mx-auto w-[58%] justify-center items-center min-w-52">
-        <Bar denominator={fraction.denominator} numerator={2} />
+      <div className="flex my-4 mx-auto w-full justify-center items-center px-6">
+        <div className="px-[78px]"></div>
+        <div className="w-[50%] ml-2">
+          <Bar denominator={fraction.denominator} numerator={2} />
+        </div>
         <div className="flex flex-col items-center justify-center content-center text-2xl leading-none text-black border-4 border-[#b9550b] px-4 ml-8">
           <div className="p-2 border-b-2 border-black">{fraction.numerator}</div>
           <div className="p-2">{fraction.denominator}</div>
@@ -206,31 +185,21 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
 
       <div className="my-8 bg-[#fff0e5] p-6 py-8 relative">
         <div
-          onClick={addBar}
-          className={`bg-[#b7611c] text-white py-3 px-4 leading-none text-2xl absolute right-8 top-8 shadow-[-4px_4px_0px_0px_rgba(0,0,0)] shadow-black 
-          ${canAddMoreBars ? 'cursor-pointer hover:opacity-90' : 'opacity-50 cursor-default'}`}
+          onClick={canAddMoreBars ? addBar : undefined}
+          className={`bg-[#b7611c] text-white py-3 px-6 leading-none text-2xl absolute right-8 bottom-8 shadow-[-3px_3px_0px_0px_rgba(0,0,0)] shadow-black 
+            ${firstWrongAttemptRef.current && canAddMoreBars ? 'cursor-pointer hover:opacity-90' : 'opacity-30 cursor-default'}`}
         >
           ADD BAR +
         </div>
-        <div className="flex justify-center items-center gap-4 text-2xl text-black">
-          <div>Pick</div>
-          <div className="p-1 px-4 bg-white border-2 border-black rounded-md">{whole}</div>
-          <div>times</div>
-          <div className="flex flex-col items-center justify-center">
-            <div className="text-center p-2 px-4 border-2 bg-white border-black rounded-md leading-none">{whole}</div>
-            <div className="px-8 my-2 border border-black h-0 leading-none"></div>
-            <div className="p-2 px-4 border-2 bg-white rounded-md border-black leading-none">{fraction.denominator}</div>
-          </div>
-          <div>pieces</div>
-        </div>
 
-        <div className="display flex justify-center items-center gap-4 text-black text-2xl leading-none mx-auto my-8">
+
+        <div className="display flex justify-center items-center gap-4 text-black text-2xl leading-none mx-auto my-4">
           <div className="flex text-center">{whole} times</div>
           <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b]  px-4 leading-none">
             <div className="p-2 border-b-2 border-black">{fraction.numerator}</div>
             <div className="p-2">{fraction.denominator}</div>
           </div>
-          <div className="w-[50%] flex flex-col gap-4 ml-2 max-w-screen-md">
+          <div className="w-[50%] flex flex-col gap-4 ml-2">
             {bars.map((barValue, index) => (
               <Bar
                 key={index}
@@ -242,40 +211,81 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
           </div>
           <div>=</div>
           <div className={`flex flex-col items-center justify-center gap-2 ${!showDropDown ? 'opacity-50' : ''}`}>
-            <DropDown options={generateArray(fraction.numerator * whole)} selected={selectedFraction.numerator} showDropDown={showDropDown} onSelect={(selected) => {
+            <DropDown options={generateArray(fraction.numerator * whole)} selected={selectedFraction.numerator} showDropDown={showDropDown} correctValue={fraction.numerator * whole + ""} onSelect={(selected) => {
               setSelectedFraction((prev) => ({ ...prev, numerator: selected }));
-            }} />
+            }}
+              onIncorrect={() => {
+                sendAdminMessage('agent', `Think about it: we're multiplying ${whole} by ${fraction.numerator}. What would that give us? 🤔`);
+              }}
+            />
             <div className="h-0 px-8 border-b-2 border-black"></div>
-            <DropDown options={generateArray(fraction.denominator)} selected={selectedFraction.denominator} showDropDown={showDropDown} onSelect={(selected) => {
+            <DropDown options={generateArray(fraction.denominator)} selected={selectedFraction.denominator} correctValue={fraction.denominator + ""} showDropDown={showDropDown} onSelect={(selected) => {
               setSelectedFraction((prev) => ({ ...prev, denominator: selected }));
-              setIsDoneActive(true);
-            }} />
+            }}
+              onCorrect={() => {
+                sendAdminMessage('agent', `Great job! Now, let's write ${whole} times ${fraction.numerator}/${fraction.denominator} as a fraction! 📝🔢`);
+                setShowProcess(true);
+              }}
+              onIncorrect={() => {
+                sendAdminMessage('agent', `Think about it: when multiplying by a whole number (${whole}), what happens to the denominator? Does it change? 🤔`);
+              }}
+
+            />
           </div>
+
+
 
           {showProcess && <><div>=</div>
             <div className="flex flex-col items-center justify-center bg-white border-4 border-[#b9550b] px-4 leading-none">
-                <div className="p-2 border-b-2 border-black">
-                <input type="text" 
-                placeholder="?"
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value.length <= (whole * fraction.numerator).toString().length) {
+              <div className="p-2 border-b-2 border-black">
+                <NewInput
+                  value={questionMarkValue}
+                  placeholder="?"
+                  nthIncorrect={2}
+                  onValueChange={(value) => {
                     setQuestionMarkValue(value);
                     setIsDoneActive(true);
-                  }
-                }}
-                className="w-6 text-center outline-none mr-1"
+                  }}
+                  useColor={true}
+                  onIncorrect={() => {
+                    sendAdminMessage('agent', `Not quite! Think about how we can write ${whole} times ${fraction.numerator}/${fraction.denominator} in the numerator part. Try again! 🔄`);
+                  }}
+                  onCorrect={() => {
+                    sendAdminMessage('agent',
+                      `Perfect! this means ${whole} times ${fraction.numerator}/${fraction.denominator} = ${totalSelected}/${fraction.denominator}. 
+                      Now let's try some examples to practice! 🎉`);
+
+                    setTimeout(() => {
+                      setShowExamples({
+                        example1: true,
+                        example2: false
+                      })
+                    }, 3000);
+                  }}
+                  correctValue={whole.toString()}
+                  className="w-6 text-center mr-1 outline-none"
                 /> x <span className="p-2">{fraction.numerator}</span>
-                </div>
+              </div>
               <div className="p-2">{fraction.denominator}</div>
             </div></>}
         </div>
-
-        <div className={`bg-[#b9550b] text-center mx-auto w-fit text-white text-2xl leading-none p-3 px-12 shadow-[-3px_3px_0px_0px_rgba(0,0,0)] mt-6 cursor-pointer ${!isDoneActive ? 'opacity-50' : ''}`}
-          onClick={isDoneActive ? handleDone : undefined}>
-          {showCorrect ? 'CORRECT 👍' : 'DONE'}
+        <div className="flex justify-center items-center gap-4 text-2xl mt-8 text-black">
+          <div>Pick</div>
+          <div className="p-1 px-4 bg-white border-2 border-black rounded-md">{whole}</div>
+          <div>times</div>
+          <div className="flex flex-col items-center justify-center">
+            <div className="text-center p-2 px-4 border-2 bg-white border-black rounded-md leading-none">{whole}</div>
+            <div className="px-8 my-2 border border-black h-0 leading-none"></div>
+            <div className="p-2 px-4 border-2 bg-white rounded-md border-black leading-none">{fraction.denominator}</div>
+          </div>
+          <div>pieces</div>
         </div>
-      </  div>
+
+        {!showDropDown && <div className={`bg-[#b9550b] text-center mx-auto w-fit text-white text-2xl leading-none p-3 px-12 shadow-[-3px_3px_0px_0px_rgba(0,0,0)] mt-8 cursor-pointer ${!isDoneActive ? 'opacity-50' : ''}`}
+          onClick={isDoneActive ? handleDone : undefined}>
+          {'DONE'}
+        </div>}
+      </div>
 
       {showExamples.example1 &&
         <div className="flex flex-col items-center justify-center my-8 mb-20">

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
 
@@ -16,6 +16,17 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [showFinal, setShowFinal] = useState(false)
   const [isNumeratorCorrect, setIsNumeratorCorrect] = useState(false)
 
+  // Add ref to track if narration was shown
+  const messageShown = useRef(false)
+
+  // Add initial narration
+  useEffect(() => {
+    if (!messageShown.current) {
+      messageShown.current = true;
+      sendAdminMessage("agent", "3 wholes is now 12/4, let's add 2/4 to complete the fraction!")
+    }
+  }, [sendAdminMessage])
+
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
     const correctNumerator = (mixedFraction.whole * mixedFraction.denominator + mixedFraction.numerator).toString()
@@ -25,9 +36,16 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
   }
 
   const handleDenominatorInput = (value: string) => {
+    if (!/^\d*$/.test(value)) return;
+    
     setDenominatorInput(value)
+    
+    // Check if both inputs are correct
     if (isNumeratorCorrect && value === mixedFraction.denominator.toString()) {
-      setShowFinal(true)
+      // Add completion narration before finishing
+      sendAdminMessage("agent", "Awesome, you have converted the mixed number to an improper fraction.", () => {
+        onComplete()
+      })
     }
   }
 
@@ -41,7 +59,9 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
   )
 
   const renderColoredQuarters = () => {
+
     return [...Array(4)].map((_, i) => {
+
       const startAngle = i * 90
       const endAngle = (i + 1) * 90
       const radius = 48
@@ -55,7 +75,9 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
             A ${radius} ${radius} 0 0 1 ${50 + radius * Math.cos(endAngle * Math.PI / 180)} ${50 + radius * Math.sin(endAngle * Math.PI / 180)}
             Z
           `}
+
           fill={i < 2 ? "#98D400" : "white"}
+
           stroke="black"
           strokeWidth="0.5"
         />
@@ -74,6 +96,7 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
               {[...Array(mixedFraction.whole + 1)].map((_, index) => (
                 <div key={`whole-${index}`} className="w-28 h-28">
                   <svg viewBox="0 0 100 100" className="w-full h-full">
+
                     <circle 
                       cx="50" 
                       cy="50" 
@@ -82,6 +105,7 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
                       stroke="black" 
                       strokeWidth="0.5"
                     />
+
                     {renderSliceLines()}
                     {index === mixedFraction.whole && renderColoredQuarters()}
                   </svg>
@@ -155,6 +179,7 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
               {[...Array(mixedFraction.whole + 1)].map((_, index) => (
                 <div key={`whole-${index}`} className="w-28 h-28">
                   <svg viewBox="0 0 100 100" className="w-full h-full">
+
                     <circle 
                       cx="50" 
                       cy="50" 
@@ -163,6 +188,7 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
                       stroke="black" 
                       strokeWidth="0.5"
                     />
+
                     {renderSliceLines()}
                     {index === mixedFraction.whole && renderColoredQuarters()}
                   </svg>

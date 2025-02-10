@@ -1,5 +1,4 @@
-import type React from "react"
-import { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
 
@@ -20,17 +19,23 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const messageShown = useRef(false);
 
 
-  useEffect(() => {
+  const showInitialMessage = useCallback(() => {
     if (!messageShown.current) {
       messageShown.current = true;
+      sendAdminMessage("agent", "Let's create 3 and 2/4. First, let's add the wholes");
     }
-  }, []);
+  }, [sendAdminMessage]);
+
+  useEffect(() => {
+    showInitialMessage();
+  }, [showInitialMessage]);
 
   const handleWholeClick = () => {
     if (wholeCount < mixedFraction.whole) {
       setWholeCount(prev => prev + 1);
       if (wholeCount + 1 === mixedFraction.whole) {
         setCanAddQuarters(true);
+        sendAdminMessage("agent", "We have 3 wholes, now let's add the fraction.");
       }
     }
   };
@@ -44,7 +49,9 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       setQuarterCount(prev => prev + 1);
       if (quarterCount + 1 === mixedFraction.numerator) {
         setShowSuccess(true);
-        onComplete();
+        sendAdminMessage("agent", "Awesome, this is 3 and 2/4", () => {
+          onComplete();
+        });
       }
     }
   };
@@ -125,19 +132,25 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
               </div>
             ))}
 
+
             {wholeCount === mixedFraction.whole && (
+
               <div className="w-28 h-28">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   <circle 
                     cx="50" 
                     cy="50" 
                     r="48" 
+
                     fill="white" 
+
                     stroke="black" 
                     strokeWidth="0.5"
                   />
                   {renderSliceLines()}
+
                   {quarterCount > 0 && [...Array(quarterCount)].map((_, i) => {
+
                     const startAngle = i * (360 / mixedFraction.denominator);
                     const endAngle = (i + 1) * (360 / mixedFraction.denominator);
                     const radius = 48;
@@ -151,7 +164,9 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                           A ${radius} ${radius} 0 0 1 ${50 + radius * Math.cos(endAngle * Math.PI / 180)} ${50 + radius * Math.sin(endAngle * Math.PI / 180)}
                           Z
                         `}
+
                         fill="#98D400"
+
                         stroke="black"
                         strokeWidth="0.5"
                       />
@@ -164,7 +179,9 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
           <div className="pb-16">
             <div className="flex justify-center gap-4">
+
               <div className={`relative ${wholeCount === mixedFraction.whole ? 'opacity-50' : ''}`}>
+
                 <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
                 <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
                 <button
@@ -172,7 +189,9 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   disabled={wholeCount === mixedFraction.whole}
                   className={`relative px-8 py-3 rounded-xl text-2xl ${
                     wholeCount === mixedFraction.whole
+
                       ? 'bg-white text-[#FF497C] border-2 border-[#FF497C]'
+
                       : 'bg-[white] border-2 border-[#FF497C] text-[#FF497C]'
                   }`}
                 >
@@ -188,7 +207,9 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   disabled={!canAddQuarters || quarterCount === mixedFraction.numerator}
                   className={`relative px-8 py-3 rounded-xl text-2xl ${
                     !canAddQuarters || quarterCount === mixedFraction.numerator
+
                       ? 'bg-white text-[#FF497C] border-2 border-[#FF497C]'
+
                       : 'border-2 border-[#FF497C] text-[#FF497C] bg-white'
                   }`}
                 >
@@ -206,4 +227,3 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
 
 export default Step1
-

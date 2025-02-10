@@ -7,7 +7,7 @@ interface HeaderProps {
   nextStep?: boolean
 }
 
-export default function Header({ level, heading, nextStep=false, onClick } : HeaderProps) {
+export default function Header({ level, heading, nextStep=true, onClick } : HeaderProps) {
 
   return (
     <div className="w-full bg-[#fff049] py-5 shadow-md flex justify-between items-center gap-4 px-10 border border-black">

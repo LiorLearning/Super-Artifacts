@@ -16,7 +16,7 @@ export default function Screen1Step0({ sendAdminMessage }: BaseProps) {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent',
-        `Let's multiply wholes and fractions visually first. Let's start 🎯💡`,
+        `Let's multiply wholes and fractions visually. Let's start 🎯💡`,
       () => {
         setNext(true);
       });
@@ -27,7 +27,7 @@ export default function Screen1Step0({ sendAdminMessage }: BaseProps) {
     <div className="flex flex-col min-h-screen">
       <Header level={1} heading="Multiplying Wholes and Fractions" onClick={() => {
         goToStep('first', setGameStateRef, 1)
-      }} nextStep={next} />
+      }} />
       <div className="my-8">
         <QuestionBox
           whole={whole}
