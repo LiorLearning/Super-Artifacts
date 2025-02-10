@@ -18,12 +18,13 @@ export const ChooseHolder = ({ answer, denomOptions, onSuccess, sendAdminMessage
     
     if (option === answer) {
       hasGameStarted.current = false;
-      sendAdminMessage('agent', `Awesome! The denominator is ${answer}, so this holder is perfect. Let's move on!`);
-      setTimeout(() => {
-        onSuccess();
-      }, 7000);
+      onSuccess();
+      // sendAdminMessage('agent', `Awesome! The denominator is ${answer}, so this holder is perfect. Let's move on!`);
+      // setTimeout(() => {
+      //   onSuccess();
+      // }, 7000);
     } else {
-      sendAdminMessage('admin', `Diagnose socratically to help user select the correct holder, user has selected ${option} but the answer is ${answer}.`);
+      sendAdminMessage('admin', `Guide user socratically, user has selected ${option} but the answer is ${answer}. Ask questions of the form: "Not quite! Which holder would contain exactly 1 group of ${answer}?"`);
     }
 
     setTimeout(() => {

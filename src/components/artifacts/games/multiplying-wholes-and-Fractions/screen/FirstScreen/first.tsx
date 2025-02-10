@@ -9,19 +9,19 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
   if (gameStateRef.current.state1.step == 0) {
     return (
-      <Screen1Step0/>
+      <Screen1Step0 sendAdminMessage={sendAdminMessage}/>
     )
   }
 
   if(gameStateRef.current.state1.step == 1) {
     return (
-      <Screen1Step1/>
+      <Screen1Step1 sendAdminMessage={sendAdminMessage}/>
     )
   }
 
   if(gameStateRef.current.state1.step == 2) {
     return (
-      <Screen1Step2/>
+      <Screen1Step2 sendAdminMessage={sendAdminMessage}/>
     )
   }
 }

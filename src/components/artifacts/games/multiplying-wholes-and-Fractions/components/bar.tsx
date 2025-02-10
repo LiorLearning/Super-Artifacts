@@ -22,7 +22,7 @@ export default function Bar({denominator, numerator, handlePieceClick} : BasePro
         {[...Array(denominator)].map((_, index) => (
           <div
             key={index}
-              className={`w-full h-24 relative cursor-pointer border-[5px] border-[#906547] ${
+              className={`w-full h-16  relative cursor-pointer border-[5px] border-[#906547] ${
               index < selectedPieces
                 ? 'bg-gradient-to-br from-[#5B361B] to-[#432611]'
                 : 'bg-gradient-to-br from-[#906547] to-[#785339] hover:bg-gradient-to-br hover:from-[#8d532a] hover:to-[#70401e]'

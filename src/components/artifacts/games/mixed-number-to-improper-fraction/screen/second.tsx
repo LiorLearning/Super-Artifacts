@@ -11,6 +11,7 @@ export default function SecondScreen({ sendAdminMessage }: SecondScreenProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step, mixedFraction } = gameStateRef.current.state2;
   const containerRef = useRef<HTMLDivElement>(null);
+
   const topFocusRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,6 +57,7 @@ export default function SecondScreen({ sendAdminMessage }: SecondScreenProps) {
   return (
     <div ref={containerRef} className="w-full min-h-screen bg-pink-50">
       {renderStep()}
+
     </div>
   );
 }

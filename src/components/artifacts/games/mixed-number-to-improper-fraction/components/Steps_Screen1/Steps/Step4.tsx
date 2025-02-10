@@ -8,6 +8,7 @@ interface Step4Props {
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
 }
 
+
 const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
   const [numeratorInput, setNumeratorInput] = useState("")
   const [isError, setIsError] = useState(false)
@@ -17,15 +18,18 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
     Array(mixedFraction.whole).fill([]).map(() => Array(4).fill(false))
   )
 
+
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
     const correctAnswer = (mixedFraction.whole * mixedFraction.denominator).toString()
     
+
     if (value.length >= correctAnswer.length) {
       if (value === correctAnswer) {
         onComplete()
       } else {
         setErrorCount(prev => prev + 1)
+
       }
     }
   }
@@ -50,6 +54,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
     const correctAnswer = (mixedFraction.whole * mixedFraction.denominator).toString()
     if (newValue === correctAnswer) {
       onComplete()
+
     }
   }
 

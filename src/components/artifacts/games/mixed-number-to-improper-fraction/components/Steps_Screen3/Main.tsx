@@ -81,6 +81,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
   const handleHintClick = () => {
     setShowHint(true);
     setHasUsedHint(true);
+
   };
 
   const renderHint = () => (

@@ -10,12 +10,14 @@ export const DevHelper = () => {
   const { screen } = gameStateRef.current;
   const { step: step1 } = gameStateRef.current.state1;
   const { step: step2 } = gameStateRef.current.state2;
+  const { step: step3 } = gameStateRef.current.state3;
   const [directStep, setDirectStep] = useState('');
 
   const getCurrentStep = () => {
     switch(screen) {
       case 'first': return step1;
       case 'second': return step2;
+      case 'third': return step3;
       default: return 0;
     }
   }
@@ -43,15 +45,16 @@ export const DevHelper = () => {
           <SelectContent>
             <SelectItem value="first">First Screen</SelectItem>
             <SelectItem value="second">Second Screen</SelectItem>
+            <SelectItem value="third">Third Screen</SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div className="flex items-center">
         <Input 
           type="number" 
-          value={directStep} 
+          value={getCurrentStep()} 
           onChange={(e) => setDirectStep(e.target.value)}
-          className="w-16 mr-2"
+          className="w-16 mr-2 border-2 border-gray-300 rounded-md text-center"
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               handleDirectStepChange();
@@ -72,8 +75,10 @@ export const nextStep = (
 ) => {
   if (screen === 'first') {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
-  } else {
+  } else if (screen === 'second') {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
+  } else if (screen === 'third') {
+    setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: prev.state3.step + 1 } }));
   }
 }
 
@@ -84,14 +89,16 @@ export const goToStep = (
 ) => {
   if (screen === 'first') {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step } }));
-  } else {
+  } else if (screen === 'second') {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step } }));
+  } else if (screen === 'third') {
+    setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step } }));
   }
 }
 
 export const goToScreen = (
   screen: GameScreen, 
-  setGameStateRef: (newState: (prevState: GameState) => GameState) => void,
+  setGameStateRef: (newState: (prevState: GameState) => GameState) => void
 ) => {
   setGameStateRef(prev => ({ ...prev, screen }));
 }
@@ -102,7 +109,9 @@ export const prevStep = (
 ) => {
   if (screen === 'first') {
     setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: Math.max(prev.state1.step - 1, 0) } }));
-  } else {
+  } else if (screen === 'second') {
     setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: Math.max(prev.state2.step - 1, 0) } }));
+  } else if (screen === 'third') {
+    setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: Math.max(prev.state3.step - 1, 0) } }));
   }
 }

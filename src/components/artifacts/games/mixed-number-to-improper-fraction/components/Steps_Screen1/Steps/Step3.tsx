@@ -11,6 +11,7 @@ interface Step3Props {
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
 }
 
+
 const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [wholeInput, setWholeInput] = useState("")
@@ -30,6 +31,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
       if (timerRef.current) {
         clearTimeout(timerRef.current)
       }
+
     }
   }, [])
 
@@ -208,5 +210,6 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete }) => {
     </div>
   );
 };
+
 
 export default Step3;
