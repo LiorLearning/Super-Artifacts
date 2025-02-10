@@ -1,5 +1,4 @@
 import React from 'react';
-import { useGameState } from '../state-utils';
 
 interface FractionHeaderProps {
   level: number,
@@ -10,9 +9,8 @@ interface FractionHeaderProps {
   onClick?: () => void
 }
 
-export default function FractionHeader({ level, whole, numerator, denominator,nextStep=false, onClick } : FractionHeaderProps) {
+export default function FractionHeader({ level, whole, numerator, denominator,nextStep=true, onClick } : FractionHeaderProps) {
 
-  const { gameStateRef, setGameStateRef } = useGameState();
 
   return (
     <div className="w-full bg-[#fff049] py-5 shadow-md flex justify-between items-center gap-4 px-10 border border-black">
