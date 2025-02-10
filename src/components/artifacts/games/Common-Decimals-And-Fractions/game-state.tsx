@@ -17,6 +17,7 @@ interface State2 {
   step: number;
   fraction1: Fraction;
   fraction2: Fraction;
+  fraction3: Fraction;
 }
 
 
@@ -56,8 +57,13 @@ export const initialGameState: GameState = {
       numerator: 2,
       denominator: 5,
     },
+    fraction3: {
+      numerator: 3,
+      denominator: 5,
+    },
 
   },
+
 
   state3: {
     step: 0,

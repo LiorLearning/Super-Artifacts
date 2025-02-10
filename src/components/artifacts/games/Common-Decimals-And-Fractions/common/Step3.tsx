@@ -5,48 +5,71 @@ interface Step3Props {
   denominator: number;
   selectedMultiple: number;
   onComplete: () => void;
+  isLastQuestion?: boolean;
+  isGameComplete?: boolean;
 }
 
 const Step3: React.FC<Step3Props> = ({
   numerator,
   denominator,
   selectedMultiple,
-  onComplete
+  onComplete,
+  isLastQuestion,
+  isGameComplete
 }) => {
   const [wholesAnswer, setWholesAnswer] = useState('');
   const [tenthsAnswer, setTenthsAnswer] = useState('');
+  const [hundredthsAnswer, setHundredthsAnswer] = useState('');
   const [showError, setShowError] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, isWholes: boolean) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, position: 'wholes' | 'tenths' | 'hundredths') => {
     const value = e.target.value;
     if (value === '' || /^\d$/.test(value)) {
-      if (isWholes) {
-        setWholesAnswer(value);
-      } else {
-        setTenthsAnswer(value);
+      switch(position) {
+        case 'wholes':
+          setWholesAnswer(value);
+          break;
+        case 'tenths':
+          setTenthsAnswer(value);
+          break;
+        case 'hundredths':
+          setHundredthsAnswer(value);
+          break;
       }
       setShowError(false);
       
-      const wholes = isWholes ? value : wholesAnswer;
-      const tenths = isWholes ? tenthsAnswer : value;
+      const wholes = position === 'wholes' ? value : wholesAnswer;
+      const tenths = position === 'tenths' ? value : tenthsAnswer;
+      const hundredths = position === 'hundredths' ? value : hundredthsAnswer;
       
-      if (wholes !== '' && tenths !== '') {
-        
-        const decimal = Number(numerator) / Number(denominator);
-        
-        
-        const userDecimal = Number(`${wholes}.${tenths}`);
-        
-        //console.log('Expected:', decimal, 'User:', userDecimal);
-        
-        if (Math.abs(userDecimal - decimal) ==0) {
-          setIsCorrect(true);
-          setShowError(false);
-        } else {
-          setIsCorrect(false);
-          setShowError(true);
-          setTimeout(() => setShowError(false), 2000);
+      const decimal = Number(numerator) / Number(denominator);
+      
+      if (selectedMultiple === 100) {
+        if (tenths !== '' && hundredths !== '') {
+          const userDecimal = Number(`${wholes || '0'}.${tenths}${hundredths}`);
+          
+          if (Math.abs(userDecimal - decimal) === 0) {
+            setIsCorrect(true);
+            setShowError(false);
+          } else {
+            setIsCorrect(false);
+            setShowError(true);
+            setTimeout(() => setShowError(false), 2000);
+          }
+        }
+      } else {
+        if (tenths !== '') {
+          const userDecimal = Number(`${wholes || '0'}.${tenths}`);
+          
+          if (Math.abs(userDecimal - decimal) === 0) {
+            setIsCorrect(true);
+            setShowError(false);
+          } else {
+            setIsCorrect(false);
+            setShowError(true);
+            setTimeout(() => setShowError(false), 2000);
+          }
         }
       }
     }
@@ -55,15 +78,17 @@ const Step3: React.FC<Step3Props> = ({
   return (
     <div className="min-h-screen flex flex-col items-center">
       {/* Top section - yellow to green gradient */}
-      <div className="w-full bg-gradient-to-b from-[#F8F58A] via-[#B7E5AA] to-[#B7E5AA] pb-12">
+      <div className="w-full bg-gradient-to-b from-[#F8F58A] via-[#B7E5AA] to-[#B7E5AA] pb-16">
         <div className="mt-12 relative w-[400px] h-[69px] mx-auto">
           <div className="relative">
+
             <div className="absolute left-[2px] top-[2px] bg-black rounded-lg w-full h-[61px]"></div>
             
-            <div className="bg-[#8E3D00] text-white rounded-lg flex items-center relative w-full h-[61px]">
+            <div className="bg-[#8E3D00] text-white rounded-lg flex items-center relative w-full h-[65px]">
               <div className="pl-10">
                 <span className="text-[35px] tracking-wide">LEVEL 4</span>
               </div>
+
               
               <div className="absolute -right-1 h-full flex items-center">
                 <div className="absolute right-[2px] top-[2px] w-[220px] h-full">
@@ -80,10 +105,11 @@ const Step3: React.FC<Step3Props> = ({
         </div>
 
         {/* Question with Fraction */}
-        <div className="text-center mt-16 w-[381px] mx-auto text-[32px] font-medium flex items-center justify-center gap-4">
+        <div className="text-center mt-16 w-[381px] mx-auto text-[40px] font-medium flex items-center justify-center gap-4">
           <span>What is</span>
           <div className="inline-flex flex-col items-center justify-center">
             <span className="text-[30px] leading-tight">{numerator}</span>
+
             <div className="w-8 h-[3px] bg-black"></div>
             <span className="text-[30px] leading-tight">{denominator}</span>
           </div>
@@ -92,20 +118,18 @@ const Step3: React.FC<Step3Props> = ({
         </div>
       </div>
 
-      {/* Bottom section - very light green to blue gradient */}
-      <div className="w-full flex-1 bg-gradient-to-b from-[#E8F5EA] via-[#B7E5AA] via-[#90D7E7] to-[#70CAEF]">
-        <div className="w-full pt-24 pb-18 flex flex-col items-center">
+      <div className="w-full flex-1 bg-gradient-to-b from-[#E8F5F9] via-[#B7E5F0] to-[#70CAEF]">
+        <div className="w-full pt-24 pb-32 flex flex-col items-center">
           <div className="relative w-[706px]">
             <div className="absolute -left-1 top-1 bg-black rounded-lg w-full h-[69px]"></div>
             
             <div className="bg-[#8E3D00] text-white rounded-lg flex justify-center items-center relative w-full h-[69px]">
-              <span className="text-[35px] font-bold tracking-wide">
+              <span className="text-[35px] tracking-wide">
                 STEP 3 : Write as Decimal
               </span>
             </div>
           </div>
 
-          {/* Main Content Container */}
           <div className="flex flex-col items-center">
             <div className="mt-16 flex items-center gap-8">
               <div className="bg-white py-6 px-8 shadow-lg">
@@ -118,7 +142,6 @@ const Step3: React.FC<Step3Props> = ({
 
               <span className="text-[45px]">=</span>
 
-              {/* Second Fraction */}
               <div className="bg-white py-6 px-8 shadow-lg">
                 <div className="flex flex-col items-center">
                   <span className="text-[45px]">{numerator * (selectedMultiple/denominator)}</span>
@@ -129,7 +152,6 @@ const Step3: React.FC<Step3Props> = ({
 
               <span className="text-[45px]">=</span>
 
-              {/* Decimal Input Boxes */}
               <div className="flex items-center gap-6">
                 <div className="flex flex-col items-center">
                   <div className="relative">
@@ -140,7 +162,7 @@ const Step3: React.FC<Step3Props> = ({
                       <input
                         type="text"
                         value={wholesAnswer}
-                        onChange={(e) => handleInputChange(e, true)}
+                        onChange={(e) => handleInputChange(e, 'wholes')}
                         className="w-full h-full text-center text-[45px] outline-none bg-transparent"
                         placeholder="?"
                         maxLength={1}
@@ -151,9 +173,8 @@ const Step3: React.FC<Step3Props> = ({
                 </div>
 
                 <div className="flex flex-col items-center justify-end h-20 pb-4">
-                  <span className="text-[65px] text-center font-bold">.</span>
+                  <span className="text-[65px] text-center">.</span>
                 </div>
-
 
                 <div className="flex flex-col items-center">
                   <div className="relative">
@@ -162,10 +183,9 @@ const Step3: React.FC<Step3Props> = ({
                       showError ? 'bg-red-200' : ''
                     }`}>
                       <input
-
                         type="text"
                         value={tenthsAnswer}
-                        onChange={(e) => handleInputChange(e, false)}
+                        onChange={(e) => handleInputChange(e, 'tenths')}
                         className="w-full h-full text-center text-[45px] outline-none bg-transparent"
                         placeholder="?"
                         maxLength={1}
@@ -174,22 +194,61 @@ const Step3: React.FC<Step3Props> = ({
                   </div>
                   <div className="text-2xl mt-4">tenths</div>
                 </div>
+
+                {selectedMultiple === 100 && (
+                  <div className="flex flex-col items-center">
+                    <div className="relative">
+                      <div className="absolute left-[3px] top-[3px] bg-black w-20 h-20"></div>
+                      <div className={`relative bg-white w-20 h-20 flex items-center justify-center ${
+                        showError ? 'bg-red-200' : ''
+                      }`}>
+                        <input
+                          type="text"
+                          value={hundredthsAnswer}
+                          onChange={(e) => handleInputChange(e, 'hundredths')}
+                          className="w-full h-full text-center text-[45px] outline-none bg-transparent"
+                          placeholder="?"
+                          maxLength={1}
+                        />
+                      </div>
+                    </div>
+                    <div className="text-2xl mt-4">hundredths</div>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Next Button Section - Separated from the expression */}
-            {isCorrect && (
-              <div className="mt-32">
+            {isCorrect && !isLastQuestion && (
+              <div className="mt-32 mb-16">
                 <div className="relative">
                   <div className="absolute left-[4px] top-[4px] bg-[#333333] w-full h-full"></div>
-                  
                   <button 
                     className="relative bg-white text-[#008294] px-16 py-6 text-[32px] font-medium hover:opacity-90 min-w-[400px]"
-                    onClick={onComplete}
+                    onClick={() => onComplete()}
                   >
                     Move to next question!
                   </button>
                 </div>
+              </div>
+            )}
+
+            {isCorrect && isLastQuestion && !isGameComplete && (
+              <div className="mt-32 mb-16">
+                <div className="relative">
+                  <div className="absolute left-[4px] top-[4px] bg-[#333333] w-full h-full"></div>
+                  <button 
+                    className="relative bg-white text-[#008294] px-16 py-6 text-[32px] font-medium hover:opacity-90 min-w-[400px]"
+                    onClick={() => onComplete()}
+                  >
+                    Continue to next level
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {isCorrect && isLastQuestion && isGameComplete && (
+              <div className="mt-32 mb-16 text-[32px] text-[#008294] font-medium">
+                Congratulations! You've completed the game!
               </div>
             )}
           </div>

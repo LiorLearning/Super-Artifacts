@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
-import { useRef } from 'react';
-import FirstScreen from './screens/First';
+import React, { useRef, useState } from 'react';
+import First from './screens/First';
+import Second from './screens/Second';
+import Third from './screens/Third';
 
 import { useGameState } from './state-utils';
 import { DevHelper } from './utils/helper'; 
@@ -9,28 +10,48 @@ import { DevHelper } from './utils/helper';
 
 
 interface GameProps {
-  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string>;
 }
 
-export default function Game({sendAdminMessage}: GameProps) {
-  const { gameStateRef } = useGameState();
-  const { screen } = gameStateRef.current;
-  const { step: step1 } = gameStateRef.current.state1;
-  const { step: step2 } = gameStateRef.current.state2;
-  
+const Game: React.FC<GameProps> = ({ sendAdminMessage }) => {
+  const [currentScreen, setCurrentScreen] = useState<'first' | 'second' | 'third'>('first');
+
+  const handleFirstComplete = () => {
+    //console.log('Transitioning to second screen'); 
+    setCurrentScreen('second');
+  };
+
+  const handleSecondComplete = () => {
+    //console.log('handleSecondComplete triggered'); 
+    setCurrentScreen('third');
+    //console.log('currentScreen set to:', 'third'); 
+  };
+
+  console.log('Current screen:', currentScreen);
+
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [step1, step2]);
 
   return (
     <div className="mx-auto game font-jersey">
       <DevHelper />
-      {/* Game screens */}
-      {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
+
+    
+      {currentScreen === 'first' ? (
+        <First 
+          sendAdminMessage={sendAdminMessage} 
+          onComplete={handleFirstComplete}
+        />
+      ) : currentScreen === 'second' ? (
+        <Second 
+          sendAdminMessage={sendAdminMessage}
+          onComplete={handleSecondComplete}
+        />
+      ) : (
+        <Third 
+          sendAdminMessage={sendAdminMessage}
+        />
+      )}
       
       {/* Select font */}
       <style jsx global>{`
@@ -40,7 +61,9 @@ export default function Game({sendAdminMessage}: GameProps) {
           }
         `}</style>
 
-      <div ref={bottomRef} style={{ height: 0 }} />
+<div ref={bottomRef} style={{ height: 0 }} />
     </div>
-  )
-}
+  );
+};
+
+export default Game;

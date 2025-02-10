@@ -1,4 +1,3 @@
-
 import TemplateGame from './games/template/game';
 import FractionAdditionGame from './games/add-fractions-with-common-denominator/game';
 import FractionSubtractionGame from './games/subtract-fractions-with-common-denominator/game';
@@ -11,7 +10,9 @@ import CommonDenominatorGame from './games/common-denominators/game';
 import CompareFractionGame from './games/compare-fractions-with-different-numerator-and-denominator/game';
 import DecimalGame from './games/fraction-to-decimal/game';
 import MixedNumberToImproperFractionGame from './games/mixed-number-to-improper-fraction/game';
+import CommonDecimalsAndFractions from './games/Common-Decimals-And-Fractions/game';
 
+import { GameStateProvider as CommonDecimalsAndFractionsProvider, useGameState as CommonDecimalsAndFractionsState } from './games/Common-Decimals-And-Fractions/state-utils';
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/add-fractions-with-common-denominator/state-utils'
 import { GameStateProvider as FractionSubtractionGameStateProvider, useGameState as FractionSubtractionGameState } from './games/subtract-fractions-with-common-denominator/state-utils'
@@ -30,7 +31,6 @@ interface GameInfo {
   useState: any;
   provider: React.ComponentType<{ children: React.ReactNode }>;
 }
-
 
 export const gameInfo: Record<string, GameInfo> = {
   'addition-within-20-using-ten-frames': {
@@ -92,5 +92,10 @@ export const gameInfo: Record<string, GameInfo> = {
     game: MixedNumberToImproperFractionGame,
     useState: MixedNumberToImproperFractionGameState,
     provider: MixedNumberToImproperFractionGameStateProvider
+  },
+  'common-decimals-and-fractions': {
+    game: CommonDecimalsAndFractions,
+    provider: CommonDecimalsAndFractionsProvider,
+    useState: CommonDecimalsAndFractionsState
   }
 };

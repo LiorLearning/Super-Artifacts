@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface Step1Props {
   numerator: number;
@@ -15,57 +15,90 @@ const Step1: React.FC<Step1Props> = ({
   const [showVerification, setShowVerification] = useState(false);
   const [answer1, setAnswer1] = useState('');
   const [answer2, setAnswer2] = useState('');
+  const [showNextButton, setShowNextButton] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showVerification && showNextButton && containerRef.current) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [showVerification, showNextButton]);
 
   const checkMultiple = (selected: number) => {
-    const isMultipleOf10 = denominator % 10 === 0;
-    const isMultipleOf100 = denominator % 100 === 0;
-
-    if (isMultipleOf10 && isMultipleOf100) {
-      if (selected === 10) {
-        onComplete(10);
-        return;
-      }
-    }
-
-    if ((isMultipleOf10 && selected === 10) || (isMultipleOf100 && selected === 100)) {
-      onComplete(selected);
-      return;
-    }
-
-    const diffFrom10 = Math.abs(denominator - 10);
-    const diffFrom100 = Math.abs(denominator - 100);
+   
+    const correctMultiple = determineCorrectMultiple(denominator);
     
-    if (diffFrom10 <= diffFrom100 && selected === 10) {
-      onComplete(10);
+    if (selected === correctMultiple) {
+      onComplete(correctMultiple);
       return;
     }
-
-    if (diffFrom100 < diffFrom10 && selected === 100) {
-      onComplete(100);
-      return;
-    }
-
+    
+   
     setError(true);
     setShowVerification(true);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, setAnswer: (value: string) => void) => {
+
+  const determineCorrectMultiple = (denom: number) => {
+
+    if (denom === 2 || denom === 5 || 
+        (denom % 2 === 0 && denom % 5 === 0)) {
+      return 10;
+    }
+    
+
+    return 100;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, isFirstInput: boolean) => {
     const value = e.target.value;
     if (value === '' || /^\d+$/.test(value)) {
-      setAnswer(value);
+      if (isFirstInput) {
+        setAnswer1(value);
+      } else {
+        setAnswer2(value);
+      }
+      
+      const newAnswer1 = isFirstInput ? value : answer1;
+      const newAnswer2 = isFirstInput ? answer2 : value;
+      
+      if (newAnswer1 !== '' && newAnswer2 !== '') {
+        const isAnswer1Correct = Number(newAnswer1) * denominator === 10;
+        const isAnswer2Correct = Number(newAnswer2) * denominator === 100;
+        
+        if (isAnswer1Correct && isAnswer2Correct) {
+          setShowNextButton(true);
+        }
+      }
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center">
+    <div ref={containerRef} className="min-h-screen flex flex-col items-center relative">
+      {showVerification && showNextButton && (
+        <div className="absolute top-[30px] right-[60px] z-50">
+          <div className="relative">
+            <div className="absolute left-[2px] top-[2px] bg-[#333333] w-full h-full rounded-full"></div>
+            <button 
+              className="relative bg-white text-[#008294] w-[56px] h-[56px] text-4xl font-medium rounded-full flex items-center justify-center shadow-sm"
+              onClick={() => onComplete(10)}
+            >
+              ≫
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Top section - yellow to green gradient */}
-      <div className="w-full bg-gradient-to-b from-[#F8F58A] via-[#B7E5AA] to-[#B7E5AA] pb-12">
-        {/* Level and Practice Header */}
+      <div className="w-full bg-gradient-to-b from-[#F8F58A] via-[#B7E5AA] to-[#B7E5AA] pb-16">
         <div className="mt-12 relative w-[400px] h-[69px] mx-auto">
           <div className="relative">
             <div className="absolute left-[2px] top-[2px] bg-black rounded-lg w-full h-[61px]"></div>
             
-            <div className="bg-[#8E3D00] text-white rounded-lg flex items-center relative w-full h-[61px]">
+            <div className="bg-[#8E3D00] text-white rounded-lg flex items-center relative w-full h-[65px]">
               <div className="pl-10">
                 <span className="text-[35px] tracking-wide">LEVEL 4</span>
               </div>
@@ -85,7 +118,7 @@ const Step1: React.FC<Step1Props> = ({
         </div>
 
         {/* Question with Fraction */}
-        <div className="text-center mt-16 w-[381px] mx-auto text-[32px] font-medium flex items-center justify-center gap-4">
+        <div className="text-center mt-16 w-[381px] mx-auto text-[40px] font-medium flex items-center justify-center gap-4">
           <span>What is</span>
           <div className="inline-flex flex-col items-center justify-center">
             <span className="text-[30px] leading-tight">{numerator}</span>
@@ -97,13 +130,14 @@ const Step1: React.FC<Step1Props> = ({
         </div>
       </div>
 
-      <div className="w-full flex-1 bg-gradient-to-b from-[#E8F5EA] via-[#B7E5AA] via-[#90D7E7] to-[#70CAEF]">
-        <div className="w-full pt-24 pb-18 flex flex-col items-center">
-          <div className="relative w-[700px]">
-            <div className="absolute -left-1 top-1 bg-black rounded-lg w-full h-[61px]"></div>
+      {/* Bottom section - blue gradient */}
+      <div className="w-full flex-1 bg-gradient-to-b from-[#E8F5F9] via-[#B7E5F0] to-[#70CAEF]">
+        <div className="w-full pt-24 pb-32 flex flex-col items-center">
+        <div className="relative w-[700px]">
+        <div className="absolute -left-1 top-1 bg-black rounded-lg w-full h-[61px]"></div>
             
-            <div className="bg-[#8E3D00] text-white rounded-lg flex items-center relative w-full h-[61px] px-16">
-              <span className="text-[28px] text-center">
+        <div className="bg-[#8E3D00] text-white rounded-lg flex items-center relative w-full h-[61px] px-16">
+        <span className="text-[28px] text-center">
                 STEP 1 : Change the denominator to a multiple of 10.
               </span>
             </div>
@@ -156,47 +190,40 @@ const Step1: React.FC<Step1Props> = ({
                   Let's verify!
                 </div>
 
-                <div className="mt-10 flex flex-col items-center gap-8">
+                <div className="mt-10 mb-32 flex flex-col items-center gap-12 relative w-[400px]">
                   {/* First equation */}
-                  <div className="flex items-center justify-center gap-6 text-3xl">
-                    <span className="w-8 text-center">{denominator}</span>
+                  <div className="flex items-center justify-between w-full text-3xl">
+                    <span className="w-12 text-center">{denominator}</span>
                     <span>X</span>
-                    <div className="w-12 h-12 bg-white border-2 border-black flex items-center justify-center">
+                    <div className="w-16 h-16 bg-white border-2 border-black flex items-center justify-center">
                       <input
                         type="text"
                         value={answer1}
-                        onChange={(e) => handleInputChange(e, setAnswer1)}
+                        onChange={(e) => handleInputChange(e, true)}
                         className="w-full h-full text-center text-3xl outline-none"
                         maxLength={2}
                       />
                     </div>
                     <span>=</span>
-                    <span>10</span>
+                    <span className="w-16 text-center">10</span>
                   </div>
 
                   {/* Second equation */}
-                  <div className="flex items-center justify-center gap-6 text-3xl pl-3">
-                    <span className="w-8 text-center">{denominator}</span>
+                  <div className="flex items-center justify-between w-full text-3xl">
+                    <span className="w-12 text-center">{denominator}</span>
                     <span>X</span>
-                    <div className="w-12 h-12 bg-white border-2 border-black flex items-center justify-center">
+                    <div className="w-16 h-16 bg-white border-2 border-black flex items-center justify-center">
                       <input
                         type="text"
                         value={answer2}
-                        onChange={(e) => handleInputChange(e, setAnswer2)}
+                        onChange={(e) => handleInputChange(e, false)}
                         className="w-full h-full text-center text-3xl outline-none"
                         maxLength={2}
                       />
                     </div>
                     <span>=</span>
-                    <span>100</span>
+                    <span className="w-16 text-center">100</span>
                   </div>
-                </div>
-
-                <div className="mt-16 text-4xl font-medium">
-                  Which is a suitable multiple?
-                </div>
-
-                <div className="mt-10 mb-16 flex gap-12">
                 </div>
               </>
             )}

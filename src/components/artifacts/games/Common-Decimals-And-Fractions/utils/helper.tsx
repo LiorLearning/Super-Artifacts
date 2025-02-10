@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/custom_ui/button';
 import { GameScreen, GameState } from '../game-state';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useGameState } from '../state-utils';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/custom_ui/input';
 import { useState } from 'react';
 
 export const DevHelper = () => {
@@ -10,14 +10,13 @@ export const DevHelper = () => {
   const { screen } = gameStateRef.current;
   const { step: step1 } = gameStateRef.current.state1;
   const { step: step2 } = gameStateRef.current.state2;
-  const { step: step3 } = gameStateRef.current.state3;
   const [directStep, setDirectStep] = useState('');
 
   const getCurrentStep = () => {
     switch(screen) {
       case 'first': return step1;
       case 'second': return step2;
-      case 'third': return step3;
+      case 'third': return gameStateRef.current.state3.step;
       default: return 0;
     }
   }
@@ -65,7 +64,6 @@ export const DevHelper = () => {
         <Button onClick={handleDirectStepChange}>Go to Step</Button>
       </div>
       <Button className='m-2' onClick={() => nextStep(screen, setGameStateRef)}>Next Step</Button>
-      <Button className='m-2' onClick={() => goToScreen(screen, setGameStateRef)}>Go to Screen</Button>
     </div>
   );
 };
@@ -74,13 +72,18 @@ export const nextStep = (
   screen: GameScreen, 
   setGameStateRef: (newState: (prevState: GameState) => GameState) => void
 ) => {
-  if (screen === 'first') {
-    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } }));
-  } else if (screen === 'second') {
-    setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } }));
-  } else if (screen === 'third') {
-    setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: prev.state3.step + 1 } }));
-  }
+  setGameStateRef(prev => {
+    switch(screen) {
+      case 'first':
+        return { ...prev, state1: { ...prev.state1, step: prev.state1.step + 1 } };
+      case 'second':
+        return { ...prev, state2: { ...prev.state2, step: prev.state2.step + 1 } };
+      case 'third':
+        return { ...prev, state3: { ...prev.state3, step: prev.state3.step + 1 } };
+      default:
+        return prev;
+    }
+  });
 }
 
 export const goToStep = (
@@ -108,11 +111,16 @@ export const prevStep = (
   screen: GameScreen, 
   setGameStateRef: (newState: (prevState: GameState) => GameState) => void
 ) => {
-  if (screen === 'first') {
-    setGameStateRef(prev => ({ ...prev, state1: { ...prev.state1, step: Math.max(prev.state1.step - 1, 0) } }));
-  } else if (screen === 'second') {
-    setGameStateRef(prev => ({ ...prev, state2: { ...prev.state2, step: Math.max(prev.state2.step - 1, 0) } }));
-  } else if (screen === 'third') {
-    setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: Math.max(prev.state3.step - 1, 0) } }));
-  }
+  setGameStateRef(prev => {
+    switch(screen) {
+      case 'first':
+        return { ...prev, state1: { ...prev.state1, step: Math.max(prev.state1.step - 1, 0) } };
+      case 'second':
+        return { ...prev, state2: { ...prev.state2, step: Math.max(prev.state2.step - 1, 0) } };
+      case 'third':
+        return { ...prev, state3: { ...prev.state3, step: Math.max(prev.state3.step - 1, 0) } };
+      default:
+        return prev;
+    }
+  });
 }

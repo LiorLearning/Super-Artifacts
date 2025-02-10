@@ -69,23 +69,20 @@ const Step2: React.FC<Step2Props> = ({
     }
   };
 
-  const getErrorStyle = () => {
-    return showError ? 'bg-red-200' : 'bg-white';
-  };
 
   return (
     <div className="min-h-screen flex flex-col items-center">
-      {/* Top section - yellow to green gradient */}
-      <div className="w-full bg-gradient-to-b from-[#F8F58A] via-[#B7E5AA] to-[#B7E5AA] pb-12">
-        {/* Level and Practice Header */}
+      <div className="w-full bg-gradient-to-b from-[#F8F58A] via-[#B7E5AA] to-[#B7E5AA] pb-16">
         <div className="mt-12 relative w-[400px] h-[69px] mx-auto">
           <div className="relative">
+
             <div className="absolute left-[2px] top-[2px] bg-black rounded-lg w-full h-[61px]"></div>
             
-            <div className="bg-[#8E3D00] text-white rounded-lg flex items-center relative w-full h-[61px]">
+            <div className="bg-[#8E3D00] text-white rounded-lg flex items-center relative w-full h-[65px]">
               <div className="pl-10">
                 <span className="text-[35px] tracking-wide">LEVEL 4</span>
               </div>
+
               
               <div className="absolute -right-1 h-full flex items-center">
                 <div className="absolute right-[2px] top-[2px] w-[220px] h-full">
@@ -102,10 +99,11 @@ const Step2: React.FC<Step2Props> = ({
         </div>
 
         {/* Question with Fraction */}
-        <div className="text-center mt-16 w-[381px] mx-auto text-[32px] font-medium flex items-center justify-center gap-4">
+        <div className="text-center mt-16 w-[381px] mx-auto text-[40px] font-medium flex items-center justify-center gap-4">
           <span>What is</span>
           <div className="inline-flex flex-col items-center justify-center">
             <span className="text-[30px] leading-tight">{numerator}</span>
+
             <div className="w-8 h-[3px] bg-black"></div>
             <span className="text-[30px] leading-tight">{denominator}</span>
           </div>
@@ -115,13 +113,13 @@ const Step2: React.FC<Step2Props> = ({
       </div>
 
       {/* Bottom section - very light green to blue gradient */}
-      <div className="w-full flex-1 bg-gradient-to-b from-[#E8F5EA] via-[#B7E5AA] via-[#90D7E7] to-[#70CAEF]">
-        <div className="w-full pt-24 pb-18 flex flex-col items-center">
+      <div className="w-full flex-1 bg-gradient-to-b from-[#E8F5F9] via-[#B7E5F0] to-[#70CAEF]">
+        <div className="w-full pt-24 pb-32 flex flex-col items-center">
           <div className="relative w-[706px]">
             <div className="absolute -left-1 top-1 bg-black rounded-lg w-full h-[69px]"></div>
             
             <div className="bg-[#8E3D00] text-white rounded-lg flex justify-center items-center relative w-full h-[69px]">
-              <span className="text-[35px] font-bold tracking-wide">
+              <span className="text-[35px] tracking-wide">
                 STEP 2 : Write the equivalent fraction
               </span>
             </div>
@@ -164,10 +162,9 @@ const Step2: React.FC<Step2Props> = ({
 
               <span className="text-4xl">=</span>
 
-              {/* Target fraction */}
               <div className="bg-white py-6 px-4 shadow-lg">
                 <div className="flex flex-col items-center">
-                  <div className={`w-10 h-10 flex items-center justify-center ${getErrorStyle()}`}>
+                  <div className={`w-10 h-10 flex items-center justify-center`}>
                     <input
                       type="text"
                       value={numeratorAnswer}
@@ -186,7 +183,6 @@ const Step2: React.FC<Step2Props> = ({
               </div>
             </div>
 
-            {/* Bottom Arrow and Input */}
             <div className="relative mt-6 flex flex-col items-center">
               <div className="relative w-[300px] h-[60px] mb-6">
                 <img 
@@ -195,7 +191,6 @@ const Step2: React.FC<Step2Props> = ({
                   className="absolute w-[150px] h-[40px] left-1/2 -translate-x-1/2 top-1"
                 />
                 
-                {/* Question box and multiplication symbol container */}
                 <div className="absolute left-1/2 top-4 -translate-x-1/2 flex items-center">
                   <span className="text-3xl mr-1">X</span>
                   <div className="bg-white border-2 border-black w-10 h-10 flex items-center justify-center">
