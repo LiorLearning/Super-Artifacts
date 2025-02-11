@@ -3,6 +3,7 @@ import type { MixedFraction } from '../../game-state';
 import LockIcon from '@/assets/Lock.png';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
+import React from 'react';
 
 interface ExpressionWithAdditionProps {
   leftNumber: number;
@@ -14,9 +15,10 @@ interface ExpressionWithAdditionProps {
 
 interface QuickHack2Props {
   mixedFraction: MixedFraction;
+  sendAdminMessage: (agent: string, message: string, callback?: () => void) => void;
 }
 
-const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction }) => {
+const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage }) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { whole, numerator, denominator } = mixedFraction;
   const [showInput, setShowInput] = useState(false);
@@ -27,6 +29,15 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction }) => {
   const [showNextStep3, setShowNextStep3] = useState(false);
   const [showSecondBox, setShowSecondBox] = useState(true);
   const [canEnterDenominator, setCanEnterDenominator] = useState(false);
+  const logicMessageShown = useRef(false);
+
+  useEffect(() => {
+    if (!logicMessageShown.current) {
+      logicMessageShown.current = true;
+      setShowInput(true);
+      sendAdminMessage("agent", "We'll unlock the steps one by one. First up! Let's multiply denominator with the whole. The hint is right there");
+    }
+  }, [sendAdminMessage]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -35,6 +46,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction }) => {
     const expectedValue = denominator * whole;
     if (parseInt(value) === expectedValue) {
       setShowNextStep(true);
+      sendAdminMessage("agent", "Now just add the numerator to your previous answer!");
     }
   };
 
@@ -63,9 +75,9 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction }) => {
     const expectedBottom = denominator;
 
     if (Number(value) === expectedBottom && Number(topAnswer) === expectedTop) {
-      setTimeout(() => {
+      sendAdminMessage("agent", "It took just 2 steps to get to the answer. let's practice some more!", () => {
         handleSuccess();
-      }, 1000);
+      });
     }
   };
 

@@ -1,5 +1,4 @@
-import type React from "react"
-import { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
 
@@ -20,17 +19,23 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const messageShown = useRef(false);
 
 
-  useEffect(() => {
+  const showInitialMessage = useCallback(() => {
     if (!messageShown.current) {
       messageShown.current = true;
+      sendAdminMessage("agent", "Let's create 3 and 2/4. First, let's add the wholes");
     }
-  }, []);
+  }, [sendAdminMessage]);
+
+  useEffect(() => {
+    showInitialMessage();
+  }, [showInitialMessage]);
 
   const handleWholeClick = () => {
     if (wholeCount < mixedFraction.whole) {
       setWholeCount(prev => prev + 1);
       if (wholeCount + 1 === mixedFraction.whole) {
         setCanAddQuarters(true);
+        sendAdminMessage("agent", "We have 3 wholes, now let's add the fraction.");
       }
     }
   };
@@ -44,7 +49,9 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       setQuarterCount(prev => prev + 1);
       if (quarterCount + 1 === mixedFraction.numerator) {
         setShowSuccess(true);
-        onComplete();
+        sendAdminMessage("agent", "Awesome, this is 3 and 2/4", () => {
+          onComplete();
+        });
       }
     }
   };
@@ -220,4 +227,3 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
 
 export default Step1
-

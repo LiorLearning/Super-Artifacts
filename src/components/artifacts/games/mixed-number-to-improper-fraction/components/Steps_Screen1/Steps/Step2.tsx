@@ -24,8 +24,9 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
     if (value === mixedFraction.whole.toString()) {
       setCanEnterNumerator(true)
       sendAdminMessage("agent", "Great! Now enter the numerator")
+    } else if (value.length >= mixedFraction.whole.toString().length && value !== mixedFraction.whole.toString()) {
+      sendAdminMessage("agent", "Answer is " + mixedFraction.whole)
     }
-
   }
 
 
@@ -33,6 +34,8 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
     setNumeratorInput(value)
     if (value === mixedFraction.numerator.toString()) {
       setCanEnterDenominator(true)
+    } else if (value.length >= mixedFraction.numerator.toString().length && value !== mixedFraction.numerator.toString()) {
+      sendAdminMessage("agent", "Answer is " + mixedFraction.numerator)
     }
   }
 
@@ -40,6 +43,8 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
     setDenominatorInput(value)
     if (value === mixedFraction.denominator.toString()) {
       onComplete();
+    } else if (value.length >= mixedFraction.denominator.toString().length && value !== mixedFraction.denominator.toString()) {
+      sendAdminMessage("agent", "Answer is " + mixedFraction.denominator)
     }
   }
 
