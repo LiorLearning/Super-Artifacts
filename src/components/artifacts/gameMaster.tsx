@@ -133,7 +133,6 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
     <div className="flex h-screen">
       <div className="w-[75%] border-r-border flex flex-col h-full overflow-auto">
         <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg h-full max-w-full">
-        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg h-full max-w-full">
           <div className="mb-4 flex items-center gap-2">
             <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
               <SelectTrigger className="p-2 border-border rounded-md flex-1">
@@ -160,7 +159,6 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               gameKey={currentGame}
               isOpen={isEditorOpen}
               onClose={() => setIsEditorOpen(false)}
-              initialState={gameInfo[currentGame]?.initialGameState}
               initialState={gameInfo[currentGame]?.initialGameState}
             />
             <Button 
@@ -202,14 +200,13 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
             )}
           </div>
         </div>
-      </div>
-      <div className="w-[25%] min-w-[250px] flex flex-col">
-        <Chat 
-          desc={getDescription?.()} 
-          componentRef={componentRef} 
-          gameState={gameStateRef} 
-        />
-      </div>
+        <div className="w-[25%] min-w-[250px] flex flex-col">
+          <Chat 
+            desc={getDescription?.()} 
+            componentRef={componentRef} 
+            gameState={gameStateRef} 
+          />
+        </div>
     </div>
   </div>
   );
@@ -253,7 +250,6 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
       <div className="bg-white p-6 rounded-lg max-w-3xl w-full mx-4">
         <div className="flex justify-between items-center mb-4">
