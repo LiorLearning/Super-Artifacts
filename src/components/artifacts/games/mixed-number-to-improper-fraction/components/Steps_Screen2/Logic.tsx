@@ -3,6 +3,7 @@ import type { MixedFraction } from '../../game-state';
 import LockIcon from '@/assets/Lock.png';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
+import React from 'react';
 
 interface ExpressionWithAdditionProps {
   leftNumber: number;
@@ -14,7 +15,7 @@ interface ExpressionWithAdditionProps {
 
 interface QuickHack2Props {
   mixedFraction: MixedFraction;
-  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
+  sendAdminMessage: (agent: string, message: string, callback?: () => void) => void;
 }
 
 const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage }) => {
@@ -26,124 +27,46 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const [topAnswer, setTopAnswer] = useState('');
   const [bottomAnswer, setBottomAnswer] = useState('');
   const [showNextStep3, setShowNextStep3] = useState(false);
-  const [showSecondBox, setShowSecondBox] = useState(false);
-  const initialMessageShown = useRef(false);
-
-  const [hasShownError, setHasShownError] = useState(false);
-  const [hasShownFirstError, setHasShownFirstError] = useState(false);
-  const [topSuccess, setTopSuccess] = useState(false);
-  const [bottomSuccess, setBottomSuccess] = useState(false);
-  const [canEnterDenominator, setCanEnterDenominator] = useState(false)
+  const [showSecondBox, setShowSecondBox] = useState(true);
+  const [canEnterDenominator, setCanEnterDenominator] = useState(false);
+  const logicMessageShown = useRef(false);
 
   useEffect(() => {
-    if (!initialMessageShown.current) {
-
-      sendAdminMessage(
-        "agent",
-        "Okay, the steps are locked. To unlock, keep filling the boxes",
-        () => {
-
-          setShowSecondBox(true);
-          
-            setTimeout(() => {
-            sendAdminMessage(
-              "agent",
-              "First up! Multiply denominator with the whole. The hint is right there"
-
-            );
-          }, 1000);
-        }
-      );
-      initialMessageShown.current = true;
+    if (!logicMessageShown.current) {
+      logicMessageShown.current = true;
+      setShowInput(true);
+      sendAdminMessage("agent", "We'll unlock the steps one by one. First up! Let's multiply denominator with the whole. The hint is right there");
     }
-  }, []);
+  }, [sendAdminMessage]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
-
     
     const expectedValue = denominator * whole;
-    
-    // Check for incorrect input
-    if (value.length >= expectedValue.toString().length && 
-        parseInt(value) !== expectedValue && 
-        !hasShownFirstError) {
-      sendAdminMessage(
-        "agent",
-        "That's not right. Try multiplying the denominator with the whole number!"
-      );
-      setHasShownFirstError(true);
-    }
-    
-    // Check for correct input
     if (parseInt(value) === expectedValue) {
-      sendAdminMessage(
-        "agent",
-        "Great job! You've got the first step right!",
-        () => {
-          setTimeout(() => {
-            sendAdminMessage(
-              "agent",
-              "Now add the numerator to your last answer. But remember to keep the denominator same!",
-              () => {
-                setShowNextStep(true);
-              }
-            );
-          }, 1000);
-        }
-      );
+      setShowNextStep(true);
+      sendAdminMessage("agent", "Now just add the numerator to your previous answer!");
     }
   };
 
   const handleSuccess = () => {
-    sendAdminMessage(
-      "agent",
-      "See? We got the same answer as with the pies method!",
-      () => {
-              setShowNextStep(false);
-              setShowNextStep3(true);
-            }
-          );
+    setShowNextStep(false);
+    setShowNextStep3(true);
   };
-
 
   const handleTopAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '');
     setTopAnswer(value);
     
     const expectedTop = (denominator * whole) + numerator;
-
-    // Error check
-    if (value.length >= expectedTop.toString().length && 
-        Number(value) !== expectedTop && 
-        !hasShownError) {
-      sendAdminMessage(
-        "agent",
-        "That's not quite right. Remember to add the numerator to your previous answer!"
-      );
-      setHasShownError(true);
-    }
-
-    // Success check for top number
-    if (Number(value) === expectedTop && !topSuccess) {
-      setCanEnterDenominator(true)  // Enable denominator input
-      sendAdminMessage(
-        "agent",
-        "Perfect! Now enter the denominator. Remember, it stays the same!"
-      );
-      setTopSuccess(true);
+    if (Number(value) === expectedTop) {
+      setCanEnterDenominator(true);
     }
   };
 
   const handleBottomAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!canEnterDenominator) {
-      sendAdminMessage(
-        "agent",
-        "First enter the correct numerator above!"
-      );
-      return;
-    }
+    if (!canEnterDenominator) return;
 
     const value = e.target.value.replace(/\D/g, '');
     setBottomAnswer(value);
@@ -151,49 +74,20 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
     const expectedTop = (denominator * whole) + numerator;
     const expectedBottom = denominator;
 
-    // Error check
-    if (value.length >= expectedBottom.toString().length && 
-        Number(value) !== expectedBottom && 
-        !hasShownError) {
-      sendAdminMessage(
-        "agent",
-        "Remember, the denominator stays the same!"
-      );
-      setHasShownError(true);
-    }
-
-    // Success check for bottom number
-    if (Number(value) === expectedBottom && !bottomSuccess) {
-      sendAdminMessage(
-        "agent",
-        "Great job! You've got the denominator right!",
-        () => {
-          if (Number(topAnswer) === expectedTop) {
-            setTimeout(() => {
-              handleSuccess();
-            }, 1000);
-          }
-        }
-      );
-      setBottomSuccess(true);
+    if (Number(value) === expectedBottom && Number(topAnswer) === expectedTop) {
+      sendAdminMessage("agent", "It took just 2 steps to get to the answer. let's practice some more!", () => {
+        handleSuccess();
+      });
     }
   };
 
-  useEffect(() => {
-
-    setHasShownError(false);
-  }, [topAnswer, bottomAnswer]);
-
-  useEffect(() => {
-    setHasShownFirstError(false);
-  }, [inputValue]);
-
-  useEffect(() => {
-    setTopSuccess(false);
-    setBottomSuccess(false);
-    setHasShownError(false);
-
-  }, [topAnswer, bottomAnswer]);
+  const handleNextLevel = () => {
+    setGameStateRef(prev => ({
+      ...prev,
+      screen: 'third' as const,
+      state2: { ...prev.state2, step: 1 }
+    }));
+  };
 
   const ExpressionWithAddition: React.FC<ExpressionWithAdditionProps> = ({ leftNumber, fraction }) => (
     <div className="flex items-center">
@@ -214,14 +108,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
       </div>
     </div>
   );
-
-  const handleNextLevel = () => {
-    setGameStateRef(prev => ({
-      ...prev,
-      screen: 'third' as const,
-      state2: { ...prev.state2, step: 1 }
-    }));
-  };
 
   return (
     <div className="min-h-screen bg-pink-50 flex flex-col">

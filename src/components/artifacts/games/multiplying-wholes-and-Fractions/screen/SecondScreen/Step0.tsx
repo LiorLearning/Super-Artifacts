@@ -18,14 +18,14 @@ export default function Screen2Step0({sendAdminMessage} : BaseProps) {
         sendAdminMessage('agent',
           `Now we see how to multiply ${whole} times ${fraction.numerator}/${fraction.denominator}. Let's start 🎯💡`,
         () => {
-          setNext(true);
+          goToStep('second', setGameStateRef, 1);
         });
       }
     }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header level={2} heading="Multiplying Wholes and Fractions" nextStep={next} onClick={() => {
+      <Header level={2} heading="Multiplying Wholes and Fractions" onClick={() => {
         goToStep('second', setGameStateRef, 1);
       }} />
       <div className="my-8">
