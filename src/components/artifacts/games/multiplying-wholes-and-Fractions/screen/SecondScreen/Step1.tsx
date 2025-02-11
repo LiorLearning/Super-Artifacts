@@ -22,7 +22,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent',
-        `How would you split this chocolate bar to create 1/${fraction.denominator} 🍫`
+        `How would you split this chocolate bar to create 1/${fraction.denominator}? 🍫`
       );
     }
   }, []);
@@ -32,7 +32,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
       if (bar.denominator === fraction.denominator) {  //for spliting
         setSplit(false);
         setCanSelect(true);
-        sendAdminMessage('agent', `Awesome! Now select as many pieces as ${fraction.numerator}/${fraction.denominator}ths! And click done when completed 🍫`);
+        sendAdminMessage('agent', `Awesome! Now select as many pieces as ${fraction.numerator}/${fraction.denominator}! And click done when completed 🍫`);
       } else {
         if (bar.denominator > fraction.denominator) {
           sendAdminMessage('agent', `Oops! You've split too many times. We need exactly ${fraction.denominator} pieces. Try joining some pieces back together! 🔄`);
@@ -42,7 +42,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
       }
     } else {  //for selecting
       if (bar.numerator === fraction.numerator) {
-        sendAdminMessage('agent', `Perfect! You've created ${fraction.numerator}/${fraction.denominator}! 🎉 Let's go to the Next Step ➡️`, () => setNextStep(true));
+        sendAdminMessage('agent', `Perfect! You've created ${fraction.numerator}/${fraction.denominator}! 🎉 Let's go to the Next Step ➡️`, () => goToStep('second', setGameStateRef, 2));
       } else if (bar.numerator > fraction.numerator) {
         sendAdminMessage('agent', `Oops! That's too many pieces. We only need ${fraction.numerator} pieces to make ${fraction.numerator}/${fraction.denominator}. Try again! 🍫`);
       } else {
@@ -55,7 +55,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <FractionHeader level={2} whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} nextStep={nextStep} onClick={() => {
+      <FractionHeader level={2} whole={whole} numerator={fraction.numerator} denominator={fraction.denominator} onClick={() => {
         goToStep('second', setGameStateRef, 2);
       }
       } />

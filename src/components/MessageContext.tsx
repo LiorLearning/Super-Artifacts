@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { AudioProvider } from './utils/cartesia_audio_stream';
+import { AudioProvider } from './utils/elevenlabs_audio_stream';
 
 export interface BaseMessage {
   messageId: string;
