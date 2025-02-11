@@ -1,4 +1,3 @@
-
 import TemplateGame from './games/template/game';
 import FractionAdditionGame from './games/add-fractions-with-common-denominator/game';
 import FractionSubtractionGame from './games/subtract-fractions-with-common-denominator/game';
@@ -13,6 +12,21 @@ import DecimalGame from './games/fraction-to-decimal/game';
 import MixedFractionGameWithRegouping from './games/add-and-subtract-mixed-numbers-with-regouping/game';
 import MixedNumberToImproperFractionGame from './games/mixed-number-to-improper-fraction/game';
 import MultiplyingWholesAndFractionsGame from './games/multiplying-wholes-and-Fractions/game';
+
+import { initialGameState as templateInitialState } from './games/template/game-state';
+import { initialGameState as fractionAdditionInitialState } from './games/add-fractions-with-common-denominator/game-state';
+import { initialGameState as fractionSubtractionInitialState } from './games/subtract-fractions-with-common-denominator/game-state';
+import { initialGameState as additionGameInitialState } from './games/addition-within-20-using-ten-frames/game-state';
+import { initialGameState as fractionsGameInitialState } from './games/compare-fractions-with-same-numerator-or-denominator/game-state';
+import { initialGameState as equivalentFractionsGameInitialState } from './games/equivalent-fractions/game-state';
+import { initialGameState as legoGameInitialState } from './games/writing-improper-fractions-as-mixed-numbers/game-state';
+import { initialGameState as commonDenominatorGameInitialState } from './games/common-denominators/game-state';
+import { initialGameState as compareFractionGameInitialState } from './games/compare-fractions-with-different-numerator-and-denominator/game-state';
+import { initialGameState as decimalGameInitialState } from './games/fraction-to-decimal/game-state';
+import { initialGameState as mixedFractionGameWithRegoupingInitialState } from './games/add-and-subtract-mixed-numbers-with-regouping/game-state';
+import { initialGameState as mixedNumberToImproperFractionGameInitialState } from './games/mixed-number-to-improper-fraction/game-state';
+import { initialGameState as multiplyingWholesAndFractionsGameInitialState } from './games/multiplying-wholes-and-Fractions/game-state';
+import { initialGameState as mixedFractionWithoutRegoupingInitialState } from './games/add-and-subtract-mixed-numbers-without-regouping/game-state';
 
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/add-fractions-with-common-denominator/state-utils'
@@ -29,81 +43,97 @@ import { GameStateProvider as MixedFractionWithRegoupingGameStateProvider, useGa
 import { GameStateProvider as MixedNumberToImproperFractionGameStateProvider, useGameState as MixedNumberToImproperFractionGameState } from './games/mixed-number-to-improper-fraction/state-utils'
 import { GameStateProvider as MultiplyingWholesAndFractionsGameStateProvider, useGameState as MultiplyingWholesAndFractionsGameState } from './games/multiplying-wholes-and-Fractions/state-utils'
 
+
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string> }>;
   useState: any;
   provider: React.ComponentType<{ children: React.ReactNode }>;
+  initialGameState: any;
 }
 
 export const gameInfo: Record<string, GameInfo> = {
   'addition-within-20-using-ten-frames': {
     game: AdditionGame,
     useState: AdditionGameState,
-    provider: AdditionGameStateProvider
+    provider: AdditionGameStateProvider,
+    initialGameState: additionGameInitialState
   },
   'compare-fractions-with-same-numerator-or-denominator': {
     game: FractionsGame,
     useState: FractionsGameState,
-    provider: FractionsGameStateProvider
+    provider: FractionsGameStateProvider,
+    initialGameState: fractionsGameInitialState
   },
   'equivalent-fractions': {
     game: EquivalentFractionsGame,
     useState: EquivalentFractionsGameState,
-    provider: EquivalentFractionsGameStateProvider
+    provider: EquivalentFractionsGameStateProvider,
+    initialGameState: equivalentFractionsGameInitialState
   },
   'common-denominators': {
     game: CommonDenominatorGame,
     useState: CommonDenominatorGameState,
-    provider: CommonDenominatorGameStateProvider
+    provider: CommonDenominatorGameStateProvider,
+    initialGameState: commonDenominatorGameInitialState
   },
   'subtract-fractions-with-common-denominator': {
     game: FractionSubtractionGame,
     useState: FractionSubtractionGameState,
-    provider: FractionSubtractionGameStateProvider
+    provider: FractionSubtractionGameStateProvider,
+    initialGameState: fractionSubtractionInitialState
   },
   'add-fractions-with-common-denominator': {
     game: FractionAdditionGame,
     useState: FractionAdditionGameState,
-    provider: FractionAdditionGameStateProvider
+    provider: FractionAdditionGameStateProvider,
+    initialGameState: fractionAdditionInitialState
   },
   'add-and-subtract-mixed-numbers-without-regouping': {
     game: MixedFractionGame,
     useState: MixedFractionWithoutRegoupingGameState,
-    provider: MixedFractionWithoutRegoupingGameStateProvider
+    provider: MixedFractionWithoutRegoupingGameStateProvider,
+    initialGameState: mixedFractionWithoutRegoupingInitialState
   },
   'writing-improper-fractions-as-mixed-numbers': {
     game: LegoGame,
     useState: LegoGameState,
-    provider: LegoGameStateProvider
+    provider: LegoGameStateProvider,
+    initialGameState: legoGameInitialState
   },
   'template-game': {
     game: TemplateGame,
     useState: TemplateGameState,
-    provider: TemplateGameStateProvider
+    provider: TemplateGameStateProvider,
+    initialGameState: templateInitialState,
   },
   'compare-fractions-with-different-numerator-and-denominator': {
     game: CompareFractionGame,
     useState: CompareFractionGameState,
-    provider: CompareFractionGameStateProvider
+    provider: CompareFractionGameStateProvider,
+    initialGameState: compareFractionGameInitialState
   },
   'fraction-to-decimal': {
     game: DecimalGame,
     useState: DecimalGameState,
-    provider: DecimalGameStateProvider
+    provider: DecimalGameStateProvider,
+    initialGameState: decimalGameInitialState
   },
   'add-and-subtract-mixed-numbers-with-regouping': {
     game: MixedFractionGameWithRegouping,
     useState: MixedFractionWithRegoupingGameState,
-    provider: MixedFractionWithRegoupingGameStateProvider
+    provider: MixedFractionWithRegoupingGameStateProvider,
+    initialGameState: mixedFractionGameWithRegoupingInitialState
   },
   'mixed-number-to-improper-fraction': {
     game: MixedNumberToImproperFractionGame,
     useState: MixedNumberToImproperFractionGameState,
-    provider: MixedNumberToImproperFractionGameStateProvider
+    provider: MixedNumberToImproperFractionGameStateProvider,
+    initialGameState: mixedNumberToImproperFractionGameInitialState
   },
   'multiplying-wholes-and-fractions': {
     game: MultiplyingWholesAndFractionsGame,
     useState: MultiplyingWholesAndFractionsGameState,
-    provider: MultiplyingWholesAndFractionsGameStateProvider
+    provider: MultiplyingWholesAndFractionsGameStateProvider,
+    initialGameState: multiplyingWholesAndFractionsGameInitialState
   }
 };

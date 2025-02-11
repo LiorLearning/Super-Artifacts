@@ -34,6 +34,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
   const [errorCount, setErrorCount] = useState(0)
 
+
   const handleSlicerClick = () => {
     setShowOptions(prev => !prev)
   }
@@ -347,6 +348,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   </div>
                   <div className="h-[2px] w-full bg-black mt-2"></div>
                   <span className="text-5xl">{mixedFraction.denominator}</span>
+
                 </div>
               </div>
             </div>

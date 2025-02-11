@@ -33,6 +33,17 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
     }
   }, [sendAdminMessage])
 
+  // Add ref to track if narration was shown
+  const messageShown = useRef(false)
+
+  // Add initial narration
+  useEffect(() => {
+    if (!messageShown.current) {
+      messageShown.current = true;
+      sendAdminMessage("agent", "3 wholes is now 12/4, let's add 2/4 to complete the fraction!")
+    }
+  }, [sendAdminMessage])
+
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
     
@@ -82,11 +93,9 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
         setDenominatorIsCorrect(true)
         setDenominatorIsWrong(false)
         if (isNumeratorCorrect) {
-          // First show the congratulatory message
           sendAdminMessage("agent", "Awesome, you have converted the mixed number to an improper fraction.", () => {
-            // Then show the final part with buttons
             setShowFinal(true)
-            // Don't call onComplete here - let user choose next action
+          
           })
         }
       } else {
@@ -103,6 +112,7 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
           return newCount
         })
       }
+
     }
   }
 

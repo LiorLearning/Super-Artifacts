@@ -22,7 +22,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent',
-        `How would you split this chocolate bar to create 1/5th? Click done after you've split. 🍫`
+        `How would you split this chocolate bar to create ${fraction.numerator}/${fraction.denominator}? Click done after you've split. 🍫`
       );
     }
   }, []);
@@ -32,7 +32,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
       if (bar.denominator === fraction.denominator) {  //for spliting
         setSplit(false);
         setCanSelect(true);
-        sendAdminMessage('agent', `Awesome! Now select as many pieces as ${fraction.numerator}/${fraction.denominator}ths! And click done when completed 🍫`);
+        sendAdminMessage('agent', `Awesome! Now select as many pieces as ${fraction.numerator}/${fraction.denominator}! And click done when completed 🍫`);
       } else {
         if (bar.denominator > fraction.denominator) {
           sendAdminMessage('agent', `Oops! You've split too many times. We need exactly ${fraction.denominator} pieces. Try joining some pieces back together! 🔄`);

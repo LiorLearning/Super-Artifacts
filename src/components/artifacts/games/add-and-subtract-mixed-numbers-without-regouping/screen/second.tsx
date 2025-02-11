@@ -140,34 +140,16 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
   }, [useEffectTrigger]);
 
   useEffect(() => {
-    if (question1description.inputWhole !== '' && parseInt(question1description.inputWhole)!=fraction1.whole){
-      sendAdminMessage('agent', `Count the pepperoni pizzas in the box.`);
-    }
-  }, [question1description.inputWhole]);
-
-  useEffect(() => {
-    if (question1description.inputNumerator !== '' && parseInt(question1description.inputNumerator)!=fraction1.numerator){
-      sendAdminMessage('agent', `Almost! Count the leftover slices carefully—how many do you see?`);
-    }
-  }, [question1description.inputNumerator]);
-
-  useEffect(() => {
-    if (question1description.inputDenominator !== '' && parseInt(question1description.inputDenominator)!=fraction1.denominator){
-      sendAdminMessage('agent', `Not quite! Think about how many slices make up a whole pizza. Try again!`);
-    }
-  }, [question1description.inputDenominator]);
-
-  useEffect(() => {
     if (question1description.inputWhole !== '' && parseInt(question1description.inputWhole)===fraction2.whole){
       sendAdminMessage('agent', `Yes! There is ${fraction2.whole} whole cheeze pizza. Great job counting!`);
     } else if (question2description.inputWhole !== '' && parseInt(question2description.inputWhole)!=fraction2.whole){
-      sendAdminMessage('agent', `Oops! Remember, whole pizzas are the complete ones. Look at the illustration with yellow pizzas and try again!`);
+      sendAdminMessage('admin', `Oops! Remember, whole pizzas are the complete ones. Look at the illustration with yellow pizzas and try again!`);
     }
   }, [question2description.inputWhole]);
 
   useEffect(() => {
     if((question2description.inputNumerator !== '' && parseInt(question2description.inputNumerator)!=fraction2.numerator) || (question2description.inputDenominator !== '' && parseInt(question2description.inputDenominator)!=fraction2.denominator)){
-      sendAdminMessage('agent', `take a hint from the slices in the yellow box`);
+      sendAdminMessage('admin', `take a hint from the slices in the yellow box`);
     }
   }, [question2description.inputNumerator, question2description.inputDenominator]);
 
@@ -202,6 +184,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             setSubStep(1)
             setQuestion2description(prev => ({ ...prev, showFirstRow: true }))
           }} 
+
+          sendAdminMessage={sendAdminMessage}
         />
     }
     { substep >= 2 && (
@@ -239,6 +223,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             sendAdminMessage('agent', `Perfect! You've broken down the order, Can you rearrange the wholes and slices together?`);
             setSubStep(2)
           }}
+
+          sendAdminMessage={sendAdminMessage}
         />
       }
       </div>
@@ -282,31 +268,49 @@ export const CombineFractionInput: React.FC<{
   const handleWholeChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWhole1(e.target.value);
     checkfirst(e.target.value,whole2,numerator1,numerator2,denominator1,denominator2)
+    if(whole1 === '' && parseInt(e.target.value) !== fraction1.whole) {
+      sendAdminMessage("admin", "Oh dear, did you forget how to count whole pizzas? Try again!");
+    }
   }
 
   const handleWholeChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWhole2(e.target.value);
     checkfirst(whole1,e.target.value,numerator1,numerator2,denominator1,denominator2)
+    if(whole2 === '' && parseInt(e.target.value) !== fraction2.whole) {
+      sendAdminMessage("admin", "That's not quite right. Maybe counting on your fingers would help?");
+    }
   }
 
   const handleNumeratorChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumerator1(e.target.value);
     checkfirst(whole1,whole2,e.target.value,numerator2,denominator1,denominator2)
+    if(numerator1 === '' && parseInt(e.target.value) !== fraction1.numerator) {
+      sendAdminMessage("admin", "Those slices must be really tricky to count, huh?");
+    }
   }
 
   const handleNumeratorChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumerator2(e.target.value);
     checkfirst(whole1,whole2,numerator1,e.target.value,denominator1,denominator2)
+    if(numerator2 === '' && parseInt(e.target.value) !== fraction2.numerator) {
+      sendAdminMessage("admin", "Close, but no pizza! Count those slices again.");
+    }
   }
 
   const handleDenominatorChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDenominator1(e.target.value);
     checkfirst(whole1,whole2,numerator1,numerator2,e.target.value,denominator2)
+    if(denominator1 === '' && parseInt(e.target.value) !== fraction1.denominator) {
+      sendAdminMessage("admin", "Are you sure that's how many slices make a whole pizza?");
+    }
   }
 
   const handleDenominatorChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDenominator2(e.target.value);
     checkfirst(whole1,whole2,numerator1,numerator2,denominator1,e.target.value)
+    if(denominator2 === '' && parseInt(e.target.value) !== fraction2.denominator) {
+      sendAdminMessage("admin", "The pizza chef would be disappointed. Try again!");
+    }
   }
 
   const checkfirst = (whole1: string, whole2: string, numerator1: string, numerator2: string, denominator1: string, denominator2: string) => {
@@ -358,8 +362,19 @@ export const CombineFractionInput: React.FC<{
     }
   }, [whole1, whole2, numerator1, numerator2, denominator1, denominator2])
 
+  const getInputStyle = (value: string, correctValue: number) => `
+    w-12 h-12 outline-none text-center text-2xl font-bold border-2 
+    ${value !== '' ? 
+      (parseInt(value) === correctValue ? 
+        'border-green-600 bg-green-100 text-green-800' : 
+        'border-red-600 bg-red-100 text-red-800'
+      ) : 
+      'border-gray-600'
+    }
+  `;
+
   return (
-    <div className='w-full bg-green-50 flex py-20 flex-col justify-center items-center'>
+    <div className='w-full flex py-20 flex-col justify-center items-center'>
       <div className="flex flex-col gap-8 items-center">
         <p className='text-2xl '>
           Rearrange to add the portions
@@ -376,7 +391,8 @@ export const CombineFractionInput: React.FC<{
                   min={0}
                   max={10}
                   placeholder="?"
-                  className={`w-12 h-24 outline-none text-center text-2xl  border-2 border-green-600 rounded ${whole1!=='' ? ( parseInt(whole1)===fraction1.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                  className={getInputStyle(whole1, fraction1.whole)}
+
                 />
                 <span className="text-2xl ">+</span>
                 <input
@@ -386,7 +402,8 @@ export const CombineFractionInput: React.FC<{
                   min={0}
                   max={10}
                   placeholder="?"
-                  className={`w-12 h-24 outline-none text-center text-2xl  border-2 border-green-600 rounded ${whole2!=='' ? ( parseInt(whole2)===fraction2.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                  className={getInputStyle(whole2, fraction2.whole)}
+
                 />
               </div>
             </div>
@@ -397,7 +414,8 @@ export const CombineFractionInput: React.FC<{
             </p>
           </div>
 
-          <span className="text-2xl ">+</span>
+          <span className="text-4xl flex items-center font-bold">+</span>
+
 
           <div className='flex flex-col gap-2'>         
             <div className="border-4 shadow-[-2px_2px_0px_rgba(150,0,0,1)] border-purple-600 rounded-2xl p-4">
@@ -410,7 +428,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className={`w-12 h-12 outline-none text-center text-2xl  border-2 border-purple-600 rounded ${numerator1!=='' ? ( parseInt(numerator1)===fraction1.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                    className={getInputStyle(numerator1, fraction1.numerator)}
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -420,7 +438,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className={`w-12 h-12 outline-none text-center text-2xl  border-2 border-purple-600 rounded ${denominator1!=='' ? ( parseInt(denominator1)===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                    className={getInputStyle(denominator1, fraction1.denominator)}
                   />
                 </div>
                 <span className="text-2xl ">+</span>
@@ -432,7 +450,8 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className={`w-12 h-12 outline-none text-center text-2xl  border-2 border-purple-600 rounded ${numerator2!=='' ? ( parseInt(numerator2)===fraction2.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                    className={getInputStyle(numerator2, fraction2.numerator)}
+
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -442,7 +461,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className={`w-12 h-12 outline-none text-center text-2xl  border-2 border-purple-600 rounded ${denominator2!=='' ? ( parseInt(denominator2)===fraction2.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                    className={getInputStyle(denominator2, fraction2.denominator)}
                   />
                 </div>
               </div>
@@ -461,7 +480,7 @@ export const CombineFractionInput: React.FC<{
 
             <p className="text-2xl text-green-600">Write in mixed form</p>
             <div className='flex flex-col gap-2'>
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2">
                 <input
                   type="text"
                   value={whole3}
@@ -469,7 +488,7 @@ export const CombineFractionInput: React.FC<{
                   min={0}
                   max={10}
                   placeholder="?"
-                  className={`w-12 h-12 outline-none text-center text-2xl  border-4 border-green-600 rounded ${whole3!=='' ? ( parseInt(whole3)===(fraction1.whole + fraction2.whole) ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                  className={getInputStyle(whole3, fraction1.whole + fraction2.whole)}
                 />
                 
                 <div className="flex flex-col items-center">
@@ -480,7 +499,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className={`w-12 h-12 outline-none text-center text-2xl  border-4 border-purple-600 rounded ${numerator3!=='' ? ( parseInt(numerator3)===(fraction1.numerator + fraction2.numerator) ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                    className={getInputStyle(numerator3, fraction1.numerator + fraction2.numerator)}
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -490,7 +509,7 @@ export const CombineFractionInput: React.FC<{
                     min={0}
                     max={10}
                     placeholder="?"
-                    className={`w-12 h-12 outline-none text-center text-2xl  border-4 border-purple-600 rounded ${denominator3!=='' ? ( parseInt(denominator3)===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                    className={getInputStyle(denominator3, fraction1.denominator)}
                   />
                 </div>
               </div>

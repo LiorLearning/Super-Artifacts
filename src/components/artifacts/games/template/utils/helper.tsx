@@ -30,7 +30,7 @@ export const DevHelper = () => {
   }
 
   return (
-    <div className="flex justify-between mt-4">
+    <div className="flex justify-between sticky top-0 bg-white mt-4">
       <Button className='m-2' onClick={() => prevStep(screen, setGameStateRef)}>Previous Step</Button>
       <div className="text-lg">
         <Select 

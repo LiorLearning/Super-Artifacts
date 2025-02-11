@@ -18,7 +18,7 @@ export default function Screen2Step0({sendAdminMessage} : BaseProps) {
         sendAdminMessage('agent',
           `Now we see how to multiply ${whole} times ${fraction.numerator}/${fraction.denominator}. Let's start 🎯💡`,
         () => {
-          setNext(true);
+          goToStep('second', setGameStateRef, 1);
         });
       }
     }, []);
