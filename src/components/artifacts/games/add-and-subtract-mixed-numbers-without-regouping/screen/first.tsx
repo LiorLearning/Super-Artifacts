@@ -19,12 +19,9 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (!start.current) {
       sendAdminMessage("agent","Today, we're learning to add mixed numbers! Let's Start!");
-
     }
     start.current = true;
   }, []);
-
-
 
   return (
       step === 0 ? 
@@ -33,7 +30,6 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       <div className="">
       <Header fraction1={fraction1} fraction2={fraction2} type='addition' version={step === 2 ? 2 : 1} />
       {step === 1 ?
-
           <Step1 sendAdminMessage={sendAdminMessage} />
         : step === 2 ?
           <Step2 sendAdminMessage={sendAdminMessage} />
@@ -50,8 +46,7 @@ const Step0 = ({ sendAdminMessage }: BaseProps) => {
       <div className='pt-32 mx-auto'>
         <Button 
           onClick={() => {
-            goToStep(1, setGameStateRef, 1); 
-            // sendAdminMessage('agent', "Let's break it down! Start with the pepperoni pizzas")
+            goToStep(1, setGameStateRef, 1)
           }}
           className='m-2 p-6 mx-auto bg-[#F97315] text-3xl text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] hover:bg-[#F97315] max-w-3xl'
         >
@@ -69,7 +64,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage("agent","Here's your order, can figure out the total number of pizzas? Let’s get started—click 'Next'!");
+      sendAdminMessage("agent","Let us imagine this as a pizza order. To solve, we have to figure out the total order. Click 'Next' to proceed!");
     }
     start.current = true;
   }, []);
@@ -150,7 +145,6 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     inputDenominator: '',
   } as QuestionDescriptionProps);
 
-
   useEffect(() => {
     if (complete === 1) {
       sendAdminMessage('agent', `You've got it! ${fraction1.whole} whole pizzas and ${fraction1.numerator}/${fraction1.denominator} of a pizza. Let's move to the cheeze pizzas next!`);
@@ -161,7 +155,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
 
   useEffect(() => {
     if (parseInt(question1description.inputWhole) === fraction1.whole){
-      sendAdminMessage('agent', `That's right! There are ${fraction1.whole} whole pepperoni pizzas. Now, let’s look at the leftover slices!`);
+      sendAdminMessage('agent', `That's right! There are ${fraction1.whole} whole pepperoni pizzas. Now, let's look at the leftover slices!`);
     } else if (parseInt(question1description.inputWhole) > 0) {
       sendAdminMessage('admin', "Oops! Take a closer look at the picture to count the full ones. Try again!");
     }
@@ -171,7 +165,6 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     if (parseInt(question1description.inputNumerator) === fraction1.numerator && parseInt(question1description.inputDenominator) === fraction1.denominator){
       sendAdminMessage('agent', `Great job! There's ${fraction1.numerator} slice left out of ${fraction1.denominator}. That makes it ${fraction1.numerator}/${fraction1.denominator} of a pizza!`);
     } else if (parseInt(question1description.inputNumerator) > 0 && parseInt(question1description.inputNumerator) !== fraction1.numerator) {
-
       sendAdminMessage('admin', "Almost! Count the leftover slices carefully—how many do you see?");
     }
   }, [question1description.inputNumerator])
@@ -186,22 +179,25 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
 
   useEffect(() => {
     if (parseInt(question2description.inputWhole) === fraction2.whole){
-      sendAdminMessage('agent', `Yes! There are ${fraction2.whole} whole cheeze pizzas. Great job counting`);
+      sendAdminMessage('agent', `That's right! There are ${fraction2.whole} whole cheeze pizzas. Now, let's look at the leftover slices!`);
     } else if (parseInt(question2description.inputWhole) > 0) {
-      sendAdminMessage('agent', "Oops! Take a closer look at the picture to count the full ones. Try again!");
+      sendAdminMessage('admin', "Oops! Take a closer look at the picture to count the full ones. Try again!");
     }
   }, [question2description.inputWhole])
 
   useEffect(() => {
-    if (parseInt(question2description.inputNumerator) > 0 && parseInt(question2description.inputNumerator) !== fraction2.numerator) {
-      sendAdminMessage('agent', "Almost! Count the leftover slices carefully—how many do you see?");
+    if (parseInt(question2description.inputNumerator) === fraction2.numerator && parseInt(question2description.inputDenominator) === fraction2.denominator){
+      sendAdminMessage('agent', `Great job! There's ${fraction2.numerator} slice left out of ${fraction2.denominator}. That makes it ${fraction2.numerator}/${fraction2.denominator} of a pizza!. Now quickly fill in the Cheese order`);
+    } else if (parseInt(question2description.inputNumerator) > 0 && parseInt(question2description.inputNumerator) !== fraction2.numerator) {
+      sendAdminMessage('admin', "Almost! Count the leftover slices carefully—how many do you see?");
     }
   }, [question2description.inputNumerator])
 
   useEffect(() => {
-    if (parseInt(question2description.inputDenominator) > 0 && parseInt(question2description.inputDenominator) !== fraction2.denominator) {
-
-      sendAdminMessage('agent', "Not quite! Think about how many slices make up a whole pizza. Try again!");
+    if (parseInt(question2description.inputDenominator) === fraction2.denominator && parseInt(question2description.inputNumerator) === fraction2.numerator){
+      sendAdminMessage('agent', `Great job! There's ${fraction2.numerator} slice left out of ${fraction2.denominator}. That makes it ${fraction2.numerator}/${fraction2.denominator} of a pizza!. Now quickly fill in the Cheese order`);
+    } else if (parseInt(question2description.inputDenominator) > 0 && parseInt(question2description.inputDenominator) !== fraction2.denominator) {
+      sendAdminMessage('admin', "Not quite! Think about how many slices make up a whole pizza. Try again!");
     }
   }, [question2description.inputDenominator])
 
@@ -236,6 +232,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             setComplete(1)
             setQuestion2description(prev => ({ ...prev, showFirstRow: true }))
           }} 
+
+          sendAdminMessage={sendAdminMessage}
         />
     }
     { complete >= 2 && (
@@ -269,6 +267,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           pizzacolor={['#FFC98F','#E6DF5A']}
 
           onComplete={() => setComplete(2)} 
+
+          sendAdminMessage={sendAdminMessage}
         />
     }
     </div>
@@ -418,46 +418,49 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
       />
 
       {showMixedForm && (
-        <div className='flex flex-col py-16 items-center gap-8 p-4 bg-green-50'>
-            <div className="text-3xl  text-green-600 mb-4">Write in mixed form</div>
-            <div className="flex items-start gap-16">
-              {/* Wholes Input Box */}
-              <div className="relative flex h-24 flex-col justify-center items-center">
-                <div className="w-20 h-20 border-[3px] border-green-600 rounded-lg flex items-center justify-center bg-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]">
+        <div className='flex flex-col py-8 items-center gap-8 p-4 my-16 bg-green-50 border-y-4 border-green-600'>
+            <div className="text-3xl font-bold text-green-600 mb-4">Write in mixed form</div>
+            <div className="flex items-start gap-2">
+              <div className="flex h-40 flex-col justify-center items-center">
+                <div className={`w-20 h-full px-2 pt-2 border-gray-200 rounded-lg flex flex-col items-center justify-between ${!showProceedButton ? 'bg-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] border-[3px]' : 'bg-transparent border-none'}`}>
+                  <span />
                   <input
                     type="text"
                     name="whole"
                     value={mixedFormInputs.whole}
                     onChange={handleMixedFormChange}
-                    className={`w-full h-full text-4xl  text-center bg-transparent outline-none ${parseInt(mixedFormInputs.whole) === totalWhole ? 'text-green-600' : ''}`}
+                    className={`w-full text-4xl font-bold text-center bg-white rounded border-[3px] border-green-600 outline-none ${parseInt(mixedFormInputs.whole) === totalWhole ? 'text-green-600' : ''}`}
                     placeholder="?"
                   />
+                  <div className="text-lg h-12 text-gray-700 whitespace-nowrap">{!showProceedButton ? 'Wholes' : ''}</div>
                 </div>
-                <div className="absolute -bottom-8 text-lg  text-gray-700 whitespace-nowrap">Wholes</div>
               </div>
 
               {/* Fraction Input Box */}
-              <div className="relative h-24 flex flex-col items-center">
-                <div className="w-20 border-[3px] border-purple-500 rounded-lg flex flex-col items-center bg-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]">
+              <div className="relative h-40 flex flex-col items-center">
+                <div className={`w-20 h-40  border-[3px] px-2 border-gray-200 rounded-lg flex flex-col items-center ${!showProceedButton ? 'bg-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]' : 'bg-transparent border-none'}`}>
                   <input
                     type="text"
                     name="numerator"
                     value={mixedFormInputs.numerator}
                     onChange={handleMixedFormChange}
-                    className={`w-full h-10 text-4xl  text-center bg-transparent outline-none ${parseInt(mixedFormInputs.numerator) === totalNumerator ? 'text-purple-600' : ''}`}
+                    className={`w-full h-10 text-4xl mt-2 border-[3px] border-purple-500 font-bold text-center bg-transparent outline-none ${parseInt(mixedFormInputs.numerator) === totalNumerator ? 'text-purple-600' : ''}`}
                     placeholder="?"
                   />
-                  <div className="w-12 h-[2px] bg-purple-500 my-1" />
+                  <div className="w-12 h-[2px] bg-gray-500 my-1" />
                   <input
                     type="text"
                     name="denominator"
                     value={mixedFormInputs.denominator}
                     onChange={handleMixedFormChange}
-                    className={`w-full h-10 text-4xl  text-center bg-transparent outline-none ${parseInt(mixedFormInputs.denominator) === commonDenominator ? 'text-purple-600' : ''}`}
+                    className={`w-full h-10 text-4xl border-[3px] border-purple-500 font-bold text-center bg-transparent outline-none ${parseInt(mixedFormInputs.denominator) === commonDenominator ? 'text-purple-600' : ''}`}
+
                     placeholder="?"
                   />
+                  <span className='h-full' />
+                  <div className="text-lg h-full text-gray-700 whitespace-nowrap">{!showProceedButton ? 'Fraction' : ''}</div>
                 </div>
-                <div className="absolute -bottom-8 text-lg  text-gray-700 whitespace-nowrap">Fraction</div>
+
               </div>
             </div>
         </div>
