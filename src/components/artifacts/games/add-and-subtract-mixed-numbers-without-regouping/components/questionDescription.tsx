@@ -142,7 +142,7 @@ const QuestionDescription = ({
         </div>
       }
       {showSecondRow && (
-        <div className="flex gap-4 w-full items-center">
+        <div className="flex gap-4 w-full items-center font-jost">
           <span className="flex items-center w-1/2 h-full justify-between p-4 rounded-lg" style={{ backgroundColor: color[0] }}>
             <div className="flex justify-between items-center w-full">
               <div className="text-xl w-2/3">What <span className='font-bold'>fraction</span> of {pizzaName} pizza is left?</div>

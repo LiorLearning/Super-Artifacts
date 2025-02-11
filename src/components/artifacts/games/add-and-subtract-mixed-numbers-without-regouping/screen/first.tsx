@@ -362,6 +362,28 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
       [name]: value
     };
 
+    // Check individual field correctness and provide feedback
+    if (value !== '') {
+      switch(name) {
+        case 'whole':
+          if (parseInt(value) !== totalWhole) {
+            sendAdminMessage("admin", "Those whole pizzas aren't adding up right. Count them again!");
+          }
+          break;
+        case 'numerator':
+          if (parseInt(value) !== totalNumerator) {
+            sendAdminMessage("admin", "The slices seem off. Remember to add all the leftover slices!");
+          }
+          break;
+        case 'denominator':
+          if (parseInt(value) !== commonDenominator) {
+            sendAdminMessage("admin", "Each pizza is cut into the same number of slices. Look carefully!");
+          }
+          break;
+      }
+    }
+
+    // Check if all inputs are correct
     const isCorrect = 
       parseInt(newInputs.whole || '0') === totalWhole &&
       parseInt(newInputs.numerator || '0') === totalNumerator &&
@@ -412,7 +434,7 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
         }}
         onComplete={() => {
           setShowMixedForm(true);
-          sendAdminMessage("agent", "Fill these boxes to arrive at your answer");
+          sendAdminMessage("agent", "Perfect! You've combined the pizzas correctly! Fill these boxes to arrive at your answer");
         }}
         sendAdminMessage={sendAdminMessage}
       />
@@ -429,7 +451,14 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
                     name="whole"
                     value={mixedFormInputs.whole}
                     onChange={handleMixedFormChange}
-                    className={`w-full text-4xl font-bold text-center bg-white rounded border-[3px] border-green-600 outline-none ${parseInt(mixedFormInputs.whole) === totalWhole ? 'text-green-600' : ''}`}
+                    className={`w-full text-4xl font-bold text-center bg-white rounded border-[3px] border-green-600 outline-none 
+                      ${mixedFormInputs.whole !== '' ? 
+                        (parseInt(mixedFormInputs.whole) === totalWhole ? 
+                          'bg-green-100 text-green-800' : 
+                          'bg-red-100 text-red-800'
+                        ) : 
+                        ''
+                      }`}
                     placeholder="?"
                   />
                   <div className="text-lg h-12 text-gray-700 whitespace-nowrap">{!showProceedButton ? 'Wholes' : ''}</div>
@@ -444,7 +473,14 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
                     name="numerator"
                     value={mixedFormInputs.numerator}
                     onChange={handleMixedFormChange}
-                    className={`w-full h-10 text-4xl mt-2 border-[3px] border-purple-500 font-bold text-center bg-transparent outline-none ${parseInt(mixedFormInputs.numerator) === totalNumerator ? 'text-purple-600' : ''}`}
+                    className={`w-full h-10 text-4xl mt-2 border-[3px] font-bold text-center bg-transparent outline-none border-purple-500 
+                      ${mixedFormInputs.numerator !== '' ? 
+                        (parseInt(mixedFormInputs.numerator) === totalNumerator ? 
+                          'bg-green-100 text-green-800' : 
+                          'bg-red-100 text-red-800'
+                        ) : 
+                        ''
+                      }`}
                     placeholder="?"
                   />
                   <div className="w-12 h-[2px] bg-gray-500 my-1" />
@@ -453,8 +489,14 @@ const Step3 = ({ sendAdminMessage }: BaseProps) => {
                     name="denominator"
                     value={mixedFormInputs.denominator}
                     onChange={handleMixedFormChange}
-                    className={`w-full h-10 text-4xl border-[3px] border-purple-500 font-bold text-center bg-transparent outline-none ${parseInt(mixedFormInputs.denominator) === commonDenominator ? 'text-purple-600' : ''}`}
-
+                    className={`w-full h-10 text-4xl border-[3px] font-bold text-center bg-transparent outline-none border-purple-500
+                      ${mixedFormInputs.denominator !== '' ? 
+                        (parseInt(mixedFormInputs.denominator) === commonDenominator ? 
+                          'bg-green-100 text-green-800' : 
+                          ' bg-red-100 text-red-800'
+                        ) : 
+                        ''
+                      }`}
                     placeholder="?"
                   />
                   <span className='h-full' />

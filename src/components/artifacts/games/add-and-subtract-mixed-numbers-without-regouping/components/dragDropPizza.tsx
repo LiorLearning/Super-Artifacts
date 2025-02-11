@@ -132,7 +132,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
 
   useEffect(() => {
     if (allPiecesDropped) {
-      sendAdminMessage("agent","Mamma mia!!, all the pizzas are served. Now just add the wholes separately and add the slices or fractions separately");
+      sendAdminMessage("agent", "Mamma mia!! All the pizzas are served. Now just add the wholes separately and add the slices or fractions separately");
     }
   }, [allPiecesDropped]);
 
@@ -154,10 +154,18 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
       parseInt(newAnswers.numerator) === correctNumerator &&
       parseInt(newAnswers.denominator) === correctDenominator
     ) {
-      sounds.correct(); // Play correct sound
       onComplete();
-    } else if (value !== '') {
-      sounds.wrong(); // Play wrong sound when incorrect answer is entered
+    } else {
+      // Wrong answers - use 'admin' role
+      if (name === 'wholes' && value !== '' && parseInt(value) !== correctWholes) {
+        sendAdminMessage("admin", "Count all the whole pizzas again. Don't forget any!");
+      }
+      if (name === 'numerator' && value !== '' && parseInt(value) !== correctNumerator) {
+        sendAdminMessage("admin", "Those slices aren't adding up right. Try counting them one more time!");
+      }
+      if (name === 'denominator' && value !== '' && parseInt(value) !== correctDenominator) {
+        sendAdminMessage("admin", "Remember, we're counting how many slices make a whole pizza!");
+      }
     }
   };
 
