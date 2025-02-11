@@ -20,22 +20,12 @@ interface GameComponentProps {
 
 // Get the current game component
 const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) => {
-  // If the game doesn't exist in gameInfo, fallback to template
+  console.log('currentGame', gameInfo[currentGame].initialGameState);
   const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
   const Provider = gameInfo[gameKey].provider;
   const Game = gameInfo[gameKey].game;
-  const initialState = gameInfo[gameKey].initialGameState;
   
-  // Check if there's a saved state in localStorage
-  const savedState = localStorage.getItem(gameKey);
-  const gameState = savedState ? JSON.parse(savedState) : initialState;
-  
-  useEffect(() => {
-    // Initialize game state if no saved state exists
-    if (!savedState) {
-      localStorage.setItem(gameKey, JSON.stringify(initialState));
-    }
-  }, [gameKey]);
+
   
   return (
     <Provider>
@@ -174,7 +164,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               gameKey={currentGame}
               isOpen={isEditorOpen}
               onClose={() => setIsEditorOpen(false)}
-              initialState={gameInfo[currentGame]?.useState?.initialGameState || templateInitialState}
+              initialState={gameInfo[currentGame].initialGameState}
             />
             <Button 
               variant="outline" 
@@ -242,7 +232,6 @@ interface GameStateEditorProps {
 export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: GameStateEditorProps) {
   const [testState, setTestState] = useState(() => {
     const savedState = localStorage.getItem(gameKey);
-    // Use saved state if it exists, otherwise use provided initialState
     return savedState || JSON.stringify(initialState, null, 2);
   });
   const [error, setError] = useState<string>("");
@@ -267,24 +256,22 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg max-w-3xl w-full mx-4">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-white p-2 rounded-lg max-w-3xl w-full mx-4">
+        <div className="flex justify-between mx-2 items-center">
           <h2 className="text-xl font-bold">Edit Game State</h2>
-          <Button variant="ghost" onClick={onClose}>x</Button>
         </div>
         <div className="space-y-4">
           <div>
-            <h3 className="mb-2 font-semibold">Test State:</h3>
             <textarea 
-              value={testState}
+              value={testState || "State not found"}
               onChange={(e) => setTestState(e.target.value)}
-              className="w-full h-48 font-mono text-sm p-4 border rounded-lg"
+              className="w-full min-h-[70vh] h-full font-mono text-sm p-4 border rounded-lg"
             />
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button onClick={handleApply}>Apply Test State</Button>
+            <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
           </div>
         </div>
       </div>
