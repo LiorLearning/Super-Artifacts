@@ -8,12 +8,13 @@ import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 interface FractionBoxProps {
   mixedFraction: MixedFraction;
   onFractionComplete?: () => void;
-  
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
 }
 
 const FractionBox: React.FC<FractionBoxProps> = ({ 
   mixedFraction, 
-  onFractionComplete
+  onFractionComplete,
+  sendAdminMessage
 }) => {
   const [numerator, setNumerator] = useState<string>('');
   const [denominator, setDenominator] = useState<string>('');
@@ -23,7 +24,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
   const hintMessageShown = useRef(false);
   const [canEnterDenominator, setCanEnterDenominator] = useState(false)
   const [hasUsedHint, setHasUsedHint] = useState(false)
-
+  const [errorCount, setErrorCount] = useState(0);
 
   useEffect(() => {
     if (numerator === '' && denominator === '' && !hintMessageShown.current) {
@@ -53,7 +54,9 @@ const FractionBox: React.FC<FractionBoxProps> = ({
 
     if (value.length >= expectedNumerator.toString().length) {
       if (Number(value) === expectedNumerator) {
-        setCanEnterDenominator(true)  // Enable denominator input
+        setCanEnterDenominator(true)
+      } else {
+        setErrorCount(prev => prev + 1);
       }
     }
   };
@@ -70,9 +73,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
     if (value.length >= expectedDenominator.toString().length) {
       if (Number(value) === expectedDenominator) {
         if (Number(numerator) === expectedNumerator) {
-          setTimeout(() => {
-            onFractionComplete?.();
-          }, 1000);
+          onFractionComplete?.();
         }
       }
     }
@@ -211,25 +212,36 @@ const FractionBox: React.FC<FractionBoxProps> = ({
 interface MainProps {
   mixedFraction1: MixedFraction;
   mixedFraction2: MixedFraction;
+  sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
 }
 
-const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2 }) => {
+const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2, sendAdminMessage }) => {
   const [showSecondFraction, setShowSecondFraction] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const initialMessageShown = useRef(false);
+
+  useEffect(() => {
+    if (!initialMessageShown.current) {
+      initialMessageShown.current = true;
+      sendAdminMessage("agent", "Come on, let's convert this mixed fraction to improper form!")
+    }
+  }, [sendAdminMessage]);
 
   const handleFirstFractionComplete = () => {
     setShowSecondFraction(true);
   };
 
   const handleSecondFractionComplete = () => {
-    setShowSuccess(true);
-    setTimeout(() => {
-      setShowSuccess(false);
-    }, 1000);
+    setShowSuccess(true);  // Show animation immediately
+    sendAdminMessage("agent", "Correct, you are a master now. Congratulations!", () => {
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 1000);
+    });
   };
 
   return (
-    <div className={showSuccess ? 'pointer-events-none' : ''}>
+    <div className={showSuccess ? 'pointer-events-none relative' : ''}>
       <div className="w-full max-w-4xl mx-auto px-6">
         <h1 className="text-3xl text-pink-500 text-center mb-20">
           Let's do some more now!
@@ -238,17 +250,23 @@ const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2 }) => {
           <FractionBox 
             mixedFraction={mixedFraction1} 
             onFractionComplete={handleFirstFractionComplete}
+            sendAdminMessage={sendAdminMessage}
           />
           {showSecondFraction && (
             <FractionBox 
               mixedFraction={mixedFraction2}
               onFractionComplete={handleSecondFractionComplete}
+              sendAdminMessage={sendAdminMessage}
             />
           )}
         </div>
-        
-        {showSuccess && <SuccessAnimation />}
       </div>
+      
+      {showSuccess && (
+        <div className="fixed inset-0 z-50">
+          <SuccessAnimation />
+        </div>
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useGameState } from '../../state-utils';
 import type { MixedFraction } from '../../game-state';
 
@@ -7,9 +7,20 @@ interface WelcomeProps {
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void;
 }
 
-const Welcome: React.FC<WelcomeProps> = ({ mixedFraction }) => {
+const Welcome: React.FC<WelcomeProps> = ({ mixedFraction, sendAdminMessage }) => {
   const { setGameStateRef } = useGameState();
   const { whole, numerator, denominator } = mixedFraction;
+
+  // Add ref to track if welcome narration was shown
+  const welcomeMessageShown = useRef(false)
+
+  // Add welcome narration when component mounts
+  useEffect(() => {
+    if (!welcomeMessageShown.current) {
+      welcomeMessageShown.current = true;
+      sendAdminMessage("agent", "Let's start right away!")
+    }
+  }, [sendAdminMessage])
 
   const handleStartClick = () => {
     setGameStateRef(prev => ({

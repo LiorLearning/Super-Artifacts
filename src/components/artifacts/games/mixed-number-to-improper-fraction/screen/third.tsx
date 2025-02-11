@@ -32,7 +32,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
             <Main
               mixedFraction1={mixedFraction1}
               mixedFraction2={mixedFraction2}
-
+              sendAdminMessage={sendAdminMessage}
 
             />
           </main>

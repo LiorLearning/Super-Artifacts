@@ -101,11 +101,13 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
       
       <div className="w-full">
         <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-black relative">
-          <div className="absolute w-3/4 text-center top-2 left-1/4 -translate-x-1/4">
-            <span className="bg-white px-4 text-[#FF497C] text-2xl">
-              Click pieces to count
-            </span>
-          </div>
+          {errorCount >= 2 && (
+            <div className="absolute w-3/4 text-center top-2 left-1/4 -translate-x-1/4">
+              <span className="bg-white px-4 text-[#FF497C] text-2xl">
+                Click pieces to count
+              </span>
+            </div>
+          )}
           
           <div className="flex justify-center items-center gap-8 py-16">
             {[...Array(mixedFraction.whole)].map((_, index) => (
