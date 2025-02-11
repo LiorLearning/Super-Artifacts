@@ -2,11 +2,13 @@ import { fetchGameState } from "@/hooks/get-game-state";
 import { GameState, initialGameState, descriptions } from "./game-state";
 import { createContext, useContext, useReducer, useRef, ReactNode, useEffect } from 'react';
 import { mergeGameState } from "@/hooks/merge-game-state";
+import  checkGameStateLimits  from './state-limits';
 
 const GameStateContext = createContext<{
     gameStateRef: React.MutableRefObject<GameState>;
     setGameStateRef: (newState: ((prevState: GameState) => GameState) | Partial<GameState>) => void;
     getDescription: () => string;
+    setGameState: (newState: Partial<GameState>) => void;
   } | undefined>(undefined);
   
   const gameStateReducer = (state: GameState, action: Partial<GameState> | ((prevState: GameState) => GameState)): GameState => {
@@ -40,13 +42,39 @@ export const GameStateProvider: React.FC<{
     }
   };
 
+  const setGameState = (newState: Partial<GameState>) => {
+    setGameStateRef(mergeGameState(gameStateRef.current, newState))
+  }
+
+
   useEffect(() => {
     const loadGameState = async () => {
+      const currentGame = window.location.search.split('game=')[1]?.split('&')[0] || 'template-game';
+
       if (id) {
-        const fetchedGameState = await fetchGameState(id);
-        setGameStateRef(mergeGameState(initialGameState, fetchedGameState || {}));
+        const fetchedGameState = await fetchGameState(id) as Partial<GameState>;
+        const updatedGameState = mergeGameState(initialGameState, fetchedGameState);
+        if (checkGameStateLimits(updatedGameState)) {
+          setGameStateRef(updatedGameState);
+        } else {
+          alert('checkGameStateLimits failed');
+        }
+
+      } else if (localStorage.getItem(currentGame)) {
+        try {
+          const fetchedGameState = JSON.parse(localStorage.getItem(currentGame) || '{}');
+          const updatedGameState = mergeGameState(initialGameState, fetchedGameState);
+          if (checkGameStateLimits(updatedGameState)) {
+            setGameStateRef(updatedGameState);
+          } else {
+            alert('checkGameStateLimits failed');
+          }
+        } catch (e) {
+          console.error('Error parsing game state from localStorage:', e);
+        }
       }
     };
+
     loadGameState();
   }, [id]);
   
@@ -60,7 +88,8 @@ export const GameStateProvider: React.FC<{
     <GameStateContext.Provider value={{ 
       gameStateRef,
       setGameStateRef,
-      getDescription
+      getDescription,
+      setGameState
     }}>
       {children}
     </GameStateContext.Provider>

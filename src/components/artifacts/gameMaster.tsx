@@ -24,6 +24,18 @@ const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) =>
   const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
   const Provider = gameInfo[gameKey].provider;
   const Game = gameInfo[gameKey].game;
+  const initialState = gameInfo[gameKey].initialGameState;
+  
+  // Check if there's a saved state in localStorage
+  const savedState = localStorage.getItem(gameKey);
+  const gameState = savedState ? JSON.parse(savedState) : initialState;
+  
+  useEffect(() => {
+    // Initialize game state if no saved state exists
+    if (!savedState) {
+      localStorage.setItem(gameKey, JSON.stringify(initialState));
+    }
+  }, [gameKey]);
   
   return (
     <Provider>
@@ -230,9 +242,16 @@ interface GameStateEditorProps {
 export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: GameStateEditorProps) {
   const [testState, setTestState] = useState(() => {
     const savedState = localStorage.getItem(gameKey);
-    return savedState || JSON.stringify(initialState || templateInitialState, null, 2);
+    // Use saved state if it exists, otherwise use provided initialState
+    return savedState || JSON.stringify(initialState, null, 2);
   });
   const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    // Update testState when gameKey changes
+    const savedState = localStorage.getItem(gameKey);
+    setTestState(savedState || JSON.stringify(initialState, null, 2));
+  }, [gameKey, initialState]);
 
   if (!isOpen) return null;
 
