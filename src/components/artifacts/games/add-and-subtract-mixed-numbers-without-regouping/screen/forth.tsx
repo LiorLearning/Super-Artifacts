@@ -81,7 +81,6 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
     ) {
       setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: 1 } }));
       sendAdminMessage("agent","Perfection! Correctly rearranged! Now carefully look at the signs, subtract the wholes separately and subtract the fractions separately");
-      sendAdminMessage("agent","Perfection! Correctly rearranged! Now carefully look at the signs, subtract the wholes separately and subtract the fractions separately");
     }
   }
 
@@ -107,8 +106,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
   ) => {
     if (whole3 === fraction1.whole - fraction2.whole && numerator3 === fraction1.numerator - fraction2.numerator && denominator3 === fraction1.denominator) {
       setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: 2 } }));
-      sendAdminMessage("agent","Correct again");
-      sendAdminMessage("agent","Correct again");
+      sendAdminMessage("agent","All hail the master! You've subtracted correctly. Mixed fractions really are like pizzas—and you are a pizza master now");
     }
   }
 
@@ -117,7 +115,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       <Header fraction1={fraction1} fraction2={fraction2} version={1} type='subtraction' />
       <div className="flex flex-col items-center">
         <Intro text="Now that you know how to add, you can easily subtract as well..." />
-        <div className="flex flex-col gap-8 items-center w-full bg-lime-100 p-8 ">
+        <div className="flex flex-col gap-8 items-center w-full p-8 ">
           <p className="text-2xl font-bold">
             {step === 0 ? 'Let’s rearrange the wholes and fractions first!' : 'Instead of adding, we will use the subtraction sign now'}
           </p>
@@ -134,9 +132,9 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                       min={0}
                       max={10}
                       placeholder="?"
-                      className={`w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole1 ? (whole1===fraction1.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                      className={`w-12 h-24 outline-none text-center text-2xl border-2 border-green-600 rounded ${whole1 ? (whole1===fraction1.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
                     />
-                    <span className="text-2xl font-bold">
+                    <span className="text-5xl">
                       {step === 0 ? '' : '-'}
                     </span>
                     <input
@@ -146,18 +144,18 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                       min={0}
                       max={10}
                       placeholder="?"
-                      className={`w-12 h-24 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole2 ? ( whole2===fraction2.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                      className={`w-12 h-24 outline-none text-center text-2xl border-2 border-green-600 rounded ${whole2 ? ( whole2===fraction2.whole ? 'bg-green-200' : 'bg-red-200') : ''}`}
                     />
                   </div>
                 </div>
                 <p 
-                  className='text-2xl font-bold text-center'
+                  className='text-2xl text-center'
                 >
                   Wholes
                 </p>
               </div>
 
-              <span className="text-2xl font-bold">
+              <span className="text-4xl font-bold">
                 {step === 0 ? '' : '+'}
               </span>
 
@@ -172,9 +170,9 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                         min={0}
                         max={10}
                         placeholder="?"
-                        className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator1 ? (numerator1===fraction1.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                        className={`w-12 h-12 outline-none text-center text-2xl border-2 border-purple-600 rounded ${numerator1 ? (numerator1===fraction1.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                       />
-                      <div className="w-full my-1 h-[2px] bg-black" />
+                      <div className="w-8 my-1 h-[2px] bg-black" />
                       <input
                         type="text"
                         value={denominator1 ? denominator1 : ''}
@@ -182,10 +180,10 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                         min={0}
                         max={10}
                         placeholder="?"
-                        className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator1 ? (denominator1===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                        className={`w-12 h-12 outline-none text-center text-2xl border-2 border-purple-600 rounded ${denominator1 ? (denominator1===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                       />
                     </div>
-                    <span className="text-2xl font-bold">
+                    <span className="text-5xl">
                       {step === 0 ? '' : '-'}
                     </span>
                     <div className="flex flex-col items-center">
@@ -196,9 +194,9 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                         min={0}
                         max={10}
                         placeholder="?"
-                        className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator2 ? (numerator2===fraction2.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                        className={`w-12 h-12 outline-none text-center text-2xl border-2 border-purple-600 rounded ${numerator2 ? (numerator2===fraction2.numerator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                       />
-                      <div className="w-full my-1 h-[2px] bg-black" />
+                      <div className="w-8 my-1 h-[2px] bg-black" />
                       <input
                         type="text"
                         value={denominator2 ? denominator2 : ''}
@@ -206,13 +204,13 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                         min={0}
                         max={10}
                         placeholder="?"
-                        className={`w-12 h-12 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator2 ? (denominator2===fraction2.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                        className={`w-12 h-12 outline-none text-center text-2xl border-2 border-purple-600 rounded ${denominator2 ? (denominator2===fraction2.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                       />
                     </div>
                   </div>
                 </div>
                 <p 
-                  className='text-2xl font-bold text-center'
+                  className='text-2xl text-center'
                 >
                   Fractions
                 </p>
@@ -231,7 +229,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                   min={0}
                   max={10}
                   placeholder="?"
-                  className={`w-14 h-14 outline-none text-center text-2xl font-bold border-2 border-green-600 rounded ${whole3 ? (whole3===(fraction1.whole - fraction2.whole) ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                  className={`w-14 h-14 outline-none text-center text-2xl border-2 border-green-600 rounded ${whole3 ? (whole3===(fraction1.whole - fraction2.whole) ? 'bg-green-200' : 'bg-red-200') : ''}`}
                 />
                 
                 <div className="flex flex-col items-center">
@@ -242,9 +240,9 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                     min={0}
                     max={10}
                     placeholder="?"
-                    className={`w-14 mx-2 h-14 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${numerator3 ? (numerator3===(fraction1.numerator - fraction2.numerator) ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                    className={`w-14 mx-2 h-14 outline-none text-center text-2xl border-2 border-purple-600 rounded ${numerator3 ? (numerator3===(fraction1.numerator - fraction2.numerator) ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
-                  <div className="w-full my-1 h-[2px] bg-black" />
+                  <div className="w-10 my-1 h-[2px] bg-black" />
                   <input
                     type="text"
                     value={denominator3 ? denominator3 : ''}
@@ -252,7 +250,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
                     min={0}
                     max={10}
                     placeholder="?"
-                    className={`w-14 mx-2 h-14 outline-none text-center text-2xl font-bold border-2 border-purple-600 rounded ${denominator3 ? (denominator3===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
+                    className={`w-14 mx-2 h-14 outline-none text-center text-2xl border-2 border-purple-600 rounded ${denominator3 ? (denominator3===fraction1.denominator ? 'bg-green-200' : 'bg-red-200') : ''}`}
                   />
                 </div>
               </div>
@@ -263,7 +261,7 @@ export default function ThirdScreen({ sendAdminMessage }: BaseProps) {
       </div>
 
       {step >= 2 && 
-            <div className='w-full font-bold text-5xl text-center bg-lime-100 py-16'>
+            <div className='w-full text-5xl text-center bg-lime-100 py-16'>
               <SuccessAnimation />
               <p> Congratulations! You did it! 🎉</p>
             </div>

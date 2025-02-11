@@ -6,6 +6,7 @@ import { AdminRequestMessage, AssistanceResponseMessage } from '../MessageContex
 import GameLoader from '../utils/gameLoader';
 import { Button } from '../custom_ui/button';
 import { Edit2Icon, RefreshCw, TimerResetIcon } from 'lucide-react';
+import { Edit2Icon, RefreshCw, TimerResetIcon } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 import { gameInfo } from './gameInfo';
@@ -20,6 +21,11 @@ interface GameComponentProps {
 
 // Get the current game component
 const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) => {
+  // If the game doesn't exist in gameInfo, fallback to template
+  const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
+  const Provider = gameInfo[gameKey].provider;
+  const Game = gameInfo[gameKey].game;
+  
   // If the game doesn't exist in gameInfo, fallback to template
   const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
   const Provider = gameInfo[gameKey].provider;
@@ -44,12 +50,15 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const [isClient, setIsClient] = useState(false);
   const gameParam = searchParams.get('game') as GameKey;
   const [currentGame, setCurrentGame] = useState<GameKey>(gameParam || 'template-game');
+  const [currentGame, setCurrentGame] = useState<GameKey>(gameParam || 'template-game');
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected, reconnectWebSocket } = useWebSocketLogger()
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
+    if (gameParam && gameParam !== currentGame) {
     if (gameParam && gameParam !== currentGame) {
       reconnectWebSocket();
       setCurrentGame(gameParam);
@@ -128,12 +137,14 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   };
 
 
+
   if (!isClient) return null;
 
   return (
     <div className="flex h-screen">
       <div className="w-[75%] border-r-border flex flex-col h-full overflow-auto">
-        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 h-full max-w-full">
+        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg h-full max-w-full">
+        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg h-full max-w-full">
           <div className="mb-4 flex items-center gap-2">
             <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
               <SelectTrigger className="p-2 border-border rounded-md flex-1">
@@ -210,6 +221,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         />
       </div>
     </div>
+  </div>
   );
 };
 

@@ -8,19 +8,19 @@ interface StepCreateBoxProps {
 export default function StepCreateBox({ step, numerator, denominator, heading }: StepCreateBoxProps) {
 
   return (
-    <div className='flex justify-between items-center gap-4 bg-[#b9550b] shadow-[-3px_3px_0px_0px_rgba(0,0,0)] mx-auto p-2 my-20 text-3xl'>
-      <div className='bg-white p-7 px-9 text-3xl leading-none font-normal text-[#b9550b]'>
+    <div className='flex justify-between items-center gap-4 bg-[#b9550b] shadow-[-3px_3px_0px_0px_rgba(0,0,0)] mx-auto p-2 my-12 text-xl'>
+      <div className='bg-white p-4 text-xl leading-none font-normal text-[#b9550b]'>
         STEP {step}
       </div>
-      <div className='flex justify-between items-center gap-4 px-6'>
-        {!heading ? <><div className='text-white text-3xl'>
+      <div className='flex justify-between items-center gap-4 px-4'>
+        {!heading ? <><div className='text-white text-xl'>
           CREATE
         </div>
           <div className="flex flex-col items-center bg-white px-2">
-            <div className="p-1 px-4">
+            <div className="p-1 px-4 leading-none">
               {numerator}
             </div>
-            <div className="border-t-2 border-black p-1">
+            <div className="border-t-2 border-black p-1 leading-none">
               {denominator}
             </div>
           </div></> :
