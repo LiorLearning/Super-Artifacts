@@ -180,10 +180,10 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
           { index: 1, pizza: fraction2, fraction: fraction2 }
         ].map(({ index, pizza, fraction}) => (
           <div key={index} className={`min-h-32 flex gap-6 p-4 items-stretch border-2 border-gray-500 rounded-lg shadow-[-2px_2px_2px_rgba(0,0,0,0.8)]`} style={{ backgroundColor: pizza.color[2] }}>
-            <span className='bg-white text-2xl rounded-lg px-2 pr-4 font-bold border-2 border-gray-500 flex items-center shadow-[inset_-2px_2px_2px_rgba(0,0,0,0.8)]'>
+            <span className='bg-white text-2xl rounded-lg px-2 pr-4  border-2 border-gray-500 flex items-center shadow-[inset_-2px_2px_2px_rgba(0,0,0,0.8)]'>
               <MixedFraction numerator={fraction.numerator} denominator={fraction.denominator} />
             </span>
-            <p className='text-xl font-extrabold px-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center shadow-[inset_-2px_2px_2px_rgba(0,0,0,0.8)]'>
+            <p className='text-xl px-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center shadow-[inset_-2px_2px_2px_rgba(0,0,0,0.8)]'>
               {sourcePizzas[pizza.name].wholes.map((exists, index) => exists ? (
                 <div
                   key={index}
@@ -219,18 +219,18 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
 
         {/* Instruction Banner */}
         <div className='bg-white border-2 border-black mx-auto p-1 shadow-[-3px_3px_0px_0px_rgba(0,0,0,1)]'>
-          <p className='font-bold px-4'>Drag wholes to the left and slices to the right</p>
+          <p className='px-4 text-xl'>Drag wholes to the left and slices to the right</p>
         </div>
 
-        <div className='flex gap-16'>
+        <div className='flex text-xl gap-16'>
           {/* Whole Pizzas Drop Zone */}
           <div className='w-full bg-orange-50 rounded-2xl p-4 shadow-[-6px_6px_rgba(0,0,0,.7)]'>
             
-            <div className='text-center py-2 font-bold border-2 border-black bg-white mb-2 shadow-[-2px_2px_0px_0px_rgba(0,0,0,1)]'>
+            <div className='text-center py-2  border-2 border-black bg-white mb-2 shadow-[-2px_2px_0px_0px_rgba(0,0,0,1)]'>
               Whole Pizzas
             </div>
 
-            <div className='text-sm text-gray-600 italic mb-4 text-center'>
+            <div className='text-sm text-gray-600  mb-4 text-center'>
               Drag the whole sections here
             </div>
             <div
@@ -256,7 +256,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
 
               </div>
             </div>
-            <div className='flex items-center justify-center gap-2 mt-4 text-xl font-bold'>
+            <div className='flex items-center justify-center gap-2 mt-4 text-xl '>
               <span
                 className='border-2 border-black bg-white p-4 h-14'
               >{droppedWholes[fraction1.name]}</span>
@@ -272,7 +272,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
                 value={answers.wholes}
                 onChange={handleAnswerChange}
                 disabled={!allPiecesDropped}
-                className={`w-12 h-14 border-[3px] border-green-600 rounded text-center font-bold ${getInputStyle(answers.wholes, correctWholes)}`}
+                className={`w-12 h-14 border-[3px] border-green-600 rounded text-center  ${getInputStyle(answers.wholes, correctWholes)}`}
               />
               <span className='ml-2'>Wholes</span>
             </div>
@@ -280,16 +280,17 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
 
           {/* Slices Drop Zone */}
           <div className='w-full bg-orange-50 rounded-2xl p-4 shadow-[-6px_6px_rgba(0,0,0,.7)]'>
-            <div className='text-center py-2 font-bold border-2 border-black bg-white mb-2 shadow-[-2px_2px_0px_0px_rgba(0,0,0,1)]'>
+            <div className='text-center py-2  border-2 border-black bg-white mb-2 shadow-[-2px_2px_0px_0px_rgba(0,0,0,1)]'>
               Slice Combiner
             </div>
-            <div className='text-sm text-gray-600 italic mb-4 text-center'>
+            <div className='text-sm text-gray-600  mb-4 text-center'>
               Drag the sliced sections here
             </div>
             <div
               onDrop={handleDropSlice}
               onDragOver={allowDrop}
               className="flex justify-center gap-6 min-h-[120px]"
+
             >
               {Object.entries(droppedSlices).map(([pizza, count]) => count > 0 && (
                 <PizzaSlices
@@ -301,7 +302,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
                 />
               ))}
             </div>
-            <div className='flex items-center justify-center gap-2 mt-4 text-xl font-bold'>
+            <div className='flex items-center justify-center gap-2 mt-4 text-xl '>
               <div className='flex items-center gap-2'>
                 <div className='flex flex-col items-center border-2 border-black px-4 py-2 bg-white justify-center'>
                   <span>{droppedSlices[fraction1.name]}</span>
@@ -323,7 +324,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
                     onChange={handleAnswerChange}
                     placeholder={allPiecesDropped ? '?' : ''}
                     disabled={!allPiecesDropped}
-                    className={`w-12 border-none outline-none text-center font-bold ${getInputStyle(answers.numerator, correctNumerator)}`}
+                    className={`w-12 border-none outline-none text-center  ${getInputStyle(answers.numerator, correctNumerator)}`}
                   />
                   <div className='w-8 h-[1px] bg-purple-500'></div>
                   <input
@@ -333,7 +334,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
                     onChange={handleAnswerChange}
                     disabled={!allPiecesDropped}
                     placeholder={allPiecesDropped ? '?' : ''}
-                    className={`w-12 border-none outline-none text-center font-bold ${getInputStyle(answers.denominator, correctDenominator)}`}
+                    className={`w-12 border-none outline-none text-center  ${getInputStyle(answers.denominator, correctDenominator)}`}
                   />
                 </div>
               </div>

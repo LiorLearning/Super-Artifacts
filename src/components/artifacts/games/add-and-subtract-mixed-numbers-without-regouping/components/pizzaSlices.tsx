@@ -34,7 +34,7 @@ const PizzaSlices: React.FC<PizzaSlicesProps> = ({
         <path
           key={i}
           d={`M ${centerx} ${centery} L ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`}
-          fill={i < numerator ? "transparent" : "rgba(255,255,255,0.7)"}
+          fill={i < numerator ? "transparent" : "rgba(255,255,255,0.6)"}
           stroke="black"
           strokeWidth=".5"
         />

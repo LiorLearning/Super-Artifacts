@@ -46,20 +46,20 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
   return (
     <div className="flex gap-8 flex-col w-full">
       <div className="w-full max-w-3xl mx-auto mt-20">
-        <div className="bg-[#F97315] text-white text-2xl py-4 mb-[2px] border-2 font-extrabold border-gray-800 px-4  text-center shadow-[-2px_2px_0px_rgba(0,0,0,1)]">
+        <div className="bg-[#F97315] text-white text-5xl py-4 mb-[2px] border-2 border-gray-800 px-4  text-center shadow-[-2px_2px_0px_rgba(0,0,0,1)]">
           PIZZA ORDER
         </div>
         <div className="flex items-center justify-center gap-4 mt-8 shadow-[inset_-3px_3px_1px_rgba(0,0,0,0.3)] p-8 border-2 border-gray-800">
-          <div className="flex bg-[#FFC5C6] p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg shadow-[-2px_2px_1px_rgba(0,0,0,0.7)]">
-            <span className='bg-white rounded-lg border-2 border-gray-500 flex items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
+          <div className="flex bg-[#FFC5C6] p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg shadow-[-3px_3px_1px_rgba(0,0,0,0.5)]">
+            <span className='bg-white rounded-lg border-2 pr-2 border-gray-500 flex items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
               <MixedFraction
                 whole={fraction1.whole}
                 numerator={fraction1.numerator}
                 denominator={fraction1.denominator}
-                className='text-xl font-extrabold p-2'
+                className='text-2xl p-2'
               />
             </span>
-            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
+            <p className='text-2xl p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
               <div className={`flex flex-col items-center justify-center p-1 rounded-full border-[1px] border-black bg-[#FFC98F]`}>
                 <div className={`w-12 h-12 bg-[#E65A5A] border-[1px] shadow-[inset_0px_0px_4px_0px_rgba(0,0,0,0.5)] border-black rounded-full`} />
               </div>
@@ -67,16 +67,16 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
             </p>
           </div>
           <span className="text-5xl font-bold text-black">+</span>
-          <div className="flex bg-yellow-200 p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg shadow-[-1px_1px_0px_rgba(0,0,0,0.7)]">
-            <span className='bg-white rounded-lg border-2 border-gray-500 flex items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
+          <div className="flex bg-yellow-200 p-2 items-stretch gap-2 border-2 border-gray-500 rounded-lg shadow-[-3px_3px_1px_rgba(0,0,0,0.5)]">
+            <span className='bg-white rounded-lg border-2 pr-2 border-gray-500 flex items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
               <MixedFraction
                 whole={fraction2.whole}
                 numerator={fraction2.numerator}
                 denominator={fraction2.denominator}
-                className='text-xl font-extrabold p-2'
+                className='text-2xl p-2'
               />
             </span>
-            <p className='text-xl font-extrabold p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
+            <p className='text-2xl p-3 border-2 border-gray-500 bg-white rounded-lg flex-grow flex gap-2 items-center shadow-[inset_-1px_1px_0px_rgba(0,0,0,0.7)]'>
               <div className={`flex flex-col items-center justify-center p-1 rounded-full border-[1px] border-black bg-[#FFC98F]`}>
                 <div className={`w-12 h-12 bg-yellow-200 border-[1px] shadow-[inset_0px_0px_4px_0px_rgba(0,0,0,0.5)] border-black rounded-full`} />
               </div>
@@ -88,10 +88,10 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
       <Button 
       onClick={() => {
         goToStep(2, setGameStateRef, 1); 
-        sendAdminMessage('agent', "The pepperoni wholes are in front of you, let's rush now!")}
+        sendAdminMessage('agent', "Let's break it down! Start with the pepperoni pizzas")}
       } 
       className='m-2 p-6 mx-auto bg-[#F97315] text-3xl text-white shadow-[-3px_3px_0px_rgba(0,0,0,1)] hover:bg-[#F97315] max-w-3xl rounded-none'>
-        Next &gt;&gt;
+        NEXT &gt;&gt;
       </Button>
     </div>
   );
@@ -190,7 +190,7 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     }
     { substep >= 2 && (
         <div className="flex items-center justify-center w-full">
-          <span className="text-5xl font-bold">
+          <span className="text-5xl ">
             +
           </span>
         </div>
@@ -352,7 +352,7 @@ export const CombineFractionInput: React.FC<{
       parseInt(numerator3) === (fraction1.numerator + fraction2.numerator) && 
       parseInt(denominator3) === fraction1.denominator
     ) {
-      sendAdminMessage('agent', "You are on a roll! Final one to practice now!");
+      sendAdminMessage('agent', "Woah, two in a row. Let's move to the next one");
       onComplete();
     }
   }
@@ -376,7 +376,7 @@ export const CombineFractionInput: React.FC<{
   return (
     <div className='w-full flex py-20 flex-col justify-center items-center'>
       <div className="flex flex-col gap-8 items-center">
-        <p className='text-2xl font-bold'>
+        <p className='text-2xl '>
           Rearrange to add the portions
         </p>
 
@@ -392,8 +392,9 @@ export const CombineFractionInput: React.FC<{
                   max={10}
                   placeholder="?"
                   className={getInputStyle(whole1, fraction1.whole)}
+
                 />
-                <span className="text-2xl font-bold">+</span>
+                <span className="text-2xl ">+</span>
                 <input
                   type="text"
                   value={whole2}
@@ -402,17 +403,19 @@ export const CombineFractionInput: React.FC<{
                   max={10}
                   placeholder="?"
                   className={getInputStyle(whole2, fraction2.whole)}
+
                 />
               </div>
             </div>
             <p 
-              className='text-2xl font-bold text-center'
+              className='text-2xl  text-center'
             >
               Wholes
             </p>
           </div>
 
           <span className="text-4xl flex items-center font-bold">+</span>
+
 
           <div className='flex flex-col gap-2'>         
             <div className="border-4 shadow-[-2px_2px_0px_rgba(150,0,0,1)] border-purple-600 rounded-2xl p-4">
@@ -438,7 +441,7 @@ export const CombineFractionInput: React.FC<{
                     className={getInputStyle(denominator1, fraction1.denominator)}
                   />
                 </div>
-                <span className="text-2xl font-bold">+</span>
+                <span className="text-2xl ">+</span>
                 <div className="flex flex-col items-center">
                   <input
                     type="text"
@@ -448,6 +451,7 @@ export const CombineFractionInput: React.FC<{
                     max={10}
                     placeholder="?"
                     className={getInputStyle(numerator2, fraction2.numerator)}
+
                   />
                   <div className="w-full my-1 h-[2px] bg-purple-600" />
                   <input
@@ -463,7 +467,7 @@ export const CombineFractionInput: React.FC<{
               </div>
             </div>
             <p 
-              className='text-2xl font-bold text-center'
+              className='text-2xl text-center'
             >
               Fractions
             </p>
@@ -474,7 +478,7 @@ export const CombineFractionInput: React.FC<{
           <>
             <hr className='w-full border-1 border-black' />
 
-            <p className="text-2xl font-bold text-green-600">Write in mixed form</p>
+            <p className="text-2xl text-green-600">Write in mixed form</p>
             <div className='flex flex-col gap-2'>
               <div className="flex items-center gap-2">
                 <input
@@ -509,7 +513,7 @@ export const CombineFractionInput: React.FC<{
                   />
                 </div>
               </div>
-              <span className='flex text-sm font-bold justify-between'>
+              <span className='flex  justify-between'>
                 <p>Whole</p>
                 <p>Fraction</p>
               </span>
