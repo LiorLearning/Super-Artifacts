@@ -205,16 +205,15 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
           </div>
         </div>
       </div>
-
-    </div>      
-    <div className="w-[25%] min-w-[250px] flex flex-col">
+      <div className="w-[25%] min-w-[250px] flex flex-col">
       <Chat 
         desc={getDescription?.()} 
         componentRef={componentRef} 
         gameState={gameStateRef} 
       />
     </div>
-  </div>
+
+    </div>      
   );
 };
 
