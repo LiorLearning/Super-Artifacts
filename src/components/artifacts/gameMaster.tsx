@@ -211,6 +211,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         />
       </div>
     </div>
+  </div>
   );
 };
 
