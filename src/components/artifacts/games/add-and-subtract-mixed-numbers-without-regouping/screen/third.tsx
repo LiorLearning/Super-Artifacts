@@ -157,7 +157,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
   }, [whole1, whole2, numerator1, numerator2, denominator1, denominator2])
 
   return (
-    <div className='w-full bg-green-50 flex py-20 flex-col justify-center items-center'>
+    <div className='w-full flex py-20 flex-col justify-center items-center'>
       <div className="flex flex-col gap-8 items-center">
         <p className='text-2xl'>
           Rearrange to add the portions
@@ -194,8 +194,8 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
               Wholes
             </p>
           </div>
+          <span className="text-4xl font-bold">+</span>
 
-          <span className="text-2xl">+</span>
 
           <div className='flex flex-col gap-2'>         
             <div className="border-4 shadow-[-2px_2px_0px_rgba(150,0,0,1)] border-purple-600 rounded-2xl p-4">
@@ -259,7 +259,7 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
 
             <p className="text-2xl text-green-600">Write in mixed form</p>
             <div className='flex flex-col gap-2'>
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2">
                 <input
                   type="text"
                   value={whole3}
@@ -292,10 +292,6 @@ const CombineFractionInput = ({ onComplete, fraction1, fraction2, sendAdminMessa
                   />
                 </div>
               </div>
-              <span className='flex justify-between'>
-                <p>Whole</p>
-                <p>Fraction</p>
-              </span>
             </div>
           </>
         )}

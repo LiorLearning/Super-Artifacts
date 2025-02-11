@@ -9,7 +9,6 @@ import { Edit2Icon, RefreshCw, TimerResetIcon } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 import { gameInfo } from './gameInfo';
-import { initialGameState as templateInitialState } from './games/template/game-state';
 
 type GameKey = keyof typeof gameInfo;
 
@@ -133,7 +132,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   return (
     <div className="flex h-screen">
       <div className="w-[75%] border-r-border flex flex-col h-full overflow-auto">
-        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg m-2 h-full max-w-full">
+        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg h-full max-w-full">
           <div className="mb-4 flex items-center gap-2">
             <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
               <SelectTrigger className="p-2 border-border rounded-md flex-1">
@@ -160,7 +159,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               gameKey={currentGame}
               isOpen={isEditorOpen}
               onClose={() => setIsEditorOpen(false)}
-              initialState={gameInfo[currentGame]?.useState?.initialGameState || templateInitialState}
+              initialState={gameInfo[currentGame]?.initialGameState}
             />
             <Button 
               variant="outline" 
@@ -226,7 +225,7 @@ interface GameStateEditorProps {
 export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: GameStateEditorProps) {
   const [testState, setTestState] = useState(() => {
     const savedState = localStorage.getItem(gameKey);
-    return savedState || JSON.stringify(initialState || templateInitialState, null, 2);
+    return savedState || JSON.stringify(initialState, null, 2);
   });
   const [error, setError] = useState<string>("");
 
@@ -235,33 +234,36 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   const handleApply = () => {
     try {
       const parsedState = JSON.parse(testState);
-      localStorage.setItem(gameKey, testState);
-      window.location.reload();
+      const validator = gameInfo[gameKey]?.validator || gameInfo['template-game'].validator;
+      
+      if (validator.validateState(parsedState)) {
+        localStorage.setItem(gameKey, testState);
+        window.location.reload();
+      } else {
+        setError("State validation failed - invalid state structure");
+      }
     } catch (e) {
-      setError("Invalid JSON");
+      setError("Invalid JSON format");
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
       <div className="bg-white p-6 rounded-lg max-w-3xl w-full mx-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Edit Game State</h2>
           <Button variant="ghost" onClick={onClose}>×</Button>
         </div>
         <div className="space-y-4">
-          <div>
-            <h3 className="mb-2 font-semibold">Test State:</h3>
-            <textarea 
-              value={testState}
-              onChange={(e) => setTestState(e.target.value)}
-              className="w-full h-48 font-mono text-sm p-4 border rounded-lg"
-            />
-          </div>
+          <textarea 
+            value={testState}
+            onChange={(e) => setTestState(e.target.value)}
+            className="w-full h-64 font-mono text-sm p-4 border rounded-lg"
+          />
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button onClick={handleApply}>Apply Test State</Button>
+            <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
           </div>
         </div>
       </div>

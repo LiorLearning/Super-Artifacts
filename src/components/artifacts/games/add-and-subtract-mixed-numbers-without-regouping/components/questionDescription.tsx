@@ -24,6 +24,7 @@ interface QuestionDescriptionProps {
   color: string[];
   pizzacolor: string[];
   onComplete: () => void;
+  sendAdminMessage: (role: string, message: string) => void;
 }
 
 
@@ -49,7 +50,8 @@ const QuestionDescription = ({
   pizzaName, 
   color, 
   pizzacolor,
-  onComplete 
+  onComplete,
+  sendAdminMessage
 }: QuestionDescriptionProps) => {
 
   const [showNextButton, setShowNextButton] = useState(false);
@@ -57,6 +59,7 @@ const QuestionDescription = ({
   const handleWholeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputWhole(value);
+    
     if (parseInt(value) === whole) {
       setShowSecondRow(true);
     }
@@ -66,13 +69,13 @@ const QuestionDescription = ({
     const value = e.target.value;
     setInputNumerator(value);
     handleComplete(parseInt(value), parseInt(inputDenominator || '0'));
-  }
+  };
 
   const handleDenominatorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputDenominator(value);
     handleComplete(parseInt(inputNumerator || '0'), parseInt(value));
-  }
+  };
 
   const handleComplete = (inputNumerator: number, inputDenominator: number) => {
     if (
@@ -94,6 +97,17 @@ const QuestionDescription = ({
 
   console.log(`bg-[${color}]`);
 
+  const getInputStyle = (value: string, correctValue: number) => `
+    border-2 text-center font-extrabold rounded p-2 w-12 h-12 text-xl
+    ${value !== '' ? 
+      (parseInt(value) === correctValue ? 
+        'border-green-600 bg-green-100 text-green-800' : 
+        'border-red-600 bg-red-100 text-red-800'
+      ) : 
+      'border-gray-600'
+    }
+  `;
+
   return (
     <div className={`flex flex-col gap-4 max-w-3xl w-full mx-auto`}>
       {showFirstRow &&
@@ -109,7 +123,8 @@ const QuestionDescription = ({
               max={10}
               value={inputWhole}
               onChange={handleWholeChange}
-              className={`border-2 text-center border-gray-600 rounded p-2 w-12 h-16 text-xl ${inputWhole !== '' ? (parseInt(inputWhole) === whole ? "bg-green-200" : "bg-red-200") : ""}`} 
+              className={getInputStyle(inputWhole, whole)} 
+
               style={{ color: 'black' }}
               disabled={showSecondRow}
             />
@@ -127,8 +142,8 @@ const QuestionDescription = ({
         </div>
       }
       {showSecondRow && (
-        <div className="flex gap-4 w-full items-center font-jost">
-          <span className="flex items-center w-1/2 h-full justify-between px-8 py-4 rounded-lg" style={{ backgroundColor: color[0] }}>
+        <div className="flex gap-4 w-full items-center">
+          <span className="flex items-center w-1/2 h-full justify-between p-4 rounded-lg" style={{ backgroundColor: color[0] }}>
             <div className="flex justify-between items-center w-full">
               <div className="text-xl w-2/3">What <span className='font-bold'>fraction</span> of {pizzaName} pizza is left?</div>
               <div className="flex flex-col gap-2">
@@ -138,7 +153,7 @@ const QuestionDescription = ({
                   max={10}
                   value={inputNumerator}
                   onChange={handleNumeratorChange}
-                  className={`border-2 text-center border-gray-600 rounded p-2 w-12 h-12 text-xl ${inputNumerator !== '' ? (parseInt(inputNumerator) === numerator ? "bg-green-200" : "bg-red-200") : ""}`} 
+                  className={getInputStyle(inputNumerator, numerator)} 
                   style={{ color: 'black' }}
                   disabled={showNextButton}
                 />
@@ -149,15 +164,14 @@ const QuestionDescription = ({
                   max={10}
                   value={inputDenominator}
                   onChange={handleDenominatorChange}
-                  className={`border-2 text-center border-gray-600 rounded p-2 w-12 h-12 text-xl ${inputDenominator !== '' ? (parseInt(inputDenominator) === denominator ? "bg-green-200" : "bg-red-200") : ""}`} 
+                  className={getInputStyle(inputDenominator, denominator)} 
                   style={{ color: 'black' }}
                   disabled={showNextButton}
                 />
               </div>
             </div>
           </span>
-
-          <span className="flex items-center w-1/2 h-full justify-between p-[36px] rounded-lg" style={{ borderWidth: 2, borderColor: color[1], backgroundColor: color[2] }}>
+          <span className="flex items-center w-1/2 h-full justify-between p-10 rounded-lg" style={{ borderWidth: 2, borderColor: color[1], backgroundColor: color[2] }}>
             <PizzaSlices
               numerator={numerator}
               denominator={denominator}
