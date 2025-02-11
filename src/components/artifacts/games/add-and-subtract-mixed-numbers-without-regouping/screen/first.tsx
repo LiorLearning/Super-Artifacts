@@ -50,9 +50,8 @@ const Step0 = ({ sendAdminMessage }: BaseProps) => {
       <div className='my-14 mx-auto'>
         <Button 
           onClick={() => {
-            goToStep(1, setGameStateRef, 1); 
-            sendAdminMessage('agent', "Let's break it down! Start with the pepperoni pizzas")}
-          }
+            goToStep(1, setGameStateRef, 1)
+          }}
           className='m-2 p-6 mx-auto bg-[#F97315] text-3xl text-white shadow-[-5px_5px_0px_0px_rgba(0,0,0,1)] hover:bg-[#F97315] max-w-3xl'
         >
           Start &gt;&gt;
@@ -69,7 +68,7 @@ const Step1 = ({ sendAdminMessage }: BaseProps) => {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage("agent","Here's your order, can figure out the total number of pizzas? Let’s get started—click 'Next'!");
+      sendAdminMessage("agent","Let us imagine this as a pizza order. To solve, we have to figure out the total order. Click 'Next' to proceed!");
     }
     start.current = true;
   }, []);
@@ -150,64 +149,107 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
     inputDenominator: '',
   } as QuestionDescriptionProps);
 
+  const start = useRef(false);
 
   useEffect(() => {
-    if (complete === 1) {
-      sendAdminMessage('agent', "Awesome! The pepperoni pizza order is complete, let's revise the Cheese pizza order too");
-    } else if (complete === 2) {
-      sendAdminMessage('agent', "Sharp work pizza wizard! See, mixed numbers are like pizzas—wholes and slices added together");
+    if (!start.current) {
+      sendAdminMessage("agent","Let's break it down! Start with the pepperoni pizzas");
     }
-  }, [complete])
+    start.current = true;
+  }, []);
 
-  useEffect(() => {
-    if (parseInt(question1description.inputWhole) === fraction1.whole){
-      sendAdminMessage('agent', `That's right! There are ${fraction1.whole} whole pepperoni pizzas. Now, let’s look at the leftover slices!`);
-    } else if (parseInt(question1description.inputWhole) > 0) {
-      sendAdminMessage('admin', "Oops! Take a closer look at the picture to count the full ones. Try again!");
+  // Remove diagnostic messages from here since they're handled in QuestionDescription
+  const handleFractionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const newInputs = {
+      ...fractionInputs,
+      [name]: value
+    };
+
+    const isCorrect = 
+      parseInt(newInputs.numerator || '0') === totalNumerator && 
+      parseInt(newInputs.denominator || '0') === commonDenominator;
+
+    setFractionInputs({
+      ...newInputs,
+      isCorrect
+    });
+  };
+
+  // Computed values
+  const totalWhole = fraction1.whole + fraction2.whole;
+  const totalNumerator = fraction1.numerator + fraction2.numerator;
+  const commonDenominator = fraction1.denominator; // Assuming same denominator
+
+  // States for first section (Whole Pizzas)
+  const [wholeInputs, setWholeInputs] = useState({
+    input: '',
+    isCorrect: false
+  });
+
+  // States for second section (Slices)
+  const [fractionInputs, setFractionInputs] = useState({
+    numerator: '',
+    denominator: '',
+    isCorrect: false
+  });
+
+  // States for mixed form
+  const [mixedFormInputs, setMixedFormInputs] = useState({
+    whole: '',
+    numerator: '',
+    denominator: '',
+    isCorrect: false
+  });
+
+  // Handle whole number input
+  const handleWholeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const isCorrect = parseInt(value) === totalWhole;
+    setWholeInputs({
+      input: value,
+      isCorrect
+    });
+  };
+
+  // Handle mixed form inputs
+  const handleMixedFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const newInputs = {
+      ...mixedFormInputs,
+      [name]: value
+    };
+
+    const isCorrect = 
+      parseInt(newInputs.whole || '0') === totalWhole &&
+      parseInt(newInputs.numerator || '0') === totalNumerator &&
+      parseInt(newInputs.denominator || '0') === commonDenominator;
+
+    if (isCorrect) {
+      sendAdminMessage("agent", "Wohoo! Great job on this question partner. Now that you are trained, let's do some more");
     }
-  }, [question1description.inputWhole])
 
-  useEffect(() => {
-    if (parseInt(question1description.inputNumerator) === fraction1.numerator && parseInt(question1description.inputDenominator) === fraction1.denominator){
-      sendAdminMessage('agent', `Great job! There's ${fraction1.numerator} slice left out of ${fraction1.denominator}. That makes it ${fraction1.numerator}/${fraction1.denominator} of a pizza!`);
-    } else if (parseInt(question1description.inputNumerator) > 0 && parseInt(question1description.inputNumerator) !== fraction1.numerator) {
+    setMixedFormInputs({
+      ...newInputs,
+      isCorrect
+    });
+  };
 
-      sendAdminMessage('admin', "Almost! Count the leftover slices carefully—how many do you see?");
-    }
-  }, [question1description.inputNumerator])
+  const [showMixedForm, setShowMixedForm] = useState(false);
 
-  useEffect(() => {
-    if (parseInt(question1description.inputDenominator) === fraction1.denominator && parseInt(question1description.inputNumerator) === fraction1.numerator){
-      sendAdminMessage('agent', `Great job! There's ${fraction1.numerator} slice left out of ${fraction1.denominator}. That makes it ${fraction1.numerator}/${fraction1.denominator} of a pizza!`);
-    } else if (parseInt(question1description.inputDenominator) > 0 && parseInt(question1description.inputDenominator) !== fraction1.denominator){
-      sendAdminMessage('admin', "Not quite! Think about how many slices make up a whole pizza. Try again!");
-    }
-  }, [question1description.inputDenominator])
+  // Show proceed button when mixed form is correct
+  const showProceedButton = mixedFormInputs.isCorrect;
 
-  useEffect(() => {
-    if (parseInt(question2description.inputWhole) === fraction2.whole){
-      sendAdminMessage('agent', `That's right! There are ${fraction2.whole} whole cheeze pizzas. Now, let’s look at the leftover slices!`);
-    } else if (parseInt(question2description.inputWhole) > 0) {
-      sendAdminMessage('agent', "Oops! Take a closer look at the picture to count the full ones. Try again!");
-    }
-  }, [question2description.inputWhole])
+  const handleProceed = () => {
+    setGameStateRef(prev => ({ ...prev, screen: 2 }));
+  };
 
-  useEffect(() => {
-    if (parseInt(question2description.inputNumerator) === fraction2.numerator && parseInt(question2description.inputDenominator) === fraction2.denominator){
-      sendAdminMessage('agent', `Great job! There's ${fraction2.numerator} slice left out of ${fraction2.denominator}. That makes it ${fraction2.numerator}/${fraction2.denominator} of a pizza!. Now quickly fill in the Cheese order`);
-    } else if (parseInt(question2description.inputNumerator) > 0 && parseInt(question2description.inputNumerator) !== fraction2.numerator) {
-      sendAdminMessage('agent', "Almost! Count the leftover slices carefully—how many do you see?");
-    }
-  }, [question2description.inputNumerator])
-
-  useEffect(() => {
-    if (parseInt(question2description.inputDenominator) === fraction2.denominator && parseInt(question2description.inputNumerator) === fraction2.numerator){
-      sendAdminMessage('agent', `Great job! There's ${fraction2.numerator} slice left out of ${fraction2.denominator}. That makes it ${fraction2.numerator}/${fraction2.denominator} of a pizza!. Now quickly fill in the Cheese order`);
-    } else if (parseInt(question2description.inputDenominator) > 0 && parseInt(question2description.inputDenominator) !== fraction2.denominator) {
-
-      sendAdminMessage('agent', "Not quite! Think about how many slices make up a whole pizza. Try again!");
-    }
-  }, [question2description.inputDenominator])
+  // Helper function to get input style based on correctness
+  const getInputStyle = (isCorrect: boolean, baseColor: string) => {
+    return `border-2 text-center font-extrabold rounded p-2 w-12 h-12 text-xl
+      ${isCorrect ? 'border-green-600 bg-green-100' : `border-${baseColor}-600`}
+      ${isCorrect ? 'text-green-800' : `text-${baseColor}-800`}`;
+  };
 
   return (
     <div className='flex flex-col gap-6 max-w-3xl mx-auto'>
@@ -240,6 +282,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
             setComplete(1)
             setQuestion2description(prev => ({ ...prev, showFirstRow: true }))
           }} 
+
+          sendAdminMessage={sendAdminMessage}
         />
     }
     { complete >= 2 && (
@@ -273,6 +317,8 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
           pizzacolor={['#FFC98F','#E6DF5A']}
 
           onComplete={() => setComplete(2)} 
+
+          sendAdminMessage={sendAdminMessage}
         />
     }
     </div>
