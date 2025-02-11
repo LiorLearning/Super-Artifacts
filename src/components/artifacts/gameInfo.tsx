@@ -43,15 +43,12 @@ import { GameStateProvider as MixedFractionWithRegoupingGameStateProvider, useGa
 import { GameStateProvider as MixedNumberToImproperFractionGameStateProvider, useGameState as MixedNumberToImproperFractionGameState } from './games/mixed-number-to-improper-fraction/state-utils'
 import { GameStateProvider as MultiplyingWholesAndFractionsGameStateProvider, useGameState as MultiplyingWholesAndFractionsGameState } from './games/multiplying-wholes-and-Fractions/state-utils'
 
-import { StateValidator } from './games/template/utils/state-validator';
-import { TemplateStateValidator } from './games/template/state-limits';
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string> }>;
   useState: any;
   provider: React.ComponentType<{ children: React.ReactNode }>;
   initialGameState: any;
-  validator: StateValidator;
 }
 
 export const gameInfo: Record<string, GameInfo> = {
@@ -108,7 +105,6 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: TemplateGameState,
     provider: TemplateGameStateProvider,
     initialGameState: templateInitialState,
-    validator: new TemplateStateValidator()
   },
   'compare-fractions-with-different-numerator-and-denominator': {
     game: CompareFractionGame,

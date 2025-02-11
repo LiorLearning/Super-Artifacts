@@ -34,7 +34,7 @@ class TemplateStateValidator extends BaseStateValidator<GameState> {
     }
 
     // State3 validation
-    if (state.state3) {B
+    if (state.state3) {
       if (!this.validateStep(state.state3.step, 'third')) return false;
       if (typeof state.state3.variable !== 'number') return false;
     }
