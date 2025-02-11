@@ -25,6 +25,12 @@ const FractionBox: React.FC<FractionBoxProps> = ({
   const [canEnterDenominator, setCanEnterDenominator] = useState(false)
   const [hasUsedHint, setHasUsedHint] = useState(false)
   const [errorCount, setErrorCount] = useState(0);
+  const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
+  const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
+  const [denominatorIsCorrect, setDenominatorIsCorrect] = useState(false)
+  const [denominatorIsWrong, setDenominatorIsWrong] = useState(false)
+  const numeratorMessageShown = useRef(false)
+  const denominatorMessageShown = useRef(false)
 
   useEffect(() => {
     if (numerator === '' && denominator === '' && !hintMessageShown.current) {
@@ -50,13 +56,26 @@ const FractionBox: React.FC<FractionBoxProps> = ({
     const value = e.target.value.replace(/\D/g, '');
     setNumerator(value);
 
+    if (value === '') {
+      setNumeratorIsCorrect(false)
+      setNumeratorIsWrong(false)
+      return
+    }
+
     const expectedNumerator = (mixedFraction.denominator * mixedFraction.whole) + mixedFraction.numerator;
 
     if (value.length >= expectedNumerator.toString().length) {
       if (Number(value) === expectedNumerator) {
+        setNumeratorIsCorrect(true)
+        setNumeratorIsWrong(false)
         setCanEnterDenominator(true)
       } else {
-        setErrorCount(prev => prev + 1);
+        setNumeratorIsWrong(true)
+        setNumeratorIsCorrect(false)
+        if (!numeratorMessageShown.current) {
+          numeratorMessageShown.current = true
+          sendAdminMessage("admin", `Answer is ${expectedNumerator}, diagnose wrt user's current game state and help the user to get the correct answer`)
+        }
       }
     }
   };
@@ -67,13 +86,28 @@ const FractionBox: React.FC<FractionBoxProps> = ({
     const value = e.target.value.replace(/\D/g, '');
     setDenominator(value);
 
+    if (value === '') {
+      setDenominatorIsCorrect(false)
+      setDenominatorIsWrong(false)
+      return
+    }
+
     const expectedDenominator = mixedFraction.denominator;
     const expectedNumerator = (mixedFraction.denominator * mixedFraction.whole) + mixedFraction.numerator;
 
     if (value.length >= expectedDenominator.toString().length) {
       if (Number(value) === expectedDenominator) {
+        setDenominatorIsCorrect(true)
+        setDenominatorIsWrong(false)
         if (Number(numerator) === expectedNumerator) {
           onFractionComplete?.();
+        }
+      } else {
+        setDenominatorIsWrong(true)
+        setDenominatorIsCorrect(false)
+        if (!denominatorMessageShown.current) {
+          denominatorMessageShown.current = true
+          sendAdminMessage("admin", `Answer is ${expectedDenominator}, diagnose wrt user's current game state and help the user to get the correct answer`)
         }
       }
     }
@@ -142,7 +176,9 @@ const FractionBox: React.FC<FractionBoxProps> = ({
                 value={numerator}
                 onChange={handleNumeratorChange}
                 disabled={isComplete}
-                className="relative w-14 h-14 text-center text-xl border border-gray-300 rounded-md disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-400 [appearance:textfield] bg-white"
+                className={`relative w-14 h-14 text-center text-xl border border-gray-300 rounded-md disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-400 [appearance:textfield]
+                  ${numeratorIsCorrect ? 'bg-green-100' : numeratorIsWrong ? 'bg-red-100' : 'bg-white'}
+                `}
                 placeholder=""
               />
             </div>
@@ -159,7 +195,10 @@ const FractionBox: React.FC<FractionBoxProps> = ({
                 value={denominator}
                 onChange={handleDenominatorChange}
                 disabled={!canEnterDenominator || isComplete}
-                className="relative w-14 h-14 text-center text-xl border border-gray-300 rounded-md disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-400 [appearance:textfield] bg-white"
+                className={`relative w-14 h-14 text-center text-xl border border-gray-300 rounded-md disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-400 [appearance:textfield]
+                  ${!canEnterDenominator ? 'bg-gray-100' : ''}
+                  ${denominatorIsCorrect ? 'bg-green-100' : denominatorIsWrong ? 'bg-red-100' : 'bg-white'}
+                `}
                 placeholder=""
               />
             </div>

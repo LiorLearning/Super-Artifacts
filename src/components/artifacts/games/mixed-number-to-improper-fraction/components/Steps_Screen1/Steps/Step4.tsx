@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
 
@@ -17,19 +17,47 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [clickedQuarterStates, setClickedQuarterStates] = useState<boolean[][]>(
     Array(mixedFraction.whole).fill([]).map(() => Array(4).fill(false))
   )
+  const messageShown = useRef<boolean>(false)
+  const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
+  const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
+  const countMessageShown = useRef(false)
 
+  useEffect(() => {
+    if (!messageShown.current) {
+      messageShown.current = true;
+      sendAdminMessage("agent", "Observe the pies, and fill in the blank now. How many quarters make up 3 wholes?")
+    }
+  }, [sendAdminMessage])
 
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
-    const correctAnswer = (mixedFraction.whole * mixedFraction.denominator).toString()
     
+    if (value === '') {
+      setNumeratorIsCorrect(false)
+      setNumeratorIsWrong(false)
+      return
+    }
+
+    const correctAnswer = (mixedFraction.whole * mixedFraction.denominator).toString()
 
     if (value.length >= correctAnswer.length) {
       if (value === correctAnswer) {
+        setNumeratorIsCorrect(true)
+        setNumeratorIsWrong(false)
         onComplete()
       } else {
-        setErrorCount(prev => prev + 1)
-
+        setNumeratorIsWrong(true)
+        setNumeratorIsCorrect(false)
+        setErrorCount(prev => {
+          const newCount = prev + 1
+          if (newCount === 1) {
+            sendAdminMessage("admin", `Answer is ${correctAnswer}, diagnose wrt user's current game state and help the user to get the correct answer`)
+          } else if (newCount === 2 && !countMessageShown.current) {
+            countMessageShown.current = true;
+            sendAdminMessage("agent", "Let's count the pieces one by one. Click each quarter to count them all.")
+          }
+          return newCount
+        })
       }
     }
   }
@@ -179,7 +207,10 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   type="text"
                   value={numeratorInput}
                   onChange={(e) => handleNumeratorInput(e.target.value)}
-                  className="relative w-16 h-16 border-2 border-[black] rounded-lg text-center text-4xl"
+                  className={`relative w-16 h-16 border-2 border-[black] rounded-lg text-center text-4xl
+                    ${numeratorIsCorrect ? 'bg-green-100' : ''}
+                    ${numeratorIsWrong ? 'bg-red-100' : ''}
+                  `}
                   placeholder="?"
                 />
               </div>

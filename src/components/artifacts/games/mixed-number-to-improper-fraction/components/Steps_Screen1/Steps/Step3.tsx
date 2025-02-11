@@ -29,6 +29,10 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const secondMessageShown = useRef(false)
   const slicerMessageShown = useRef(false)
   const wrongSelectionMessageShown = useRef(false)
+  const [numeratorInput, setNumeratorInput] = useState("")
+  const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
+  const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
+  const [errorCount, setErrorCount] = useState(0)
 
   const handleSlicerClick = () => {
     setShowOptions(prev => !prev)
@@ -81,6 +85,33 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
     if (!slicerMessageShown.current) {
       slicerMessageShown.current = true;
       sendAdminMessage("agent", "Use this slicer to divide each whole into equal number of pieces.")
+    }
+  }
+
+  const handleNumeratorInput = (value: string) => {
+    setNumeratorInput(value)
+    if (value === '') {
+      setNumeratorIsCorrect(false)
+      setNumeratorIsWrong(false)
+      return
+    }
+
+    const expectedValue = mixedFraction.whole * mixedFraction.denominator
+    if (value === expectedValue.toString()) {
+      setNumeratorIsCorrect(true)
+      setNumeratorIsWrong(false)
+      onComplete()
+    } else if (value.length >= expectedValue.toString().length) {
+      setNumeratorIsWrong(true)
+      setNumeratorIsCorrect(false)
+      setErrorCount(prev => {
+        const newCount = prev + 1
+        if (newCount === 2) {
+          setShowHelpButton(true)
+        }
+        return newCount
+      })
+      sendAdminMessage("admin", `Answer is ${expectedValue}, diagnose wrt user's current game state and help the user to get the correct answer`)
     }
   }
 
@@ -306,14 +337,16 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
                     <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-lg"></div>
                     <input
                       type="text"
-                      value={inputValue}
-                      onChange={(e) => handleInputChange(e.target.value)}
-                      className="relative w-16 h-16 border-2 border-black rounded-lg text-center text-4xl bg-white"
-                      placeholder="?"
+                      value={numeratorInput}
+                      onChange={(e) => handleNumeratorInput(e.target.value)}
+                      className={`relative w-20 h-20 border-2 border-gray-300 rounded-lg text-center text-5xl
+                        ${numeratorIsCorrect ? 'bg-green-100' : ''}
+                        ${numeratorIsWrong ? 'bg-red-100' : ''}
+                      `}
                     />
                   </div>
                   <div className="h-[2px] w-full bg-black mt-2"></div>
-                  <span>{mixedFraction.denominator}</span>
+                  <span className="text-5xl">{mixedFraction.denominator}</span>
                 </div>
               </div>
             </div>

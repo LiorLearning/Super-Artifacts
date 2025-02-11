@@ -15,6 +15,12 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [denominatorInput, setDenominatorInput] = useState("")
   const [showFinal, setShowFinal] = useState(false)
   const [isNumeratorCorrect, setIsNumeratorCorrect] = useState(false)
+  const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
+  const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
+  const [denominatorIsCorrect, setDenominatorIsCorrect] = useState(false)
+  const [denominatorIsWrong, setDenominatorIsWrong] = useState(false)
+  const [errorCount, setErrorCount] = useState(0)
+  const countMessageShown = useRef(false)
 
   // Add ref to track if narration was shown
   const messageShown = useRef(false)
@@ -29,9 +35,34 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
+    
+    if (value === '') {
+      setNumeratorIsCorrect(false)
+      setNumeratorIsWrong(false)
+      return
+    }
+
     const correctNumerator = (mixedFraction.whole * mixedFraction.denominator + mixedFraction.numerator).toString()
-    if (value === correctNumerator) {
-      setIsNumeratorCorrect(true)
+    
+    if (value.length >= correctNumerator.length) {
+      if (value === correctNumerator) {
+        setNumeratorIsCorrect(true)
+        setNumeratorIsWrong(false)
+        setIsNumeratorCorrect(true)
+      } else {
+        setNumeratorIsWrong(true)
+        setNumeratorIsCorrect(false)
+        setErrorCount(prev => {
+          const newCount = prev + 1
+          if (newCount === 1) {
+            sendAdminMessage("admin", `Answer is ${correctNumerator}, diagnose wrt user's current game state and help the user to get the correct answer`)
+          } else if (newCount === 2 && !countMessageShown.current) {
+            countMessageShown.current = true
+            sendAdminMessage("agent", "Let's count the pieces one by one. Click each quarter to count them all.")
+          }
+          return newCount
+        })
+      }
     }
   }
 
@@ -40,12 +71,38 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
     
     setDenominatorInput(value)
     
-    // Check if both inputs are correct
-    if (isNumeratorCorrect && value === mixedFraction.denominator.toString()) {
-      // Add completion narration before finishing
-      sendAdminMessage("agent", "Awesome, you have converted the mixed number to an improper fraction.", () => {
-        onComplete()
-      })
+    if (value === '') {
+      setDenominatorIsCorrect(false)
+      setDenominatorIsWrong(false)
+      return
+    }
+
+    if (value.length >= mixedFraction.denominator.toString().length) {
+      if (value === mixedFraction.denominator.toString()) {
+        setDenominatorIsCorrect(true)
+        setDenominatorIsWrong(false)
+        if (isNumeratorCorrect) {
+          // First show the congratulatory message
+          sendAdminMessage("agent", "Awesome, you have converted the mixed number to an improper fraction.", () => {
+            // Then show the final part with buttons
+            setShowFinal(true)
+            // Don't call onComplete here - let user choose next action
+          })
+        }
+      } else {
+        setDenominatorIsWrong(true)
+        setDenominatorIsCorrect(false)
+        setErrorCount(prev => {
+          const newCount = prev + 1
+          if (newCount === 1) {
+            sendAdminMessage("admin", `Answer is ${mixedFraction.denominator}, diagnose wrt user's current game state and help the user to get the correct answer`)
+          } else if (newCount === 2 && !countMessageShown.current) {
+            countMessageShown.current = true
+            sendAdminMessage("agent", "Let's count the pieces one by one. Click each quarter to count them all.")
+          }
+          return newCount
+        })
+      }
     }
   }
 
@@ -148,7 +205,10 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
                     type="text"
                     value={numeratorInput}
                     onChange={(e) => handleNumeratorInput(e.target.value)}
-                    className="relative w-16 h-16 border-2 border-black rounded-lg text-center text-4xl"
+                    className={`relative w-16 h-16 border-2 border-black rounded-lg text-center text-4xl
+                      ${numeratorIsCorrect ? 'bg-green-100' : ''}
+                      ${numeratorIsWrong ? 'bg-red-100' : ''}
+                    `}
                     placeholder="?"
                   />
                 </div>
@@ -163,7 +223,10 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
                     type="text"
                     value={denominatorInput}
                     onChange={(e) => handleDenominatorInput(e.target.value)}
-                    className="relative w-16 h-16 border-2 border-black rounded-lg text-center text-4xl"
+                    className={`relative w-16 h-16 border-2 border-black rounded-lg text-center text-4xl
+                      ${denominatorIsCorrect ? 'bg-green-100' : ''}
+                      ${denominatorIsWrong ? 'bg-red-100' : ''}
+                    `}
                     placeholder="?"
                     disabled={!isNumeratorCorrect}
                   />
