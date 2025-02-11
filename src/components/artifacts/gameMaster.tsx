@@ -234,9 +234,9 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   const handleApply = () => {
     try {
       const parsedState = JSON.parse(testState);
-      const validator = gameInfo[gameKey]?.validator || gameInfo['template-game'].validator;
+      const gamestate = gameInfo[gameKey]?.initialGameState || gameInfo['template-game'].initialGameState;
       
-      if (validator.validateState(parsedState)) {
+      if (gamestate) {
         localStorage.setItem(gameKey, testState);
         window.location.reload();
       } else {
