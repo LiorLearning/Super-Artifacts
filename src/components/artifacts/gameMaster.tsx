@@ -6,7 +6,6 @@ import { AdminRequestMessage, AssistanceResponseMessage } from '../MessageContex
 import GameLoader from '../utils/gameLoader';
 import { Button } from '../custom_ui/button';
 import { Edit2Icon, RefreshCw, TimerResetIcon } from 'lucide-react';
-import { Edit2Icon, RefreshCw, TimerResetIcon } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 import { gameInfo } from './gameInfo';
@@ -21,11 +20,6 @@ interface GameComponentProps {
 
 // Get the current game component
 const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) => {
-  // If the game doesn't exist in gameInfo, fallback to template
-  const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
-  const Provider = gameInfo[gameKey].provider;
-  const Game = gameInfo[gameKey].game;
-  
   // If the game doesn't exist in gameInfo, fallback to template
   const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
   const Provider = gameInfo[gameKey].provider;
@@ -50,15 +44,12 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const [isClient, setIsClient] = useState(false);
   const gameParam = searchParams.get('game') as GameKey;
   const [currentGame, setCurrentGame] = useState<GameKey>(gameParam || 'template-game');
-  const [currentGame, setCurrentGame] = useState<GameKey>(gameParam || 'template-game');
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected, reconnectWebSocket } = useWebSocketLogger()
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    if (gameParam && gameParam !== currentGame) {
     if (gameParam && gameParam !== currentGame) {
       reconnectWebSocket();
       setCurrentGame(gameParam);
@@ -213,13 +204,14 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
           </div>
         </div>
       </div>
-      <div className="w-[25%] min-w-[250px] flex flex-col">
-        <Chat 
-          desc={getDescription?.()} 
-          componentRef={componentRef} 
-          gameState={gameStateRef} 
-        />
-      </div>
+
+    </div>      
+    <div className="w-[25%] min-w-[250px] flex flex-col">
+      <Chat 
+        desc={getDescription?.()} 
+        componentRef={componentRef} 
+        gameState={gameStateRef} 
+      />
     </div>
   </div>
   );
@@ -259,7 +251,7 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
       <div className="bg-white p-6 rounded-lg max-w-3xl w-full mx-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Edit Game State</h2>
-          <Button variant="ghost" onClick={onClose}>×</Button>
+          <Button variant="ghost" onClick={onClose}>x</Button>
         </div>
         <div className="space-y-4">
           <div>
