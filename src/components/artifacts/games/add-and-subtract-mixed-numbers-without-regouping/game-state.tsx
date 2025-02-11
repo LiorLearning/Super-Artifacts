@@ -87,26 +87,26 @@ export const initialGameState: GameState = {
   state1: {
     step: 0,
     fraction1: { whole: 3, numerator: 1, denominator: 4 },
-    fraction2: { whole: 4, numerator: 3, denominator: 4 },
+    fraction2: { whole: 2, numerator: 2, denominator: 4 },
   },
 
   state2: {
     step: 0,
     substep: 0,
-    fraction1: { whole: 2, numerator: 3, denominator: 5 },
-    fraction2: { whole: 3, numerator: 1, denominator: 5 },
+    fraction1: { whole: 2, numerator: 2, denominator: 5 },
+    fraction2: { whole: 1, numerator: 1, denominator: 5 },
   },
 
   state3: {
     step: 0,
     substep: 0,
-    fraction1: { whole: 5, numerator: 5, denominator: 9 },
-    fraction2: { whole: 2, numerator: 2, denominator: 9 },
+    fraction1: { whole: 2, numerator: 3, denominator: 8 },
+    fraction2: { whole: 1, numerator: 2, denominator: 8 },
   },
 
   state4: {
     step: 0,
-    fraction1: { whole: 4, numerator: 2, denominator: 7 },
-    fraction2: { whole: 1, numerator: 1, denominator: 7 },
+    fraction1: { whole: 3, numerator: 2, denominator: 6 },
+    fraction2: { whole: 1, numerator: 1, denominator: 6 },
   },
 };
