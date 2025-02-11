@@ -133,6 +133,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
     <div className="flex h-screen">
       <div className="w-[75%] border-r-border flex flex-col h-full overflow-auto">
         <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg h-full max-w-full">
+        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg h-full max-w-full">
           <div className="mb-4 flex items-center gap-2">
             <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
               <SelectTrigger className="p-2 border-border rounded-md flex-1">
@@ -159,6 +160,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               gameKey={currentGame}
               isOpen={isEditorOpen}
               onClose={() => setIsEditorOpen(false)}
+              initialState={gameInfo[currentGame]?.initialGameState}
               initialState={gameInfo[currentGame]?.initialGameState}
             />
             <Button 
@@ -209,6 +211,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         />
       </div>
     </div>
+  </div>
   );
 };
 
@@ -226,6 +229,7 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   const [testState, setTestState] = useState(() => {
     const savedState = localStorage.getItem(gameKey);
     return savedState || JSON.stringify(initialState, null, 2);
+    return savedState || JSON.stringify(initialState, null, 2);
   });
   const [error, setError] = useState<string>("");
 
@@ -234,9 +238,9 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   const handleApply = () => {
     try {
       const parsedState = JSON.parse(testState);
-      const validator = gameInfo[gameKey]?.validator || gameInfo['template-game'].validator;
+      const gamestate = gameInfo[gameKey]?.initialGameState || gameInfo['template-game'].initialGameState;
       
-      if (validator.validateState(parsedState)) {
+      if (gamestate) {
         localStorage.setItem(gameKey, testState);
         window.location.reload();
       } else {
@@ -244,17 +248,24 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
       }
     } catch (e) {
       setError("Invalid JSON format");
+      setError("Invalid JSON format");
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
       <div className="bg-white p-6 rounded-lg max-w-3xl w-full mx-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Edit Game State</h2>
-          <Button variant="ghost" onClick={onClose}>×</Button>
+          <Button variant="ghost" onClick={onClose}>x</Button>
         </div>
         <div className="space-y-4">
+          <textarea 
+            value={testState}
+            onChange={(e) => setTestState(e.target.value)}
+            className="w-full h-64 font-mono text-sm p-4 border rounded-lg"
+          />
           <textarea 
             value={testState}
             onChange={(e) => setTestState(e.target.value)}
@@ -263,6 +274,7 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
             <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
           </div>
         </div>
