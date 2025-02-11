@@ -258,7 +258,7 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
       <div className="bg-white p-6 rounded-lg max-w-3xl w-full mx-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Edit Game State</h2>
-          <Button variant="ghost" onClick={onClose}>×</Button>
+          <Button variant="ghost" onClick={onClose}>x</Button>
         </div>
         <div className="space-y-4">
           <textarea 
