@@ -140,34 +140,16 @@ const Step2 = ({ sendAdminMessage }: BaseProps) => {
   }, [useEffectTrigger]);
 
   useEffect(() => {
-    if (question1description.inputWhole !== '' && parseInt(question1description.inputWhole)!=fraction1.whole){
-      sendAdminMessage('agent', `Count the pepperoni pizzas in the box.`);
-    }
-  }, [question1description.inputWhole]);
-
-  useEffect(() => {
-    if (question1description.inputNumerator !== '' && parseInt(question1description.inputNumerator)!=fraction1.numerator){
-      sendAdminMessage('agent', `Almost! Count the leftover slices carefully—how many do you see?`);
-    }
-  }, [question1description.inputNumerator]);
-
-  useEffect(() => {
-    if (question1description.inputDenominator !== '' && parseInt(question1description.inputDenominator)!=fraction1.denominator){
-      sendAdminMessage('agent', `Not quite! Think about how many slices make up a whole pizza. Try again!`);
-    }
-  }, [question1description.inputDenominator]);
-
-  useEffect(() => {
     if (question1description.inputWhole !== '' && parseInt(question1description.inputWhole)===fraction2.whole){
       sendAdminMessage('agent', `Yes! There is ${fraction2.whole} whole cheeze pizza. Great job counting!`);
     } else if (question2description.inputWhole !== '' && parseInt(question2description.inputWhole)!=fraction2.whole){
-      sendAdminMessage('agent', `Oops! Remember, whole pizzas are the complete ones. Look at the illustration with yellow pizzas and try again!`);
+      sendAdminMessage('admin', `Oops! Remember, whole pizzas are the complete ones. Look at the illustration with yellow pizzas and try again!`);
     }
   }, [question2description.inputWhole]);
 
   useEffect(() => {
     if((question2description.inputNumerator !== '' && parseInt(question2description.inputNumerator)!=fraction2.numerator) || (question2description.inputDenominator !== '' && parseInt(question2description.inputDenominator)!=fraction2.denominator)){
-      sendAdminMessage('agent', `take a hint from the slices in the yellow box`);
+      sendAdminMessage('admin', `take a hint from the slices in the yellow box`);
     }
   }, [question2description.inputNumerator, question2description.inputDenominator]);
 
@@ -285,32 +267,50 @@ export const CombineFractionInput: React.FC<{
 
   const handleWholeChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWhole1(e.target.value);
-    checkfirst(e.target.value,whole2,numerator1,numerator2,denominator1,denominator2);
+    checkfirst(e.target.value,whole2,numerator1,numerator2,denominator1,denominator2)
+    if(whole1 === '' && parseInt(e.target.value) !== fraction1.whole) {
+      sendAdminMessage("admin", "Oh dear, did you forget how to count whole pizzas? Try again!");
+    }
   }
 
   const handleWholeChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWhole2(e.target.value);
-    checkfirst(whole1,e.target.value,numerator1,numerator2,denominator1,denominator2);
+    checkfirst(whole1,e.target.value,numerator1,numerator2,denominator1,denominator2)
+    if(whole2 === '' && parseInt(e.target.value) !== fraction2.whole) {
+      sendAdminMessage("admin", "That's not quite right. Maybe counting on your fingers would help?");
+    }
   }
 
   const handleNumeratorChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumerator1(e.target.value);
-    checkfirst(whole1,whole2,e.target.value,numerator2,denominator1,denominator2);
+    checkfirst(whole1,whole2,e.target.value,numerator2,denominator1,denominator2)
+    if(numerator1 === '' && parseInt(e.target.value) !== fraction1.numerator) {
+      sendAdminMessage("admin", "Those slices must be really tricky to count, huh?");
+    }
   }
 
   const handleNumeratorChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumerator2(e.target.value);
-    checkfirst(whole1,whole2,numerator1,e.target.value,denominator1,denominator2);
+    checkfirst(whole1,whole2,numerator1,e.target.value,denominator1,denominator2)
+    if(numerator2 === '' && parseInt(e.target.value) !== fraction2.numerator) {
+      sendAdminMessage("admin", "Close, but no pizza! Count those slices again.");
+    }
   }
 
   const handleDenominatorChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDenominator1(e.target.value);
-    checkfirst(whole1,whole2,numerator1,numerator2,e.target.value,denominator2);
+    checkfirst(whole1,whole2,numerator1,numerator2,e.target.value,denominator2)
+    if(denominator1 === '' && parseInt(e.target.value) !== fraction1.denominator) {
+      sendAdminMessage("admin", "Are you sure that's how many slices make a whole pizza?");
+    }
   }
 
   const handleDenominatorChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDenominator2(e.target.value);
-    checkfirst(whole1,whole2,numerator1,numerator2,denominator1,e.target.value);
+    checkfirst(whole1,whole2,numerator1,numerator2,denominator1,e.target.value)
+    if(denominator2 === '' && parseInt(e.target.value) !== fraction2.denominator) {
+      sendAdminMessage("admin", "The pizza chef would be disappointed. Try again!");
+    }
   }
 
   const checkfirst = (whole1: string, whole2: string, numerator1: string, numerator2: string, denominator1: string, denominator2: string) => {

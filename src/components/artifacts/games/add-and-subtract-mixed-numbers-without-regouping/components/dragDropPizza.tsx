@@ -289,7 +289,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
             <div
               onDrop={handleDropSlice}
               onDragOver={allowDrop}
-              className="flex justify-center gap-2 min-h-[120px]"
+              className="flex justify-center gap-6 min-h-[120px]"
             >
               {Object.entries(droppedSlices).map(([pizza, count]) => count > 0 && (
                 <PizzaSlices
@@ -297,7 +297,7 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
                   numerator={count}
                   denominator={pizza === fraction1.name ? fraction1.denominator : fraction2.denominator}
                   // color={pizza === fraction1.name ? fraction1.color : fraction2.color}  
-                  color={pizza === fraction1.name ? ["pink", "black", "#CA8A04"] : ["yellow", "black", "#CA8A04"]}
+                  color={pizza === fraction1.name ? ['#FFC5C6', '#E65A5A'] : ['#FFC98F','#E6DF5A']}
                 />
               ))}
             </div>

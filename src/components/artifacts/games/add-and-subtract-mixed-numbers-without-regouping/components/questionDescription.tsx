@@ -60,9 +60,7 @@ const QuestionDescription = ({
     const value = e.target.value;
     setInputWhole(value);
     
-    if (value !== '' && parseInt(value) !== whole) {
-      sendAdminMessage("admin", "Did you count the pizzas with your eyes closed?");
-    } else if (parseInt(value) === whole) {
+    if (parseInt(value) === whole) {
       setShowSecondRow(true);
     }
   };
@@ -70,20 +68,12 @@ const QuestionDescription = ({
   const handleNumeratorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputNumerator(value);
-    
-    if (value !== '' && parseInt(value) !== numerator) {
-      sendAdminMessage("admin", "Those slices must be playing hide and seek with you!");
-    }
     handleComplete(parseInt(value), parseInt(inputDenominator || '0'));
   };
 
   const handleDenominatorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputDenominator(value);
-    
-    if (value !== '' && parseInt(value) !== denominator) {
-      sendAdminMessage("admin", "A pizza divided by... what? Try again!");
-    }
     handleComplete(parseInt(inputNumerator || '0'), parseInt(value));
   };
 
