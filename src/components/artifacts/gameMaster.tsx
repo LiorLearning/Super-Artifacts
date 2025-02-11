@@ -211,6 +211,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         />
       </div>
     </div>
+    </div>
   );
 };
 
@@ -265,15 +266,9 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
             onChange={(e) => setTestState(e.target.value)}
             className="w-full h-64 font-mono text-sm p-4 border rounded-lg"
           />
-          <textarea 
-            value={testState}
-            onChange={(e) => setTestState(e.target.value)}
-            className="w-full h-64 font-mono text-sm p-4 border rounded-lg"
-          />
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
             <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
           </div>
         </div>
