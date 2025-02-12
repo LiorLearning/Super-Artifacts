@@ -15,7 +15,6 @@ const Second: React.FC<SecondProps> = ({ sendAdminMessage, onComplete }) => {
   const [selectedMultiple, setSelectedMultiple] = useState<number>(0);
   const { gameStateRef } = useGameState();
 
-
   const getCurrentFraction = () => {
     switch (currentFraction) {
       case 'fraction1':
@@ -56,7 +55,6 @@ const Second: React.FC<SecondProps> = ({ sendAdminMessage, onComplete }) => {
       console.log('Completing fraction3...');
       try {
         await sendAdminMessage('assistant', 'Congratulations! Moving to the next level!');
-      
         setTimeout(() => {
           console.log('Message callback executed');
           onComplete(); 
@@ -74,6 +72,7 @@ const Second: React.FC<SecondProps> = ({ sendAdminMessage, onComplete }) => {
           numerator={numerator} 
           denominator={denominator}
           onComplete={handleStep1Complete}
+          isFirstQuestion={currentFraction === 'fraction1'}
         />
       ) : currentStep === 2 ? (
         <Step2 

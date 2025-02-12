@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface Step3Props {
   numerator: number;
@@ -22,6 +22,18 @@ const Step3: React.FC<Step3Props> = ({
   const [hundredthsAnswer, setHundredthsAnswer] = useState('');
   const [showError, setShowError] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const buttonRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isCorrect && buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }, 100);
+    }
+  }, [isCorrect]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, position: 'wholes' | 'tenths' | 'hundredths') => {
     const value = e.target.value;
@@ -48,8 +60,7 @@ const Step3: React.FC<Step3Props> = ({
       if (selectedMultiple === 100) {
         if (tenths !== '' && hundredths !== '') {
           const userDecimal = Number(`${wholes || '0'}.${tenths}${hundredths}`);
-          
-          if (Math.abs(userDecimal - decimal) === 0) {
+          if (Math.abs(userDecimal - decimal) < 0.0001) {
             setIsCorrect(true);
             setShowError(false);
           } else {
@@ -61,8 +72,7 @@ const Step3: React.FC<Step3Props> = ({
       } else {
         if (tenths !== '') {
           const userDecimal = Number(`${wholes || '0'}.${tenths}`);
-          
-          if (Math.abs(userDecimal - decimal) === 0) {
+          if (Math.abs(userDecimal - decimal) < 0.0001) {
             setIsCorrect(true);
             setShowError(false);
           } else {
@@ -75,9 +85,16 @@ const Step3: React.FC<Step3Props> = ({
     }
   };
 
+  const getDecimalDigits = (num: number, denom: number) => {
+    const decimal = Number(num) / Number(denom);
+    return {
+      tenths: Math.floor((decimal * 10) % 10),
+      hundredths: Math.floor((decimal * 100) % 10)
+    };
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center">
-      {/* Top section - yellow to green gradient */}
       <div className="w-full bg-gradient-to-b from-[#F8F58A] via-[#B7E5AA] to-[#B7E5AA] pb-16">
         <div className="mt-12 relative w-[400px] h-[69px] mx-auto">
           <div className="relative">
@@ -156,14 +173,24 @@ const Step3: React.FC<Step3Props> = ({
                 <div className="flex flex-col items-center">
                   <div className="relative">
                     <div className="absolute left-[3px] top-[3px] bg-black w-20 h-20"></div>
-                    <div className={`relative bg-white  w-20 h-20 flex items-center justify-center ${
-                      showError ? 'bg-red-200' : ''
+                    <div className={`relative bg-white w-20 h-20 flex items-center justify-center ${
+                      wholesAnswer && Number(wholesAnswer) === Math.floor(Number(numerator) / Number(denominator))
+                        ? 'bg-green-50'
+                        : wholesAnswer
+                        ? 'bg-red-50'
+                        : ''
                     }`}>
                       <input
                         type="text"
                         value={wholesAnswer}
                         onChange={(e) => handleInputChange(e, 'wholes')}
-                        className="w-full h-full text-center text-[45px] outline-none bg-transparent"
+                        className={`w-full h-full text-center text-[45px] outline-none ${
+                          wholesAnswer && Number(wholesAnswer) === Math.floor(Number(numerator) / Number(denominator))
+                            ? 'text-green-600'
+                            : wholesAnswer
+                            ? 'text-red-500'
+                            : ''
+                        } bg-transparent`}
                         placeholder="?"
                         maxLength={1}
                       />
@@ -180,13 +207,23 @@ const Step3: React.FC<Step3Props> = ({
                   <div className="relative">
                     <div className="absolute left-[3px] top-[3px] bg-black w-20 h-20"></div>
                     <div className={`relative bg-white w-20 h-20 flex items-center justify-center ${
-                      showError ? 'bg-red-200' : ''
+                      tenthsAnswer && Number(tenthsAnswer) === getDecimalDigits(numerator, denominator).tenths
+                        ? 'bg-green-50'
+                        : tenthsAnswer
+                        ? 'bg-red-50'
+                        : ''
                     }`}>
                       <input
                         type="text"
                         value={tenthsAnswer}
                         onChange={(e) => handleInputChange(e, 'tenths')}
-                        className="w-full h-full text-center text-[45px] outline-none bg-transparent"
+                        className={`w-full h-full text-center text-[45px] outline-none ${
+                          tenthsAnswer && Number(tenthsAnswer) === getDecimalDigits(numerator, denominator).tenths
+                            ? 'text-green-600'
+                            : tenthsAnswer
+                            ? 'text-red-500'
+                            : ''
+                        } bg-transparent`}
                         placeholder="?"
                         maxLength={1}
                       />
@@ -200,13 +237,23 @@ const Step3: React.FC<Step3Props> = ({
                     <div className="relative">
                       <div className="absolute left-[3px] top-[3px] bg-black w-20 h-20"></div>
                       <div className={`relative bg-white w-20 h-20 flex items-center justify-center ${
-                        showError ? 'bg-red-200' : ''
+                        hundredthsAnswer && Number(hundredthsAnswer) === getDecimalDigits(numerator, denominator).hundredths
+                          ? 'bg-green-50'
+                          : hundredthsAnswer
+                          ? 'bg-red-50'
+                          : ''
                       }`}>
                         <input
                           type="text"
                           value={hundredthsAnswer}
                           onChange={(e) => handleInputChange(e, 'hundredths')}
-                          className="w-full h-full text-center text-[45px] outline-none bg-transparent"
+                          className={`w-full h-full text-center text-[45px] outline-none ${
+                            hundredthsAnswer && Number(hundredthsAnswer) === getDecimalDigits(numerator, denominator).hundredths
+                              ? 'text-green-600'
+                              : hundredthsAnswer
+                              ? 'text-red-500'
+                              : ''
+                          } bg-transparent`}
                           placeholder="?"
                           maxLength={1}
                         />
@@ -219,7 +266,7 @@ const Step3: React.FC<Step3Props> = ({
             </div>
 
             {isCorrect && !isLastQuestion && (
-              <div className="mt-32 mb-16">
+              <div ref={buttonRef} className="mt-32 mb-16">
                 <div className="relative">
                   <div className="absolute left-[4px] top-[4px] bg-[#333333] w-full h-full"></div>
                   <button 
@@ -233,7 +280,7 @@ const Step3: React.FC<Step3Props> = ({
             )}
 
             {isCorrect && isLastQuestion && !isGameComplete && (
-              <div className="mt-32 mb-16">
+              <div ref={buttonRef} className="mt-32 mb-16">
                 <div className="relative">
                   <div className="absolute left-[4px] top-[4px] bg-[#333333] w-full h-full"></div>
                   <button 
@@ -247,7 +294,7 @@ const Step3: React.FC<Step3Props> = ({
             )}
 
             {isCorrect && isLastQuestion && isGameComplete && (
-              <div className="mt-32 mb-16 text-[32px] text-[#008294] font-medium">
+              <div ref={buttonRef} className="mt-32 mb-16 text-[32px] text-[#008294] font-medium">
                 Congratulations! You've completed the game!
               </div>
             )}

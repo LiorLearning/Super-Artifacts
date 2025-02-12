@@ -26,7 +26,11 @@ const Third: React.FC<ThirdProps> = ({ sendAdminMessage }) => {
   const { numerator, denominator } = getCurrentFraction();
 
   const handleStep1Complete = (multiple: number) => {
-    setSelectedMultiple(multiple);
+    if (currentFraction === 'fraction1') {
+      setSelectedMultiple(100);
+    } else {
+      setSelectedMultiple(multiple);
+    }
     setCurrentStep(2);
     sendAdminMessage('assistant', 'Correct! Moving to next step...', () => {});
   };
@@ -54,6 +58,8 @@ const Third: React.FC<ThirdProps> = ({ sendAdminMessage }) => {
           numerator={numerator} 
           denominator={denominator}
           onComplete={handleStep1Complete}
+          isFirstQuestion={currentFraction === 'fraction1'}
+          isThirdScreen={true}
         />
       ) : currentStep === 2 ? (
         <Step2 
@@ -61,6 +67,7 @@ const Third: React.FC<ThirdProps> = ({ sendAdminMessage }) => {
           denominator={denominator}
           selectedMultiple={selectedMultiple}
           onComplete={handleStep2Complete}
+          isThirdScreenFirstQuestion={currentFraction === 'fraction1'}
         />
       ) : (
         <Step3
