@@ -51,27 +51,24 @@ export const GameStateProvider: React.FC<{
     const loadGameState = async () => {
       const currentGame = window.location.search.split('game=')[1]?.split('&')[0] || 'template-game';
 
-      if (id) {
-        const fetchedGameState = await fetchGameState(id) as Partial<GameState>;
+      try {
+        const fetchedGameState = (id ? 
+          await fetchGameState(id) as Partial<GameState> : 
+          (localStorage.getItem(currentGame) ? 
+            JSON.parse(localStorage.getItem(currentGame) || '{}') as Partial<GameState> : 
+            initialGameState)
+        );
+
         const updatedGameState = mergeGameState(initialGameState, fetchedGameState);
-        if (checkGameStateLimits(updatedGameState)) {
+        const validationResult = checkGameStateLimits(updatedGameState);
+        
+        if (validationResult.isValid) {
           setGameStateRef(updatedGameState);
         } else {
-          alert('checkGameStateLimits failed');
+          alert(`Invalid game state: ${validationResult.reason}`);
         }
-
-      } else if (localStorage.getItem(currentGame)) {
-        try {
-          const fetchedGameState = JSON.parse(localStorage.getItem(currentGame) || '{}');
-          const updatedGameState = mergeGameState(initialGameState, fetchedGameState);
-          if (checkGameStateLimits(updatedGameState)) {
-            setGameStateRef(updatedGameState);
-          } else {
-            alert('checkGameStateLimits failed');
-          }
-        } catch (e) {
-          console.error('Error parsing game state from localStorage:', e);
-        }
+      } catch (e) {
+        console.error('Error fetching game state:', e);
       }
     };
 
