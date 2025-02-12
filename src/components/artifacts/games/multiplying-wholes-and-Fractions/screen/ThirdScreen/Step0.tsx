@@ -17,8 +17,9 @@ export default function Screen3Step1({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
+      const firstQuestion = questions[0];
       sendAdminMessage('agent', 
-        `Great job learning! Now, we practice multiplying whole numbers by fractions to become a math master! 🎯💡`
+        `We'll start by multiplying ${firstQuestion.whole} by ${firstQuestion.fraction.numerator}/${firstQuestion.fraction.denominator}. 🎯`
       );
     }
   }, []);
@@ -34,12 +35,12 @@ export default function Screen3Step1({ sendAdminMessage }: BaseProps) {
 
     if (currentQuestionIndex < questions.length - 1) {
       sendAdminMessage('agent', 
-        `Excellent! You got it right! 🌟 Now let's try the next one. ` +
+        `Excellent! You got it right! Now let's try the next one. ` +
         `We'll multiply ${nextQuestion.whole} by ${nextQuestion.fraction.numerator}/${nextQuestion.fraction.denominator}.`
       );
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      sendAdminMessage('agent', `Congratulations! 🎉 You've successfully completed all the multiplication problems! You're now a master at multiplying whole numbers with fractions! 🌟`);
+      sendAdminMessage('agent', `Congratulations! You've successfully completed all the multiplication problems! You're now a master at multiplying whole numbers with fractions!`);
       setShowSuccess(true);
     }
   };

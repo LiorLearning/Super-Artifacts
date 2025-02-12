@@ -7,7 +7,7 @@ interface DropDownProps {
   showDropDown: boolean;
   correctValue: string;
   onCorrect?: () => void;
-  onIncorrect?: () => void;
+  onIncorrect?: (current: string) => void;
 }
 
 export default function DropDown({ 
@@ -23,15 +23,15 @@ export default function DropDown({
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const handleSelect = (value: string) => {
+    onSelect(value);
+    setIsOpen(false);
     if (value === correctValue) {
       setIsCorrect(true);
       onCorrect?.();
     } else {
       setIsCorrect(false);
-      onIncorrect?.();
+      onIncorrect?.(value);
     }
-    onSelect(value);
-    setIsOpen(false);
   };
 
   return (
