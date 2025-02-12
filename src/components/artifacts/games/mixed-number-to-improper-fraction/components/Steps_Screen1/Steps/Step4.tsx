@@ -207,10 +207,12 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
                   type="text"
                   value={numeratorInput}
                   onChange={(e) => handleNumeratorInput(e.target.value)}
+
                   className={`relative w-16 h-16 border-2 border-[black] rounded-lg text-center text-4xl
                     ${numeratorIsCorrect ? 'bg-green-100' : ''}
                     ${numeratorIsWrong ? 'bg-red-100' : ''}
                   `}
+
                   placeholder="?"
                 />
               </div>

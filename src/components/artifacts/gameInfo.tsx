@@ -1,4 +1,3 @@
-
 import TemplateGame from './games/template/game';
 import FractionAdditionGame from './games/add-fractions-with-common-denominator/game';
 import FractionSubtractionGame from './games/subtract-fractions-with-common-denominator/game';

@@ -30,6 +30,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const [showSecondBox, setShowSecondBox] = useState(true);
   const [canEnterDenominator, setCanEnterDenominator] = useState(false);
   const logicMessageShown = useRef(false);
+
   const [firstInputIsCorrect, setFirstInputIsCorrect] = useState(false)
   const [firstInputIsWrong, setFirstInputIsWrong] = useState(false)
   const [topAnswerIsCorrect, setTopAnswerIsCorrect] = useState(false)
@@ -41,6 +42,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const firstInputMessageShown = useRef(false)
   const topAnswerMessageShown = useRef(false)
   const bottomAnswerMessageShown = useRef(false)
+
 
   useEffect(() => {
     if (!logicMessageShown.current) {
@@ -61,6 +63,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
     }
     
     const expectedValue = denominator * whole;
+
     if (value.length >= expectedValue.toString().length) {
       if (parseInt(value) === expectedValue) {
         setFirstInputIsCorrect(true)
@@ -75,6 +78,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
           sendAdminMessage("admin", `Answer is ${expectedValue}, diagnose wrt user's current game state and help the user to get the correct answer`)
         }
       }
+
     }
   };
 
@@ -139,6 +143,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
           sendAdminMessage("admin", `Answer is ${expectedBottom}, diagnose wrt user's current game state and help the user to get the correct answer`)
         }
       }
+
     }
   };
 

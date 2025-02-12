@@ -25,12 +25,14 @@ const FractionBox: React.FC<FractionBoxProps> = ({
   const [canEnterDenominator, setCanEnterDenominator] = useState(false)
   const [hasUsedHint, setHasUsedHint] = useState(false)
   const [errorCount, setErrorCount] = useState(0);
+
   const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
   const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
   const [denominatorIsCorrect, setDenominatorIsCorrect] = useState(false)
   const [denominatorIsWrong, setDenominatorIsWrong] = useState(false)
   const numeratorMessageShown = useRef(false)
   const denominatorMessageShown = useRef(false)
+
 
   useEffect(() => {
     if (numerator === '' && denominator === '' && !hintMessageShown.current) {
@@ -66,6 +68,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
 
     if (value.length >= expectedNumerator.toString().length) {
       if (Number(value) === expectedNumerator) {
+
         setNumeratorIsCorrect(true)
         setNumeratorIsWrong(false)
         setCanEnterDenominator(true)
@@ -76,6 +79,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
           numeratorMessageShown.current = true
           sendAdminMessage("admin", `Answer is ${expectedNumerator}, diagnose wrt user's current game state and help the user to get the correct answer`)
         }
+
       }
     }
   };
@@ -101,6 +105,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
         setDenominatorIsWrong(false)
         if (Number(numerator) === expectedNumerator) {
           onFractionComplete?.();
+
         }
       } else {
         setDenominatorIsWrong(true)
@@ -108,6 +113,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
         if (!denominatorMessageShown.current) {
           denominatorMessageShown.current = true
           sendAdminMessage("admin", `Answer is ${expectedDenominator}, diagnose wrt user's current game state and help the user to get the correct answer`)
+
         }
       }
     }

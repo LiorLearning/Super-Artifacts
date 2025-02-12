@@ -289,7 +289,8 @@ const DragDropPizza: React.FC<DragDropPizzaProps> = ({
             <div
               onDrop={handleDropSlice}
               onDragOver={allowDrop}
-              className="flex justify-center gap-4 min-h-[120px]"
+              className="flex justify-center gap-6 min-h-[120px]"
+
             >
               {Object.entries(droppedSlices).map(([pizza, count]) => count > 0 && (
                 <PizzaSlices
