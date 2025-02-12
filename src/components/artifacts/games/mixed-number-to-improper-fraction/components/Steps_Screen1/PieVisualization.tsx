@@ -17,7 +17,7 @@ const PieVisualization: React.FC<PieVisualizationProps> = ({ mixedFraction }) =>
 
   return (
     <div className="w-full">
-      <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-black">
+      <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-gray-400">
         <div className="flex justify-center gap-8 py-16">
           {[...Array(mixedFraction.whole)].map((_, index) => (
             <div key={`whole-${index}`} className="w-28 h-28">

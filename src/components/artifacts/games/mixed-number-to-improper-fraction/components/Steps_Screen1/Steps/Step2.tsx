@@ -40,7 +40,7 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
     } else if (value.length >= mixedFraction.whole.toString().length) {
       setWholeIsWrong(true)
       setWholeIsCorrect(false)
-      sendAdminMessage("admin", `Answer is ${mixedFraction.whole}, diagnose wrt user's current game state and help the user to get the correct answer`)
+      sendAdminMessage("admin", `User answered incorrectly for the wholes pie, correct answer is ${mixedFraction.whole} but user answered ${value} . Diagnose socratically.`)
 
     }
   }
@@ -60,7 +60,7 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
     } else if (value.length >= mixedFraction.numerator.toString().length && value !== mixedFraction.numerator.toString()) {
       setNumeratorIsWrong(true)
       setNumeratorIsCorrect(false)
-      sendAdminMessage("admin",  `Answer is ${mixedFraction.numerator}, diagnose wrt user's current game state and help the user to get the correct answer in terms of numerator for that pie except the all ${mixedFraction.whole} wholes pie. Remember don't give direct answer, give hint`)
+      sendAdminMessage("admin",  `User answered incorrectly for the numerator pie, correct answer is ${mixedFraction.numerator}, but user answered ${value} . Diagnose socratically.`)
 
     }
   }
@@ -78,7 +78,7 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
       setDenominatorIsWrong(true)
       setDenominatorIsCorrect(false)
-      sendAdminMessage("admin",  `Answer is ${mixedFraction.denominator}, diagnose wrt user's current game state and help the user to get the correct answer in terms of denominator for that pie except the all ${mixedFraction.whole} wholes pie. Remember don't give direct answer, give hint`)
+      sendAdminMessage("admin",  `User answered incorrectly for the denominator pie, correct answer is ${mixedFraction.denominator}, but user answered ${value} . Diagnose socratically.`)
 
     }
   }

@@ -75,7 +75,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         setFirstInputIsWrong(true)
         if (!firstInputMessageShown.current) {
           firstInputMessageShown.current = true
-          sendAdminMessage("admin", `Answer is ${expectedValue}, diagnose wrt user's current game state and help the user to get the correct answer`)
+          sendAdminMessage("admin", `User answered incorrectly for the denominator pie, correct answer is ${expectedValue}, but user answered ${value} . Diagnose socratically.`)
         }
       }
 
@@ -108,7 +108,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         setTopAnswerIsWrong(true)
         if (!topAnswerMessageShown.current) {
           topAnswerMessageShown.current = true
-          sendAdminMessage("admin", `Answer is ${expectedTop}, diagnose wrt user's current game state and help the user to get the correct answer`)
+          sendAdminMessage("admin", `User answered incorrectly for the numerator pie, correct answer is ${expectedTop}, but user answered ${value} . Diagnose socratically.`)
         }
       }
     }
@@ -140,7 +140,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         setBottomAnswerIsWrong(true)
         if (!bottomAnswerMessageShown.current) {
           bottomAnswerMessageShown.current = true
-          sendAdminMessage("admin", `Answer is ${expectedBottom}, diagnose wrt user's current game state and help the user to get the correct answer`)
+          sendAdminMessage("admin", `User answered incorrectly for the denominator pie, correct answer is ${expectedBottom}, but user answered ${value} . Diagnose socratically.`)
         }
       }
 

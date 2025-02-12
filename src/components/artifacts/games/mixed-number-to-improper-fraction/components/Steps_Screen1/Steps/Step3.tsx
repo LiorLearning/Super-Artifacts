@@ -33,6 +33,8 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
   const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
   const [errorCount, setErrorCount] = useState(0)
+  const helpMessageShown = useRef(false)
+  const knifeAudioRef = useRef<HTMLAudioElement | null>(null)
 
 
   const handleSlicerClick = () => {
@@ -50,18 +52,32 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
     }
   }
 
+  const playKnifeSound = () => {
+    if (knifeAudioRef.current) {
+      knifeAudioRef.current.currentTime = 0
+      knifeAudioRef.current.play()
+    }
+  }
+
   const handlePieClick = (pieIndex: number) => {
     if (!selectedOption) return
 
-    setClickedPieStates(prev => {
-      const newStates = [...prev]
-      newStates[pieIndex] = true
-      
-      const allClicked = newStates.every(state => state)
-      setAllPiesClicked(allClicked)
-      
-      return newStates
-    })
+    // Play sound immediately
+    if (knifeAudioRef.current) {
+      knifeAudioRef.current.currentTime = 0
+      knifeAudioRef.current.play().then(() => {
+        // Update state after sound starts playing
+        setClickedPieStates(prev => {
+          const newStates = [...prev]
+          newStates[pieIndex] = true
+          
+          const allClicked = newStates.every(state => state)
+          setAllPiesClicked(allClicked)
+          
+          return newStates
+        })
+      })
+    }
   }
 
   const handleInputChange = (value: string) => {
@@ -91,6 +107,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
+    
     if (value === '') {
       setNumeratorIsCorrect(false)
       setNumeratorIsWrong(false)
@@ -98,21 +115,28 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
     }
 
     const expectedValue = mixedFraction.whole * mixedFraction.denominator
-    if (value === expectedValue.toString()) {
-      setNumeratorIsCorrect(true)
-      setNumeratorIsWrong(false)
-      onComplete()
-    } else if (value.length >= expectedValue.toString().length) {
-      setNumeratorIsWrong(true)
-      setNumeratorIsCorrect(false)
-      setErrorCount(prev => {
-        const newCount = prev + 1
-        if (newCount === 2) {
-          setShowHelpButton(true)
-        }
-        return newCount
-      })
-      sendAdminMessage("admin", `Answer is ${expectedValue}, diagnose wrt user's current game state and help the user to get the correct answer`)
+    if (value.length >= expectedValue.toString().length) {
+      if (Number(value) === expectedValue) {
+        setNumeratorIsCorrect(true)
+        setNumeratorIsWrong(false)
+        onComplete()
+      } else {
+        setNumeratorIsWrong(true)
+        setNumeratorIsCorrect(false)
+        setErrorCount(prev => {
+          const newCount = prev + 1
+          if (newCount === 2 && !helpMessageShown.current) {
+            helpMessageShown.current = true
+            sendAdminMessage("agent", "Looks like you need some help.", () => {
+              setShowHelpButton(true)
+            })
+          } else if (!wrongSelectionMessageShown.current) {
+            wrongSelectionMessageShown.current = true
+            sendAdminMessage("agent", "Not quite. Think about it, how many slices are needed to match the fraction pie?")
+          }
+          return newCount
+        })
+      }
     }
   }
 
@@ -187,7 +211,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       <Level mixedFraction={mixedFraction} />
 
       <div className="w-full">
-        <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-black">
+        <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-gray-400">
           <div className="flex justify-center gap-8 py-16">
             {/* Whole pies */}
             {[...Array(mixedFraction.whole)].map((_, index) => (
@@ -265,7 +289,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
                     alt="slicer" 
                     width={44} 
                     height={44} 
-                    className="w-11 h-11" 
+                    className="w-13 h-13" 
                   />
                 </div>
               </div>
@@ -368,6 +392,8 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
           </div>
         )}
       </div>
+
+      <audio ref={knifeAudioRef} src="/sounds/KnifeCut.mp3" />
     </div>
   );
 };

@@ -21,6 +21,8 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
   const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
   const countMessageShown = useRef(false)
+  const correctAudioRef = useRef<HTMLAudioElement | null>(null)
+  const errorMessageShown = useRef(false)
 
   useEffect(() => {
     if (!messageShown.current) {
@@ -44,16 +46,23 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
       if (value === correctAnswer) {
         setNumeratorIsCorrect(true)
         setNumeratorIsWrong(false)
-        onComplete()
+        if (correctAudioRef.current) {
+          correctAudioRef.current.currentTime = 0
+          correctAudioRef.current.addEventListener('ended', () => {
+            onComplete()
+          }, { once: true })
+          correctAudioRef.current.play()
+        }
       } else {
         setNumeratorIsWrong(true)
         setNumeratorIsCorrect(false)
         setErrorCount(prev => {
           const newCount = prev + 1
-          if (newCount === 1) {
-            sendAdminMessage("admin", `Answer is ${correctAnswer}, diagnose wrt user's current game state and help the user to get the correct answer`)
+          if (newCount === 1 && !errorMessageShown.current) {
+            errorMessageShown.current = true
+            sendAdminMessage("admin", `User answered incorrectly for the numerator pie, correct answer is ${correctAnswer}, but user answered ${value} . Diagnose socratically.`)
           } else if (newCount === 2 && !countMessageShown.current) {
-            countMessageShown.current = true;
+            countMessageShown.current = true
             sendAdminMessage("agent", "Let's count the pieces one by one. Click each quarter to count them all.")
           }
           return newCount
@@ -81,8 +90,12 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
     const correctAnswer = (mixedFraction.whole * mixedFraction.denominator).toString()
     if (newValue === correctAnswer) {
-      onComplete()
-
+      if (correctAudioRef.current) {
+        correctAudioRef.current.currentTime = 0
+        correctAudioRef.current.play().then(() => {
+          onComplete()
+        })
+      }
     }
   }
 
@@ -128,7 +141,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
       <Level mixedFraction={mixedFraction} />
       
       <div className="w-full">
-        <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-black relative">
+        <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-gray-400 relative">
           {errorCount >= 2 && (
             <div className="absolute w-3/4 text-center top-2 left-1/4 -translate-x-1/4">
               <span className="bg-white px-4 text-[#FF497C] text-2xl">
@@ -226,6 +239,7 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
           </div>
         </div>
       </div>
+      <audio ref={correctAudioRef} src="/sounds/CorrectAnswer2.mp3" />
     </div>
   )
 }

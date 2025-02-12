@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MixedFraction } from '../../game-state';
 import Image from 'next/image';
 import DirectionArrows from '@/assets/direction.png';
-import { useGameState } from '../../state-utils';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 interface FractionBoxProps {
@@ -77,7 +76,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
         setNumeratorIsCorrect(false)
         if (!numeratorMessageShown.current) {
           numeratorMessageShown.current = true
-          sendAdminMessage("admin", `Answer is ${expectedNumerator}, diagnose wrt user's current game state and help the user to get the correct answer`)
+          sendAdminMessage("admin", `User answered incorrectly for the numerator pie, correct answer is ${expectedNumerator}, but user answered ${value} . Diagnose socratically.`)
         }
 
       }
@@ -112,7 +111,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
         setDenominatorIsCorrect(false)
         if (!denominatorMessageShown.current) {
           denominatorMessageShown.current = true
-          sendAdminMessage("admin", `Answer is ${expectedDenominator}, diagnose wrt user's current game state and help the user to get the correct answer`)
+          sendAdminMessage("admin", `User answered incorrectly for the denominator pie, correct answer is ${expectedDenominator}, but user answered ${value} . Diagnose socratically.`)
 
         }
       }
@@ -294,7 +293,7 @@ const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2, sendAdminMe
         <div className="space-y-8">
           <FractionBox 
             mixedFraction={mixedFraction1} 
-            onFractionComplete={handleFirstFractionComplete}
+            onFractionComplete={handleFirstFractionComplete}  
             sendAdminMessage={sendAdminMessage}
           />
           {showSecondFraction && (
