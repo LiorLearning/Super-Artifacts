@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react"
+import type React from "react"
+import { useState, useEffect, useRef } from "react"
 import type { MixedFraction } from "../../../game-state"
-import Level from "../level"
-
+import GameLayout from "../GameLayout"
 
 interface Step1Props {
   mixedFraction: MixedFraction
@@ -10,220 +10,236 @@ interface Step1Props {
 }
 
 const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
+  const [wholes, setWholes] = useState<number | null>(null)
+  const [fraction, setFraction] = useState<{ numerator: number; denominator: number } | null>(null)
+  const [isDragging, setIsDragging] = useState<"whole" | "fraction" | null>(null)
+  const [showStepButton, setShowStepButton] = useState(false)
+  const messageShown = useRef(false)
 
-  const [wholeCount, setWholeCount] = useState(0);
-  const [quarterCount, setQuarterCount] = useState(0);
-  const [canAddQuarters, setCanAddQuarters] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const messageShown = useRef(false);
-
-
-  const showInitialMessage = useCallback(() => {
-    if (!messageShown.current) {
-      messageShown.current = true;
-      sendAdminMessage("agent", "Let's create 3 and 2/4. First, let's add the wholes");
-    }
-  }, [sendAdminMessage]);
+  const stepButtonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    showInitialMessage();
-  }, [showInitialMessage]);
-
-  const handleWholeClick = () => {
-    if (wholeCount < mixedFraction.whole) {
-      setWholeCount(prev => prev + 1);
-      if (wholeCount + 1 === mixedFraction.whole) {
-        setCanAddQuarters(true);
-        sendAdminMessage("agent", "We have 3 wholes, now let's add the fraction.");
-      }
+    if (!messageShown.current) {
+      sendAdminMessage(
+        "agent",
+        "Can you drag and drop the numbers in the matching colour blocks below"
+      )
+      messageShown.current = true
     }
-  };
+  }, [])
 
 
-  const handleQuarterClick = () => {
-    if (!canAddQuarters) {
-      return;
+  useEffect(() => {
+    if (showStepButton && stepButtonRef.current) {
+      stepButtonRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-    if (quarterCount < mixedFraction.numerator) {
-      setQuarterCount(prev => prev + 1);
-      if (quarterCount + 1 === mixedFraction.numerator) {
-        setShowSuccess(true);
-        sendAdminMessage("agent", "Awesome, this is 3 and 2/4", () => {
-          onComplete();
-        });
-      }
-    }
-  };
+  }, [showStepButton]);
 
-  const renderSliceLines = () => (
-    <>
-      <line 
-        x1="50" 
-        y1="50" 
-        x2="50" 
-        y2="2" 
-        stroke="black" 
-        strokeWidth="0.5"
-      />
-      <line 
-        x1="50" 
-        y1="50" 
-        x2="98" 
-        y2="50" 
-        stroke="black" 
-        strokeWidth="0.5"
-      />
-      <line 
-        x1="50" 
-        y1="50" 
-        x2="50" 
-        y2="98" 
-        stroke="black" 
-        strokeWidth="0.5"
-      />
-      <line 
-        x1="50" 
-        y1="50" 
-        x2="2" 
-        y2="50" 
-        stroke="black" 
-        strokeWidth="0.5"
-      />
-    </>
-  );
+
+  const handleDragStart = (type: "whole" | "fraction", e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData("type", type)
+    setIsDragging(type)
+    
+    const dragElement = e.currentTarget.cloneNode(true) as HTMLDivElement
+    dragElement.style.transform = 'rotate(4deg)'
+    dragElement.style.opacity = '0.8'
+    dragElement.style.position = 'fixed'
+    dragElement.style.top = '-1000px'
+    document.body.appendChild(dragElement)
+    e.dataTransfer.setDragImage(dragElement, 20, 20)
+    setTimeout(() => document.body.removeChild(dragElement), 0)
+  }
+
+  const handleDragEnd = () => {
+    setIsDragging(null)
+  }
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+  }
+
+  const handleDrop = (zone: "whole" | "fraction", e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const type = e.dataTransfer.getData("type")
+
+    if (type === "whole" && zone === "whole") {
+      setWholes(mixedFraction.whole)
+      sendAdminMessage(
+        "agent",
+        "Great! You've placed the whole number correctly"
+      )
+    } else if (type === "fraction" && zone === "fraction") {
+      setFraction({
+        numerator: mixedFraction.numerator,
+        denominator: mixedFraction.denominator,
+      })
+      sendAdminMessage(
+        "agent",
+        `Correct! ${mixedFraction.whole} ${mixedFraction.numerator}/${mixedFraction.denominator}th is a sum of ${mixedFraction.whole} wholes and ${mixedFraction.numerator}/${mixedFraction.denominator}th. Now let's change ${mixedFraction.whole} wholes to fraction, so that we can add these two easily`,
+
+        () => {
+          setShowStepButton(true)
+          setTimeout(() => {
+            sendAdminMessage(
+              "agent",
+              "Click on Step 2 to proceed"
+            )
+          }, 1000)
+        }
+      )
+    } else {
+      sendAdminMessage(
+        "agent",
+        "oops! the colours don't match, try again!"
+      )
+    }
+  }
+
+  const isComplete = wholes !== null && fraction !== null
 
   return (
-    <div ref={containerRef} className="w-full min-h-screen bg-pink-50 pt-16">
-      <Level mixedFraction={mixedFraction} />
+    <GameLayout
+      mixedFraction={mixedFraction}
+      stepNumber={1}
+      level={1}
+      stepTitle="Sum of WHOLES & FRACTIONS"
+    >
+      <div className="max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 -mx-4 relative">
+          <div className="bg-pink-100 p-4 flex flex-col items-center min-h-[320px]">
 
-      <div className="w-full">
-        <div className="bg-white w-full max-w-4xl mx-auto min-h-[400px] border-2 border-black flex flex-col justify-between">
-          <div className="flex justify-between items-center px-8 py-8">
-            <div className="flex-1 text-center">
-              <h2 className="text-[#FF497C] text-4xl font-medium">Let's create 3 and 2/4ths</h2>
+            <div className="flex items-center justify-center gap-12 mb-8 mt-12">
+              <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
+                
+                <div
+                  draggable
+                  onDragStart={(e) => handleDragStart("whole", e)}
+                  onDragEnd={handleDragEnd}
+                  className={`w-28 h-28 bg-white rounded-2xl flex items-center justify-center cursor-move relative
+                    ${isDragging === "whole" ? "opacity-50 scale-95" : ""} 
+                    transition-all duration-200`}
+                >
+                  <span className="text-green-500 text-7xl">{mixedFraction.whole}</span>
+                  <span className="absolute bottom-2 right-3 text-2xl">+</span>
+                </div>
+              </div>
+
+              <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
+                
+
+                <div
+                  draggable
+                  onDragStart={(e) => handleDragStart("fraction", e)}
+                  onDragEnd={handleDragEnd}
+
+                  className={`flex flex-col items-center bg-white rounded-2xl p-6 cursor-move relative
+                    ${isDragging === "fraction" ? "opacity-50 scale-95" : ""}
+                    transition-all duration-200`}
+                >
+                  <span className="text-4xl text-purple-500">{mixedFraction.numerator}</span>
+                  <div className="w-10 h-0.5 bg-black my-2"></div>
+                  <span className="text-4xl text-purple-500">{mixedFraction.denominator}</span>
+                  <span className="absolute bottom-2 right-3 text-2xl">+</span>
+
+                </div>
+              </div>
             </div>
-            <button
-              onClick={() => {
-                setWholeCount(0);
-                setQuarterCount(0);
-                setCanAddQuarters(false);
-                setShowSuccess(false);
-              }}
-              className="text-[#FF497C] text-2xl"
-            >
-              ↻
-            </button>
+            
+            <span className="text-[#FF497C] text-3xl mt-10">pick from here</span>
           </div>
 
-          <div className="flex justify-center gap-8 py-8">
-            {[...Array(wholeCount)].map((_, index) => (
-              <div key={`whole-${index}`} className="w-28 h-28">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <circle 
-                    cx="50" 
-                    cy="50" 
-                    r="48" 
-                    fill="#98D400" 
-                    stroke="black" 
-                    strokeWidth="0.5"
-                  />
-                </svg>
-              </div>
-            ))}
 
+          <div className="bg-white p-4 min-h-[320px] flex flex-col justify-center">
+            <div className="flex flex-col gap-2">
+              <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
 
-            {wholeCount === mixedFraction.whole && (
+                <div
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop("whole", e)}
+                  className={`border-2 ${isDragging === "whole" ? "border-green-600 bg-green-50" : "border-green-400"} 
 
-              <div className="w-28 h-28">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <circle 
-                    cx="50" 
-                    cy="50" 
-                    r="48" 
-
-                    fill="white" 
-
-                    stroke="black" 
-                    strokeWidth="0.5"
-                  />
-                  {renderSliceLines()}
-
-                  {quarterCount > 0 && [...Array(quarterCount)].map((_, i) => {
-
-                    const startAngle = i * (360 / mixedFraction.denominator);
-                    const endAngle = (i + 1) * (360 / mixedFraction.denominator);
-                    const radius = 48;
-                    
-                    return (
-                      <path
-                        key={i}
-                        d={`
-                          M 50 50
-                          L ${50 + radius * Math.cos(startAngle * Math.PI / 180)} ${50 + radius * Math.sin(startAngle * Math.PI / 180)}
-                          A ${radius} ${radius} 0 0 1 ${50 + radius * Math.cos(endAngle * Math.PI / 180)} ${50 + radius * Math.sin(endAngle * Math.PI / 180)}
-                          Z
-                        `}
-
-                        fill="#98D400"
-
-                        stroke="black"
-                        strokeWidth="0.5"
-                      />
-                    );
-                  })}
-                </svg>
-              </div>
-            )}
-          </div>
-
-          <div className="pb-16">
-            <div className="flex justify-center gap-4">
-
-              <div className={`relative ${wholeCount === mixedFraction.whole ? 'opacity-50' : ''}`}>
-
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-                <button
-                  onClick={handleWholeClick}
-                  disabled={wholeCount === mixedFraction.whole}
-                  className={`relative px-8 py-3 rounded-xl text-2xl ${
-                    wholeCount === mixedFraction.whole
-
-                      ? 'bg-white text-[#FF497C] border-2 border-[#FF497C]'
-
-                      : 'bg-[white] border-2 border-[#FF497C] text-[#FF497C]'
-                  }`}
+                    rounded-2xl p-6 min-h-[120px] transition-colors duration-200 bg-white relative`}
                 >
-                  + Whole
-                </button>
+                  <h4 className="text-green-500 font-medium tracking-widest mb-2 text-2xl">WHOLES</h4>
+                  {wholes !== null && <div className="text-5xl text-center text-green-500">{wholes}</div>}
+                </div>
               </div>
 
-              <div className={`relative ${!canAddQuarters ? 'opacity-50' : ''}`}>
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-                <button
-                  onClick={handleQuarterClick}
-                  disabled={!canAddQuarters || quarterCount === mixedFraction.numerator}
-                  className={`relative px-8 py-3 rounded-xl text-2xl ${
-                    !canAddQuarters || quarterCount === mixedFraction.numerator
+              <div className="flex justify-center">
+                <div className="text-black text-5xl">+</div>
+              </div>
 
-                      ? 'bg-white text-[#FF497C] border-2 border-[#FF497C]'
+              <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-2xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-2xl"></div>
 
-                      : 'border-2 border-[#FF497C] text-[#FF497C] bg-white'
-                  }`}
+                <div
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop("fraction", e)}
+                  className={`border-2 ${isDragging === "fraction" ? "border-purple-600 bg-purple-50" : "border-purple-400"}
+                    rounded-2xl p-6 min-h-[120px] transition-colors duration-200 bg-white relative`}
                 >
-                  + Quarters
-                </button>
-              </div>
+                  <h4 className="text-purple-500 font-medium tracking-widest mb-4 text-2xl">FRACTION</h4>
+                  {fraction && (
+                    <div className="flex flex-col items-center">
+                      <span className="text-4xl text-purple-500">{fraction.numerator}</span>
+                      <div className="w-10 h-0.5 bg-black my-2"></div>
+                      <span className="text-4xl text-purple-500">{fraction.denominator}</span>
 
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
+            <span className="text-[#FF497C] mt-8 text-center text-3xl">drop here</span>
           </div>
         </div>
-      </div>
-    </div>
-  );
-};
 
+        {/* Complete state */}
+        {isComplete && showStepButton && (
+
+          <div ref={stepButtonRef} className="mt-8 flex flex-col items-center gap-6 pb-8">
+
+            <div className="bg-white px-8 py-4 rounded-xl">
+              <div className="text-3xl text-[#FF497C] text-center tracking-wide flex items-center justify-center gap-4">
+                {mixedFraction.whole}
+                <div className="flex flex-col items-center">
+                  <span className="text-[#FF497C]">{mixedFraction.numerator}</span>
+                  <div className="w-6 h-0.5 bg-[#FF497C]"></div>
+                  <span className="text-[#FF497C]">{mixedFraction.denominator}</span>
+                </div>
+                = <span className="text-green-600">{mixedFraction.whole} wholes</span> +
+                <div className="flex flex-col items-center ">
+                  <span className="text-[#FF497C]">{mixedFraction.numerator}</span>
+                  <div className="w-6 h-0.5 bg-[#FF497C]"></div>
+                  <span className="text-[#FF497C]">{mixedFraction.denominator}</span>
+                </div>
+              </div>
+            </div>
+            <div className="relative w-[180px] h-[90px]">
+
+            <div className="absolute -bottom-2 -left-2 w-full h-full bg-black"></div>
+                <div className="absolute -bottom-2 -left-2 w-full h-full bg-black opacity-60"></div>
+              
+              {/* Main button */}
+              <button 
+                onClick={onComplete}
+                className="relative w-full h-full border-[10px] border-[#FF497C] bg-white flex items-center justify-center"
+              >
+                <span className="text-[#FF497C] text-[32px] tracking-wide">STEP 2 &gt;&gt;</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </GameLayout>
+  )
+}
 
 export default Step1
