@@ -19,18 +19,18 @@ interface question {
 export const descriptions: Description[] = [
   {
     title: 'first',
-    oneliner: 'Create fractions using chocolate bars',
-    description: `Learn to multiply whole numbers with fractions using chocolate bars. Start by splitting a chocolate bar into equal parts using the Split button, or combine pieces with the Join button. Once you've split the bar correctly, select the right number of pieces to create your fraction. The game will guide you through each step, showing how to create fractions visually. Click DONE after each action to check your work and move forward.`
+    oneliner: 'Create and visualize fractions with chocolate bars',
+    description: `Start by learning how fractions work with a chocolate bar. First, use the Split button to divide the bar into equal parts for the denominator. Once you have the right number of pieces, select some pieces to create your whole times fraction for the numerator. For example, to make whole times numerator/denominator, split the bar into denominator pieces and select numerator times whole of them. After creating your fraction, you'll learn how to multiply it by a whole number by selecting the same fraction multiple times. The game guides you through each step with clear instructions and visual feedback.`
   },
   {
     title: 'second',
-    oneliner: 'Multiply fractions using multiple chocolate bars',
-    description: `Practice multiplying whole numbers by fractions using multiple chocolate bars. First create your fraction by splitting and selecting pieces, then use the ADD BAR + button to add more bars when needed. Each bar represents one group, and you'll need to select the same fraction in each bar. After selecting all pieces correctly, you'll solve example problems where you multiply the numerator by the whole number while keeping the denominator the same.`
+    oneliner: 'Multiply fractions by whole numbers using multiple bars and examples',
+    description: `Practice multiplying fractions by whole numbers using multiple chocolate bars. You'll first start with one bar where you select pieces to represent your fraction. Secondly now you will create a chococlate bar representing whole times fraction, when you need more pieces, use the ADD BAR + button to add another bar. Each bar lets you select the same fraction, helping you understand how multiplication works. After correctly selecting the bars, Now you have select the Fraction its represent after multiplication from the drop down for each numerator and denominator, if you selected wrong then provide the feedback. After selecting the fraction you have fill the question mark value (which represent the '?' times fraction). Then You'll solve example problems where you multiply the numerator by the whole number while keeping the denominator the same.`
   }, 
   {
     title: 'third',
-    oneliner: 'Solve fraction multiplication problems step by step',
-    description: `Test your understanding by solving multiplication problems with whole numbers and fractions. For each problem, enter your answer with the numerator (multiply the whole number by the original numerator) and denominator (stays the same as the original fraction). If you need help, click the HINT button to see the step-by-step solution. The game provides immediate feedback and will guide you to the correct answer.`
+    oneliner: 'Solve multiplication problems with fractions independently',
+    description: `Put your knowledge to the test by solving fraction multiplication problems. For each problem, multiply the whole number by the numerator to get your answer's numerator, while keeping the denominator the same. If you need help, use the HINT button to see a step-by-step solution. Enter your answers in the input boxes - numerator on top, denominator below. The game checks your work and helps you understand any mistakes.`
   }
 ];
 
