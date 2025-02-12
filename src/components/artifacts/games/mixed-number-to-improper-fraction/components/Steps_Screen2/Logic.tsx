@@ -31,6 +31,19 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const [canEnterDenominator, setCanEnterDenominator] = useState(false);
   const logicMessageShown = useRef(false);
 
+  const [firstInputIsCorrect, setFirstInputIsCorrect] = useState(false)
+  const [firstInputIsWrong, setFirstInputIsWrong] = useState(false)
+  const [topAnswerIsCorrect, setTopAnswerIsCorrect] = useState(false)
+  const [topAnswerIsWrong, setTopAnswerIsWrong] = useState(false)
+  const [bottomAnswerIsCorrect, setBottomAnswerIsCorrect] = useState(false)
+  const [bottomAnswerIsWrong, setBottomAnswerIsWrong] = useState(false)
+  const [errorCount, setErrorCount] = useState(0)
+  const countMessageShown = useRef(false)
+  const firstInputMessageShown = useRef(false)
+  const topAnswerMessageShown = useRef(false)
+  const bottomAnswerMessageShown = useRef(false)
+
+
   useEffect(() => {
     if (!logicMessageShown.current) {
       logicMessageShown.current = true;
@@ -43,10 +56,29 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
     const value = e.target.value;
     setInputValue(value);
     
+    if (value === '') {
+      setFirstInputIsCorrect(false)
+      setFirstInputIsWrong(false)
+      return
+    }
+    
     const expectedValue = denominator * whole;
-    if (parseInt(value) === expectedValue) {
-      setShowNextStep(true);
-      sendAdminMessage("agent", "Now just add the numerator to your previous answer!");
+
+    if (value.length >= expectedValue.toString().length) {
+      if (parseInt(value) === expectedValue) {
+        setFirstInputIsCorrect(true)
+        setFirstInputIsWrong(false)
+        setShowNextStep(true);
+        sendAdminMessage("agent", "Now just add the numerator to your previous answer!")
+      } else {
+        setFirstInputIsCorrect(false)
+        setFirstInputIsWrong(true)
+        if (!firstInputMessageShown.current) {
+          firstInputMessageShown.current = true
+          sendAdminMessage("admin", `User answered incorrectly for the denominator pie, correct answer is ${expectedValue}, but user answered ${value} . Diagnose socratically.`)
+        }
+      }
+
     }
   };
 
@@ -59,25 +91,59 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
     const value = e.target.value.replace(/\D/g, '');
     setTopAnswer(value);
     
+    if (value === '') {
+      setTopAnswerIsCorrect(false)
+      setTopAnswerIsWrong(false)
+      return
+    }
+    
     const expectedTop = (denominator * whole) + numerator;
-    if (Number(value) === expectedTop) {
-      setCanEnterDenominator(true);
+    if (value.length >= expectedTop.toString().length) {
+      if (Number(value) === expectedTop) {
+        setTopAnswerIsCorrect(true)
+        setTopAnswerIsWrong(false)
+        setCanEnterDenominator(true)
+      } else {
+        setTopAnswerIsCorrect(false)
+        setTopAnswerIsWrong(true)
+        if (!topAnswerMessageShown.current) {
+          topAnswerMessageShown.current = true
+          sendAdminMessage("admin", `User answered incorrectly for the numerator pie, correct answer is ${expectedTop}, but user answered ${value} . Diagnose socratically.`)
+        }
+      }
     }
   };
 
   const handleBottomAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!canEnterDenominator) return;
-
     const value = e.target.value.replace(/\D/g, '');
     setBottomAnswer(value);
     
-    const expectedTop = (denominator * whole) + numerator;
-    const expectedBottom = denominator;
+    if (value === '') {
+      setBottomAnswerIsCorrect(false)
+      setBottomAnswerIsWrong(false)
+      return
+    }
 
-    if (Number(value) === expectedBottom && Number(topAnswer) === expectedTop) {
-      sendAdminMessage("agent", "It took just 2 steps to get to the answer. let's practice some more!", () => {
-        handleSuccess();
-      });
+    const expectedBottom = denominator;
+    if (value.length >= expectedBottom.toString().length) {
+      if (Number(value) === expectedBottom) {
+        setBottomAnswerIsCorrect(true)
+        setBottomAnswerIsWrong(false)
+        if (topAnswerIsCorrect) {
+          sendAdminMessage("agent", "It took just 2 steps to get to the answer. let's practice some more!", () => {
+            handleSuccess();
+          });
+        }
+      } else {
+        setBottomAnswerIsCorrect(false)
+        setBottomAnswerIsWrong(true)
+        if (!bottomAnswerMessageShown.current) {
+          bottomAnswerMessageShown.current = true
+          sendAdminMessage("admin", `User answered incorrectly for the denominator pie, correct answer is ${expectedBottom}, but user answered ${value} . Diagnose socratically.`)
+        }
+      }
+
     }
   };
 
@@ -195,7 +261,9 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                         <input
                           value={inputValue}
                           onChange={handleInputChange}
-                          className="w-full h-[60px] text-center text-3xl bg-transparent outline-none"
+                          className={`w-full h-[60px] text-center text-3xl outline-none
+                            ${firstInputIsCorrect ? 'bg-green-100' : firstInputIsWrong ? 'bg-red-100' : 'bg-transparent'}
+                          `}
                         />
                       </div>
                     ) : (
@@ -249,7 +317,9 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                   <input
                     value={topAnswer}
                     onChange={handleTopAnswerChange}
-                    className="absolute inset-0 bg-white rounded-xl border-4 border-white text-center text-3xl outline-none z-10"
+                    className={`absolute inset-0 rounded-xl border-4 border-white text-center text-3xl outline-none z-10
+                      ${topAnswerIsCorrect ? 'bg-green-100' : topAnswerIsWrong ? 'bg-red-100' : 'bg-white'}
+                    `}
                     placeholder="?"
                   />
                 </div>
@@ -260,8 +330,10 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                   <input
                     value={bottomAnswer}
                     onChange={handleBottomAnswerChange}
-                    className={`absolute inset-0 bg-white rounded-xl border-4 border-white text-center text-3xl outline-none z-10 
-                      ${!canEnterDenominator ? 'cursor-not-allowed' : ''}`}
+                    className={`absolute inset-0 rounded-xl border-4 border-white text-center text-3xl outline-none z-10
+                      ${!canEnterDenominator ? 'cursor-not-allowed bg-gray-100' : ''}
+                      ${bottomAnswerIsCorrect ? 'bg-green-100' : bottomAnswerIsWrong ? 'bg-red-100' : 'bg-white'}
+                    `}
                     placeholder="?"
                     disabled={!canEnterDenominator}
                   />
