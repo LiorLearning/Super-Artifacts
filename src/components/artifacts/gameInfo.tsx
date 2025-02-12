@@ -12,7 +12,9 @@ import DecimalGame from './games/fraction-to-decimal/game';
 import MixedFractionGameWithRegouping from './games/add-and-subtract-mixed-numbers-with-regouping/game';
 import MixedNumberToImproperFractionGame from './games/mixed-number-to-improper-fraction/game';
 import MultiplyingWholesAndFractionsGame from './games/multiplying-wholes-and-Fractions/game';
+import CommonDecimalsFractions from './games/common-decimals-fractions/game';
 
+import { initialGameState as commonDecimalsFractionsInitialState } from './games/common-decimals-fractions/game-state';
 import { initialGameState as templateInitialState } from './games/template/game-state';
 import { initialGameState as fractionAdditionInitialState } from './games/add-fractions-with-common-denominator/game-state';
 import { initialGameState as fractionSubtractionInitialState } from './games/subtract-fractions-with-common-denominator/game-state';
@@ -28,6 +30,7 @@ import { initialGameState as mixedNumberToImproperFractionGameInitialState } fro
 import { initialGameState as multiplyingWholesAndFractionsGameInitialState } from './games/multiplying-wholes-and-Fractions/game-state';
 import { initialGameState as mixedFractionWithoutRegoupingInitialState } from './games/add-and-subtract-mixed-numbers-without-regouping/game-state';
 
+import { GameStateProvider as CommonDecimalsFractionsGameStateProvider, useGameState as CommonDecimalsFractionsGameState } from './games/common-decimals-fractions/state-utils'
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/add-fractions-with-common-denominator/state-utils'
 import { GameStateProvider as FractionSubtractionGameStateProvider, useGameState as FractionSubtractionGameState } from './games/subtract-fractions-with-common-denominator/state-utils'
@@ -135,5 +138,11 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: MultiplyingWholesAndFractionsGameState,
     provider: MultiplyingWholesAndFractionsGameStateProvider,
     initialGameState: multiplyingWholesAndFractionsGameInitialState
+  },
+  'common-decimals-fractions': {
+    game: CommonDecimalsFractions,
+    useState: CommonDecimalsFractionsGameState,
+    provider: CommonDecimalsFractionsGameStateProvider,
+    initialGameState: commonDecimalsFractionsInitialState
   }
 };
