@@ -193,20 +193,26 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               currentGame && (
                 <div className="relative h-full w-full">
                   <div className="relative h-full w-full overflow-auto">
+
                       <GameComponent currentGame={currentGame} sendAdminMessage={sendAdminMessage} />
+                    </div>
                   </div>
-                </div>
-              )
-            )}
+                )
+              )}
+            </div>
           </div>
         </div>
+
         <div className="w-[25%] min-w-[250px] flex flex-col">
+
           <Chat 
             desc={getDescription?.()} 
             componentRef={componentRef} 
             gameState={gameStateRef} 
           />
         </div>
+
+
     </div>
   </div>
   );
@@ -226,7 +232,6 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   const [testState, setTestState] = useState(() => {
     const savedState = localStorage.getItem(gameKey);
     return savedState || JSON.stringify(initialState, null, 2);
-    return savedState || JSON.stringify(initialState, null, 2);
   });
   const [error, setError] = useState<string>("");
 
@@ -245,7 +250,6 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
       }
     } catch (e) {
       setError("Invalid JSON format");
-      setError("Invalid JSON format");
     }
   };
 
@@ -262,15 +266,9 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
             onChange={(e) => setTestState(e.target.value)}
             className="w-full h-64 font-mono text-sm p-4 border rounded-lg"
           />
-          <textarea 
-            value={testState}
-            onChange={(e) => setTestState(e.target.value)}
-            className="w-full h-64 font-mono text-sm p-4 border rounded-lg"
-          />
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
             <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
           </div>
         </div>
