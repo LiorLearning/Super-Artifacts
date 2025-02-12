@@ -9,7 +9,6 @@ import { Edit2Icon, RefreshCw, TimerResetIcon } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 import { gameInfo } from './gameInfo';
-import { initialGameState as templateInitialState } from './games/template/game-state';
 
 type GameKey = keyof typeof gameInfo;
 
@@ -18,14 +17,10 @@ interface GameComponentProps {
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string>;
 }
 
-// Get the current game component
 const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) => {
-  console.log('currentGame', gameInfo[currentGame].initialGameState);
   const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
   const Provider = gameInfo[gameKey].provider;
   const Game = gameInfo[gameKey].game;
-  
-
   
   return (
     <Provider>
@@ -87,7 +82,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
       } as AssistanceResponseMessage, onComplete);
     }
 
-    return messageId; // Return the messageId for optional tracking
+    return messageId;
   };
 
   useEffect(() => {
@@ -189,7 +184,6 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
             </Button>
           </div>
           
-          {/* Game container */}
           <div className="flex-1 h-full w-full overflow-y-auto border-2 border-gray-300 rounded-lg" ref={componentRef}>
             {!isConnected || loading ? (
               <GameLoader />
@@ -235,7 +229,6 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    // Update testState when gameKey changes
     const savedState = localStorage.getItem(gameKey);
     setTestState(savedState || JSON.stringify(initialState, null, 2));
   }, [gameKey, initialState]);
@@ -243,8 +236,7 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   if (!isOpen) return null;
 
   const handleApply = () => {
-    try {
-      const parsedState = JSON.parse(testState);
+      try {
       localStorage.setItem(gameKey, testState);
       window.location.reload();
     } catch (e) {

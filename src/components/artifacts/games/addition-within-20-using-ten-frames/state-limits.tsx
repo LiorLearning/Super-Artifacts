@@ -1,19 +1,59 @@
 import { GameState } from "./game-state";
 
-export default function checkGameStateLimits(state?: Partial<GameState>): boolean {
-  const { screen, state1, state2 } = state || {};
+interface ValidationResult {
+  isValid: boolean;
+  reason?: string;
+}
+
+const validateMarbleCounts = (marbleState: { maxGreenMarbles: number, maxBlueMarbles: number }): ValidationResult => {
+  if (marbleState.maxGreenMarbles < 0 || marbleState.maxGreenMarbles > 10) {
+    return {
+      isValid: false,
+      reason: `Invalid state: Green marble count (${marbleState.maxGreenMarbles}) must be between 0 and 10`
+    };
+  }
+
+  if (marbleState.maxBlueMarbles < 0 || marbleState.maxBlueMarbles > 10) {
+    return {
+      isValid: false,
+      reason: `Invalid state: Blue marble count (${marbleState.maxBlueMarbles}) must be between 0 and 10`
+    };
+  }
+
+  if (marbleState.maxGreenMarbles + marbleState.maxBlueMarbles > 20) {
+    return {
+      isValid: false,
+      reason: `Invalid state: Total marble count (${marbleState.maxGreenMarbles + marbleState.maxBlueMarbles}) cannot exceed 20`
+    };
+  }
+
+  return { isValid: true };
+};
+
+export default function checkGameStateLimits(state?: Partial<GameState>): ValidationResult {
+  if (!state) return { isValid: false, reason: "No game state provided" };
+
+  const { state1, state2 } = state;
 
   if (state1) {
-    if (state1.maxGreenMarbles < 0 || state1.maxGreenMarbles > 10) return false;
-    if (state1.maxBlueMarbles < 0 || state1.maxBlueMarbles > 10) return false;
-    if (state1.maxGreenMarbles + state1.maxBlueMarbles > 20) return false;
+    const result = validateMarbleCounts(state1);
+    if (!result.isValid) {
+      return {
+        isValid: false,
+        reason: `Validation failed for screen 1: ${result.reason}`
+      };
+    }
   }
 
   if (state2) {
-    if (state2.maxGreenMarbles < 0 || state2.maxGreenMarbles > 10) return false;
-    if (state2.maxBlueMarbles < 0 || state2.maxBlueMarbles > 10) return false;
-    if (state2.maxGreenMarbles + state2.maxBlueMarbles > 20) return false;
+    const result = validateMarbleCounts(state2);
+    if (!result.isValid) {
+      return {
+        isValid: false,
+        reason: `Validation failed for screen 2: ${result.reason}`
+      };
+    }
   }
 
-  return true;
-};
+  return { isValid: true };
+}

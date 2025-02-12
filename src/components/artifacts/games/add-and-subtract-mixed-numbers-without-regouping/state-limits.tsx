@@ -1,59 +1,89 @@
 import { GameState } from "./game-state";
 
-export default function checkGameStateLimits(state?: Partial<GameState>): boolean {
-  if (!state) return false;
+interface ValidationResult {
+  isValid: boolean;
+  reason?: string;
+}
 
-  // Check screen 1 state
-  if (state.state1) {
-    const { fraction1, fraction2 } = state.state1;
-    
-    // Check whole numbers are <= 5
-    if (fraction1.whole > 5 || fraction2.whole > 5) return false;
-    
-    // Check if numerators are less than denominators
-    if (fraction1.numerator >= fraction1.denominator || 
-        fraction2.numerator >= fraction2.denominator) return false;
+const validateFractionLimits = (fraction1: any, fraction2: any): ValidationResult => {
+  if (fraction1.whole > 5) {
+    return { 
+      isValid: false, 
+      reason: `Invalid state: First fraction's whole number (${fraction1.whole}) exceeds maximum limit of 5` 
+    };
+  }
+  
+  if (fraction2.whole > 5) {
+    return { 
+      isValid: false, 
+      reason: `Invalid state: Second fraction's whole number (${fraction2.whole}) exceeds maximum limit of 5` 
+    };
+  }
+  
+  if (fraction1.numerator >= fraction1.denominator) {
+    return { 
+      isValid: false, 
+      reason: `Invalid state: First fraction's numerator (${fraction1.numerator}) must be less than denominator (${fraction1.denominator})` 
+    };
   }
 
-  // Check screen 2 state
-  if (state.state2) {
-    const { fraction1, fraction2 } = state.state2;
-    
-    if (fraction1.whole > 5 || fraction2.whole > 5) return false;
-    if (fraction1.numerator >= fraction1.denominator || 
-        fraction2.numerator >= fraction2.denominator) return false;
+  if (fraction2.numerator >= fraction2.denominator) {
+    return { 
+      isValid: false, 
+      reason: `Invalid state: Second fraction's numerator (${fraction2.numerator}) must be less than denominator (${fraction2.denominator})` 
+    };
   }
 
-  // Check screen 3 state
-  if (state.state3) {
-    const { fraction1, fraction2 } = state.state3;
-    
-    if (fraction1.whole > 5 || fraction2.whole > 5) return false;
-    if (fraction1.numerator >= fraction1.denominator || 
-        fraction2.numerator >= fraction2.denominator) return false;
+  return { isValid: true };
+};
+
+const checkFractionSum = (f1: any, f2: any): ValidationResult => {
+  if (f1.denominator !== f2.denominator) {
+    return { 
+      isValid: false, 
+      reason: `Invalid state: Denominators must be equal (first: ${f1.denominator}, second: ${f2.denominator})` 
+    };
+  }
+  
+  const sum = f1.numerator + f2.numerator;
+  if (sum > f1.denominator) {
+    return { 
+      isValid: false, 
+      reason: `Invalid state: Sum of numerators (${sum}) cannot exceed denominator (${f1.denominator})` 
+    };
+  }
+  
+  return { isValid: true };
+};
+
+const validateScreenState = (screenState: any): ValidationResult => {
+  if (!screenState) return { isValid: true };
+  
+  const { fraction1, fraction2 } = screenState;
+  
+  const fractionLimitsResult = validateFractionLimits(fraction1, fraction2);
+  if (!fractionLimitsResult.isValid) return fractionLimitsResult;
+
+  const fractionSumResult = checkFractionSum(fraction1, fraction2);
+  if (!fractionSumResult.isValid) return fractionSumResult;
+
+  return { isValid: true };
+};
+
+export default function checkGameStateLimits(state?: Partial<GameState>): ValidationResult {
+  if (!state) return { isValid: false, reason: "No game state provided" };
+
+  const screenStates = [state.state1, state.state2, state.state3, state.state4];
+  
+  for (let i = 0; i < screenStates.length; i++) {
+    const result = validateScreenState(screenStates[i]);
+    if (!result.isValid) {
+      return { 
+        isValid: false, 
+        reason: `Validation failed for screen ${i + 1}: ${result.reason}` 
+      };
+    }
   }
 
-  // Check screen 4 state
-  if (state.state4) {
-    const { fraction1, fraction2 } = state.state4;
-    
-    if (fraction1.whole > 5 || fraction2.whole > 5) return false;
-    if (fraction1.numerator >= fraction1.denominator || 
-        fraction2.numerator >= fraction2.denominator) return false;
-  }
-
-  // Helper function to check if sum of fractions is valid
-  const checkFractionSum = (f1: any, f2: any) => {
-    if (f1.denominator !== f2.denominator) return false;
-    const sum = f1.numerator + f2.numerator;
-    return sum <= f1.denominator;
-  };
-
-  // Check sum of fractions for each screen
-  if (state.state1 && !checkFractionSum(state.state1.fraction1, state.state1.fraction2)) return false;
-  if (state.state2 && !checkFractionSum(state.state2.fraction1, state.state2.fraction2)) return false;
-  if (state.state3 && !checkFractionSum(state.state3.fraction1, state.state3.fraction2)) return false;
-  if (state.state4 && !checkFractionSum(state.state4.fraction1, state.state4.fraction2)) return false;
-
-  return true;
+  return { isValid: true };
 }
