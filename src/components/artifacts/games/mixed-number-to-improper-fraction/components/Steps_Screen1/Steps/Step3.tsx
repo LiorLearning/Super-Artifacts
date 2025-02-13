@@ -37,8 +37,10 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [errorCount, setErrorCount] = useState(0)
   const helpMessageShown = useRef(false)
   const knifeAudioRef = useRef<HTMLAudioElement | null>(null)
+
   const [showSuccess, setShowSuccess] = useState(false)
   const partCompleteAudioRef = useRef<HTMLAudioElement | null>(null)
+
 
 
   const handleSlicerClick = () => {
@@ -123,8 +125,10 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       if (Number(value) === expectedValue) {
         setNumeratorIsCorrect(true)
         setNumeratorIsWrong(false)
+
         setShowSecondBox(false)
         updateStep(5)
+
       } else {
         setNumeratorIsWrong(true)
         setNumeratorIsCorrect(false)
@@ -422,6 +426,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       
       <audio ref={knifeAudioRef} src="/sounds/KnifeCut.mp3" />
       <audio ref={partCompleteAudioRef} src="/sounds/PartComplete.mp3" />
+
     </div>
   );
 };

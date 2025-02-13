@@ -259,6 +259,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                 <div className="relative w-[80px] h-[80px]">
                   <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
                   <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+
                   <input
                     value={inputValue}
                     onChange={handleInputChange}
@@ -267,6 +268,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                     `}
                     placeholder="?"
                   />
+
                 </div>
               </div>
             </div>

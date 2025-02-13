@@ -36,17 +36,19 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
   useEffect(() => {
     if (!hasStartedRef.current) {
       hasStartedRef.current = true;
-      sendAdminMessage('agent', `Now let's multiply! How many pieces do you think will ${whole * fraction.numerator} times 1/${fraction.denominator} will have? 🎯`);
+      sendAdminMessage('agent', `Now let's multiply! How many pieces do you think ${whole * fraction.numerator} times 1/${fraction.denominator} will have?`);
     }
   }, []);
 
   useEffect(() => {
     if (dropdownsCorrect.numerator && dropdownsCorrect.denominator) {
-      sendAdminMessage('agent', `Great job! 🎉 You've successfully multiplied 2 times 1/5th. Let's move on to the next question! 🚀`, () => goToScreen('second', setGameStateRef));
+      sendAdminMessage('agent', `Great job! 🎉 You've successfully multiplied ${whole} times ${fraction.numerator}/${fraction.denominator}. Let's move on to the next question!`, () => goToScreen('second', setGameStateRef));
       setSuccess(true);
     }
   }, [dropdownsCorrect]);
 
+
+  
   function handleDone() {
     if (bar === fraction.numerator * whole) {
       sendAdminMessage('agent', `Sweet! This is ${whole} times ${fraction.numerator}/${fraction.denominator}. Now enter the fraction it represents! 📝`);
@@ -54,17 +56,19 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
       setIsDoneActive(false);
     } else {
       if (bar < fraction.numerator * whole) {
-        sendAdminMessage('agent', `Not quite! You've selected less than the required pieces. We need to select 1/${fraction.denominator} piece ${whole * fraction.numerator} times. Try again! 🔄`);
+        sendAdminMessage('agent', `Not quite! You've selected less than the required pieces. We need to select 1/${fraction.denominator} piece ${whole * fraction.numerator} times. Try again!`);
       } else {
-        sendAdminMessage('agent', `Oops! You've picked more pieces than needed. Remember, we need to select 1/${fraction.denominator} piece ${whole * fraction.numerator} times. Give it another shot! 🔄`);
+        sendAdminMessage('agent', `Oops! You've picked more pieces than needed. Remember, we need to select 1/${fraction.denominator} piece ${whole * fraction.numerator} times. Give it another shot!`);
       }
     }
   }
-
+  
   useEffect(() => {
     if(success)
       ansRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [success]);
+  
+
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -110,7 +114,7 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
                 setDropdownsCorrect(prev => ({...prev, numerator: true}));
               }}
               onIncorrect={() => {
-                sendAdminMessage('agent', `Think about it: we're multiplying ${whole} by ${fraction.numerator}. What would that give us? 🤔`);
+                sendAdminMessage('admin', `User answered incorrectly for the numerator, correct answer is ${fraction.numerator * whole} but user answered ${selectedFraction.numerator}, Help user solve the problem. Diagnose socratically.`);
               }}
             />
             <div className="h-0 px-8 border-b-2 border-black"></div>
@@ -126,7 +130,7 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
                 setDropdownsCorrect(prev => ({...prev, denominator: true}));
               }}
               onIncorrect={() => {
-                sendAdminMessage('agent', `Remember: when multiplying by a whole number, the denominator stays the same! 🎯`);
+                sendAdminMessage('admin', `User answered incorrectly for the denominator, correct answer is ${fraction.denominator} but user answered ${selectedFraction.denominator}, Help user solve the problem. Diagnose socratically.`);
               }}
             />
           </div>
@@ -163,7 +167,6 @@ export default function Screen1Step2({sendAdminMessage} : BaseProps) {
           </div>
         </div>
       </div>}</div>
-
     </div>
   )
 }

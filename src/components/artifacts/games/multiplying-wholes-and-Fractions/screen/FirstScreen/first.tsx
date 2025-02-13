@@ -24,4 +24,6 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       <Screen1Step2 sendAdminMessage={sendAdminMessage}/>
     )
   }
+
+  
 }
