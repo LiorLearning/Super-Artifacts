@@ -17,9 +17,7 @@ interface GameComponentProps {
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string>;
 }
 
-// Get the current game component
 const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) => {
-  // If the game doesn't exist in gameInfo, fallback to template
   const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
   const Provider = gameInfo[gameKey].provider;
   const Game = gameInfo[gameKey].game;
@@ -84,7 +82,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
       } as AssistanceResponseMessage, onComplete);
     }
 
-    return messageId; // Return the messageId for optional tracking
+    return messageId;
   };
 
   useEffect(() => {
@@ -127,6 +125,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   };
 
 
+
   if (!isClient) return null;
 
   return (
@@ -159,7 +158,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
               gameKey={currentGame}
               isOpen={isEditorOpen}
               onClose={() => setIsEditorOpen(false)}
-              initialState={gameInfo[currentGame]?.initialGameState}
+              initialState={gameInfo[currentGame].initialGameState}
             />
             <Button 
               variant="outline" 
@@ -185,7 +184,6 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
             </Button>
           </div>
           
-          {/* Game container */}
           <div className="flex-1 h-full w-full overflow-y-auto border-2 border-gray-300 rounded-lg" ref={componentRef}>
             {!isConnected || loading ? (
               <GameLoader />
@@ -200,15 +198,16 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
             )}
           </div>
         </div>
-        <div className="w-[25%] min-w-[250px] flex flex-col">
-          <Chat 
-            desc={getDescription?.()} 
-            componentRef={componentRef} 
-            gameState={gameStateRef} 
-          />
-        </div>
+      </div>
+      <div className="w-[25%] min-w-[250px] flex flex-col">
+      <Chat 
+        desc={getDescription?.()} 
+        componentRef={componentRef} 
+        gameState={gameStateRef} 
+      />
     </div>
-  </div>
+
+    </div>      
   );
 };
 
@@ -226,51 +225,42 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   const [testState, setTestState] = useState(() => {
     const savedState = localStorage.getItem(gameKey);
     return savedState || JSON.stringify(initialState, null, 2);
-    return savedState || JSON.stringify(initialState, null, 2);
   });
   const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    const savedState = localStorage.getItem(gameKey);
+    setTestState(savedState || JSON.stringify(initialState, null, 2));
+  }, [gameKey, initialState]);
 
   if (!isOpen) return null;
 
   const handleApply = () => {
-    try {
-      const parsedState = JSON.parse(testState);
-      const gamestate = gameInfo[gameKey]?.initialGameState || gameInfo['template-game'].initialGameState;
-      
-      if (gamestate) {
-        localStorage.setItem(gameKey, testState);
-        window.location.reload();
-      } else {
-        setError("State validation failed - invalid state structure");
-      }
+      try {
+      localStorage.setItem(gameKey, testState);
+      window.location.reload();
     } catch (e) {
-      setError("Invalid JSON format");
-      setError("Invalid JSON format");
+      setError("Invalid JSON");
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
-      <div className="bg-white p-6 rounded-lg max-w-3xl w-full mx-4">
-        <div className="flex justify-between items-center mb-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-2 rounded-lg max-w-3xl w-full mx-4">
+        <div className="flex justify-between mx-2 items-center">
           <h2 className="text-xl font-bold">Edit Game State</h2>
-          <Button variant="ghost" onClick={onClose}>x</Button>
         </div>
         <div className="space-y-4">
-          <textarea 
-            value={testState}
-            onChange={(e) => setTestState(e.target.value)}
-            className="w-full h-64 font-mono text-sm p-4 border rounded-lg"
-          />
-          <textarea 
-            value={testState}
-            onChange={(e) => setTestState(e.target.value)}
-            className="w-full h-64 font-mono text-sm p-4 border rounded-lg"
-          />
+          <div>
+            <textarea 
+              value={testState || "State not found"}
+              onChange={(e) => setTestState(e.target.value)}
+              className="w-full min-h-[70vh] h-full font-mono text-sm p-4 border rounded-lg"
+            />
+          </div>
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
             <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
           </div>
         </div>

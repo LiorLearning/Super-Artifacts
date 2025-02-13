@@ -15,36 +15,71 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [denominatorInput, setDenominatorInput] = useState("")
   const [canEnterNumerator, setCanEnterNumerator] = useState(false)
   const [canEnterDenominator, setCanEnterDenominator] = useState(false)
+  const [wholeIsCorrect, setWholeIsCorrect] = useState(false)
+  const [wholeIsWrong, setWholeIsWrong] = useState(false)
+  const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
+  const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
+  const [denominatorIsCorrect, setDenominatorIsCorrect] = useState(false)
+  const [denominatorIsWrong, setDenominatorIsWrong] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const messageShown = useRef(false)
 
 
   const handleWholeInput = (value: string) => {
     setWholeInput(value)
+    if (value === '') {
+      setWholeIsCorrect(false)
+      setWholeIsWrong(false)
+      return
+    }
     if (value === mixedFraction.whole.toString()) {
+      setWholeIsCorrect(true)
+      setWholeIsWrong(false)
       setCanEnterNumerator(true)
       sendAdminMessage("agent", "Great! Now enter the numerator")
-    } else if (value.length >= mixedFraction.whole.toString().length && value !== mixedFraction.whole.toString()) {
-      sendAdminMessage("agent", "Answer is " + mixedFraction.whole)
+    } else if (value.length >= mixedFraction.whole.toString().length) {
+      setWholeIsWrong(true)
+      setWholeIsCorrect(false)
+      sendAdminMessage("admin", `User answered incorrectly for the wholes pie, correct answer is ${mixedFraction.whole} but user answered ${value} . Diagnose socratically.`)
+
     }
   }
 
 
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
+    if (value === '') {
+      setNumeratorIsCorrect(false)
+      setNumeratorIsWrong(false)
+      return
+    }
     if (value === mixedFraction.numerator.toString()) {
+      setNumeratorIsCorrect(true)
+      setNumeratorIsWrong(false)
       setCanEnterDenominator(true)
     } else if (value.length >= mixedFraction.numerator.toString().length && value !== mixedFraction.numerator.toString()) {
-      sendAdminMessage("agent", "Answer is " + mixedFraction.numerator)
+      setNumeratorIsWrong(true)
+      setNumeratorIsCorrect(false)
+      sendAdminMessage("admin",  `User answered incorrectly for the numerator pie, correct answer is ${mixedFraction.numerator}, but user answered ${value} . Diagnose socratically.`)
+
     }
   }
 
   const handleDenominatorInput = (value: string) => {
     setDenominatorInput(value)
+    if (value === '') {
+      setDenominatorIsCorrect(false)
+      setDenominatorIsWrong(false)
+      return
+    }
     if (value === mixedFraction.denominator.toString()) {
       onComplete();
     } else if (value.length >= mixedFraction.denominator.toString().length && value !== mixedFraction.denominator.toString()) {
-      sendAdminMessage("agent", "Answer is " + mixedFraction.denominator)
+
+      setDenominatorIsWrong(true)
+      setDenominatorIsCorrect(false)
+      sendAdminMessage("admin",  `User answered incorrectly for the denominator pie, correct answer is ${mixedFraction.denominator}, but user answered ${value} . Diagnose socratically.`)
+
     }
   }
 
@@ -72,7 +107,10 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
               type="text"
               value={wholeInput}
               onChange={(e) => handleWholeInput(e.target.value)}
-              className="relative w-20 h-20 border-2 border-gray-300 rounded-lg text-center text-5xl"
+              className={`relative w-20 h-20 border-2 border-gray-300 rounded-lg text-center text-5xl
+                ${wholeIsCorrect ? 'bg-green-100' : ''}
+                ${wholeIsWrong ? 'bg-red-100' : ''}
+              `}
             />
           </div>
 
@@ -87,9 +125,11 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
                 value={numeratorInput}
                 onChange={(e) => handleNumeratorInput(e.target.value)}
                 disabled={!canEnterNumerator}
-                className={`relative w-20 h-20 border-2 border-gray-300 rounded-lg text-center text-5xl ${
-                  !canEnterNumerator ? 'bg-gray-100' : ''
-                }`}
+                className={`relative w-20 h-20 border-2 border-gray-300 rounded-lg text-center text-5xl
+                  ${!canEnterNumerator ? 'bg-gray-100' : ''}
+                  ${numeratorIsCorrect ? 'bg-green-100' : ''}
+                  ${numeratorIsWrong ? 'bg-red-100' : ''}
+                `}
               />
 
             </div>
@@ -101,9 +141,11 @@ const Step2: React.FC<Step2Props> = ({ mixedFraction, onComplete, sendAdminMessa
                 value={denominatorInput}
                 onChange={(e) => handleDenominatorInput(e.target.value)}
                 disabled={!canEnterDenominator}
-                className={`relative w-20 h-20 border-2 border-gray-300 rounded-lg text-center text-3xl ${
-                  !canEnterDenominator ? 'bg-gray-100' : ''
-                }`}
+                className={`relative w-20 h-20 border-2 border-gray-300 rounded-lg text-center text-5xl
+                  ${!canEnterDenominator ? 'bg-gray-100' : ''}
+                  ${denominatorIsCorrect ? 'bg-green-100' : ''}
+                  ${denominatorIsWrong ? 'bg-red-100' : ''}
+                `}
               />
             </div>
           </div>

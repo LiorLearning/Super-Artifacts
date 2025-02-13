@@ -20,7 +20,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
 
   const topFocusRef = useRef<HTMLDivElement>(null)
 
-
   useEffect(() => {
     if (!start.current) {
       sendAdminMessage(
@@ -33,14 +32,15 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
   }, [])
 
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'instant'
+    });
+  }, [step]);
 
+  useEffect(() => {
     if (step >= 0) {
-      window.scrollTo({
-        top: 0,
-        behavior: 'auto'
-      });
       topFocusRef.current?.focus();
-
     }
   }, [step]);
 
@@ -58,8 +58,8 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
     switch(step) {
       case 0:
         return (
-          <div className="min-h-screen bg-pink-50">
-            <div className="pt-32" style={{ transform: 'scale(0.65)', transformOrigin: 'top center' }}>
+          <div className="w-full bg-pink-50 pt-">
+            <div style={{ transform: 'scale(0.65)', transformOrigin: 'top center' }}>
               <div className="max-w-[700px] mx-auto flex flex-col items-center">
                 {/* Title with shadow effect */}
                 <div className="relative w-full mb-8">
@@ -103,15 +103,9 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
 
       case 1:
         return (
-          <div className="min-h-screen bg-pink-50">
-
-            <div 
-              ref={topFocusRef} 
-              tabIndex={-1} 
-              className="outline-none"
-            />
-            <div style={{ transform: 'scale(0.65)', transformOrigin: 'top top' }} className="mt-4">
-
+          <div className="w-full bg-pink-50 pt-4">
+            <div ref={topFocusRef} tabIndex={-1} className="outline-none" />
+            <div style={{ transform: 'scale(0.65)', transformOrigin: 'top center' }}>
               <Step1 
                 mixedFraction={mixedFraction}
                 sendAdminMessage={sendAdminMessage}
@@ -123,7 +117,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
 
       case 2:
         return (
-          <div className="min-h-screen bg-pink-50">
+          <div className="w-full bg-pink-50 pt-4">
 
             <div 
               ref={topFocusRef} 
@@ -143,7 +137,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
 
       case 3:
         return (
-          <div className="min-h-screen bg-pink-50">
+          <div className="w-full bg-pink-50 pt-4">
 
             <div 
               ref={topFocusRef} 
@@ -156,6 +150,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
                 mixedFraction={mixedFraction}
                 sendAdminMessage={sendAdminMessage}
                 onComplete={() => updateStep(4)}
+                updateStep={updateStep}
               />
             </div>
           </div>
@@ -163,7 +158,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
 
       case 4:
         return (
-          <div className="min-h-screen bg-pink-50">
+          <div className="w-full bg-pink-50 pt-4">
 
             <div 
               ref={topFocusRef} 
@@ -182,7 +177,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
 
       case 5:
         return (
-          <div className="min-h-screen bg-pink-50">
+          <div className="w-full bg-pink-50 pt-4">
             <div 
               ref={topFocusRef} 
               tabIndex={-1} 

@@ -16,7 +16,7 @@ export default function Screen1Step0({ sendAdminMessage }: BaseProps) {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent',
-        `Let's multiply wholes and fractions visually. Let's start 🎯💡`,
+        `Let's multiply wholes and fractions visually. Let's start.`,
       () => {
         goToStep('first', setGameStateRef, 1);
       });
