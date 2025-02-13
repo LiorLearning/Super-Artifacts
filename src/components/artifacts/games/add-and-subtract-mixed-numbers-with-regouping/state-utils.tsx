@@ -62,10 +62,10 @@ export const GameStateProvider: React.FC<{
         const updatedGameState = mergeGameState(initialGameState, fetchedGameState);
         const validationResult = checkGameStateLimits(updatedGameState);
         
-        if (validationResult.isValid) {
+        if (validationResult) {
           setGameStateRef(updatedGameState);
         } else {
-          alert(`Invalid game state: ${validationResult.reason}`);
+          alert(`Invalid game state`);
         }
       } catch (e) {
         console.error('Error fetching game state:', e);
