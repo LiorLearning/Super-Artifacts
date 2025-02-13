@@ -9,6 +9,8 @@ interface DecimalBoxProps {
     wholes: (value: string) => void;
     tenths: (value: string) => void;
   };
+  correctWholes?: string;
+  correctTenths?: string;
 }
 
 const DecimalBox = ({ 
