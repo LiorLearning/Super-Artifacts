@@ -84,20 +84,19 @@ export const initialGameState: GameState = {
 export const descriptions = [
   {
     title: 'First Screen',
-    description: 'Question related to unit fraction with denominator 2'
+    oneliner: 'Convert a half to decimal using tenths',
+    description: 'Players learn to convert a half fraction to a decimal through equivalent fractions. The game guides through a three-step process: selecting the appropriate multiple of ten, writing the equivalent fraction with that denominator, and expressing it as a decimal. Each step provides immediate feedback with color-coded inputs and includes a verification system for incorrect answers to reinforce understanding.'
   },
-
 
   {
     title: 'Second Screen',
-    description: 'Question related to unit fraction with denominator 5'
+    oneliner: 'Convert fractions with denominator five to decimals',
+    description: 'Players work with a sequence of fractions sharing the same denominator (fifths), converting each to decimals through equivalent fractions. Each fraction follows three steps: choosing an appropriate multiple of ten as denominator, finding the equivalent fraction, and writing the decimal. Later questions feature a streamlined interface with dropdown selection, helping players recognize patterns in converting fifths to decimals.'
   },
-
 
   {
     title: 'Third Screen',
-    description: 'Question related to unit fraction with denominator 4'
+    oneliner: 'Convert quarters to decimals using hundredths',
+    description: 'Players explore converting quarters to decimals, discovering why some fractions require hundredths rather than tenths for conversion. The first fraction demonstrates the necessity of using hundredths as the denominator, guiding players through the conversion process. The second fraction reinforces this concept, helping players understand when and why to use hundredths instead of tenths in decimal conversions.'
   }
-
-
 ];
