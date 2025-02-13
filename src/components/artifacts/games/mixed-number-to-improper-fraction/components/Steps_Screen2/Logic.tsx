@@ -4,6 +4,7 @@ import LockIcon from '@/assets/Lock.png';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import React from 'react';
+import SuccessAnimation from '@/components/artifacts/utils/success-animate'
 
 interface ExpressionWithAdditionProps {
   leftNumber: number;
@@ -26,7 +27,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const [showNextStep, setShowNextStep] = useState(false);
   const [topAnswer, setTopAnswer] = useState('');
   const [bottomAnswer, setBottomAnswer] = useState('');
-  const [showNextStep3, setShowNextStep3] = useState(false);
   const [showSecondBox, setShowSecondBox] = useState(true);
   const [canEnterDenominator, setCanEnterDenominator] = useState(false);
   const logicMessageShown = useRef(false);
@@ -42,7 +42,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const firstInputMessageShown = useRef(false)
   const topAnswerMessageShown = useRef(false)
   const bottomAnswerMessageShown = useRef(false)
-
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     if (!logicMessageShown.current) {
@@ -84,7 +84,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
 
   const handleSuccess = () => {
     setShowNextStep(false);
-    setShowNextStep3(true);
   };
 
   const handleTopAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,7 +130,9 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         setBottomAnswerIsCorrect(true)
         setBottomAnswerIsWrong(false)
         if (topAnswerIsCorrect) {
+          setShowSuccess(true);
           sendAdminMessage("agent", "It took just 2 steps to get to the answer. let's practice some more!", () => {
+            setShowSuccess(false);
             setGameStateRef(prev => ({
               ...prev,
               screen: 'third' as const,
@@ -254,7 +255,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                 <div className="relative w-[80px] h-[80px]">
                   <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
                   <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-
                   <input
                     value={inputValue}
                     onChange={handleInputChange}
@@ -263,7 +263,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                     `}
                     placeholder="?"
                   />
-
                 </div>
               </div>
             </div>
@@ -327,28 +326,13 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
             </div>
           </div>
         )}
-
-        {showNextStep3 && (
-          <div className="w-full">
-            <div className="bg-[#FF497C] rounded-t-[20px] p-3 flex items-center pb-16">
-              <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
-                <Image src={LockIcon} alt="Lock" width={35} height={35} />
-              </div>
-    
-              <div className="text-white text-[20px] mx-4 flex-1">
-                Add the numerator,<br />Denominator remains same
-              </div>
-    
-              <div className="bg-white rounded-xl px-6 py-3">
-                <ExpressionWithAddition 
-                  leftNumber={denominator * whole}
-                  fraction={{ numerator, denominator }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+
+      {showSuccess && (
+        <div className="fixed inset-0 z-50">
+          <SuccessAnimation />
+        </div>
+      )}
     </div>
   );
 };
