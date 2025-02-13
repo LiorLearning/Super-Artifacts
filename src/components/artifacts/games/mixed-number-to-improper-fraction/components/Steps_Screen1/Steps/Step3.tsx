@@ -4,16 +4,18 @@ import Level from "../level"
 
 import Image from "next/image"
 import redSlicer from "../../../../../../../../public/img/red-Slicer.png"
+import SuccessAnimation from '@/components/artifacts/utils/success-animate'
 
 
 interface Step3Props {
   mixedFraction: MixedFraction
   onComplete: () => void
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => void
+  updateStep: (step: number) => void
 }
 
 
-const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessage }) => {
+const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessage, updateStep }) => {
   const [showOptions, setShowOptions] = useState(false)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [clickedPieStates, setClickedPieStates] = useState<boolean[]>(Array(mixedFraction.whole).fill(false))
@@ -35,6 +37,10 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [errorCount, setErrorCount] = useState(0)
   const helpMessageShown = useRef(false)
   const knifeAudioRef = useRef<HTMLAudioElement | null>(null)
+
+  const [showSuccess, setShowSuccess] = useState(false)
+  const partCompleteAudioRef = useRef<HTMLAudioElement | null>(null)
+
 
 
   const handleSlicerClick = () => {
@@ -119,7 +125,10 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       if (Number(value) === expectedValue) {
         setNumeratorIsCorrect(true)
         setNumeratorIsWrong(false)
-        onComplete()
+
+        setShowSecondBox(false)
+        updateStep(5)
+
       } else {
         setNumeratorIsWrong(true)
         setNumeratorIsCorrect(false)
@@ -143,7 +152,19 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   useEffect(() => {
     if (allPiesClicked && selectedOption) {
       if (selectedOption === mixedFraction.denominator) {
-        onComplete()
+        setShowSuccess(true)
+        setShowSecondBox(false)
+        setShowHelpButton(false)
+        if (partCompleteAudioRef.current) {
+          partCompleteAudioRef.current.currentTime = 0
+          partCompleteAudioRef.current.addEventListener('ended', () => {
+            setTimeout(() => {
+              setShowSuccess(false)
+              onComplete()
+            }, 3000)
+          }, { once: true })
+          partCompleteAudioRef.current.play()
+        }
       } else {
         setShowErrorBox(true)
       }
@@ -174,7 +195,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
         selectedOption !== mixedFraction.denominator && 
         !wrongSelectionMessageShown.current) {
       wrongSelectionMessageShown.current = true;
-      sendAdminMessage("agent", "Not quite. Think about it, how many slices are needed to match the fraction pie?")
+      sendAdminMessage("agent", "Not quite. Think about it, how many slices are needed to match the fraction pie? Maybe try other slicers too.")
     }
   }, [allPiesClicked, selectedOption, mixedFraction.denominator, sendAdminMessage])
 
@@ -317,7 +338,9 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
         )}
 
         <div className="w-full max-w-4xl mx-auto mt-6">
-          <div className={`py-8 ${allPiesClicked && selectedOption ? 'bg-[#FFB9B9]' : 'bg-white'}`}>
+          <div className={`py-8 ${allPiesClicked && selectedOption ? 
+            (selectedOption === mixedFraction.denominator ? 'bg-green-100' : 'bg-[#FFB9B9]') 
+            : 'bg-white'}`}>
             <div className="flex items-center justify-center gap-2 text-5xl">
               {/* Mixed fraction part */}
               <div className="flex items-center">
@@ -334,7 +357,9 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
               {allPiesClicked && selectedOption ? (
                 <div className="flex flex-col justify-center items-center">
                   <span className="border-b-2 border-black w-10">&nbsp;</span>
-                  <span className="text-red-500">{selectedOption}</span>
+                  <span className={selectedOption === mixedFraction.denominator ? 'text-green-500' : 'text-red-500'}>
+                    {selectedOption}
+                  </span>
                 </div>
               ) : (
                 <span className="text-[#009C43]">{mixedFraction.whole}</span>
@@ -393,7 +418,15 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
         )}
       </div>
 
+      {showSuccess && (
+        <div className="fixed inset-0 z-50">
+          <SuccessAnimation />
+        </div>
+      )}
+      
       <audio ref={knifeAudioRef} src="/sounds/KnifeCut.mp3" />
+      <audio ref={partCompleteAudioRef} src="/sounds/PartComplete.mp3" />
+
     </div>
   );
 };

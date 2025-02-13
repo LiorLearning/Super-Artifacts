@@ -150,6 +150,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ sendAdminMessage }) => {
                 mixedFraction={mixedFraction}
                 sendAdminMessage={sendAdminMessage}
                 onComplete={() => updateStep(4)}
+                updateStep={updateStep}
               />
             </div>
           </div>
