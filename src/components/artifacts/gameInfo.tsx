@@ -50,15 +50,57 @@ interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string> }>;
   useState: any;
   provider: React.ComponentType<{ children: React.ReactNode }>;
-  initialGameState: any;
+  initialGameState: any
 }
 
 export const gameInfo: Record<string, GameInfo> = {
+  'template-game': {
+    game: TemplateGame,
+    useState: TemplateGameState,
+    provider: TemplateGameStateProvider,
+    initialGameState: templateInitialState,
+  },
+  'add-and-subtract-mixed-numbers-with-regouping': {
+    game: MixedFractionGameWithRegouping,
+    useState: MixedFractionWithRegoupingGameState,
+    provider: MixedFractionWithRegoupingGameStateProvider,
+    initialGameState: mixedFractionGameWithRegoupingInitialState
+  },
+  'add-and-subtract-mixed-numbers-without-regouping': {
+    game: MixedFractionGame,
+    useState: MixedFractionWithoutRegoupingGameState,
+    provider: MixedFractionWithoutRegoupingGameStateProvider,
+    initialGameState: mixedFractionWithoutRegoupingInitialState
+  },
+  'add-fractions-with-common-denominator': {
+    game: FractionAdditionGame,
+    useState: FractionAdditionGameState,
+    provider: FractionAdditionGameStateProvider,
+    initialGameState: fractionAdditionInitialState
+  },
   'addition-within-20-using-ten-frames': {
     game: AdditionGame,
     useState: AdditionGameState,
     provider: AdditionGameStateProvider,
     initialGameState: additionGameInitialState
+  },
+  'common-denominators': {
+    game: CommonDenominatorGame,
+    useState: CommonDenominatorGameState,
+    provider: CommonDenominatorGameStateProvider,
+    initialGameState: commonDenominatorGameInitialState
+  },
+  'common-decimals-and-fractions': {
+    game: CommonDecimalsAndFractions,
+    provider: CommonDecimalsAndFractionsProvider,
+    useState: CommonDecimalsAndFractionsState,
+    initialGameState: commonDecimalsAndFractionsInitialState
+  },
+  'compare-fractions-with-different-numerator-and-denominator': {
+    game: CompareFractionGame,
+    useState: CompareFractionGameState,
+    provider: CompareFractionGameStateProvider,
+    initialGameState: compareFractionGameInitialState
   },
   'compare-fractions-with-same-numerator-or-denominator': {
     game: FractionsGame,
@@ -72,59 +114,11 @@ export const gameInfo: Record<string, GameInfo> = {
     provider: EquivalentFractionsGameStateProvider,
     initialGameState: equivalentFractionsGameInitialState
   },
-  'common-denominators': {
-    game: CommonDenominatorGame,
-    useState: CommonDenominatorGameState,
-    provider: CommonDenominatorGameStateProvider,
-    initialGameState: commonDenominatorGameInitialState
-  },
-  'subtract-fractions-with-common-denominator': {
-    game: FractionSubtractionGame,
-    useState: FractionSubtractionGameState,
-    provider: FractionSubtractionGameStateProvider,
-    initialGameState: fractionSubtractionInitialState
-  },
-  'add-fractions-with-common-denominator': {
-    game: FractionAdditionGame,
-    useState: FractionAdditionGameState,
-    provider: FractionAdditionGameStateProvider,
-    initialGameState: fractionAdditionInitialState
-  },
-  'add-and-subtract-mixed-numbers-without-regouping': {
-    game: MixedFractionGame,
-    useState: MixedFractionWithoutRegoupingGameState,
-    provider: MixedFractionWithoutRegoupingGameStateProvider,
-    initialGameState: mixedFractionWithoutRegoupingInitialState
-  },
-  'writing-improper-fractions-as-mixed-numbers': {
-    game: LegoGame,
-    useState: LegoGameState,
-    provider: LegoGameStateProvider,
-    initialGameState: legoGameInitialState
-  },
-  'template-game': {
-    game: TemplateGame,
-    useState: TemplateGameState,
-    provider: TemplateGameStateProvider,
-    initialGameState: templateInitialState,
-  },
-  'compare-fractions-with-different-numerator-and-denominator': {
-    game: CompareFractionGame,
-    useState: CompareFractionGameState,
-    provider: CompareFractionGameStateProvider,
-    initialGameState: compareFractionGameInitialState
-  },
   'fraction-to-decimal': {
     game: DecimalGame,
     useState: DecimalGameState,
     provider: DecimalGameStateProvider,
     initialGameState: decimalGameInitialState
-  },
-  'add-and-subtract-mixed-numbers-with-regouping': {
-    game: MixedFractionGameWithRegouping,
-    useState: MixedFractionWithRegoupingGameState,
-    provider: MixedFractionWithRegoupingGameStateProvider,
-    initialGameState: mixedFractionGameWithRegoupingInitialState
   },
   'mixed-number-to-improper-fraction': {
     game: MixedNumberToImproperFractionGame,
@@ -138,10 +132,16 @@ export const gameInfo: Record<string, GameInfo> = {
     provider: MultiplyingWholesAndFractionsGameStateProvider,
     initialGameState: multiplyingWholesAndFractionsGameInitialState
   },
-  'common-decimals-and-fractions': {
-    game: CommonDecimalsAndFractions,
-    provider: CommonDecimalsAndFractionsProvider,
-    useState: CommonDecimalsAndFractionsState,
-    initialGameState: commonDecimalsAndFractionsInitialState
-  }
+  'subtract-fractions-with-common-denominator': {
+    game: FractionSubtractionGame,
+    useState: FractionSubtractionGameState,
+    provider: FractionSubtractionGameStateProvider,
+    initialGameState: fractionSubtractionInitialState
+  },
+  'writing-improper-fractions-as-mixed-numbers': {
+    game: LegoGame,
+    useState: LegoGameState,
+    provider: LegoGameStateProvider,
+    initialGameState: legoGameInitialState
+  },
 };
