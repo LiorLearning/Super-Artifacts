@@ -1,4 +1,10 @@
-export const desc = ``;
+export const descriptions = [
+  {
+    title: 'zero',
+    oneliner: 'Introduction to mixed number to improper fraction',
+    description: 'This screen introduces the concept of mixed number to improper fraction using a visual mixed number metaphor. It presents an initial mixed number (e.g., 2 1/2) and asks students to think about how many pieces they would need out of a larger denominator (e.g., 6) to represent the same amount. The screen features a simple interface with the question and a "Let\'s find out" button to proceed to the interactive exercises.'
+  }
+];
 
 export type GameScreen = 'first' | 'second' | 'third';
 

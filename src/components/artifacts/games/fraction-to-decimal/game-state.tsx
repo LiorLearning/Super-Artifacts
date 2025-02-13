@@ -1,4 +1,10 @@
-export const desc = ``;
+export const descriptions = [
+  {
+    title: 'zero',
+    oneliner: 'Introduction to fraction to decimal',
+    description: 'This screen introduces the concept of fraction to decimal using a visual fraction metaphor. It presents an initial fraction (e.g., 2/3) and asks students to think about how many pieces they would need out of a larger denominator (e.g., 6) to represent the same amount. The screen features a simple interface with the question and a "Let\'s find out" button to proceed to the interactive exercises.'
+  }
+];
 
 export type GameScreen = 'zero' | 'first' | 'second' | 'third' | 'fourth' | 'fifth';
 

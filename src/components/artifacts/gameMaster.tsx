@@ -17,9 +17,7 @@ interface GameComponentProps {
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string>;
 }
 
-// Get the current game component
 const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) => {
-  // If the game doesn't exist in gameInfo, fallback to template
   const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
   const Provider = gameInfo[gameKey].provider;
   const Game = gameInfo[gameKey].game;
@@ -84,7 +82,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
       } as AssistanceResponseMessage, onComplete);
     }
 
-    return messageId; // Return the messageId for optional tracking
+    return messageId;
   };
 
   useEffect(() => {
@@ -127,90 +125,89 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   };
 
 
+
   if (!isClient) return null;
 
   return (
     <div className="flex h-screen">
-      <div className="flex flex-1 h-full">
-        <div className="w-3/4 border-r-border flex flex-col h-full overflow-auto">
-          <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg h-full max-w-full">
-            <div className="mb-4 flex items-center gap-2">
-              <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
-                <SelectTrigger className="p-2 border-border rounded-md flex-1">
-                  <SelectValue placeholder="Select a game" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(gameInfo).map((gameKey) => (
-                    <SelectItem key={gameKey} value={gameKey}>
-                      {gameKey}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsEditorOpen(true)}
-                className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
-                title="Edit GameState"
-              >
-                <Edit2Icon className="h-4 w-4" />
-                <span>Edit GameState</span>
-              </Button>
-              <GameStateEditor 
-                gameKey={currentGame}
-                isOpen={isEditorOpen}
-                onClose={() => setIsEditorOpen(false)}
-                initialState={gameInfo[currentGame]?.initialGameState}
-              />
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  localStorage.removeItem(currentGame);
-                  window.location.reload();
-                }}
-                className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
-                title="Reset GameState"
-                disabled={localStorage.getItem(currentGame) === null}
-              >
-                <TimerResetIcon className="h-4 w-4" />
-                <span>Reset GameState</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleReloadGame}
-                className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
-                title="Reload Game"
-              >
-                <RefreshCw className="h-4 w-4" />
-                <span>Retry</span>
-              </Button>
-            </div>
-            
-            {/* Game container */}
-            <div className="flex-1 h-full w-full overflow-y-auto border-2 border-gray-300 rounded-lg" ref={componentRef}>
-              {!isConnected || loading ? (
-                <GameLoader />
-              ) : (
-                currentGame && (
-                  <div className="relative h-full w-full">
-                    <div className="relative h-full w-full overflow-auto">
+      <div className="w-[75%] border-r-border flex flex-col h-full overflow-auto">
+        <div className="flex-1 flex p-2 flex-col bg-background border-border rounded-lg h-full max-w-full">
+          <div className="mb-4 flex items-center gap-2">
+            <Select value={currentGame ?? ''} onValueChange={(value) => handleGameChange(value as GameKey)}>
+              <SelectTrigger className="p-2 border-border rounded-md flex-1">
+                <SelectValue placeholder="Select a game" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(gameInfo).map((gameKey) => (
+                  <SelectItem key={gameKey} value={gameKey}>
+                    {gameKey}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditorOpen(true)}
+              className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
+              title="Edit GameState"
+            >
+              <Edit2Icon className="h-4 w-4" />
+              <span>Edit GameState</span>
+            </Button>
+            <GameStateEditor 
+              gameKey={currentGame}
+              isOpen={isEditorOpen}
+              onClose={() => setIsEditorOpen(false)}
+              initialState={gameInfo[currentGame].initialGameState}
+            />
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                localStorage.removeItem(currentGame);
+                window.location.reload();
+              }}
+              className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
+              title="Reset GameState"
+              disabled={localStorage.getItem(currentGame) === null}
+            >
+              <TimerResetIcon className="h-4 w-4" />
+              <span>Reset GameState</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleReloadGame}
+              className="hover:bg-gray-100 text-foreground px-4 py-2 flex items-center gap-2"
+              title="Reload Game"
+            >
+              <RefreshCw className="h-4 w-4" />
+              <span>Retry</span>
+            </Button>
+          </div>
+          
+          <div className="flex-1 h-full w-full overflow-y-auto border-2 border-gray-300 rounded-lg" ref={componentRef}>
+            {!isConnected || loading ? (
+              <GameLoader />
+            ) : (
+              currentGame && (
+                <div className="relative h-full w-full">
+                  <div className="relative h-full w-full overflow-auto">
                       <GameComponent currentGame={currentGame} sendAdminMessage={sendAdminMessage} />
-                    </div>
                   </div>
-                )
-              )}
-            </div>
+                </div>
+              )
+            )}
           </div>
         </div>
-        <div className="w-1/4 min-w-[250px] flex flex-col">
-          <Chat 
-            desc={getDescription?.()} 
-            componentRef={componentRef} 
-            gameState={gameStateRef} 
-          />
-        </div>
       </div>
+      <div className="w-[25%] min-w-[250px] flex flex-col">
+      <Chat 
+        desc={getDescription?.()} 
+        componentRef={componentRef} 
+        gameState={gameStateRef} 
+      />
     </div>
+
+    </div>      
   );
 };
 
@@ -231,37 +228,36 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
   });
   const [error, setError] = useState<string>("");
 
+  useEffect(() => {
+    const savedState = localStorage.getItem(gameKey);
+    setTestState(savedState || JSON.stringify(initialState, null, 2));
+  }, [gameKey, initialState]);
+
   if (!isOpen) return null;
 
   const handleApply = () => {
-    try {
-      const parsedState = JSON.parse(testState);
-      const gamestate = gameInfo[gameKey]?.initialGameState || gameInfo['template-game'].initialGameState;
-      
-      if (gamestate) {
-        localStorage.setItem(gameKey, testState);
-        window.location.reload();
-      } else {
-        setError("State validation failed - invalid state structure");
-      }
+      try {
+      localStorage.setItem(gameKey, testState);
+      window.location.reload();
     } catch (e) {
-      setError("Invalid JSON format");
+      setError("Invalid JSON");
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
-      <div className="bg-white p-6 rounded-lg max-w-3xl w-full mx-4">
-        <div className="flex justify-between items-center mb-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-2 rounded-lg max-w-3xl w-full mx-4">
+        <div className="flex justify-between mx-2 items-center">
           <h2 className="text-xl font-bold">Edit Game State</h2>
-          <Button variant="ghost" onClick={onClose}>x</Button>
         </div>
         <div className="space-y-4">
-          <textarea 
-            value={testState}
-            onChange={(e) => setTestState(e.target.value)}
-            className="w-full h-64 font-mono text-sm p-4 border rounded-lg"
-          />
+          <div>
+            <textarea 
+              value={testState || "State not found"}
+              onChange={(e) => setTestState(e.target.value)}
+              className="w-full min-h-[70vh] h-full font-mono text-sm p-4 border rounded-lg"
+            />
+          </div>
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
