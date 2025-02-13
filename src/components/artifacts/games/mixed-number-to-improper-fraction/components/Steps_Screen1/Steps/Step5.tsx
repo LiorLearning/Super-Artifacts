@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react"
 import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
+import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 interface Step5Props {
   mixedFraction: MixedFraction
@@ -15,11 +16,20 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [denominatorInput, setDenominatorInput] = useState("")
   const [showFinal, setShowFinal] = useState(false)
   const [isNumeratorCorrect, setIsNumeratorCorrect] = useState(false)
+  const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
+  const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
+  const [denominatorIsCorrect, setDenominatorIsCorrect] = useState(false)
+  const [denominatorIsWrong, setDenominatorIsWrong] = useState(false)
+  const [errorCount, setErrorCount] = useState(0)
+  const countMessageShown = useRef(false)
+  const numeratorMessageShown = useRef(false)
 
-  // Add ref to track if narration was shown
   const messageShown = useRef(false)
 
-  // Add initial narration
+  const levelCompleteAudioRef = useRef<HTMLAudioElement | null>(null)
+
+  const [showSuccess, setShowSuccess] = useState(false)
+
   useEffect(() => {
     if (!messageShown.current) {
       messageShown.current = true;
@@ -29,9 +39,37 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
   const handleNumeratorInput = (value: string) => {
     setNumeratorInput(value)
+    
+    if (value === '') {
+      setNumeratorIsCorrect(false)
+      setNumeratorIsWrong(false)
+      return
+    }
+
     const correctNumerator = (mixedFraction.whole * mixedFraction.denominator + mixedFraction.numerator).toString()
-    if (value === correctNumerator) {
-      setIsNumeratorCorrect(true)
+    
+    if (value.length >= correctNumerator.length) {
+      if (value === correctNumerator) {
+        setNumeratorIsCorrect(true)
+        setNumeratorIsWrong(false)
+        setIsNumeratorCorrect(true)
+        // Add success message for correct numerator
+        sendAdminMessage("agent", "Great! Now enter the denominator to complete the fraction.")
+      } else {
+        setNumeratorIsWrong(true)
+        setNumeratorIsCorrect(false)
+        setErrorCount(prev => {
+          const newCount = prev + 1
+          if (newCount === 1 && !numeratorMessageShown.current) {
+            numeratorMessageShown.current = true
+            sendAdminMessage("admin", `User answered incorrectly for the numerator pie, correct answer is ${correctNumerator}, but user answered ${value} . Diagnose socratically.`)
+          } else if (newCount === 2 && !countMessageShown.current) {
+            countMessageShown.current = true
+            sendAdminMessage("admin", `User answered incorrectly for the denominator pie, correct answer is ${correctNumerator}, but user answered ${value} . Diagnose socratically.`)
+          }
+          return newCount
+        })
+      }
     }
   }
 
@@ -40,12 +78,47 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
     
     setDenominatorInput(value)
     
-    // Check if both inputs are correct
-    if (isNumeratorCorrect && value === mixedFraction.denominator.toString()) {
-      // Add completion narration before finishing
-      sendAdminMessage("agent", "Awesome, you have converted the mixed number to an improper fraction.", () => {
-        onComplete()
-      })
+    if (value === '') {
+      setDenominatorIsCorrect(false)
+      setDenominatorIsWrong(false)
+      return
+    }
+
+    if (value.length >= mixedFraction.denominator.toString().length) {
+      if (value === mixedFraction.denominator.toString()) {
+        setDenominatorIsCorrect(true)
+        setDenominatorIsWrong(false)
+        if (isNumeratorCorrect) {
+          if (levelCompleteAudioRef.current) {
+            levelCompleteAudioRef.current.currentTime = 0
+            setShowSuccess(true)  // Show animation immediately with sound
+            levelCompleteAudioRef.current.play()
+            levelCompleteAudioRef.current.addEventListener('ended', () => {
+              sendAdminMessage("agent", "Awesome, you have converted the mixed number to an improper fraction.", () => {
+                setShowFinal(true)
+                setTimeout(() => {
+                  setShowSuccess(false)  // Hide animation after delay
+                  sendAdminMessage("agent", "What to do next? Learn a quick way to solve this, or maybe do this again?")
+                }, 1000)
+              })
+            }, { once: true })
+          }
+        }
+      } else {
+        setDenominatorIsWrong(true)
+        setDenominatorIsCorrect(false)
+        setErrorCount(prev => {
+          const newCount = prev + 1
+          if (newCount === 1) {
+            sendAdminMessage("admin", `User answered incorrectly for the denominator pie, correct answer is ${mixedFraction.denominator}, but user answered ${value} . Diagnose socratically.`)
+          } else if (newCount === 2 && !countMessageShown.current) {
+            countMessageShown.current = true
+            sendAdminMessage("agent", "Let's count the pieces one by one. Click each quarter to count them all.")
+          }
+          return newCount
+        })
+      }
+
     }
   }
 
@@ -86,120 +159,37 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
   }
 
   return (
-    <div className="w-full min-h-screen bg-pink-50">
-      <Level mixedFraction={mixedFraction} />
+    <div className={showSuccess ? 'pointer-events-none relative' : ''}>
+      <div className="w-full min-h-screen bg-pink-50 pt-4">
+        <Level mixedFraction={mixedFraction} />
 
-      {!showFinal ? (
-        <div className="w-full">
-          <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-black">
-            <div className="flex justify-center items-center gap-8 py-16">
-              {[...Array(mixedFraction.whole + 1)].map((_, index) => (
-                <div key={`whole-${index}`} className="w-28 h-28">
-                  <svg viewBox="0 0 100 100" className="w-full h-full">
+        {!showFinal ? (
+          <div className="w-full">
+            <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-gray-400">
+              <div className="flex justify-center items-center gap-8 py-16">
+                {[...Array(mixedFraction.whole + 1)].map((_, index) => (
+                  <div key={`whole-${index}`} className="w-28 h-28">
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
 
-                    <circle 
-                      cx="50" 
-                      cy="50" 
-                      r="48" 
-                      fill={index === mixedFraction.whole ? "white" : "#98D400"}
-                      stroke="black" 
-                      strokeWidth="0.5"
-                    />
+                      <circle 
+                        cx="50" 
+                        cy="50" 
+                        r="48" 
+                        fill={index === mixedFraction.whole ? "white" : "#98D400"}
+                        stroke="black" 
+                        strokeWidth="0.5"
+                      />
 
-                    {renderSliceLines()}
-                    {index === mixedFraction.whole && renderColoredQuarters()}
-                  </svg>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="w-full max-w-4xl mx-auto mt-6">
-            <div className="flex items-center justify-center gap-5 text-5xl py-8 bg-white">
-              <div className="flex items-center">
-                {mixedFraction.whole}
-                <div className="flex flex-col mx-2 justify-center items-center">
-                  <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
-                  <span>{mixedFraction.denominator}</span>
-                </div>
-              </div>
-
-              <span className="mx-4">=</span>
-
-              <div className="flex flex-col justify-center items-center">
-                <span className="border-b-2 border-black text-[#009C43]">12</span>
-                <span className="text-[#009C43]">4</span>
-              </div>
-
-              <span className="mx-4">+</span>
-
-              <div className="flex flex-col justify-center items-center">
-                <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
-                <span>{mixedFraction.denominator}</span>
-              </div>
-
-              <span className="mx-4">=</span>
-
-              <div className="flex flex-col justify-center items-center gap-4">
-                <div className="relative">
-                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-lg"></div>
-                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-lg"></div>
-                  <input
-                    type="text"
-                    value={numeratorInput}
-                    onChange={(e) => handleNumeratorInput(e.target.value)}
-                    className="relative w-16 h-16 border-2 border-black rounded-lg text-center text-4xl"
-                    placeholder="?"
-                  />
-                </div>
-                <div className="relative">
-                  {isNumeratorCorrect && (
-                    <>
-                      <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-lg"></div>
-                      <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-lg"></div>
-                    </>
-                  )}
-                  <input
-                    type="text"
-                    value={denominatorInput}
-                    onChange={(e) => handleDenominatorInput(e.target.value)}
-                    className="relative w-16 h-16 border-2 border-black rounded-lg text-center text-4xl"
-                    placeholder="?"
-                    disabled={!isNumeratorCorrect}
-                  />
-                </div>
+                      {renderSliceLines()}
+                      {index === mixedFraction.whole && renderColoredQuarters()}
+                    </svg>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
-        </div>
-      ) : (
-        <div className="w-full">
-          <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-black">
-            <div className="flex justify-center items-center gap-8 py-16">
-              {[...Array(mixedFraction.whole + 1)].map((_, index) => (
-                <div key={`whole-${index}`} className="w-28 h-28">
-                  <svg viewBox="0 0 100 100" className="w-full h-full">
 
-                    <circle 
-                      cx="50" 
-                      cy="50" 
-                      r="48" 
-                      fill={index === mixedFraction.whole ? "white" : "#98D400"}
-                      stroke="black" 
-                      strokeWidth="0.5"
-                    />
-
-                    {renderSliceLines()}
-                    {index === mixedFraction.whole && renderColoredQuarters()}
-                  </svg>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="w-full max-w-4xl mx-auto mt-6 flex justify-center">
-            <div className="bg-white border-4 border-[#FF497C] rounded-3xl p-6">
-              <div className="flex items-center justify-center gap-5 text-5xl">
+            <div className="w-full max-w-4xl mx-auto mt-6">
+              <div className="flex items-center justify-center gap-5 text-5xl py-8 bg-white">
                 <div className="flex items-center">
                   {mixedFraction.whole}
                   <div className="flex flex-col mx-2 justify-center items-center">
@@ -207,39 +197,138 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
                     <span>{mixedFraction.denominator}</span>
                   </div>
                 </div>
+
                 <span className="mx-4">=</span>
+
                 <div className="flex flex-col justify-center items-center">
-                  <span className="border-b-2 border-black text-[#FF497C]">{numeratorInput}</span>
-                  <span className="text-[#FF497C]">{denominatorInput}</span>
+                  <span className="border-b-2 border-black text-[#009C43]">12</span>
+                  <span className="text-[#009C43]">4</span>
+                </div>
+
+                <span className="mx-4">+</span>
+
+                <div className="flex flex-col justify-center items-center">
+                  <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
+                  <span>{mixedFraction.denominator}</span>
+                </div>
+
+                <span className="mx-4">=</span>
+
+                <div className="flex flex-col justify-center items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-lg"></div>
+                    <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-lg"></div>
+                    <input
+                      type="text"
+                      value={numeratorInput}
+                      onChange={(e) => handleNumeratorInput(e.target.value)}
+                      className={`relative w-16 h-16 border-2 border-black rounded-lg text-center text-4xl
+                        ${numeratorIsCorrect ? 'bg-green-100' : ''}
+                        ${numeratorIsWrong ? 'bg-red-100' : ''}
+                      `}
+                      placeholder="?"
+                    />
+                  </div>
+                  <div className="relative">
+                    {isNumeratorCorrect && (
+                      <>
+                        <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-lg"></div>
+                        <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-lg"></div>
+                      </>
+                    )}
+                    <input
+                      type="text"
+                      value={denominatorInput}
+                      onChange={(e) => handleDenominatorInput(e.target.value)}
+                      className={`relative w-16 h-16 border-2 border-black rounded-lg text-center text-4xl
+                        ${denominatorIsCorrect ? 'bg-green-100' : ''}
+                        ${denominatorIsWrong ? 'bg-red-100' : ''}
+                      `}
+                      placeholder="?"
+                      disabled={!isNumeratorCorrect}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        ) : (
+          <div className="w-full">
+            <div className="bg-white w-full max-w-4xl mx-auto min-h-[300px] border-2 border-gray-400">
+              <div className="flex justify-center items-center gap-8 py-16">
+                {[...Array(mixedFraction.whole + 1)].map((_, index) => (
+                  <div key={`whole-${index}`} className="w-28 h-28">
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
 
-          <div className="text-center text-2xl mt-8 mb-8">
-            What's your next step?
-          </div>
+                      <circle 
+                        cx="50" 
+                        cy="50" 
+                        r="48" 
+                        fill={index === mixedFraction.whole ? "white" : "#98D400"}
+                        stroke="black" 
+                        strokeWidth="0.5"
+                      />
 
-          <div className="flex justify-center gap-8">
-            <button 
-              onClick={() => navigateToScreen2()}
-              className="relative bg-black rounded-full"
-            >
-              <div className="relative bg-white border-2 border-[#FF497C] rounded-full px-8 py-3 -translate-x-1 -translate-y-1">
-                <span className="text-[#FF497C] text-xl font-medium">Learn a Hack!</span>
+                      {renderSliceLines()}
+                      {index === mixedFraction.whole && renderColoredQuarters()}
+                    </svg>
+                  </div>
+                ))}
               </div>
-            </button>
-            <button 
-              onClick={() => updateStep(0)}
-              className="relative bg-black rounded-full"
-            >
-              <div className="relative bg-white border-2 border-[#FF497C] rounded-full px-8 py-3 -translate-x-1 -translate-y-1">
-                <span className="text-[#FF497C] text-xl font-medium">Try this Again...</span>
+            </div>
+
+            <div className="w-full max-w-4xl mx-auto mt-6 flex justify-center">
+              <div className="bg-white border-4 border-[#FF497C] rounded-3xl p-6">
+                <div className="flex items-center justify-center gap-5 text-5xl">
+                  <div className="flex items-center">
+                    {mixedFraction.whole}
+                    <div className="flex flex-col mx-2 justify-center items-center">
+                      <span className="border-b-2 border-black">{mixedFraction.numerator}</span>
+                      <span>{mixedFraction.denominator}</span>
+                    </div>
+                  </div>
+                  <span className="mx-4">=</span>
+                  <div className="flex flex-col justify-center items-center">
+                    <span className="border-b-2 border-black text-[#FF497C]">{numeratorInput}</span>
+                    <span className="text-[#FF497C]">{denominatorInput}</span>
+                  </div>
+                </div>
               </div>
-            </button>
+            </div>
+
+            <div className="text-center text-2xl mt-8 mb-8">
+              What's your next step?
+            </div>
+
+            <div className="flex justify-center gap-8">
+              <button 
+                onClick={() => navigateToScreen2()}
+                className="relative bg-black rounded-full"
+              >
+                <div className="relative bg-white border-2 border-[#FF497C] rounded-full px-8 py-3 -translate-x-1 -translate-y-1">
+                  <span className="text-[#FF497C] text-xl font-medium">Learn a Hack!</span>
+                </div>
+              </button>
+              <button 
+                onClick={() => updateStep(0)}
+                className="relative bg-black rounded-full"
+              >
+                <div className="relative bg-white border-2 border-[#FF497C] rounded-full px-8 py-3 -translate-x-1 -translate-y-1">
+                  <span className="text-[#FF497C] text-xl font-medium">Try this Again...</span>
+                </div>
+              </button>
+            </div>
           </div>
+        )}
+      </div>
+
+      {showSuccess && (
+        <div className="fixed inset-0 z-50">
+          <SuccessAnimation />
         </div>
       )}
+      
+      <audio ref={levelCompleteAudioRef} src="/sounds/LevelComplete.mp3" />
     </div>
   )
 }

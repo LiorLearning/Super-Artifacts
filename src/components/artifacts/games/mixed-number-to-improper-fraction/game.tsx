@@ -12,18 +12,29 @@ interface GameProps {
 }
 
 export default function Game({sendAdminMessage}: GameProps) {
-  const { gameStateRef } = useGameState();
+  const { gameStateRef, setGameStateRef } = useGameState();
   const { screen } = gameStateRef.current;
   const { step: step1 } = gameStateRef.current.state1;
   const { step: step2 } = gameStateRef.current.state2;
   
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+  // Remove bottomRef and its useEffect that was scrolling to bottom
 
-  useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [step1, step2]);
+  // Add scroll utility function
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // In your step change handlers
+  const handleStepComplete = () => {
+    setGameStateRef(prev => ({
+      ...prev,
+      state1: {
+        ...prev.state1,
+        step: prev.state1.step + 1
+      }
+    }))
+    scrollToTop()
+  }
 
   return (
     <div className="mx-auto game font-jersey">
@@ -40,8 +51,6 @@ export default function Game({sendAdminMessage}: GameProps) {
             font-family: 'Jersey 25', cursive;
           }
         `}</style>
-
-      <div ref={bottomRef} style={{ height: 0 }} />
     </div>
   )
 }
