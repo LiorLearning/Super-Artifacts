@@ -183,20 +183,23 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
                 </motion.div>
               </div>
             ) : (step >= 2) && (
-              <div className="flex flex-col gap-4 absolute -right-32 bg-white rounded-lg p-4">
-                <Fraction 
-                  numerator={selectedPieces} 
-                  denominator={denominator} 
-                  className='text-3xl text-black'
-                />
+              <div className={`flex flex-col gap-4 absolute ${isSelectionLocked ? '-right-24' : '-right-32'} ${isSelectionLocked ? 'top-[50%]' : 'top-[75%]'} -translate-y-1/2 bg-white rounded-lg p-4`}>
+                <div className="flex items-center text-4xl font-bold">
+                  <div className="flex flex-col items-center">
+                    <span>{selectedPieces}</span>
+                    <div className="w-full border-t-2 border-black"></div>
+                    <span>{denominator}</span>
+                  </div>
+                </div>
                 {step === 2 && !isSelectionLocked && (
                   <motion.div
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
+                    className="mt-4"
                   >
                     <Button
                       onClick={handleSubmitSelection}
-                      className="bg-[#d3ea00] hover:bg-[#d3ea00]/80 text-black px-4 py-2 rounded-sm flex items-center gap-2 transition-all duration-200 shadow-lg w-full"
+                      className="bg-[#d3ea00] hover:bg-[#d3ea00]/80 text-black px-4 py-2 rounded-sm flex items-center gap-2 transition-all duration-200 shadow-lg"
                     >
                       Done ✓
                     </Button>
