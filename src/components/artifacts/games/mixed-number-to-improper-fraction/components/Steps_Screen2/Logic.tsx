@@ -177,9 +177,9 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
 
   return (
     <div className="min-h-screen bg-pink-50 flex flex-col">
-      <div className="w-full max-w-[600px] mx-auto p-4 flex flex-col gap-8">
-        {/* Main pink container*/}
-        <div className="bg-[#FF497C] rounded-[20px] p-2 flex items-center w-[450px] mx-auto">
+      <div className="w-full max-w-[600px] mx-auto p-4 flex flex-col">
+        {/* Main pink container with Quick Hack */}
+        <div className="bg-[#FF497C] rounded-[20px] p-2 flex items-center w-[450px] mx-auto mb-16">
           <div className="text-white text-center text-[28px] leading-[32px] w-[120px]">
             Quick
             <br />
@@ -210,27 +210,27 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
           </div>
         </div>
 
-        {showSecondBox && (
-          /* Bottom instruction container */
-          <div className="bg-[#FF497C] rounded-[20px] p-3 flex items-center">
+        {/* Connected boxes */}
+        <div className="relative">
+          {/* First pink box */}
+          <div className="bg-[#FF497C] rounded-[20px] p-3 flex items-center mb-8">
             <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
               <Image src={LockIcon} alt="Lock" width={35} height={35} />
             </div>
-
 
             <div className="text-white text-[20px] mx-4 flex-1">
               Multiply denominator and <br /> wholes
             </div>
 
-            {/* Expression boxes */}
-            <div className="flex items-center gap-3">
-              {/* Left expression box with shadow */}
-              <div className="relative">
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-                <div className="bg-white rounded-xl px-4 py-2 relative">
+            <div className="relative">
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+              <div className="bg-white rounded-xl px-4 py-2 relative">
+                {firstInputIsCorrect ? (
+                  <span className="text-3xl">{denominator * whole}</span>
+                ) : (
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl -mt-3">{whole}</span>
+                    <span className="text-2xl">{whole}</span>
                     <Image 
                       src="/img/Multiply.png" 
                       alt="multiply" 
@@ -244,47 +244,37 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                       <span className="text-2xl">{denominator}</span>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Result box with shadow */}
-              <div className="relative -bottom-2.5">
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-white text-lg whitespace-nowrap">
-                  {denominator} * {whole}
-                </div>
-                <div className="relative">
-                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-                  <div className="bg-white rounded-xl w-[60px] overflow-hidden relative">
-                    {showInput ? (
-                      <div className="relative">
-                        <input
-                          value={inputValue}
-                          onChange={handleInputChange}
-                          className={`w-full h-[60px] text-center text-3xl outline-none
-                            ${firstInputIsCorrect ? 'bg-green-100' : firstInputIsWrong ? 'bg-red-100' : 'bg-transparent'}
-                          `}
-                        />
-                      </div>
-                    ) : (
-                      <div 
-                        onClick={() => setShowInput(true)}
-                        className="h-[60px] flex items-center justify-center cursor-pointer"
-                      >
-                        <span className="text-3xl">?</span>
-                      </div>
-                    )}
-                  </div>
-
-                </div>
+                )}
               </div>
             </div>
           </div>
-        )}
 
-        {/* Appears when correct */}
+          {/* Red box with input - only show when not correct */}
+          {!firstInputIsCorrect && (
+            <div className="bg-[#B40033] rounded-[20px] p-8 pt-16 -mt-10">
+              <div className="flex flex-col items-center">
+                <div className="text-white text-lg mb-4">
+                  {denominator} X {whole}
+                </div>
+                <div className="relative w-[80px] h-[80px]">
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+                  <input
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    className={`absolute inset-0 rounded-xl border-4 border-white text-center text-3xl outline-none z-10
+                      ${firstInputIsCorrect ? 'bg-green-100' : firstInputIsWrong ? 'bg-red-100' : 'bg-white'}
+                    `}
+                    placeholder="?"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
         {showNextStep && (
-          <div className="w-full">
+          <div className="w-full mt-4">
             <div className="bg-[#FF497C] rounded-t-[20px] p-3 flex items-center pb-16">
               <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
                 <Image src={LockIcon} alt="Lock" width={35} height={35} />
