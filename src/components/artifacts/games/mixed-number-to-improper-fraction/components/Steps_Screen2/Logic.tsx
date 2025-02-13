@@ -132,7 +132,11 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         setBottomAnswerIsWrong(false)
         if (topAnswerIsCorrect) {
           sendAdminMessage("agent", "It took just 2 steps to get to the answer. let's practice some more!", () => {
-            handleSuccess();
+            setGameStateRef(prev => ({
+              ...prev,
+              screen: 'third' as const,
+              state2: { ...prev.state2, step: 1 }
+            }));
           });
         }
       } else {
@@ -145,14 +149,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
       }
 
     }
-  };
-
-  const handleNextLevel = () => {
-    setGameStateRef(prev => ({
-      ...prev,
-      screen: 'third' as const,
-      state2: { ...prev.state2, step: 1 }
-    }));
   };
 
   const ExpressionWithAddition: React.FC<ExpressionWithAdditionProps> = ({ leftNumber, fraction }) => (
@@ -249,7 +245,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
             </div>
           </div>
 
-          {/* Red box with input - only show when not correct */}
           {!firstInputIsCorrect && (
             <div className="bg-[#B40033] rounded-[20px] p-8 pt-16 -mt-10">
               <div className="flex flex-col items-center">
@@ -275,7 +270,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
 
         {showNextStep && (
           <div className="w-full mt-4">
-            <div className="bg-[#FF497C] rounded-t-[20px] p-3 flex items-center pb-16">
+            <div className="bg-[#FF497C] rounded-[20px] p-3 flex items-center">
               <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
                 <Image src={LockIcon} alt="Lock" width={35} height={35} />
               </div>
@@ -285,25 +280,23 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
               </div>
 
               <div className="relative">
-              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-              <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
-              <div className="bg-white rounded-xl px-6 py-3 relative">
-                <ExpressionWithAddition 
-                  leftNumber={denominator * whole}
-
-                  fraction={{ numerator, denominator }}
-                />
-              </div>
+                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+                <div className="bg-white rounded-xl px-6 py-3 relative">
+                  <ExpressionWithAddition 
+                    leftNumber={denominator * whole}
+                    fraction={{ numerator, denominator }}
+                  />
+                </div>
               </div>
             </div>
 
-
             {/* Bottom answer container */}
-            <div className="bg-[#B40033] rounded-b-[20px] -mt-10 p-8 pt-16">
+            <div className="bg-[#B40033] rounded-[20px] p-8">
               <div className="flex flex-col items-center gap-4">
                 <div className="relative w-[80px] h-[80px]">
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
                   <input
                     value={topAnswer}
                     onChange={handleTopAnswerChange}
@@ -315,8 +308,8 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                 </div>
                 <div className="h-[3px] w-24 bg-white"></div>
                 <div className="relative w-[80px] h-[80px]">
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
-                <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
+                  <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
                   <input
                     value={bottomAnswer}
                     onChange={handleBottomAnswerChange}
@@ -350,36 +343,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                   fraction={{ numerator, denominator }}
                 />
               </div>
-            </div>
-
-            {/* Bottom red container */}
-            <div className="bg-[#B40033] rounded-b-[20px] -mt-10 p-8">
-              <div className="flex items-center">
-                <div className="flex flex-col items-center">
-                  <div className="bg-white rounded-xl px-4 py-2">
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl">{(denominator * whole) + numerator}</span>
-                      <div className="h-[2px] w-5 bg-black"></div>
-                      <span className="text-3xl">{denominator}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-white text-[20px] ml-8">
-                  We get the same answer as with pies
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-center mt-8">
-              <button
-                onClick={handleNextLevel}
-                className="px-4 py-2 bg-white text-black border-[11px] border-[#FF497C] text-2xl relative"
-                style={{
-                  boxShadow: '-4px 4px 0px 0px rgba(0,0,0,1)'
-                }}
-              >
-                Next Level &gt;&gt;
-              </button>
             </div>
           </div>
         )}
