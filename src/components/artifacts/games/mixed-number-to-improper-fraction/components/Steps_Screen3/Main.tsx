@@ -286,7 +286,7 @@ const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2, sendAdminMe
 
   return (
     <div className={showSuccess ? 'pointer-events-none relative' : ''}>
-      <div className="w-full max-w-4xl mx-auto px-6">
+      <div className="w-full max-w-4xl mx-auto px-6 pt-20 transform scale-[1.4]">
         <h1 className="text-3xl text-pink-500 text-center mb-20">
           Let's do some more now!
         </h1>
