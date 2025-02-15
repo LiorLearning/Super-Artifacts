@@ -1,5 +1,5 @@
-import { useGameState } from '../state-utils';
-import { BaseProps } from '../utils/types';
+import { useGameState } from '../../state-utils';
+import { BaseProps } from '../../utils/types';
 
 
 export default function ThirdScreen({ sendAdminMessage }: BaseProps) {

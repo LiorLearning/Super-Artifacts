@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useRef } from 'react';
-import FirstScreen from './screen/first';
-import SecondScreen from './screen/second';
-import ThirdScreen from './screen/third';
+import FirstScreen from './screen/FirstScreen/first';
+import SecondScreen from './screen/SecondScreen/second';
+import ThirdScreen from './screen/ThirdScreen/third';
 import { useGameState } from './state-utils';
 import { DevHelper } from './utils/helper';
 
@@ -40,6 +40,10 @@ export default function Game({sendAdminMessage}: GameProps) {
           @import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');
           .font-jersey {
             font-family: 'Jersey 25', cursive;
+          }
+          @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+          .font-patrick {
+            font-family: 'Patrick Hand', cursive;
           }
         `}</style>
 

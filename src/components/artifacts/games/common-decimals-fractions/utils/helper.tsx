@@ -52,7 +52,6 @@ export const DevHelper = () => {
       <div className="flex items-center">
         <Input 
           type="number" 
-          value={getCurrentStep()} 
           onChange={(e) => setDirectStep(e.target.value)}
           className="w-16 mr-2 border-2 border-gray-300 rounded-md text-center"
           onKeyDown={(e) => {
