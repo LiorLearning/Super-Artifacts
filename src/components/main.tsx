@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { MessageProvider } from './MessageContext'
 import { WebSocketProvider } from './websocket'
 import MathGamesContainer from './artifacts/gameMaster'
-
+import Profile from './auth/profile'
 
 export default function Main() {
   const componentRef = useRef<HTMLDivElement | null>(null);
