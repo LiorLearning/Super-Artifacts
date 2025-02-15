@@ -16,7 +16,7 @@ export default function Screen2Step0({sendAdminMessage} : BaseProps) {
       if (!hasGameStartedRef.current) {
         hasGameStartedRef.current = true;
         sendAdminMessage('agent',
-          `Now we see how to multiply ${whole} times ${fraction.numerator}/${fraction.denominator}. Let's start 🎯💡`,
+          `Now we see how to multiply ${whole} times ${fraction.numerator}/${fraction.denominator}. Let's start.`,
         () => {
           goToStep('second', setGameStateRef, 1);
         });

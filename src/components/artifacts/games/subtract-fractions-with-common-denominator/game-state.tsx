@@ -19,7 +19,7 @@ export const descriptions: Description[] = [
   }
 ]
 
-interface Fraction {
+export interface Fraction {
   numerator: number;
   denominator: number;
 }

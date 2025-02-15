@@ -63,7 +63,7 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
 
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage('agent', `Let's practice more challenging problems now. Try creating ${numerator}/${denominator} of a chocolate"`);
+      sendAdminMessage('agent', `Let's practice more challenging problems now. Try creating ${numerator}/${denominator} of a chocolate`);
       start.current = true;
     }
   }, []);
