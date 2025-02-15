@@ -10,7 +10,7 @@ interface KeyProps {
   isActive: boolean;
 }
 
-export default function ({ n, a, b, isActive }: KeyProps) {
+export default function NewKey({ n, a, b, isActive }: KeyProps) {
 
   const imageClass = !isActive ? 'grayscale' : '';
 
