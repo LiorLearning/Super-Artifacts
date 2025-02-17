@@ -2,52 +2,39 @@ import { useGameState } from '../../state-utils';
 import { BaseProps } from '../../utils/types';
 import LeftArrow from '../../assets/LeftArrow.png';
 import NewKey from '../../components/newKey';
-import Chest from '../../assets/chest-without-border.png';
+import chest from '../../assets/chest-without-border.png';
 import background from '../../assets/bg-small-without-chest.png'
 
 
 export default function Screen2Step1({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const level4 = {
-    n: gameStateRef.current.state4.key.n,
-    a: gameStateRef.current.state4.key.a,
-    b: gameStateRef.current.state4.key.b
-  }
-  const level3 = {
-    n: gameStateRef.current.state3.key.n,
-    a: gameStateRef.current.state3.key.a,
-    b: gameStateRef.current.state3.key.b
-  }
-  const level2 = {
-    n: gameStateRef.current.state2.key.n,
-    a: gameStateRef.current.state2.key.a,
-    b: gameStateRef.current.state2.key.b
-  }
-  
-  return (
-    <div className="mx-auto min-h-screen overflow-hidden relative" style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat'}}>
 
-      <div className='flex justify-center items-center space-x-8 text-2xl leading-none py-24 relative'>
-        <div>
-          <img src={LeftArrow.src} alt="left-arrow" />
+  return (
+    <div className="mx-auto min-h-screen overflow-hidden" style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat' }}>
+
+      <div className='absolute flex items-center justify-center w-full gap-[3vh] translate-y-[5vh]'>
+        <img src={LeftArrow.src} className='w-[3vh] h-auto' alt="left-arrow" />
+        <div className='flex flex-col items-center justify-center'>
+          <h1 className='translate-y-[4vh] text-[2.5vh]'>Level {gameStateRef.current.state3.key.level}</h1>
+          <NewKey n={gameStateRef.current.state3.key.n} a={gameStateRef.current.state3.key.a} b={gameStateRef.current.state3.key.b} isActive={false} />
         </div>
-        <div className='flex flex-col items-center'>  
-          <h1 className='absolute top-[84px] text-xl'>Level 4</h1>
-          <NewKey n={level4.n} a={level4.a} b={level4.b} isActive={false}/>
+        <div className='flex flex-col items-center justify-center'>
+          <h1 className='-translate-y-[2vh] text-[3vh]'>Level {gameStateRef.current.state2.key.level}</h1>
+          <NewKey  n={gameStateRef.current.state2.key.n} a={gameStateRef.current.state2.key.a} b={gameStateRef.current.state2.key.b} isActive={true} />
         </div>
-        <div className='flex flex-col items-center'> 
-          <h1 className='absolute top-[50px] '>Level 2</h1>
-          <NewKey n={level2.n} a={level2.a} b={level2.b} isActive={true}/>
+        <div className='flex flex-col items-center justify-center'>
+          <h1 className='translate-y-[4vh] text-[2.5vh]'>Level {gameStateRef.current.state4.key.level}</h1>
+          <NewKey  n={gameStateRef.current.state4.key.n} a={gameStateRef.current.state4.key.a} b={gameStateRef.current.state4.key.b} isActive={false} />
         </div>
-        <div className='flex flex-col items-center'> 
-          <h1 className='absolute top-[84px] text-xl'>Level 3</h1>
-          <NewKey n={level3.n} a={level3.a} b={level3.b} isActive={false}/>
-        </div>
-        <div>
-          <img className='rotate-180' src={LeftArrow.src} alt="left-arrow" />
-        </div>
+        <img src={LeftArrow.src} className='w-[3vh] h-auto transform rotate-180' alt="left-arrow" />
+      </div>  
+
+      <div className='relative min-h-screen min-w-full transform -translate-x-[4vh] translate-y-[27vh] flex justify-center items-center'>
+        <img src={chest.src}
+          className='absolute scale-[1.2] h-[48vh] w-auto z-10'
+          alt="chest"
+        />
       </div>
-      <img src={Chest.src} className='absolute scale-[1.2] bottom-1 left-1/2 transform -translate-x-[55%] z-10' alt="chest" />
     </div>
   );
 }

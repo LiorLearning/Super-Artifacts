@@ -21,10 +21,10 @@ const DraggableKey = ({ n, a, b }: { n: number; a: number; b: number }) => {
   }));
 
   return (
-    <div 
+    <div
       ref={drag as unknown as React.LegacyRef<HTMLDivElement>}
-      id='first' 
-      className='absolute scale-[1.2] top-[43%] left-[54%] z-20 cursor-move'
+      id='first'
+      className='absolute translate-x-[40vw] translate-y-[38vh] z-20 cursor-move'
       style={{ opacity: isDragging ? 0 : 1 }}
     >
       <NewKey n={n} a={a} b={b} isActive={true} />
@@ -45,10 +45,10 @@ const DropTarget = ({ n, a, b, onDrop, isDropped }: { n: number; a: number; b: n
   }));
 
   return (
-    <div 
+    <div
       ref={drop as unknown as React.LegacyRef<HTMLDivElement>}
       id='second'
-      className={`absolute scale-[1.2] top-[57%] left-[44.6%] z-20 transition-opacity duration-300
+      className={`absolute top-[52.5vh] w-full z-20 transition-opacity duration-300
         ${isDropped ? 'opacity-100' : isOver ? 'opacity-50' : 'opacity-0'}`}
     >
       <NewKey n={n} a={a} b={b} isActive={true} />
@@ -69,21 +69,24 @@ export default function Screen2Step3({ sendAdminMessage }: BaseProps) {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="mx-auto min-h-screen relative overflow-hidden" style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>
-        <div className='mx-auto flex justify-center items-center gap-4 absolute left-1/2 top-[10%] transform -translate-x-1/2'>
-          <div className='bg-[#f5f8e5] px-10 py-3 text-2xl leading-none rounded-[20px] flex items-center justify-center gap-4'>
-            <div className='flex flex-col justify-center items-center'>
-              <div className='bg-[#ffdc3e] w-8 text-center p-1 rounded-lg border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{n}</div>
-              <div className='px-6 border-b-2 my-2 border-[#8A1900]'></div>
-              <div className='bg-[#ffdc3e] p-1 w-8 text-center rounded-lg border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{a * b}</div>
-            </div>
-            <h1 className='text-[#8A1900] scale-y-125'>Key is ready...</h1>
-          </div>
+      <div className='bg-[#f5f8e5] px-[4vw] py-[2vh] text-[1.7vw] leading-none rounded-[2vw] absolute left-1/2 transform -translate-x-1/2 translate-y-[10vh] shadow-lg opacity-90 flex justify-center items-center gap-[2vh]'>
+        <div className='flex flex-col justify-center items-center'>
+          <div className='bg-[#ffdc3e] w-[5vh] text-center p-[0.3vh] rounded-[1vh] border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{n}</div>
+          <div className='px-[3vh] border-b-[0.2vh] my-[0.8vh] border-[#8A1900]'></div>
+          <div className='bg-[#ffdc3e] w-[5vh] text-center p-[0.3vh] rounded-[1vh] border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{a * b}</div>
         </div>
+        <h1 className='text-[#8A1900] scale-y-125'>Key is ready...</h1>
+      </div>
 
         {!isDropped && <DraggableKey n={n} a={a} b={b} />}
         <DropTarget n={n} a={a} b={b} onDrop={handleDrop} isDropped={isDropped} />
 
-        <img src={Chest.src} className='absolute scale-[1.2] bottom-[15%] left-1/2 transform -translate-x-[55%]  z-10' alt="chest" />
+        <div className='relative min-h-screen min-w-full transform -translate-x-[4vh] translate-y-[10vh] flex justify-center items-center'>
+          <img src={Chest.src}
+            className='absolute scale-[1.2] h-[48vh] w-auto z-10'
+            alt="chest"
+          />
+        </div>
       </div>
     </DndProvider>
   );

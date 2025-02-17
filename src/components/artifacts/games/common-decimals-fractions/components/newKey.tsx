@@ -10,15 +10,15 @@ interface KeyProps {
   isActive: boolean;
 }
 
-export default function NewKey({ n, a, b, isActive }: KeyProps) {
+export default function NewKey({ n=2, a, b, isActive }: KeyProps) {
 
   const imageClass = !isActive ? 'grayscale' : '';
 
   return (
-    <div className={`flex flex-col items-center ${!isActive ? 'scale-[0.75] opacity-50' : 'scale-[1.1]'}`}>
+    <div className={`flex flex-col justify-center items-center ${!isActive ? 'scale-[0.75] opacity-50' : 'scale-[1.1]'}`}>
       <div className={`relative`}>
-        <img className={`${imageClass}`} src={KeyImage.src} alt="key" />
-        <div className='flex flex-wrap content-start absolute w-[88%] h-[49%] top-[7px] left-[6px] z-10'>
+        <img className={`${imageClass} w-[18vh] h-auto`} src={KeyImage.src} alt="key" />
+        <div className='flex flex-wrap content-start absolute w-[15.8vh] h-[49%] top-[1.2vh] left-[1.1vh] z-10'>
           {Array.from({ length: a * b }, (_, i) => (
             i < n && (
               <img
@@ -31,7 +31,7 @@ export default function NewKey({ n, a, b, isActive }: KeyProps) {
             )
           ))}
         </div>
-        <div className='flex justify-between items-center absolute w-[88%] h-[49%] top-[7px] left-[6px]'>
+        <div className='flex justify-between items-center absolute w-[15.8vh] h-[49%] top-[1.2vh] left-[1.1vh]'>
           {Array.from({ length: b + 1 }, (_, i) => (
             <img
               key={`divider-${i}`}
@@ -41,7 +41,7 @@ export default function NewKey({ n, a, b, isActive }: KeyProps) {
             />
           ))}
         </div>
-        {a != 1 && <div className='flex justify-between items-center absolute w-[88%] h-[50%] top-[7px] left-[6px] rotate-90'>
+        {a != 1 && <div className='flex justify-between items-center absolute w-[15.8vh] h-[49%] top-[1.2vh] left-[1.1vh] rotate-90'>
           {Array.from({ length: a + 1 }, (_, i) => (
             <img
               key={`divider-${i}`}

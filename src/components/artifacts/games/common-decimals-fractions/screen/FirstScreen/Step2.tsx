@@ -3,7 +3,7 @@ import { useGameState } from '../../state-utils';
 import { BaseProps } from '../../utils/types';
 import NewKey from '../../components/newKey';
 import NewInput from '@/components/ui/newinput';
-import Chest from '../../assets/chest-without-border.png';
+import chest from '../../assets/chest-without-border.png';
 import background from '../../assets/bg-small-without-chest.png'
 
 
@@ -14,14 +14,13 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const [num, setNum] = useState('');
   const [den, setDen] = useState('');
 
-  const inputClassName = 'w-10 my-2 text-2xl bg-[#ffdc3e] text-center border border-black rounded-md outline-none shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]';
+  const inputClassName = 'p-[1vh] w-[3vw] text-center text-[1.7vw] leading-none bg-[#ffdc3e] text-center border border-black rounded-[1.2vh] outline-none shadow-[#c98600] shadow-[-0.15vw_0.15vw_0px_0px_rgba(0,0,0)]';
 
   return (
-    <div className="mx-auto min-h-screen relative overflow-hidden" style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>
+    <div className="mx-auto min-h-screen overflow-hidden" style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>
 
-      <div className='flex justify-center items-center pt-24 shad mr-[104px]'>
-
-        <div className='flex flex-col justify-center items-center mr-8 mb-[90px]'>
+      <div className='absolute flex justify-center items-center w-full translate-y-[7vh] gap-[4vh]'>
+        <div className='flex flex-col justify-center items-center  mb-[15vh]'>
           <NewInput
             value={num}
             onValueChange={(value) => setNum(value)}
@@ -29,7 +28,7 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
             correctValue={n.toString()}
             placeholder='?'
           />
-          <div className='px-[28px] border-b-2 border-[#c98600]'></div>
+          <div className='px-[3vh] my-[1.5vh] border-b-2 border-[#c98600]'></div>
           <NewInput
             value={den}
             onValueChange={(value) => setDen(value)}
@@ -38,12 +37,17 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
             placeholder='?'
           />
         </div>
-        <div className='scale-[1.1]'>
+        <div className='mr-[11vh]'>
           <NewKey n={n} a={a} b={b} isActive={true} />
         </div>
       </div>
 
-      <img src={Chest.src} className='absolute scale-[1.2] bottom-1 left-1/2 transform -translate-x-[55%] z-10' alt="chest" />
+      <div className='relative min-h-screen min-w-full transform -translate-x-[4vh] translate-y-[27vh] flex justify-center items-center'>
+        <img src={chest.src}
+          className='absolute scale-[1.2] h-[48vh] w-auto z-10'
+          alt="chest"
+        />
+      </div>    
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useCallback } from
 import { MessageContext, Message, useMessageContext } from './MessageContext';
 import { WifiOff, Wifi } from 'lucide-react';
 import { AudioContext } from './utils/elevenlabs_audio_stream';
+import Profile from './auth/profile';
 
 // const SPEAKOUT = process.env.NEXT_PUBLIC_PROD === 'true';
 const SPEAKOUT = false;
@@ -254,8 +255,9 @@ export const WebSocketStatus: React.FC = () => {
   const { isConnected } = useWebSocketLogger();
   
   return (
-    <div className="p-2 rounded-full flex items-center justify-center">
+    <div className="p-2 rounded-full flex gap-4 items-center justify-center">
       {isConnected ? <Wifi className="text-green-500" /> : <WifiOff className="text-red-500" />}
+      <Profile />
     </div>
   );
 };

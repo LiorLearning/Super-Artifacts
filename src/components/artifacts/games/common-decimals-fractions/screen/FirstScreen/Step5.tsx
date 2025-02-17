@@ -13,7 +13,7 @@ export default function Screen1Step5({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { n, a, b, level } = gameStateRef.current.state1.key;
 
-  const decimalClassName = 'w-10  text-2xl leading-none text-center bg-white outline-none border-4 border-[#9c9b9b] rounded-md'
+  const decimalClassName = 'w-[4vh] h-auto py-[0.4vh]  text-[3vh] leading-none text-center bg-white outline-none border-[0.2vh] border-[#9c9b9b] rounded-md'
   const [decimal, setDecimal] = useState({
     before: '',
     after: ''
@@ -28,40 +28,39 @@ export default function Screen1Step5({ sendAdminMessage }: BaseProps) {
   }, [])
 
   return (
-    <div className="mx-auto max-h-screen overflow-hidden" style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>
+    <div className="mx-auto max-h-screen overflow-hidden"
+      style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>
 
+      <div className='bg-[#f5f8e5] px-[4vw] py-[2vh] text-[1.7vw] leading-none rounded-[2vw] absolute left-1/2 transform -translate-x-1/2 translate-y-[10vh] shadow-lg opacity-90'>
+        <h1 className='text-[#8A1900] scale-y-125 py-[2vh]'>You’ve unlocked the CODE BOX</h1>
+      </div>  
 
-      <div className='bg-[#f5f8e5] px-12 py-3 text-2xl leading-none rounded-[20px] absolute left-1/2 transform -translate-x-1/2 top-[20%] shadow-lg'>
-        <h1 className='text-[#8A1900] scale-y-125 py-5'>You’ve unlocked the CODE BOX</h1>
-      </div>
-
-
-      <div className='relative min-h-screen min-w-full pr-20 translate-y-20 flex justify-center items-center'>
+      <div className='min-h-screen min-w-full pr-[5vw] translate-y-[9vh] flex flex-col justify-center items-center'>
         <img src={Chest.src}
-          className='absolute scale-[1.2]  z-10'
+          className='absolute scale-[1.2] z-10 h-[52vh] w-auto'
           alt="chest"
         />
-        <div className='flex flex-wrap content-start absolute -translate-y-2.5 translate-x-[27px] w-[130px] h-[130px] z-20'>
+        <div className='flex flex-wrap content-start absolute -translate-y-[1.3vh] translate-x-[3.7vh] w-[17vh] h-[17.4vh] z-20'>
           {Array.from({ length: (10 / b) * n }, (_, i) => (
             true && (
               <img
                 key={`numerator-${i}`}
                 style={{ height: `${100 / a}%` }}
-                className='w-[13px]'
+                className='w-[1.7vh]'
                 src={yellowbar.src}
                 alt="numerator"
               />
             )
           ))}
         </div>
-        <div className={`absolute flex flex-row justify-center items-center transform translate-x-[25px] -translate-y-[182px] gap-2 z-10 transition-opacity duration-1000 ${showCode ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`absolute flex justify-center items-center translate-x-[2vw] -translate-y-[24.2vh] gap-[0.5vw] z-10 transition-opacity duration-1000 ${showCode ? 'opacity-100' : 'opacity-0'}`}>
           <NewInput
             value={decimal.before}
             onValueChange={(value) => setDecimal({ ...decimal, before: value })}
             correctValue='0'
             className={decimalClassName}
           />
-          <div className='border-4 h-0 rounded-full border-white '></div>
+          <div className='border-[0.3vw] mt-[1.5vh] h-0 rounded-full border-white '></div>
           <NewInput
             value={decimal.after}
             onValueChange={(value) => setDecimal({ ...decimal, after: value })}
@@ -69,20 +68,21 @@ export default function Screen1Step5({ sendAdminMessage }: BaseProps) {
             className={decimalClassName}
           />
         </div>
-        <div className='absolute flex flex-col justify-center items-center pb-4 z-10 -translate-x-[108px] text-3xl'>
-          <div className='bg-white px-3 p-2 w-12 text-center  rounded-lg border border-black leading-none'>{n}</div>
-          <div className='px-6 border-b-2 my-2 border-white'></div>
-          <div className='bg-white  px-3 p-2 w-12 text-center rounded-lg border border-black leading-none'>{a * b}</div>
+        <div className='absolute flex flex-col justify-center items-center pb-[3vh] z-10 -translate-x-[15vh] text-[3.5vh]'>
+          <div className='bg-white p-[1vh] w-[5.5vh] text-center rounded-[0.6vw] border border-black leading-none'>{n}</div>
+          <div className='px-[2vw] border-b-2 my-[1vh] border-white'></div>
+          <div className='bg-white p-[1vh] w-[5.5vh] text-center rounded-[0.6vw] border border-black leading-none'>{a * b}</div>
         </div>
       </div>
 
-      <div style={{ backgroundImage: `url(${downbanner.src})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat' }} className='absolute w-[400px] h-[150px] left-1/2 transform -translate-x-[57%] top-[100%] flex justify-center items-center gap-4'>
-        <div className='flex flex-col justify-center items-center pb-4 pl-4 text-xl'>
-          <div className='bg-[#ffdc3e] w-8 text-center  rounded-lg border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{n}</div>
-          <div className='px-6 border-b-2 my-1 border-[#8A1900]'></div>
-          <div className='bg-[#ffdc3e]  w-8 text-center rounded-lg border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{a * b}</div>
+      <div style={{ backgroundImage: `url(${downbanner.src})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat' }}
+        className='absolute w-[25vw] h-[17vh] left-1/2 transform -translate-x-[53%] -translate-y-[20vh] flex justify-center items-center gap-[1.5vw]'>
+        <div className='flex flex-col justify-center items-center pb-[2.5vh] pl-[2vw] text-[1.5vw]'>
+          <div className='bg-[#ffdc3e] w-[2.5vw] text-center rounded-[0.6vw] border border-black shadow-[#c98600] shadow-[-0.15vw_0.15vw_0px_0px_rgba(0,0,0)]'>{n}</div>
+          <div className='px-[1.5vw] border-b-[0.2vh] my-[0.5vh] border-[#8A1900]'></div>
+          <div className='bg-[#ffdc3e] w-[2.5vw] text-center rounded-[0.6vw] border border-black shadow-[#c98600] shadow-[-0.15vw_0.15vw_0px_0px_rgba(0,0,0)]'>{a * b}</div>
         </div>
-        <h1 className='text-[#8A1900] text-2xl scale-y-125 pb-4'>Key ENGAGED</h1>
+        <h1 className='text-[#8A1900] text-[1.7vw] scale-y-125 pb-[2vh]'>Key ENGAGED</h1>
       </div>
     </div>
   );

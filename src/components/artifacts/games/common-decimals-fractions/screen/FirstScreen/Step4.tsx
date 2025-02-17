@@ -14,41 +14,34 @@ export default function Screen1Step4({ sendAdminMessage }: BaseProps) {
   return (
     <div className="mx-auto max-h-screen overflow-hidden " style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>
 
-        <div className='flex justify-center items-center gap-4 absolute left-1/2 transform -translate-x-1/2 translate-y-[60%]'>
-          <div className='bg-[#f5f8e5] px-12 py-3 text-2xl leading-none rounded-[20px] flex items-center justify-center gap-4'>
-            <div className='flex flex-col justify-center items-center'>
-              <div className='bg-[#ffdc3e] w-8 text-center p-1 rounded-lg border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{n}</div>
-              <div className='px-6 border-b-2 my-2 border-[#8A1900]'></div>
-              <div className='bg-[#ffdc3e] p-1 w-8 text-center rounded-lg border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{a * b}</div>
-            </div>
-            <h1 className='text-[#8A1900] scale-y-125'>Key is ready...</h1>
-          </div>
+      <div className='bg-[#f5f8e5] px-[4vw] py-[2vh] text-[1.7vw] leading-none rounded-[2vw] absolute left-1/2 transform -translate-x-1/2 translate-y-[10vh] shadow-lg opacity-90 flex justify-center items-center gap-[2vh]'>
+        <div className='flex flex-col justify-center items-center'>
+          <div className='bg-[#ffdc3e] w-[5vh] text-center p-[0.3vh] rounded-[1vh] border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{n}</div>
+          <div className='px-[3vh] border-b-[0.2vh] my-[0.8vh] border-[#8A1900]'></div>
+          <div className='bg-[#ffdc3e] w-[5vh] text-center p-[0.3vh] rounded-[1vh] border border-black shadow-[#c98600] shadow-[-2px_2px_0px_0px_rgba(0,0,0)]'>{a * b}</div>
         </div>
-      
-        <div className='relative min-h-screen min-w-full pr-20 translate-y-28 flex justify-center items-center'>
-          <img src={Chest.src} 
-            className='absolute scale-[1.2]  z-10' 
-            alt="chest" 
-          />
-          <div className='flex flex-wrap content-start absolute -translate-y-3 translate-x-[27px] w-[130px] h-[130px] z-20'>
-            {Array.from({ length: (10/b) * n }, (_, i) => (
-              true && (
-                <img
-                  key={`numerator-${i}`}
-                  style={{ height: `${100 / a}%` }}
-                  className='w-[13px]'
-                  src={yellowbar.src}
-                  alt="numerator"
-                />
-              )
-            ))}
-          </div>
+        <h1 className='text-[#8A1900] scale-y-125'>Key is ready...</h1>
+      </div>
+
+      <div className='min-h-screen min-w-full pr-[5vw] translate-y-[10vh] flex flex-col justify-center items-center'>
+        <img src={Chest.src}
+          className='absolute scale-[1.2] z-10 h-[52vh] w-auto'
+          alt="chest"
+        />
+        <div className='flex flex-wrap content-start absolute -translate-y-[1.5vh] translate-x-[3.7vh] w-[17vh] h-[17vh] z-20'>
+          {Array.from({ length: (10 / b) * n }, (_, i) => (
+            true && (
+              <img
+                key={`numerator-${i}`}
+                style={{ height: `${100 / a}%` }}
+                className='w-[1.7vh]'
+                src={yellowbar.src}
+                alt="numerator"
+              />
+            )
+          ))}
         </div>
-
-
-        <div style={{ backgroundImage: `url(${downbanner.src})`, backgroundSize: 'auto', backgroundRepeat: 'no-repeat' }} className='absolute h-[100px] left-1/2 transform -translate-x-1/2 -translate-y-28'>
-
-        </div>
+      </div>
     </div>
   );
 }
