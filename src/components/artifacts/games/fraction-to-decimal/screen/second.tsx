@@ -7,6 +7,7 @@ import FractionBox from '../components/FractionBox';
 import DecimalBox from '../components/DecimalBox';
 import Proceed from '../components/proceed';
 import { sounds } from '../utils/sound';
+import HintVisual from '../components/HintVisual';
 
 
 export default function SecondScreen({ sendAdminMessage }: BaseProps) {
@@ -212,6 +213,8 @@ function Hundred({ sendAdminMessage }: BaseProps) {
   const [tenths, setTenths] = useState('');
   const [hundredths, setHundredths] = useState('');
   const [showHint, setShowHint] = useState(false);
+  const hintRef = useRef<HTMLDivElement>(null);
+  const [showHintVisual, setShowHintVisual] = useState(false);
 
   const start = useRef(false);
 
@@ -285,6 +288,15 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     setFractionDenominator(value);
   };
 
+  const scrollToHint = () => {
+    if (!showHint) {  
+      setShowHint(true);
+      setTimeout(() => {
+        hintRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
   const handleWholesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setWholes(value);
@@ -292,7 +304,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     const correctWholes = Math.floor(question3.numerator/question3.denominator);
     if (value.length > 0 && parseInt(value) !== correctWholes) {
       sounds.join();
-      setShowHint(true);
+      scrollToHint();
       sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
     } else if (value.length > 0 && parseInt(value) === correctWholes) {
       sounds.levelUp();
@@ -307,7 +319,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     const correctTenths = Math.floor((question3.numerator * 10) / question3.denominator) % 10;
     if (value.length > 0 && parseInt(value) !== correctTenths) {
       sounds.join();
-      setShowHint(true);
+      scrollToHint();
       sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
     } else if (value.length > 0 && parseInt(value) === correctTenths) {
       sounds.levelUp();
@@ -322,7 +334,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     const correctHundredths = Math.floor((question3.numerator * 100) / question3.denominator) % 10;
     if (value.length > 0 && parseInt(value) !== correctHundredths) {
       sounds.join();
-      setShowHint(true);
+      scrollToHint();
       sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
     } else if (value.length > 0 && parseInt(value) === correctHundredths) {
       sounds.levelUp();
@@ -332,11 +344,8 @@ function Hundred({ sendAdminMessage }: BaseProps) {
 
   const handleNeedHelp = () => {
     sounds.join();
-    sendAdminMessage('agent', `Let's break this down step by step:
-    1. First, look at how many complete wholes we have in ${question3.numerator}/${question3.denominator}
-    2. For tenths, we need to multiply ${question3.numerator} by 10 and divide by ${question3.denominator}
-    3. For hundredths, we multiply ${question3.numerator} by 100 and divide by ${question3.denominator}
-    Let me know if you need more specific help!`);
+    setShowHintVisual(true);
+    sendAdminMessage('agent', `Let's look at a simpler example first to understand how tenths work in a decimal.`);
   };
 
   return (
@@ -438,7 +447,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
         </div>
 
         {showHint && step === 5 && (
-          <div className="relative mt-8">
+          <div className="relative mt-8" ref={hintRef}>
             <div className="absolute -top-1 -left-1 bg-black px-6 py-2">
               <span className="text-xl text-white invisible">Need a hint?</span>
             </div>
@@ -451,10 +460,20 @@ function Hundred({ sendAdminMessage }: BaseProps) {
           </div>
         )}
 
+        {showHintVisual && (
+          <HintVisual
+            numerator={7}
+            denominator={10}
+            onClose={() => setShowHintVisual(false)}
+            sendAdminMessage={sendAdminMessage}
+            setGameStateRef={setGameStateRef}
+          />
+        )}
+
         {step === 6 && (
           <Proceed
             onComplete={handleProceed}
-            text="Onward!"
+            text="Onward! 🚀"
           />
         )}
       </div>
@@ -473,6 +492,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     const [tenths, setTenths] = useState('');
     const [hundredths, setHundredths] = useState('');
     const [showHint, setShowHint] = useState(false);
+    const hintRef = useRef<HTMLDivElement>(null);
 
     const start = useRef(false);
   
@@ -527,6 +547,15 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       sounds.levelUp();
     };
   
+    const scrollToHint = () => {
+      if (!showHint) {  // Only scroll if hint wasn't already showing
+        setShowHint(true);
+        setTimeout(() => {
+          hintRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    };
+  
     const handleWholesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setWholes(value);
@@ -534,7 +563,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       const correctWholes = Math.floor(question4.numerator/question4.denominator);
       if (value.length > 0 && parseInt(value) !== correctWholes) {
         sounds.join();
-        setShowHint(true);
+        scrollToHint();
         sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
       } else if (value.length > 0 && parseInt(value) === correctWholes) {
         sounds.levelUp();
@@ -549,11 +578,10 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       const correctTenths = Math.floor((question4.numerator * 10) / question4.denominator) % 10;
       if (value.length > 0 && parseInt(value) !== correctTenths) {
         sounds.join();
-        setShowHint(true);
-        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
+        sendAdminMessage('admin', `User answered incorrectly for tenths. They entered ${value} when looking at ${question4.numerator}/100. Guide them to count the complete rows.`);
       } else if (value.length > 0 && parseInt(value) === correctTenths) {
         sounds.levelUp();
-        sendAdminMessage('agent', 'Perfect! You got the tenths digit right.');
+        sendAdminMessage('agent', 'Perfect! You got the tenths digit right. Now for the hundredths.');
       }
     };
   
@@ -564,12 +592,37 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       const correctHundredths = Math.floor((question4.numerator * 100) / question4.denominator) % 10;
       if (value.length > 0 && parseInt(value) !== correctHundredths) {
         sounds.join();
-        setShowHint(true);
-        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
+        sendAdminMessage('admin', `User answered incorrectly for hundredths. They entered ${value} when looking at ${question4.numerator}/100. Guide them to count the remaining pieces in the partial row.`);
       } else if (value.length > 0 && parseInt(value) === correctHundredths) {
         sounds.levelUp();
-        sendAdminMessage('agent', 'Perfect! You got the hundredths digit right.');
+        sendAdminMessage('agent', 'Excellent! You\'ve mastered converting fractions to decimals!');
       }
+    };
+  
+    const handleFractionNumeratorChange = (value: string) => {
+      if (value.length >= String(question4.numerator).length) {
+        if (parseInt(value) !== question4.numerator) {
+          sounds.join();
+          sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question4.numerator}, but user answered ${value}. Guide them to count the filled pieces.`);
+        } else {
+          sounds.levelUp();
+          sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
+        }
+      }
+      setFractionNumerator(value);
+    };
+
+    const handleFractionDenominatorChange = (value: string) => {
+      if (value.length >= String(question4.denominator).length) {
+        if (parseInt(value) !== question4.denominator) {
+          sounds.join();
+          sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question4.denominator}, but user answered ${value}. Guide them to understand this is a 100-piece chocolate bar.`);
+        } else {
+          sounds.levelUp();
+          sendAdminMessage('agent', 'Perfect! You got the denominator right.');
+        }
+      }
+      setFractionDenominator(value);
     };
   
     const handleNeedHelp = () => {
@@ -614,8 +667,8 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
                 numerator={fractionNumerator}
                 denominator={fractionDenominator}
                 onChange={{
-                  numerator: setFractionNumerator,
-                  denominator: setFractionDenominator
+                  numerator: handleFractionNumeratorChange,
+                  denominator: handleFractionDenominatorChange
                 }}
                 correctnumerator={String(question4.numerator)}
                 correctdenominator={String(question4.denominator)}
@@ -680,7 +733,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           </div>
   
           {showHint && step === 8 && (
-            <div className="relative mt-8">
+            <div className="relative mt-8" ref={hintRef}>
               <div className="absolute -top-1 -left-1 bg-black px-6 py-2">
                 <span className="text-xl text-white invisible">Need a hint?</span>
               </div>
@@ -696,7 +749,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           {step === 9 && (
             <Proceed 
               onComplete={handleProceed}
-              text="Onward!"
+              text="Onward! 🚀"
             />
           )}
         </div>

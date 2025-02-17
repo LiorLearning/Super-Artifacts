@@ -21,6 +21,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   const [isSelectionLocked, setIsSelectionLocked] = useState(false);
 
   const start = useRef(false);
+  const proceedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!start.current) {
@@ -56,6 +57,10 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
     if (parseInt(tenths) === Math.floor(question1.numerator*10/question1.denominator)) {
       setStep(5);
       sendAdminMessage('agent', 'Sweet! This way of representing fractions is called decimals. The dot in the middle separates the whole from the fraction!');
+      
+      setTimeout(() => {
+        proceedRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
   }, [tenths]);
 
@@ -277,18 +282,20 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
                 <p className="text-2xl text-center mt-4 mb-8">
                   The dot separates the wholes from the fraction
                 </p>
-                <Proceed
-                  onComplete={() => {
-                    sounds.levelUp();
-                    setTimeout(() => {
-                      setGameStateRef(prev => ({
-                        ...prev,
-                        screen: "second"
-                      }));
-                    }, 1000);
-                  }}
-                  text="Onward! 🚀"
-                />
+                <div ref={proceedRef}>
+                  <Proceed
+                    onComplete={() => {
+                      sounds.levelUp();
+                      setTimeout(() => {
+                        setGameStateRef(prev => ({
+                          ...prev,
+                          screen: "second"
+                        }));
+                      }, 1000);
+                    }}
+                    text="Onward! 🚀"
+                  />
+                </div>
               </>
             )}
           </div>

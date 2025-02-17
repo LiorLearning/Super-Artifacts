@@ -41,7 +41,8 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [showSuccess, setShowSuccess] = useState(false)
   const partCompleteAudioRef = useRef<HTMLAudioElement | null>(null)
 
-
+  const secondBoxRef = useRef<HTMLDivElement>(null);
+  const scrollMessageShown = useRef(false);
 
   const handleSlicerClick = () => {
     setShowOptions(prev => !prev)
@@ -186,11 +187,21 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   useEffect(() => {
     if (showSecondBox && !secondMessageShown.current) {
       secondMessageShown.current = true;
-      sendAdminMessage("agent", "Look at the pies and tell how many quarters make up 3 wholes?", () => {
-        setShowHelpButton(true)
-      })
+      sendAdminMessage("agent", "Great, so 3 2/4 is nothing but 3 plus 2/4", () => {
+        // After narration ends, scroll to the second box
+        if (secondBoxRef.current) {
+          secondBoxRef.current.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+        // Then show the next message
+        sendAdminMessage("agent", "Look at the pies and tell how many quarters make up 3 wholes?", () => {
+          setShowHelpButton(true)
+        });
+      });
     }
-  }, [showSecondBox, sendAdminMessage])
+  }, [showSecondBox, sendAdminMessage]);
 
   useEffect(() => {
     if (allPiesClicked && 
@@ -380,7 +391,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
         </div>
 
         {showSecondBox && (
-          <div className="w-full max-w-4xl mx-auto mt-6">
+          <div ref={secondBoxRef} className="w-full max-w-4xl mx-auto mt-6">
             <div className="bg-white py-8">
               <div className="flex items-center justify-center gap-4 text-5xl">
                 <span>{mixedFraction.whole} wholes = </span>
