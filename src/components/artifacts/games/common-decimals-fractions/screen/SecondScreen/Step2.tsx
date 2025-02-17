@@ -9,7 +9,9 @@ import background from '../../assets/bg-small-without-chest.png'
 
 export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { n, a, b, level } = gameStateRef.current.state2.key;
+  const n = gameStateRef.current.state1.key.numerator;
+  const a = gameStateRef.current.state1.key.denominator_1;
+  const b = gameStateRef.current.state1.key.denominator_2;
 
   const [num, setNum] = useState('');
   const [den, setDen] = useState('');

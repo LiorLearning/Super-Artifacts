@@ -13,9 +13,9 @@ interface Fraction {
 
 interface Key {
   level: number;
-  n: number;
-  a: number;
-  b: number;
+  numerator: number;
+  denominator_1: number;
+  denominator_2: number;
 }
 
 export const descriptions: Description[] = [
@@ -71,36 +71,36 @@ export const initialGameState: GameState = {
     step: 0,
     key: {
       level: 1,
-      n: 1,
-      a: 1,
-      b: 2
+      numerator: 1,
+      denominator_1: 1,
+      denominator_2: 2
     }
   },
   state2: {
     step: 0,
     key: {
       level: 2,
-      n: 1,
-      a: 1,
-      b: 5
+      numerator: 1,
+      denominator_1: 1,
+      denominator_2: 5
     }
   },
   state3: {
     step: 0,
     key: {
       level: 3,
-      n: 1,
-      a: 2,
-      b: 2,
+      numerator: 1,
+      denominator_1: 2,
+      denominator_2: 2,
     }
   },
   state4: {
     step: 0,
     key: {
       level: 4,
-      n: 3,
-      a: 2,
-      b: 2,
+      numerator: 3,
+      denominator_1: 2,
+      denominator_2: 2,
     }
   }
 };

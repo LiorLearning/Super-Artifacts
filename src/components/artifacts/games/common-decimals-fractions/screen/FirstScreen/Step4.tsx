@@ -9,7 +9,9 @@ import downbanner from '../../assets/down-banner.png'
 
 export default function Screen1Step4({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { n, a, b, level } = gameStateRef.current.state1.key;
+  const n = gameStateRef.current.state1.key.numerator;
+  const a = gameStateRef.current.state1.key.denominator_1;
+  const b = gameStateRef.current.state1.key.denominator_2;
 
   return (
     <div className="mx-auto max-h-screen overflow-hidden " style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>

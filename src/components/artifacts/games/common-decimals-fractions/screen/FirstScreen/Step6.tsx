@@ -12,7 +12,9 @@ import { goToStep } from '../../utils/helper';
 
 export default function Screen1Step6({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { n, a, b, level } = gameStateRef.current.state1.key;
+  const n = gameStateRef.current.state1.key.numerator;
+  const a = gameStateRef.current.state1.key.denominator_1;
+  const b = gameStateRef.current.state1.key.denominator_2;
 
   const [num, setNum] = useState('');
   const [den, setDen] = useState('');

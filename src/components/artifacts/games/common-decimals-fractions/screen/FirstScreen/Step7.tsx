@@ -14,7 +14,9 @@ import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 export default function Screen1Step7({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { n, a, b, level } = gameStateRef.current.state1.key;
+  const n = gameStateRef.current.state1.key.numerator;
+  const a = gameStateRef.current.state1.key.denominator_1;
+  const b = gameStateRef.current.state1.key.denominator_2;
 
   const decimalClassName = 'w-[4vh] h-auto py-[0.4vh]  text-[3vh] leading-none text-center bg-white outline-none border-[0.2vh] border-[#9c9b9b] rounded-md'
 

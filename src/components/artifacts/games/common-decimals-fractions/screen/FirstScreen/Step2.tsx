@@ -9,7 +9,7 @@ import background from '../../assets/bg-small-without-chest.png'
 
 export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { n, a, b, level } = gameStateRef.current.state1.key;
+  const { numerator, denominator_1, denominator_2, level } = gameStateRef.current.state1.key;
 
   const [num, setNum] = useState('');
   const [den, setDen] = useState('');
@@ -25,7 +25,7 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
             value={num}
             onValueChange={(value) => setNum(value)}
             className={inputClassName}
-            correctValue={n.toString()}
+            correctValue={numerator.toString()}
             placeholder='?'
           />
           <div className='px-[3vh] my-[1.5vh] border-b-2 border-[#c98600]'></div>
@@ -33,12 +33,12 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
             value={den}
             onValueChange={(value) => setDen(value)}
             className={inputClassName}
-            correctValue={(a*b).toString()}
+            correctValue={(denominator_1 * denominator_2).toString()}
             placeholder='?'
           />
         </div>
         <div className='mr-[11vh]'>
-          <NewKey n={n} a={a} b={b} isActive={true} />
+          <NewKey n={denominator_1} a={denominator_1} b={denominator_2} isActive={true} />
         </div>
       </div>
 

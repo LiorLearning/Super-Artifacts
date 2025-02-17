@@ -16,15 +16,15 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
         <img src={LeftArrow.src} className='w-[3vh] h-auto' alt="left-arrow" />
         <div className='flex flex-col items-center justify-center'>
           <h1 className='translate-y-[4vh] text-[2.5vh]'>Level {gameStateRef.current.state3.key.level}</h1>
-          <NewKey n={gameStateRef.current.state3.key.n} a={gameStateRef.current.state3.key.a} b={gameStateRef.current.state3.key.b} isActive={false} />
+          <NewKey n={gameStateRef.current.state3.key.numerator} a={gameStateRef.current.state3.key.denominator_1} b={gameStateRef.current.state3.key.denominator_2} isActive={false} />
         </div>
         <div className='flex flex-col items-center justify-center'>
           <h1 className='-translate-y-[2vh] text-[3vh]'>Level {gameStateRef.current.state1.key.level}</h1>
-          <NewKey  n={gameStateRef.current.state1.key.n} a={gameStateRef.current.state1.key.a} b={gameStateRef.current.state1.key.b} isActive={true} />
+          <NewKey  n={gameStateRef.current.state1.key.numerator} a={gameStateRef.current.state1.key.denominator_1} b={gameStateRef.current.state1.key.denominator_2} isActive={true} />
         </div>
         <div className='flex flex-col items-center justify-center'>
           <h1 className='translate-y-[4vh] text-[2.5vh]'>Level {gameStateRef.current.state2.key.level}</h1>
-          <NewKey  n={gameStateRef.current.state2.key.n} a={gameStateRef.current.state2.key.a} b={gameStateRef.current.state2.key.b} isActive={false} />
+          <NewKey  n={gameStateRef.current.state2.key.numerator} a={gameStateRef.current.state2.key.denominator_1} b={gameStateRef.current.state2.key.denominator_2} isActive={false} />
         </div>
         <img src={LeftArrow.src} className='w-[3vh] h-auto transform rotate-180' alt="left-arrow" />
       </div>  
