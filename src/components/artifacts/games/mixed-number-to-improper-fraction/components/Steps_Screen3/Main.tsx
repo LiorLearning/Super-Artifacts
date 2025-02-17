@@ -276,7 +276,7 @@ const Main: React.FC<MainProps> = ({ mixedFraction1, mixedFraction2, sendAdminMe
   };
 
   const handleSecondFractionComplete = () => {
-    setShowSuccess(true);  // Show animation immediately
+    setShowSuccess(true);  
     sendAdminMessage("agent", "Correct, you are a master now. Congratulations!", () => {
       setTimeout(() => {
         setShowSuccess(false);
