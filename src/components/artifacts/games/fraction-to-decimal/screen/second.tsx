@@ -8,6 +8,7 @@ import DecimalBox from '../components/DecimalBox';
 import Proceed from '../components/proceed';
 import { sounds } from '../utils/sound';
 import HintVisual from '../components/HintVisual';
+import HintVisual2 from '../components/HintVisual2';
 
 
 export default function SecondScreen({ sendAdminMessage }: BaseProps) {
@@ -493,6 +494,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     const [hundredths, setHundredths] = useState('');
     const [showHint, setShowHint] = useState(false);
     const hintRef = useRef<HTMLDivElement>(null);
+    const [showHintVisual, setShowHintVisual] = useState(false);
 
     const start = useRef(false);
   
@@ -578,7 +580,8 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       const correctTenths = Math.floor((question4.numerator * 10) / question4.denominator) % 10;
       if (value.length > 0 && parseInt(value) !== correctTenths) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for tenths. They entered ${value} when looking at ${question4.numerator}/100. Guide them to count the complete rows.`);
+        scrollToHint();
+        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
       } else if (value.length > 0 && parseInt(value) === correctTenths) {
         sounds.levelUp();
         sendAdminMessage('agent', 'Perfect! You got the tenths digit right. Now for the hundredths.');
@@ -592,7 +595,8 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       const correctHundredths = Math.floor((question4.numerator * 100) / question4.denominator) % 10;
       if (value.length > 0 && parseInt(value) !== correctHundredths) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for hundredths. They entered ${value} when looking at ${question4.numerator}/100. Guide them to count the remaining pieces in the partial row.`);
+        scrollToHint();
+        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
       } else if (value.length > 0 && parseInt(value) === correctHundredths) {
         sounds.levelUp();
         sendAdminMessage('agent', 'Excellent! You\'ve mastered converting fractions to decimals!');
@@ -603,7 +607,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       if (value.length >= String(question4.numerator).length) {
         if (parseInt(value) !== question4.numerator) {
           sounds.join();
-          sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question4.numerator}, but user answered ${value}. Guide them to count the filled pieces.`);
+          sendAdminMessage('agent', `I notice you entered ${value} pieces. Let's count the filled pieces together - each row has 10 pieces, and we need to count both the complete rows and any extra pieces.`);
         } else {
           sounds.levelUp();
           sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
@@ -616,7 +620,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       if (value.length >= String(question4.denominator).length) {
         if (parseInt(value) !== question4.denominator) {
           sounds.join();
-          sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question4.denominator}, but user answered ${value}. Guide them to understand this is a 100-piece chocolate bar.`);
+          sendAdminMessage('agent', `Let's think about this - we're looking at a chocolate bar divided into 10 rows of 10 pieces each. How many total pieces would that make?`);
         } else {
           sounds.levelUp();
           sendAdminMessage('agent', 'Perfect! You got the denominator right.');
@@ -627,11 +631,8 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
   
     const handleNeedHelp = () => {
       sounds.join();
-      sendAdminMessage('agent', `Here's how we can solve this:
-      1. To find wholes: Divide ${question4.numerator} by ${question4.denominator}
-      2. For tenths: Multiply ${question4.numerator} by 10, divide by ${question4.denominator}, and look at the remainder
-      3. For hundredths: Multiply ${question4.numerator} by 100, divide by ${question4.denominator}, and look at the last digit
-      Take your time and try each step!`);
+      setShowHintVisual(true);
+      sendAdminMessage('agent', `Let's look at this step by step to understand how to convert ${question4.numerator}/100 to a decimal.`);
     };
   
     return (
@@ -744,6 +745,16 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
                 Need a hint?
               </button>
             </div>
+          )}
+  
+          {showHintVisual && (
+            <HintVisual2
+              numerator={21}
+              denominator={100}
+              onClose={() => setShowHintVisual(false)}
+              sendAdminMessage={sendAdminMessage}
+              setGameStateRef={setGameStateRef}
+            />
           )}
   
           {step === 9 && (

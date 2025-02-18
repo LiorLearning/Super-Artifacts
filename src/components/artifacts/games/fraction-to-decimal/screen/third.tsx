@@ -6,7 +6,6 @@ import RedBox, { RedBox2 } from '../components/RedBox';
 import Header from '../components/header';
 import Fraction from '../components/Fraction';
 import KnifeSelector from '../components/knifeselector';
-import DecimalBox from '../components/DecimalBox';
 import { sounds } from '../utils/sound';
 
 interface ThirdScreenProps {
@@ -185,6 +184,9 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
   const [tenths, setTenths] = useState<string>('')
   const [hundredths, setHundredths] = useState<string>('')
 
+  const [isWholesCorrect, setIsWholesCorrect] = useState(false);
+  const [isTenthsCorrect, setIsTenthsCorrect] = useState(false);
+
   const start = useRef(false);
 
   useEffect(() => {
@@ -206,6 +208,62 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
     }
   }, [wholes, tenths, hundredths])
 
+  const handleWholesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 1) {
+      setWholes(value);
+      
+      if (value.length > 0) {
+        const isCorrect = parseInt(value) === Math.floor(numerator / denominator);
+        setIsWholesCorrect(isCorrect);
+        
+        if (isCorrect) {
+          sounds.levelUp();
+          sendAdminMessage('agent', 'Correct! Now enter the tenths digit.');
+        } else {
+          sounds.join();
+          sendAdminMessage('agent', 'Look at how many complete chocolates you have.');
+        }
+      }
+    }
+  };
+
+  const handleTenthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 1) {
+      setTenths(value);
+      
+      if (value.length > 0) {
+        const isCorrect = parseInt(value) === Math.floor((numerator % denominator) / 10);
+        setIsTenthsCorrect(isCorrect);
+        
+        if (isCorrect) {
+          sounds.levelUp();
+          sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
+        } else {
+          sounds.join();
+          sendAdminMessage('agent', "Oops, I see what you did there. Let's click on the hint to understand this better");
+        }
+      }
+    }
+  };
+
+  const handleHundredthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 1) {
+      setHundredths(value);
+      
+      if (value.length > 0) {
+        if (parseInt(value) === Math.floor((numerator % denominator) % 10)) {
+          sounds.levelUp();
+          sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
+        } else {
+          sounds.join();
+          sendAdminMessage('agent', "Oops, I see what you did there. Let's click on the hint to understand this better");
+        }
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col items-center max-w-screen-lg w-full mx-auto justify-center flex-1 gap-8">
@@ -231,58 +289,85 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
       </div>
 
       <div className="flex flex-col items-center gap-2 text-2xl">
-        <div className="text-center mb-2">
-          <span className="text-lg font-bold bg-[#FFE4B5] px-4 py-1">Decimal</span>
-        </div>
-        <div className="border-2 border-black p-4 bg-white">
-          <div className="flex items-center gap-2">
-            <div className="flex flex-col items-center">
-              <span className="text-sm font-bold">Wholes</span>
-              <input
-                type="text"
-                value={wholes}
-                onChange={(e) => setWholes(e.target.value)}
-                className="w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl"
-                maxLength={1}
-              />
+        <div className="w-screen bg-[#F7F5DD] py-8">
+          <div className="max-w-[500px] mx-auto px-4">
+            <div className="text-center -mb-4 relative z-10">
+              <span className="text-lg font-bold bg-[#FFE4B5] px-6 py-2 rounded-t-lg">
+                Decimal Form
+              </span>
             </div>
-            <span className="text-4xl mt-6">.</span>
-
-            
-            <div className='flex flex-col items-center'>
-              <span className="text-sm font-bold">Tenths</span>
-              <input 
-                type="text"
-                value={tenths}
-                onChange={(e) => setTenths(e.target.value)}
-                className="w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl"
-                maxLength={1}
-              />
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-sm font-bold">Hundredths</span>
-              <input
-                type="text"
-                value={hundredths}
-                onChange={(e) => setHundredths(e.target.value)}
-                className="w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl"
-                maxLength={2}
-              />
+            <div className="border-2 border-black p-6 bg-white rounded-lg">
+              <div className="flex flex-col items-center">
+                <div className="flex w-full justify-center mb-2">
+                  <div className="w-16 text-center">
+                    <span className="text-sm font-bold">Wholes</span>
+                  </div>
+                  <div className="w-16 text-center ml-12">
+                    <span className="text-sm font-bold">Tenths</span>
+                  </div>
+                  <div className="w-16 text-center ml-4">
+                    <span className="text-sm font-bold">Hundredths</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center">
+                  <input
+                    type="text"
+                    value={wholes}
+                    onChange={handleWholesChange}
+                    className={`w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl ${
+                      wholes.length > 0 
+                        ? parseInt(wholes) === Math.floor(numerator / denominator)
+                          ? 'bg-green-100' 
+                          : 'bg-red-100'
+                        : 'bg-white'
+                    }`}
+                    maxLength={1}
+                  />
+                  <span className="text-4xl mx-4">.</span>
+                  <input 
+                    type="text"
+                    value={tenths}
+                    onChange={handleTenthsChange}
+                    disabled={!isWholesCorrect}
+                    className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
+                      tenths.length > 0 
+                        ? parseInt(tenths) === Math.floor((numerator % denominator) / 10)
+                          ? 'bg-green-100' 
+                          : 'bg-red-100'
+                        : 'bg-white'
+                    } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    maxLength={1}
+                  />
+                  <input
+                    type="text"
+                    value={hundredths}
+                    onChange={handleHundredthsChange}
+                    disabled={!isTenthsCorrect}
+                    className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ml-4 ${
+                      hundredths.length > 0 
+                        ? parseInt(hundredths) === Math.floor((numerator % denominator) % 10)
+                          ? 'bg-green-100' 
+                          : 'bg-red-100'
+                        : 'bg-white'
+                    } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    maxLength={2}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      {
-        step === 3 && (
-            <Proceed 
-              onComplete={() => setGameStateRef((prev) => ({
-                ...prev,
-                screen: 'fourth'
-              }))}
-              text='onwards'
-            />
-        )
-      }
+
+      {step === 3 && (
+        <Proceed 
+          onComplete={() => setGameStateRef((prev) => ({
+            ...prev,
+            screen: 'fourth'
+          }))}
+          text='Onward! 🚀'
+        />
+      )}
     </div>
   )
 }
