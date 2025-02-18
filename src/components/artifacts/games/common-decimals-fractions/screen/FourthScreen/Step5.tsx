@@ -8,7 +8,7 @@ import yellowbar from '../../assets/red-key-bar.png'
 import yellowsinglebar from '../../assets/yellow-single-bar.png'
 import downbanner from '../../assets/attempt-failed-bg.png'
 import Hammer from '../../assets/hammer.png'
-import { getIfColored } from '../../components/getIfColored';
+import { getIfColored } from '../../components/commonFunctions';
 
 
 export default function Screen4Step5({ sendAdminMessage }: BaseProps) {

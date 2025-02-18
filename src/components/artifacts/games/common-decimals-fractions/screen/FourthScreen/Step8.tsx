@@ -10,7 +10,7 @@ import leveropen from '../../assets/lever-open.png'
 import leverclose from '../../assets/lever-close.png'
 import { goToStep } from '../../utils/helper';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
-import { getIfColored } from '../../components/getIfColored';
+import { getIfColored } from '../../components/commonFunctions';
 import coin from '../../assets/coin.png'
 
 export default function Screen4Step8({ sendAdminMessage }: BaseProps) {

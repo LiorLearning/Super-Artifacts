@@ -7,7 +7,7 @@ import background from '../../assets/bg-big-without-chest.png'
 import yellowsinglebar from '../../assets/yellow-single-bar.png'
 import downbanner from '../../assets/down-banner.png'
 import { goToStep } from '../../utils/helper';
-import { getIfColored } from '../../components/getIfColored';
+import { getIfColored } from '../../components/commonFunctions';
 
 
 

@@ -110,3 +110,5 @@ export const initialGameState: GameState = {
 // denominator = denominator_1 * denominator_2 should be factor of 100
 // numerator < denominator
 
+
+
