@@ -56,9 +56,9 @@ const DropTarget = ({ n, a, b, onDrop, isDropped }: { n: number; a: number; b: n
   );
 };
 
-export default function Screen1Step3({ sendAdminMessage }: BaseProps) {
+export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { numerator, denominator_1, denominator_2, level } = gameStateRef.current.state1.key;
+  const { numerator, denominator_1, denominator_2, level } = gameStateRef.current.state3.key;
   const [isDropped, setIsDropped] = useState(false);
 
   const handleDrop = () => {
@@ -83,7 +83,7 @@ export default function Screen1Step3({ sendAdminMessage }: BaseProps) {
 
         <div className='relative min-h-screen min-w-full transform -translate-x-[4vh] translate-y-[10vh] flex justify-center items-center'>
           <img src={Chest.src}
-            className='absolute scale-[1.2] h-[52vh] w-auto z-10'
+            className='absolute scale-[1.2] h-[52vh] w-auto z-10 select-none'
             alt="chest"
           />
         </div>

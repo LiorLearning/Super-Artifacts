@@ -4,10 +4,24 @@ import LeftArrow from '../../assets/LeftArrow.png';
 import NewKey from '../../components/newKey';
 import chest from '../../assets/chest-without-border.png';
 import background from '../../assets/bg-small-without-chest.png'
+import { useEffect, useRef } from 'react';
+import { narrations } from '../../narrations';
+import { formatMessage } from '../../components/commonFunctions'
 
 
 export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
+  
+  const { numerator, denominator_1, denominator_2, level } = gameStateRef.current.state1.key;
+
+  const hasGameStartedRef = useRef(false);
+  
+    useEffect(() => {
+      if (!hasGameStartedRef.current) {
+        hasGameStartedRef.current = true;
+        sendAdminMessage(narrations.Screen1Step1Message1.role, formatMessage(narrations.Screen1Step1Message1.content, {a: level}));
+      }
+    }, []);
 
   return (
     <div className="mx-auto min-h-screen overflow-hidden" style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat' }}>

@@ -44,6 +44,10 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const bottomAnswerMessageShown = useRef(false)
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Add audio refs
+  const correctAnswerAudioRef = useRef<HTMLAudioElement | null>(null);
+  const levelCompleteAudioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     if (!logicMessageShown.current) {
       logicMessageShown.current = true;
@@ -68,9 +72,11 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
       if (parseInt(value) === expectedValue) {
         setFirstInputIsCorrect(true)
         setFirstInputIsWrong(false)
+
         setShowNextStep(true)
         const audio = new Audio(soundFiles.correct)
         audio.play()
+
         sendAdminMessage("agent", "Now just add the numerator to your previous answer!")
       } else {
         setFirstInputIsCorrect(false)
@@ -132,6 +138,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         setBottomAnswerIsCorrect(true)
         setBottomAnswerIsWrong(false)
         if (topAnswerIsCorrect) {
+
           setShowSuccess(true)
           const audio = new Audio(soundFiles.LevelComplete)
           audio.play()
@@ -335,6 +342,10 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
           <SuccessAnimation />
         </div>
       )}
+
+      {/* Add audio elements */}
+      <audio ref={correctAnswerAudioRef} src="/sounds/CorrectAnswer2.mp3" />
+      <audio ref={levelCompleteAudioRef} src="/sounds/LevelComplete.mp3" />
     </div>
   );
 };
