@@ -3,8 +3,8 @@ import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
 
 import Image from "next/image"
-import redSlicer from "../../../../../../../../public/img/red-Slicer.png"
 import SuccessAnimation from '@/components/artifacts/utils/success-animate'
+import { soundFiles } from '../../../utils/sound'
 
 
 interface Step3Props {
@@ -36,10 +36,8 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
   const [errorCount, setErrorCount] = useState(0)
   const helpMessageShown = useRef(false)
-  const knifeAudioRef = useRef<HTMLAudioElement | null>(null)
 
   const [showSuccess, setShowSuccess] = useState(false)
-  const partCompleteAudioRef = useRef<HTMLAudioElement | null>(null)
 
   const secondBoxRef = useRef<HTMLDivElement>(null);
   const scrollMessageShown = useRef(false);
@@ -58,36 +56,23 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       setIsCorrectOption(true)
     }
     
-    // Add narration to guide user to slice the pies
     sendAdminMessage("agent", "Click on the whole to slice them up.")
-  }
-
-  const playKnifeSound = () => {
-    if (knifeAudioRef.current) {
-      knifeAudioRef.current.currentTime = 0
-      knifeAudioRef.current.play()
-    }
   }
 
   const handlePieClick = (pieIndex: number) => {
     if (!selectedOption) return
 
-    // Play sound immediately
-    if (knifeAudioRef.current) {
-      knifeAudioRef.current.currentTime = 0
-      knifeAudioRef.current.play().then(() => {
-        // Update state after sound starts playing
-        setClickedPieStates(prev => {
-          const newStates = [...prev]
-          newStates[pieIndex] = true
-          
-          const allClicked = newStates.every(state => state)
-          setAllPiesClicked(allClicked)
-          
-          return newStates
-        })
-      })
-    }
+    const audio = new Audio(soundFiles.Knife)
+    audio.play()
+    setClickedPieStates(prev => {
+      const newStates = [...prev]
+      newStates[pieIndex] = true
+      
+      const allClicked = newStates.every(state => state)
+      setAllPiesClicked(allClicked)
+      
+      return newStates
+    })
   }
 
   const handleInputChange = (value: string) => {
@@ -159,16 +144,12 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
         setShowSuccess(true)
         setShowSecondBox(false)
         setShowHelpButton(false)
-        if (partCompleteAudioRef.current) {
-          partCompleteAudioRef.current.currentTime = 0
-          partCompleteAudioRef.current.addEventListener('ended', () => {
-            setTimeout(() => {
-              setShowSuccess(false)
-              onComplete()
-            }, 3000)
-          }, { once: true })
-          partCompleteAudioRef.current.play()
-        }
+        const completeAudio = new Audio(soundFiles.PartComplete)
+        completeAudio.play()
+        setTimeout(() => {
+          setShowSuccess(false)
+          onComplete()
+        }, 3000)
       } else {
         setShowErrorBox(true)
       }
@@ -320,7 +301,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
               <div className={`relative px-24 py-8 bg-black rounded-2xl ${!selectedOption && 'animate-pulse'}`}>
                 <div className={`absolute inset-0 flex items-center justify-center bg-white border-2 ${!selectedOption ? 'border-[#FF497C] shadow-[0_0_10px_#FF497C]' : 'border-[#FF497C]'} rounded-2xl -translate-x-1 -translate-y-1`}>
                   <Image 
-                    src={redSlicer} 
+                    src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/red-Slicer.png"
                     alt="slicer" 
                     width={44} 
                     height={44} 
@@ -439,9 +420,6 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
           <SuccessAnimation />
         </div>
       )}
-      
-      <audio ref={knifeAudioRef} src="/sounds/KnifeCut.mp3" />
-      <audio ref={partCompleteAudioRef} src="/sounds/PartComplete.mp3" />
 
     </div>
   );
