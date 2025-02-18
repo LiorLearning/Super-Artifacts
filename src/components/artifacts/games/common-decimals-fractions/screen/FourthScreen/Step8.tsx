@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useGameState } from '../../state-utils';
 import { BaseProps } from '../../utils/types';
 import background1 from '../../assets/bg-big-without-chest.png'
-import background2 from '../../assets/bg-big-without-chest2.png'
 import yellowsinglebar from '../../assets/yellow-single-bar.png'
 import levermovement from '../../assets/lever-movement.gif'
 import chestopen from '../../assets/chest-open-100.png'
@@ -12,6 +11,7 @@ import leverclose from '../../assets/lever-close.png'
 import { goToStep } from '../../utils/helper';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 import { getIfColored } from '../../components/getIfColored';
+import coin from '../../assets/coin.png'
 
 export default function Screen4Step8({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -32,7 +32,7 @@ export default function Screen4Step8({ sendAdminMessage }: BaseProps) {
   };
 
   return (
-    <div className="mx-auto max-h-screen overflow-hidden" style={{ backgroundImage: `url(${leverState === "up" ? background1.src : background2.src})`, backgroundSize: '100% 100%' }}>
+    <div className="mx-auto max-h-screen overflow-hidden" style={{ backgroundImage: `url(${background1.src})`, backgroundSize: '100% 100%' }}>
 
       <div className='min-h-screen min-w-full pr-[5vw] translate-y-[10vh] flex flex-col justify-center items-center'>
         {leverState==='up' ? <img src={chestclose.src}
@@ -83,12 +83,8 @@ export default function Screen4Step8({ sendAdminMessage }: BaseProps) {
           <div className='bg-[#ffdc3e] shadow-[#c98600] shadow-[-0.15vw_0.15vw_0px_0px_rgba(0,0,0)] p-[1vh] w-[6vh]  text-center rounded-[0.6vw] border border-black leading-none'>100</div>
         </div>
 
-        {/* <img
-          src={leverState === "up" ? leveropen.src : leverclose.src}
-          alt="Lever"
-          className="absolute z-20 cursor-pointer w-auto h-[27vh] -translate-y-[3.7vh] translate-x-[38vh]"
-          onClick={handleLeverClick}
-        /> */}
+        {leverState === "down" && <img className='absolute translate-y-[20vh] translate-x-[27.2vw] w-[5vw] h-[6vh]' src={coin.src} alt="coin" />}
+
         <div className="absolute z-20 cursor-pointer w-[15vh] h-[20vh] -translate-y-[8vh]  translate-x-[45vh]"
           onClick={handleLeverClick}>
         </div>
