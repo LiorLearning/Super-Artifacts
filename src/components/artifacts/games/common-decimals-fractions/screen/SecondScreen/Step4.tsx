@@ -4,14 +4,13 @@ import { BaseProps } from '../../utils/types';
 import Chest from '../../assets/chest-with-key.png';
 import background from '../../assets/bg-big-without-chest.png'
 import yellowbar from '../../assets/yellow-key-bar.png'
-import downbanner from '../../assets/down-banner.png'
 
 
 export default function Screen2Step4({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const n = gameStateRef.current.state1.key.numerator;
-  const a = gameStateRef.current.state1.key.denominator_1;
-  const b = gameStateRef.current.state1.key.denominator_2;
+  const n = gameStateRef.current.state2.key.numerator;
+  const a = gameStateRef.current.state2.key.denominator_1;
+  const b = gameStateRef.current.state2.key.denominator_2;
 
   return (
     <div className="mx-auto max-h-screen overflow-hidden " style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>

@@ -4,14 +4,14 @@ import { BaseProps } from '../../utils/types';
 import NewKey from '../../components/newKey';
 import NewInput from '@/components/ui/newinput';
 import chest from '../../assets/chest-without-border.png';
-import background from '../../assets/bg-small-without-chest.png'
+import background from '../../assets/bg-small-with-hammer.png'
 
 
-export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
+export default function Screen4Step2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const n = gameStateRef.current.state2.key.numerator;
-  const a = gameStateRef.current.state2.key.denominator_1;
-  const b = gameStateRef.current.state2.key.denominator_2;
+  const n = gameStateRef.current.state4.key.numerator;
+  const a = gameStateRef.current.state4.key.denominator_1;
+  const b = gameStateRef.current.state4.key.denominator_2;
 
   const [num, setNum] = useState('');
   const [den, setDen] = useState('');

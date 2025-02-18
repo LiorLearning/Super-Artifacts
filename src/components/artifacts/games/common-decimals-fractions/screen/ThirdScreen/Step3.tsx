@@ -56,9 +56,9 @@ const DropTarget = ({ n, a, b, onDrop, isDropped }: { n: number; a: number; b: n
   );
 };
 
-export default function Screen1Step3({ sendAdminMessage }: BaseProps) {
+export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const { numerator, denominator_1, denominator_2, level } = gameStateRef.current.state1.key;
+  const { numerator, denominator_1, denominator_2, level } = gameStateRef.current.state3.key;
   const [isDropped, setIsDropped] = useState(false);
 
   const handleDrop = () => {

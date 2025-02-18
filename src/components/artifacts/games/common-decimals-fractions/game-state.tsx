@@ -100,9 +100,13 @@ export const initialGameState: GameState = {
       level: 4,
       numerator: 3,
       denominator_1: 2,
-      denominator_2: 2,
+      denominator_2: 5,
     }
   }
 };
 
+// denominator_1 can be {1, 2, 5}
+// denominator_2 can be {2, 4, 5}
+// denominator = denominator_1 * denominator_2 should be factor of 100
+// numerator < denominator
 
