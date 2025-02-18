@@ -56,6 +56,9 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
     if (value === mixedFraction.denominator) {
       setIsCorrectOption(true)
     }
+    
+    // Add narration to guide user to slice the pies
+    sendAdminMessage("agent", "Click on the whole to slice them up.")
   }
 
   const playKnifeSound = () => {
@@ -240,12 +243,12 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
                 key={`whole-${index}`} 
                 className={`w-28 h-28 ${
                   selectedOption && !clickedPieStates[index] 
-                    ? 'cursor-[url("/img/knife-cursor.png"),_pointer]' 
+                    ? 'cursor-[url("/img/knife-cursor.png"),_pointer] animate-pulse shadow-[0_0_10px_#98D400]' 
                     : ''
                 }`}
                 onClick={() => handlePieClick(index)}
               >
-                <svg viewBox="0 0 100 100" className="w-full h-full">
+                <svg viewBox="0 0 100 100" className="w-full h-full bg-transparent">
                   <circle 
                     cx="50" 
                     cy="50" 
@@ -261,7 +264,7 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
             {/* Fraction pie */}
             <div className="w-28 h-28">
-              <svg viewBox="0 0 100 100" className="w-full h-full">
+              <svg viewBox="0 0 100 100" className="w-full h-full bg-transparent">
                 <circle 
                   cx="50" 
                   cy="50" 
@@ -303,8 +306,8 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
               className={`relative inline-flex ${(isCorrectOption && allPiesClicked) ? 'opacity-50 cursor-not-allowed' : ''}`}
               disabled={isCorrectOption && allPiesClicked}
             >
-              <div className="relative px-24 py-8 bg-black rounded-2xl">
-                <div className="absolute inset-0 flex items-center justify-center bg-white border-2 border-[#FF497C] rounded-2xl -translate-x-1 -translate-y-1">
+              <div className={`relative px-24 py-8 bg-black rounded-2xl ${!selectedOption && 'animate-pulse'}`}>
+                <div className={`absolute inset-0 flex items-center justify-center bg-white border-2 ${!selectedOption ? 'border-[#FF497C] shadow-[0_0_10px_#FF497C]' : 'border-[#FF497C]'} rounded-2xl -translate-x-1 -translate-y-1`}>
                   <Image 
                     src={redSlicer} 
                     alt="slicer" 
@@ -410,8 +413,10 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
               className="relative bg-black rounded-xl"
               onClick={handleHelpClick}
             >
-              <div className="relative bg-white border-2 border-[#FF497C] rounded-xl px-8 py-3 -translate-x-1 -translate-y-1">
-                <span className="text-[#FF497C] text-2xl">Need help!</span>
+              <div className="relative bg-white border-2 border-[#FF497C] rounded-xl px-12 py-4 -translate-x-1 -translate-y-1">
+                <span className="text-[#FF497C] text-3xl font-medium">
+                  Need help!
+                </span>
               </div>
             </button>
           </div>

@@ -44,6 +44,10 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   const bottomAnswerMessageShown = useRef(false)
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Add audio refs
+  const correctAnswerAudioRef = useRef<HTMLAudioElement | null>(null);
+  const levelCompleteAudioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     if (!logicMessageShown.current) {
       logicMessageShown.current = true;
@@ -69,6 +73,10 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         setFirstInputIsCorrect(true)
         setFirstInputIsWrong(false)
         setShowNextStep(true);
+        if (correctAnswerAudioRef.current) {
+          correctAnswerAudioRef.current.currentTime = 0;
+          correctAnswerAudioRef.current.play();
+        }
         sendAdminMessage("agent", "Now just add the numerator to your previous answer!")
       } else {
         setFirstInputIsCorrect(false)
@@ -131,6 +139,11 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         setBottomAnswerIsWrong(false)
         if (topAnswerIsCorrect) {
           setShowSuccess(true);
+          // Play level complete sound
+          if (levelCompleteAudioRef.current) {
+            levelCompleteAudioRef.current.currentTime = 0;
+            levelCompleteAudioRef.current.play();
+          }
           sendAdminMessage("agent", "It took just 2 steps to get to the answer. let's practice some more!", () => {
             setShowSuccess(false);
             setGameStateRef(prev => ({
@@ -175,7 +188,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
   return (
     <div className="min-h-screen bg-pink-50 flex flex-col">
       <div className="w-full max-w-[600px] mx-auto p-4 flex flex-col">
-        {/* Main pink container with Quick Hack */}
         <div className="bg-[#FF497C] rounded-[20px] p-2 flex items-center w-[450px] mx-auto mb-16">
           <div className="text-white text-center text-[28px] leading-[32px] w-[120px]">
             Quick
@@ -183,7 +195,6 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
             Hack
           </div>
 
-          {/* White box with fraction */}
           <div className="bg-white rounded-xl flex-1 py-3">
             <div className="flex items-center gap-2 text-2xl justify-center">
               <span>{whole}</span>
@@ -210,7 +221,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         {/* Connected boxes */}
         <div className="relative">
           {/* First pink box */}
-          <div className="bg-[#FF497C] rounded-[20px] p-3 flex items-center mb-8">
+          <div className="bg-[#FF497C] rounded-[20px] p-3 pb-12 flex items-center mb-4">
             <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
               <Image src={LockIcon} alt="Lock" width={35} height={35} />
             </div>
@@ -247,12 +258,12 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
           </div>
 
           {!firstInputIsCorrect && (
-            <div className="bg-[#B40033] rounded-[20px] p-8 pt-16 -mt-10">
-              <div className="flex flex-col items-center">
-                <div className="text-white text-lg mb-4">
+            <div className="bg-[#B40033] rounded-[20px] p-8 pt-16 -mt-12">
+              <div className="flex flex-col items-center justify-center w-full">
+                <div className="text-white text-lg mb-4 text-center">
                   {denominator} X {whole}
                 </div>
-                <div className="relative w-[80px] h-[80px]">
+                <div className="relative w-[80px] h-[80px] mx-auto">
                   <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
                   <div className="absolute -bottom-1 -left-1 w-full h-full bg-black opacity-60 rounded-xl"></div>
                   <input
@@ -271,7 +282,8 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
 
         {showNextStep && (
           <div className="w-full mt-4">
-            <div className="bg-[#FF497C] rounded-[20px] p-3 flex items-center">
+            {/* Second pink box */}
+            <div className="bg-[#FF497C] rounded-[20px] p-3 pb-12 flex items-center mb-4">
               <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
                 <Image src={LockIcon} alt="Lock" width={35} height={35} />
               </div>
@@ -292,8 +304,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
               </div>
             </div>
 
-            {/* Bottom answer container */}
-            <div className="bg-[#B40033] rounded-[20px] p-8">
+            <div className="bg-[#B40033] rounded-[20px] p-8 pt-16 -mt-12">
               <div className="flex flex-col items-center gap-4">
                 <div className="relative w-[80px] h-[80px]">
                   <div className="absolute -bottom-1 -left-1 w-full h-full bg-black rounded-xl"></div>
@@ -333,6 +344,10 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
           <SuccessAnimation />
         </div>
       )}
+
+      {/* Add audio elements */}
+      <audio ref={correctAnswerAudioRef} src="/sounds/CorrectAnswer2.mp3" />
+      <audio ref={levelCompleteAudioRef} src="/sounds/LevelComplete.mp3" />
     </div>
   );
 };
