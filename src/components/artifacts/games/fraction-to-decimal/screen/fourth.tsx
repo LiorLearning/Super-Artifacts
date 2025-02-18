@@ -37,7 +37,6 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
     }
   }, []);
 
-
   const setStep = (value: number) => {
     setGameStateRef((prev) => ({
       ...prev,
@@ -54,8 +53,6 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
     }
   }, [selectedKnife])
 
-
-
   useEffect(() => {
     if(wholechocolate + 1 < question6 && selectedPieces === selectedKnife * chocolate) {
       setAllowadd(true)
@@ -68,14 +65,34 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
   }, [selectedPieces])
 
   useEffect(() => {
-    if (numerator === question6*selectedKnife && denominator === selectedKnife) {
-      setStep(3)
-      sendAdminMessage('agent', `Great job, let's head to the final level!`);
-    } else if ( numerator >= 1 || denominator >= 1) {
+    const correctNumerator = question6 * selectedKnife;
+    const correctDenominator = selectedKnife;
+    
+    if (numerator.toString().length >= correctNumerator.toString().length) {
+      if (numerator === correctNumerator && denominator === 0) {
+        sendAdminMessage('agent', 'Perfect! Now enter the denominator - how many pieces are there in total?');
+      }
+    }
+
+    if (denominator.toString().length >= correctDenominator.toString().length && 
+        numerator === correctNumerator) {
+      if (denominator === correctDenominator) {
+        setStep(3)
+        sendAdminMessage('agent', `Great job, let's head to the final level!`);
+      } else {
+        sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+      }
+    } else if (denominator.toString().length >= correctDenominator.toString().length && 
+               numerator !== correctNumerator) {
       sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
     }
-  }, [numerator, denominator])
+  }, [numerator, denominator]);
 
+  useEffect(() => {
+    if (step === 2) {
+      sendAdminMessage('agent', 'Awesome, now enter the fraction these chocolates display');
+    }
+  }, [step]);
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -108,30 +125,48 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
             
             <span className='flex flex-col justify-center h-full mx-16 w-1/6 text-center text-xl'>
               {Array.from({length: wholechocolate}, (_, index) => (
-                <div 
-                  key={index}
-                >
-                  <VerticalBar
-                    numerator={selectedKnife * chocolate}
-                    denominator={selectedKnife * chocolate}
-                    handlePieceClick={() => {}}
-                    active={false}
-                />
+                <div key={index}>
+                  {selectedKnife === 100 ? (
+                    <Bar2d
+                      numerator={selectedKnife * chocolate}
+                      denominator={selectedKnife * chocolate}
+                      handlePieceClick={() => {}}
+                      active={false}
+                    />
+                  ) : (
+                    <VerticalBar
+                      numerator={selectedKnife * chocolate}
+                      denominator={selectedKnife * chocolate}
+                      handlePieceClick={() => {}}
+                      active={false}
+                    />
+                  )}
                 </div>
               ))}
             </span>
 
             <span className='relative w-4/6 text-center text-xl'>
-              <VerticalBar
-                numerator={selectedPieces}
-                denominator={selectedKnife * chocolate}
-                handlePieceClick={(index) => {  
-                  setSelectedPieces(index)
-                  sounds.join()
-
-                }}
-                active={step > 0}
-              />
+              {selectedKnife === 100 ? (
+                <Bar2d
+                  numerator={selectedPieces}
+                  denominator={selectedKnife * chocolate}
+                  handlePieceClick={(index) => {  
+                    setSelectedPieces(index)
+                    sounds.join()
+                  }}
+                  active={step > 0}
+                />
+              ) : (
+                <VerticalBar
+                  numerator={selectedPieces}
+                  denominator={selectedKnife * chocolate}
+                  handlePieceClick={(index) => {  
+                    setSelectedPieces(index)
+                    sounds.join()
+                  }}
+                  active={step > 0}
+                />
+              )}
             </span>
 
             <span className='relative flex flex-col justify-center mx-10 w-1/6 text-center text-xl'>
@@ -220,7 +255,7 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
                 }))
                 sounds.levelUp();
               }}
-              text="Onward"
+              text="Onward! 🚀"
             />
           }
       </div>

@@ -33,6 +33,12 @@ function Tenth({ sendAdminMessage }: BaseProps) {
   const [fractionDenominator, setFractionDenominator] = useState('');
   const [wholes, setWholes] = useState('');
   const [tenths, setTenths] = useState('');
+  const [isWholesCorrect, setIsWholesCorrect] = useState(false);
+  const [isTenthsCorrect, setIsTenthsCorrect] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const hintRef = useRef<HTMLDivElement>(null);
+  const [showHintVisual, setShowHintVisual] = useState(false);
+  const [isTenthsIncorrect, setIsTenthsIncorrect] = useState(false);
 
   const start = useRef(false);
 
@@ -107,12 +113,16 @@ function Tenth({ sendAdminMessage }: BaseProps) {
     setWholes(value);
     
     const correctWholes = Math.floor(question2.numerator/question2.denominator);
-    if (value.length > 0 && parseInt(value) !== correctWholes) {
-      sounds.join();
-      sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
-    } else if (value.length > 0 && parseInt(value) === correctWholes) {
-      sounds.levelUp();
-      sendAdminMessage('agent', 'Excellent! That\'s the correct number of wholes.');
+    if (value.length > 0) {
+      if (parseInt(value) !== correctWholes) {
+        sounds.join();
+        sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+        setIsWholesCorrect(false);
+      } else {
+        sounds.levelUp();
+        sendAdminMessage('agent', 'Excellent! Now enter the tenths digit.');
+        setIsWholesCorrect(true);
+      }
     }
   };
 
@@ -120,14 +130,51 @@ function Tenth({ sendAdminMessage }: BaseProps) {
     const value = e.target.value;
     setTenths(value);
     
-    const correctTenths = question2.numerator;
+    const correctTenths = Math.floor((question2.numerator * 10) / question2.denominator) % 10;
+    if (value.length > 0) {
+      if (parseInt(value) !== correctTenths) {
+        sounds.join();
+        scrollToHint();
+        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
+        setIsTenthsCorrect(false);
+        setIsTenthsIncorrect(true);
+      } else {
+        sounds.levelUp();
+        sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
+        setIsTenthsCorrect(true);
+        setIsTenthsIncorrect(false);
+      }
+    }
+  };
+
+  const handleHundredthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTenths(value);
+    
+    const correctTenths = Math.floor((question2.numerator * 10) / question2.denominator) % 10;
     if (value.length > 0 && parseInt(value) !== correctTenths) {
       sounds.join();
-      sendAdminMessage('admin', `User answered incorrectly for the tenths, correct answer is ${correctTenths}, but user answered ${value}. Diagnose socratically.`);
+      scrollToHint();
+      sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
     } else if (value.length > 0 && parseInt(value) === correctTenths) {
       sounds.levelUp();
-      sendAdminMessage('agent', 'Perfect! You got the tenths digit right.');
+      sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
     }
+  };
+
+  const scrollToHint = () => {
+    if (!showHint) {  
+      setShowHint(true);
+      setTimeout(() => {
+        hintRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
+  const handleNeedHelp = () => {
+    sounds.join();
+    setShowHintVisual(true);
+    sendAdminMessage('agent', `Let's look at a simpler example first to understand how tenths work in a decimal.`);
   };
 
   return (
@@ -216,6 +263,10 @@ function Hundred({ sendAdminMessage }: BaseProps) {
   const [showHint, setShowHint] = useState(false);
   const hintRef = useRef<HTMLDivElement>(null);
   const [showHintVisual, setShowHintVisual] = useState(false);
+  const [isWholesCorrect, setIsWholesCorrect] = useState(false);
+  const [isTenthsCorrect, setIsTenthsCorrect] = useState(false);
+  const [isTenthsIncorrect, setIsTenthsIncorrect] = useState(false);
+  const [isHundredthsIncorrect, setIsHundredthsIncorrect] = useState(false);
 
   const start = useRef(false);
 
@@ -303,13 +354,16 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     setWholes(value);
     
     const correctWholes = Math.floor(question3.numerator/question3.denominator);
-    if (value.length > 0 && parseInt(value) !== correctWholes) {
-      sounds.join();
-      scrollToHint();
-      sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
-    } else if (value.length > 0 && parseInt(value) === correctWholes) {
-      sounds.levelUp();
-      sendAdminMessage('agent', 'Excellent! That\'s the correct number of wholes.');
+    if (value.length > 0) {
+      if (parseInt(value) !== correctWholes) {
+        sounds.join();
+        sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+        setIsWholesCorrect(false);
+      } else {
+        sounds.levelUp();
+        sendAdminMessage('agent', 'Excellent! Now enter the tenths digit.');
+        setIsWholesCorrect(true);
+      }
     }
   };
 
@@ -318,13 +372,19 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     setTenths(value);
     
     const correctTenths = Math.floor((question3.numerator * 10) / question3.denominator) % 10;
-    if (value.length > 0 && parseInt(value) !== correctTenths) {
-      sounds.join();
-      scrollToHint();
-      sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
-    } else if (value.length > 0 && parseInt(value) === correctTenths) {
-      sounds.levelUp();
-      sendAdminMessage('agent', 'Perfect! You got the tenths digit right.');
+    if (value.length > 0) {
+      if (parseInt(value) !== correctTenths) {
+        sounds.join();
+        scrollToHint();
+        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
+        setIsTenthsCorrect(false);
+        setIsTenthsIncorrect(true);
+      } else {
+        sounds.levelUp();
+        sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
+        setIsTenthsCorrect(true);
+        setIsTenthsIncorrect(false);
+      }
     }
   };
 
@@ -333,13 +393,17 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     setHundredths(value);
     
     const correctHundredths = Math.floor((question3.numerator * 100) / question3.denominator) % 10;
-    if (value.length > 0 && parseInt(value) !== correctHundredths) {
-      sounds.join();
-      scrollToHint();
-      sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
-    } else if (value.length > 0 && parseInt(value) === correctHundredths) {
-      sounds.levelUp();
-      sendAdminMessage('agent', 'Perfect! You got the hundredths digit right.');
+    if (value.length > 0) {
+      if (parseInt(value) !== correctHundredths) {
+        sounds.join();
+        scrollToHint();
+        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
+        setIsHundredthsIncorrect(true);
+      } else {
+        sounds.levelUp();
+        sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
+        setIsHundredthsIncorrect(false);
+      }
     }
   };
 
@@ -418,13 +482,15 @@ function Hundred({ sendAdminMessage }: BaseProps) {
                     type="text"
                     value={tenths}
                     onChange={handleTenthsChange}
-                    className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                      tenths === String(Math.floor((question3.numerator * 10) / question3.denominator) % 10)
-                        ? 'bg-green-100' 
-                        : tenths.length > 0 ? 'bg-red-100' : 'bg-white'
-                    }`}
+                    className={`w-12 h-12 border-4 border-pink-400 rounded-lg text-center text-2xl ${
+                      tenths.length > 0 
+                        ? parseInt(tenths) === Math.floor((question3.numerator * 10) / question3.denominator) % 10
+                          ? 'bg-green-100' 
+                          : 'bg-red-100'
+                        : 'bg-white'
+                    } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
                     maxLength={1}
-                    disabled={step !== 5}
+                    disabled={!isWholesCorrect}
                   />
                 </div>
                 <div className="flex flex-col items-center">
@@ -433,13 +499,15 @@ function Hundred({ sendAdminMessage }: BaseProps) {
                     type="text"
                     value={hundredths}
                     onChange={handleHundredthsChange}
-                    className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                      hundredths === String(Math.floor((question3.numerator * 100) / question3.denominator) % 10)
-                        ? 'bg-green-100' 
-                        : hundredths.length > 0 ? 'bg-red-100' : 'bg-white'
-                    }`}
+                    className={`w-12 h-12 border-4 border-pink-400 rounded-lg text-center text-2xl ${
+                      hundredths.length > 0 
+                        ? parseInt(hundredths) === Math.floor((question3.numerator * 100) / question3.denominator) % 10
+                          ? 'bg-green-100' 
+                          : 'bg-red-100'
+                        : 'bg-white'
+                    } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
                     maxLength={1}
-                    disabled={step !== 5}
+                    disabled={!isTenthsCorrect}
                   />
                 </div>
               </div>
@@ -447,11 +515,8 @@ function Hundred({ sendAdminMessage }: BaseProps) {
           </div>
         </div>
 
-        {showHint && step === 5 && (
+        {(isTenthsIncorrect || isHundredthsIncorrect) && (
           <div className="relative mt-8" ref={hintRef}>
-            <div className="absolute -top-1 -left-1 bg-black px-6 py-2">
-              <span className="text-xl text-white invisible">Need a hint?</span>
-            </div>
             <button
               onClick={handleNeedHelp}
               className="relative bg-[#FF9DB1] px-6 py-2 text-xl text-white hover:bg-[#FF8DA3] transition-colors"
@@ -495,6 +560,10 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     const [showHint, setShowHint] = useState(false);
     const hintRef = useRef<HTMLDivElement>(null);
     const [showHintVisual, setShowHintVisual] = useState(false);
+    const [isWholesCorrect, setIsWholesCorrect] = useState(false);
+    const [isTenthsCorrect, setIsTenthsCorrect] = useState(false);
+    const [isTenthsIncorrect, setIsTenthsIncorrect] = useState(false);
+    const [isHundredthsIncorrect, setIsHundredthsIncorrect] = useState(false);
 
     const start = useRef(false);
   
@@ -563,13 +632,16 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       setWholes(value);
       
       const correctWholes = Math.floor(question4.numerator/question4.denominator);
-      if (value.length > 0 && parseInt(value) !== correctWholes) {
-        sounds.join();
-        scrollToHint();
-        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
-      } else if (value.length > 0 && parseInt(value) === correctWholes) {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Excellent! That\'s the correct number of wholes.');
+      if (value.length > 0) {
+        if (parseInt(value) !== correctWholes) {
+          sounds.join();
+          sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+          setIsWholesCorrect(false);
+        } else {
+          sounds.levelUp();
+          sendAdminMessage('agent', 'Excellent! That\'s the correct number of wholes.');
+          setIsWholesCorrect(true);
+        }
       }
     };
   
@@ -578,13 +650,19 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       setTenths(value);
       
       const correctTenths = Math.floor((question4.numerator * 10) / question4.denominator) % 10;
-      if (value.length > 0 && parseInt(value) !== correctTenths) {
-        sounds.join();
-        scrollToHint();
-        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
-      } else if (value.length > 0 && parseInt(value) === correctTenths) {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Perfect! You got the tenths digit right. Now for the hundredths.');
+      if (value.length > 0) {
+        if (parseInt(value) !== correctTenths) {
+          sounds.join();
+          scrollToHint();
+          sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
+          setIsTenthsCorrect(false);
+          setIsTenthsIncorrect(true);
+        } else {
+          sounds.levelUp();
+          sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
+          setIsTenthsCorrect(true);
+          setIsTenthsIncorrect(false);
+        }
       }
     };
   
@@ -593,13 +671,17 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       setHundredths(value);
       
       const correctHundredths = Math.floor((question4.numerator * 100) / question4.denominator) % 10;
-      if (value.length > 0 && parseInt(value) !== correctHundredths) {
-        sounds.join();
-        scrollToHint();
-        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
-      } else if (value.length > 0 && parseInt(value) === correctHundredths) {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Excellent! You\'ve mastered converting fractions to decimals!');
+      if (value.length > 0) {
+        if (parseInt(value) !== correctHundredths) {
+          sounds.join();
+          scrollToHint();
+          sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
+          setIsHundredthsIncorrect(true);
+        } else {
+          sounds.levelUp();
+          sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
+          setIsHundredthsIncorrect(false);
+        }
       }
     };
   
@@ -705,12 +787,14 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
                       value={tenths}
                       onChange={handleTenthsChange}
                       className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                        tenths === String(Math.floor((question4.numerator * 10) / question4.denominator) % 10)
-                          ? 'bg-green-100' 
-                          : tenths.length > 0 ? 'bg-red-100' : 'bg-white'
-                      }`}
+                        tenths.length > 0 
+                          ? parseInt(tenths) === Math.floor((question4.numerator * 10) / question4.denominator) % 10
+                            ? 'bg-green-100' 
+                            : 'bg-red-100'
+                          : 'bg-white'
+                      } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
                       maxLength={1}
-                      disabled={step !== 8}
+                      disabled={!isWholesCorrect}
                     />
                   </div>
                   <div className="flex flex-col items-center">
@@ -720,12 +804,14 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
                       value={hundredths}
                       onChange={handleHundredthsChange}
                       className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                        hundredths === String(Math.floor((question4.numerator * 100) / question4.denominator) % 10)
-                          ? 'bg-green-100' 
-                          : hundredths.length > 0 ? 'bg-red-100' : 'bg-white'
-                      }`}
+                        hundredths.length > 0 
+                          ? parseInt(hundredths) === Math.floor((question4.numerator * 100) / question4.denominator) % 10
+                            ? 'bg-green-100' 
+                            : 'bg-red-100'
+                          : 'bg-white'
+                      } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
                       maxLength={1}
-                      disabled={step !== 8}
+                      disabled={!isTenthsCorrect}
                     />
                   </div>
                 </div>

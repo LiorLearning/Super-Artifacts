@@ -242,7 +242,7 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
           sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
         } else {
           sounds.join();
-          sendAdminMessage('agent', "Oops, I see what you did there. Let's click on the hint to understand this better");
+          sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
         }
       }
     }
@@ -259,7 +259,7 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
           sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
         } else {
           sounds.join();
-          sendAdminMessage('agent', "Oops, I see what you did there. Let's click on the hint to understand this better");
+          sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
         }
       }
     }

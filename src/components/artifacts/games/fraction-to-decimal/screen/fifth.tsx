@@ -3,8 +3,8 @@ import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import Fraction from '../components/Fraction';
 import Proceed from '../components/proceed';
-import { HUNDRED_PERCENT } from 'html2canvas/dist/types/css/types/length-percentage';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
+import { sounds } from '../utils/sound';
 
 
 interface FifthScreenProps {
@@ -24,9 +24,13 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
 
   const start = useRef(false);
 
+  const [isTenthsCorrect, setIsTenthsCorrect] = useState(false);
+
+  const [showFinish, setShowFinish] = useState(false);
+
   useEffect(() => {
     if (!start.current) {
-      sendAdminMessage('agent', `his time, let's try converting a fraction to decimal without the visuals. Let me know if you need help!`);
+      sendAdminMessage('agent', `this time, let's try converting a fraction to decimal without the visuals. Let me know if you need help!`);
       start.current = true;
     }
   }, []);
@@ -40,6 +44,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
       setTenths('')
       setHundredths('')
       setDisabled(true)
+      setIsTenthsCorrect(false);
       sendAdminMessage('agent', `Great, let's try another one!`);
   }
 
@@ -70,14 +75,88 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
           state5: { step: 1 }
         }));
       } else if (step === 2) {
-        setGameStateRef(prev => ({
-          ...prev,
-          state5: { step: 3 }
-        }));
-        sendAdminMessage('agent', `Awesome, you're now a master at converting fractions to decimals - great job!`);
+        setShowFinish(true);
       }
     }
   }, [tenths, hundredths, wholes, step])
+
+  const getCorrectValues = (numerator: number, denominator: number) => {
+    const decimal = numerator / denominator;
+    const wholes = Math.floor(decimal);
+    const decimalPart = (decimal - wholes).toFixed(2);
+    const [tenths, hundredths] = decimalPart.split('.')[1];
+    return {
+      wholes: wholes.toString(),
+      tenths,
+      hundredths
+    };
+  };
+
+  const handleWholesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 1) {
+      setWholes(value);
+      
+      if (value.length > 0) {
+        const currentQuestion = step < 2 ? question7 : question8;
+        const correct = getCorrectValues(currentQuestion.numerator, currentQuestion.denominator);
+        
+        if (value === correct.wholes) {
+          sendAdminMessage('agent', 'Correct! Now enter the tenths digit.');
+          setDisabled(false);
+        } else {
+          sendAdminMessage('admin', 'user is incorrect, diagnose socratically by referring to their current game state.');
+        }
+      }
+    }
+  };
+
+  const handleTenthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 1) {
+      setTenths(value);
+      
+      if (value.length > 0) {
+        const currentQuestion = step < 2 ? question7 : question8;
+        const correct = getCorrectValues(currentQuestion.numerator, currentQuestion.denominator);
+        
+        if (value === correct.tenths) {
+          sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
+          setIsTenthsCorrect(true);
+        } else {
+          sendAdminMessage('admin', 'user is incorrect, diagnose socratically by referring to their current game state.');
+          setIsTenthsCorrect(false);
+        }
+      }
+    }
+  };
+
+  const handleHundredthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 1) {
+      setHundredths(value);
+      
+      if (value.length > 0) {
+        const currentQuestion = step < 2 ? question7 : question8;
+        const correct = getCorrectValues(currentQuestion.numerator, currentQuestion.denominator);
+        
+        if (value === correct.hundredths) {
+          sendAdminMessage('agent', 'Excellent! You\'ve converted the fraction to a decimal.');
+        } else {
+          sendAdminMessage('admin', 'user is incorrect, diagnose socratically by referring to their current game state.');
+        }
+      }
+    }
+  };
+
+  const handleFinish = () => {
+    setGameStateRef(prev => ({
+      ...prev,
+      state5: { step: 3 }
+    }));
+    sounds.levelUp();
+    sendAdminMessage('agent', `Awesome, you're now a master at converting fractions to decimals - great job!`);
+  };
 
   return (
       <div className="flex flex-col h-full w-full">
@@ -110,8 +189,17 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
                   <input
                     type="text"
                     value={wholes}
-                    onChange={(e) => setWholes(e.target.value)}
-                    className="w-12 h-12 border-4 border-green-600 flex items-center justify-center text-2xl rounded-lg text-center"
+                    onChange={handleWholesChange}
+                    className={`w-12 h-12 border-4 border-green-600 flex items-center justify-center text-2xl rounded-lg text-center ${
+                      wholes.length > 0 
+                        ? wholes === getCorrectValues(
+                            (step < 2 ? question7 : question8).numerator,
+                            (step < 2 ? question7 : question8).denominator
+                          ).wholes
+                          ? 'bg-green-100' 
+                          : 'bg-red-100'
+                        : ''
+                    }`}
                     maxLength={1}
                     placeholder={disabled ? '?' : ''}
                     disabled={!disabled || step === 1 || step === 3}
@@ -125,8 +213,19 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
                   <input
                     type="text"
                     value={tenths}
-                    onChange={(e) => setTenths(e.target.value)}
-                    className={`w-12 h-12 border-4 ${disabled ? 'opacity-50' : 'border-pink-400'} flex items-center justify-center text-2xl rounded-lg text-center`}
+                    onChange={handleTenthsChange}
+                    className={`w-12 h-12 border-4 ${
+                      disabled ? 'opacity-50' : 'border-pink-400'
+                    } flex items-center justify-center text-2xl rounded-lg text-center ${
+                      tenths.length > 0 
+                        ? tenths === getCorrectValues(
+                            (step < 2 ? question7 : question8).numerator,
+                            (step < 2 ? question7 : question8).denominator
+                          ).tenths
+                          ? 'bg-green-100' 
+                          : 'bg-red-100'
+                        : ''
+                    }`}
                     maxLength={1}
                     placeholder={!disabled ? '?' : ''}
                     disabled={disabled || step === 1 || step === 3}
@@ -139,11 +238,22 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
                   <input
                     type="text"
                     value={hundredths}
-                    onChange={(e) => setHundredths(e.target.value)}
-                    className={`w-12 h-12 border-4 ${disabled ? 'opacity-50' : 'border-pink-400'} flex items-center justify-center text-2xl rounded-lg text-center`}
+                    onChange={handleHundredthsChange}
+                    className={`w-12 h-12 border-4 ${
+                      disabled || !isTenthsCorrect ? 'opacity-50' : 'border-pink-400'
+                    } flex items-center justify-center text-2xl rounded-lg text-center ${
+                      hundredths.length > 0 
+                        ? hundredths === getCorrectValues(
+                            (step < 2 ? question7 : question8).numerator,
+                            (step < 2 ? question7 : question8).denominator
+                          ).hundredths
+                          ? 'bg-green-100' 
+                          : 'bg-red-100'
+                        : ''
+                    }`}
                     maxLength={1}
-                    disabled={disabled || step === 1 || step === 3}
-                    placeholder={!disabled ? '?' : ''}
+                    disabled={disabled || step === 1 || step === 3 || !isTenthsCorrect}
+                    placeholder={!disabled && isTenthsCorrect ? '?' : ''}
                   />
                 </div>
               </div>
@@ -156,11 +266,18 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
             <Proceed onComplete={handleProceed} text='Proceed' />
           </div>
         )}
+        {showFinish && (
+          <div className='flex justify-center mb-20 scale-125'>
+            <button
+              onClick={handleFinish}
+              className="bg-[#ff3971] text-white font-bold text-xl rounded-none px-4 py-2 shadow-[-5px_5px_0px_rgba(0,0,0,1)]"
+            >
+              Finish 🚀
+            </button>
+          </div>
+        )}
         {step === 3 && (
-          <p className='w-full text-center bg-lime-500 py-20 text-5xl font-bold'>
             <SuccessAnimation />
-              Correct! 
-          </p>
         )}
     </div>
   );
