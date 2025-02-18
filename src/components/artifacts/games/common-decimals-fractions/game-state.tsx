@@ -100,15 +100,40 @@ export const initialGameState: GameState = {
       level: 4,
       numerator: 3,
       denominator_1: 2,
-      denominator_2: 5,
+      denominator_2: 2,
     }
   }
 };
 
-// denominator_1 can be {1, 2, 5}
-// denominator_2 can be {2, 4, 5}
-// denominator = denominator_1 * denominator_2 should be factor of 100
-// numerator < denominator
+
+/* 
+Screen1 (state1) or Screen2 (state2)
+
+nuerator < denominator_1 * denominator_2
+
+denominator1 has to be 1
+
+denominator2 can be {2, 5, 10}
+
+E.g. 1 / (1 * 5),   6 / (1 * 10)
+
+
+--------------------------------------------------
+
+
+Screen3 (state3) or Screen3 (state3)
+
+nuerator < (denominator_1 * denominator_2)
+
+denominator1 can't be 1
+
+denominator1 can be {2, 5}
+denominator2 can be {2, 5}
+
+E.g  3 / (2 * 2),    7 / (2 * 5)   
+
+
+*/
 
 
 
