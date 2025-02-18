@@ -29,7 +29,7 @@ export default function Screen3Step0({ sendAdminMessage }: BaseProps) {
     <div className="mx-auto max-h-screen overflow-hidden" style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>
       <div className='relative min-h-screen min-w-full pr-[5vw] translate-y-[10vh] flex justify-center items-center'>
         <img src={chest.src}
-          className='absolute scale-[1.2] w-[80vh] h-auto -z-10'
+          className='absolute scale-[1.2] w-[80vh] h-auto -z-10 select-none'
           alt="chest"
         />
       </div>

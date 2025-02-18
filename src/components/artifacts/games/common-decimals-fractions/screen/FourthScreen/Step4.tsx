@@ -32,7 +32,7 @@ export default function Screen4Step4({ sendAdminMessage }: BaseProps) {
 
       <div className='min-h-screen min-w-full pr-[5vw] translate-y-[10vh] flex flex-col justify-center items-center'>
         <img src={Chest.src}
-          className='absolute scale-[1.2] z-10 h-[52vh] w-auto'
+          className='absolute scale-[1.2] z-10 h-[52vh] w-auto select-none'
           alt="chest"
         />
 

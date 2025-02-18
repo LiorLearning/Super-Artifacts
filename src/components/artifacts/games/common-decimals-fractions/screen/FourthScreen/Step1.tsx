@@ -31,7 +31,7 @@ export default function Screen4Step1({ sendAdminMessage }: BaseProps) {
 
       <div className='relative min-h-screen min-w-full transform -translate-x-[4vh] translate-y-[27vh] flex justify-center items-center'>
         <img src={chest.src}
-          className='absolute scale-[1.2] h-[48vh] w-auto z-10'
+          className='absolute scale-[1.2] h-[48vh] w-auto z-10 select-none'
           alt="chest"
         />
       </div>

@@ -54,7 +54,7 @@ export default function Screen3Step7({ sendAdminMessage }: BaseProps) {
 
       <div className='min-h-screen min-w-full pr-[5vw] translate-y-[10vh] flex flex-col justify-center items-center'>
         <img src={Chest.src}
-          className='absolute scale-[1.2] z-10 h-[52vh] w-auto'
+          className='absolute scale-[1.2] z-10 h-[52vh] w-auto select-none'
           alt="chest"
         />
         <div className='flex flex-col content-start absolute -translate-y-[1.35vh] translate-x-[3.69vh] h-[17.2vh] w-[17.2vh] z-20'>

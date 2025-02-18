@@ -36,11 +36,11 @@ export default function Screen3Step8({ sendAdminMessage }: BaseProps) {
 
       <div className='min-h-screen min-w-full pr-[5vw] translate-y-[10vh] flex flex-col justify-center items-center'>
         {leverState==='up' ? <img src={chestclose.src}
-          className='absolute scale-[1.2] z-10 w-[83vh] h-auto'
+          className='absolute scale-[1.2] z-10 w-[83vh] h-auto select-none'
           alt="chest"
         /> : 
         <img src={chestopen.src}
-          className='absolute scale-[1.2] z-10 w-[83vh] h-auto -translate-y-[6.2vh]'
+          className='absolute scale-[1.2] z-10 w-[83vh] h-auto -translate-y-[6.2vh] select-none'
           alt="chest"
         />
         }

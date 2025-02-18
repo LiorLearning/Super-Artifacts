@@ -36,12 +36,12 @@ export default function Screen3Step6({ sendAdminMessage }: BaseProps) {
       style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%' }}>
 
       <div className='bg-[#f5f8e5] px-[4vw] py-[2vh] text-[1.7vw] leading-none rounded-[2vw] absolute left-1/2 transform -translate-x-1/2 translate-y-[10vh] shadow-lg opacity-90'>
-        <h1 className='text-[#8A1900] scale-y-125 py-[2vh]'>You’ve unlocked the CODE BOX</h1>
+        <h1 className='text-[#8A1900] scale-y-125 py-[2vh]'>You've unlocked the CODE BOX</h1>
       </div>
 
       <div className='min-h-screen min-w-full pr-[5vw] translate-y-[9vh] flex flex-col justify-center items-center'>
         <img src={Chest.src}
-          className='absolute scale-[1.2] z-10 h-[52vh] w-auto'
+          className='absolute scale-[1.2] z-10 h-[52vh] w-auto select-none'
           alt="chest"
         />
         <div className='flex flex-col content-start absolute -translate-y-[1.35vh] translate-x-[3.69vh] h-[17.2vh] w-[17.2vh] z-20'>
