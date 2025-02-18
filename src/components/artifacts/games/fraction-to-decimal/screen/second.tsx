@@ -737,117 +737,120 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
         />
   
         <div className='flex w-full flex-col max-w-screen-md mx-auto items-center justify-center gap-8 mt-8 transform scale-90'>
-          <Bar
-            numerator={question4.numerator}
-            denominator={question4.denominator}
-            handlePieceClick={(index) => setSelectedPieces(index)}
-            active={false}
-          />
-  
-          <div className="flex w-full">
-            <div className="w-1/2 bg-[#E8FFE9] flex items-center justify-center">
-              <FractionBox 
-                numerator={fractionNumerator}
-                denominator={fractionDenominator}
-                onChange={{
-                  numerator: handleFractionNumeratorChange,
-                  denominator: handleFractionDenominatorChange
-                }}
-                correctnumerator={String(question4.numerator)}
-                correctdenominator={String(question4.denominator)}
-              />
-            </div>
-  
-            <div className={`w-1/2 bg-[#FFF8E7] flex flex-col items-center py-8 ${step >= 8 ? 'opacity-100' : 'opacity-50'}`}>
-              <div className="text-center mb-2">
-                <span className="text-lg font-bold bg-[#FFE4B5] px-4 py-1">Decimal</span>
-              </div>
-              <div className="border-2 border-black p-4 bg-white">
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col items-center">
-                    <span className="text-sm font-bold">Wholes</span>
-                    <input
-                      type="text"
-                      value={wholes}
-                      onChange={handleWholesChange}
-                      className={`w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl ${
-                        wholes === String(Math.floor(question4.numerator/question4.denominator)) 
-                          ? 'bg-green-100' 
-                          : wholes.length > 0 ? 'bg-red-100' : 'bg-white'
-                      }`}
-                      maxLength={1}
-                      disabled={step !== 8}
-                    />
-                  </div>
-                  <span className="text-4xl mb-6">.</span>
-                  <div className='flex flex-col items-center'>
-                    <span className="text-sm font-bold">Tenths</span>
-                    <input 
-                      type="text"
-                      value={tenths}
-                      onChange={handleTenthsChange}
-                      className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                        tenths.length > 0 
-                          ? parseInt(tenths) === Math.floor((question4.numerator * 10) / question4.denominator) % 10
-                            ? 'bg-green-100' 
-                            : 'bg-red-100'
-                          : 'bg-white'
-                      } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      maxLength={1}
-                      disabled={!isWholesCorrect}
-                    />
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span className="text-sm font-bold">Hundredths</span>
-                    <input
-                      type="text"
-                      value={hundredths}
-                      onChange={handleHundredthsChange}
-                      className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                        hundredths.length > 0 
-                          ? parseInt(hundredths) === Math.floor((question4.numerator * 100) / question4.denominator) % 10
-                            ? 'bg-green-100' 
-                            : 'bg-red-100'
-                          : 'bg-white'
-                      } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      maxLength={1}
-                      disabled={!isTenthsCorrect}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-  
-          {showHint && step === 8 && (
-            <div className="relative mt-8" ref={hintRef}>
-              <div className="absolute -top-1 -left-1 bg-black px-6 py-2">
-                <span className="text-xl text-white invisible">Need a hint?</span>
-              </div>
-              <button
-                onClick={handleNeedHelp}
-                className="relative bg-[#FF9DB1] px-6 py-2 text-xl text-white hover:bg-[#FF8DA3] transition-colors"
-              >
-                Need a hint?
-              </button>
-            </div>
-          )}
-  
-          {showHintVisual && (
+          {showHintVisual ? (
             <HintVisual2
               numerator={21}
               denominator={100}
               onClose={() => setShowHintVisual(false)}
               sendAdminMessage={sendAdminMessage}
               setGameStateRef={setGameStateRef}
+              currentScreen="second"
             />
-          )}
+          ) : (
+            <>
+              <Bar
+                numerator={question4.numerator}
+                denominator={question4.denominator}
+                handlePieceClick={(index) => setSelectedPieces(index)}
+                active={false}
+              />
   
-          {step === 9 && (
-            <Proceed 
-              onComplete={handleProceed}
-              text="Onward! 🚀"
-            />
+              <div className="flex w-full">
+                <div className="w-1/2 bg-[#E8FFE9] flex items-center justify-center">
+                  <FractionBox 
+                    numerator={fractionNumerator}
+                    denominator={fractionDenominator}
+                    onChange={{
+                      numerator: handleFractionNumeratorChange,
+                      denominator: handleFractionDenominatorChange
+                    }}
+                    correctnumerator={String(question4.numerator)}
+                    correctdenominator={String(question4.denominator)}
+                  />
+                </div>
+  
+                <div className={`w-1/2 bg-[#FFF8E7] flex flex-col items-center py-8 ${step >= 8 ? 'opacity-100' : 'opacity-50'}`}>
+                  <div className="text-center mb-2">
+                    <span className="text-lg font-bold bg-[#FFE4B5] px-4 py-1">Decimal</span>
+                  </div>
+                  <div className="border-2 border-black p-4 bg-white">
+                    <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-center">
+                        <span className="text-sm font-bold">Wholes</span>
+                        <input
+                          type="text"
+                          value={wholes}
+                          onChange={handleWholesChange}
+                          className={`w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl ${
+                            wholes === String(Math.floor(question4.numerator/question4.denominator)) 
+                              ? 'bg-green-100' 
+                              : wholes.length > 0 ? 'bg-red-100' : 'bg-white'
+                          }`}
+                          maxLength={1}
+                          disabled={step !== 8}
+                        />
+                      </div>
+                      <span className="text-4xl mb-6">.</span>
+                      <div className='flex flex-col items-center'>
+                        <span className="text-sm font-bold">Tenths</span>
+                        <input 
+                          type="text"
+                          value={tenths}
+                          onChange={handleTenthsChange}
+                          className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
+                            tenths.length > 0 
+                              ? parseInt(tenths) === Math.floor((question4.numerator * 10) / question4.denominator) % 10
+                                ? 'bg-green-100' 
+                                : 'bg-red-100'
+                              : 'bg-white'
+                          } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          maxLength={1}
+                          disabled={!isWholesCorrect}
+                        />
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-sm font-bold">Hundredths</span>
+                        <input
+                          type="text"
+                          value={hundredths}
+                          onChange={handleHundredthsChange}
+                          className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
+                            hundredths.length > 0 
+                              ? parseInt(hundredths) === Math.floor((question4.numerator * 100) / question4.denominator) % 10
+                                ? 'bg-green-100' 
+                                : 'bg-red-100'
+                              : 'bg-white'
+                          } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          maxLength={1}
+                          disabled={!isTenthsCorrect}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              {showHint && step === 8 && (
+                <div className="relative mt-8" ref={hintRef}>
+                  <div className="absolute -top-1 -left-1 bg-black px-6 py-2">
+                    <span className="text-xl text-white invisible">Need a hint?</span>
+                  </div>
+                  <button
+                    onClick={handleNeedHelp}
+                    className="relative bg-[#FF9DB1] px-6 py-2 text-xl text-white hover:bg-[#FF8DA3] transition-colors"
+                  >
+                    Need a hint?
+                  </button>
+                </div>
+              )}
+  
+              {step === 9 && (
+                <Proceed 
+                  onComplete={handleProceed}
+                  text="Onward! 🚀"
+                />
+              )}
+            </>
           )}
         </div>
       </div>

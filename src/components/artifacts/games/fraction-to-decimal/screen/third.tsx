@@ -7,6 +7,7 @@ import Header from '../components/header';
 import Fraction from '../components/Fraction';
 import KnifeSelector from '../components/knifeselector';
 import { sounds } from '../utils/sound';
+import HintVisual2 from '../components/HintVisual2';
 
 interface ThirdScreenProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -173,7 +174,7 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
   );
 };
 
-const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
+const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step } = gameStateRef.current.state3
   const {numerator, denominator} = gameStateRef.current.question.question5
@@ -186,6 +187,9 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
 
   const [isWholesCorrect, setIsWholesCorrect] = useState(false);
   const [isTenthsCorrect, setIsTenthsCorrect] = useState(false);
+
+  const [showHint, setShowHint] = useState(false);
+  const [showHintButton, setShowHintButton] = useState(false);
 
   const start = useRef(false);
 
@@ -240,8 +244,10 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
         if (isCorrect) {
           sounds.levelUp();
           sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
+          setShowHintButton(false);
         } else {
           sounds.join();
+          setShowHintButton(true);
           sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
         }
       }
@@ -254,11 +260,14 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
       setHundredths(value);
       
       if (value.length > 0) {
-        if (parseInt(value) === Math.floor((numerator % denominator) % 10)) {
+        const isCorrect = parseInt(value) === Math.floor((numerator % denominator) % 10);
+        if (isCorrect) {
           sounds.levelUp();
           sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
+          setShowHintButton(false);
         } else {
           sounds.join();
+          setShowHintButton(true);
           sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
         }
       }
@@ -267,96 +276,125 @@ const Part2: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
 
   return (
     <div className="flex flex-col items-center max-w-screen-lg w-full mx-auto justify-center flex-1 gap-8">
-      <div className="flex gap-7">
-          {Array.from({length: wholechocolate}, (_, index) => (
-            <div 
-              key={index}
-            >
-              <Bar2d
-                numerator={100}
-                denominator={100}
-                handlePieceClick={() => {}}
-                active={false}
-            />
-            </div>
-          ))}
-          <Bar2d
+      <div className="w-full">
+        {showHint ? (
+          <HintVisual2
             numerator={numerator % denominator}
             denominator={100}
-            handlePieceClick={() => {}}
-            active={false}
+            onClose={() => setShowHint(false)}
+            sendAdminMessage={sendAdminMessage}
+            setGameStateRef={setGameStateRef}
+            currentScreen="third"
           />
-      </div>
-
-      <div className="flex flex-col items-center gap-2 text-2xl">
-        <div className="w-screen bg-[#F7F5DD] py-8">
-          <div className="max-w-[500px] mx-auto px-4">
-            <div className="text-center -mb-4 relative z-10">
-              <span className="text-lg font-bold bg-[#FFE4B5] px-6 py-2 rounded-t-lg">
-                Decimal Form
-              </span>
-            </div>
-            <div className="border-2 border-black p-6 bg-white rounded-lg">
-              <div className="flex flex-col items-center">
-                <div className="flex w-full justify-center mb-2">
-                  <div className="w-16 text-center">
-                    <span className="text-sm font-bold">Wholes</span>
-                  </div>
-                  <div className="w-16 text-center ml-12">
-                    <span className="text-sm font-bold">Tenths</span>
-                  </div>
-                  <div className="w-16 text-center ml-4">
-                    <span className="text-sm font-bold">Hundredths</span>
-                  </div>
+        ) : (
+          <>
+            <div className="flex justify-center text-2xl font-bold items-center gap-4 mb-16">
+              {Array.from({length: wholechocolate}, (_, index) => (
+                <div key={index} className="w-[200px]">
+                  <Bar2d
+                    numerator={100}
+                    denominator={100}
+                    handlePieceClick={() => {}}
+                    active={false}
+                  />
                 </div>
-                <div className="flex items-center justify-center">
-                  <input
-                    type="text"
-                    value={wholes}
-                    onChange={handleWholesChange}
-                    className={`w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl ${
-                      wholes.length > 0 
-                        ? parseInt(wholes) === Math.floor(numerator / denominator)
-                          ? 'bg-green-100' 
-                          : 'bg-red-100'
-                        : 'bg-white'
-                    }`}
-                    maxLength={1}
-                  />
-                  <span className="text-4xl mx-4">.</span>
-                  <input 
-                    type="text"
-                    value={tenths}
-                    onChange={handleTenthsChange}
-                    disabled={!isWholesCorrect}
-                    className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                      tenths.length > 0 
-                        ? parseInt(tenths) === Math.floor((numerator % denominator) / 10)
-                          ? 'bg-green-100' 
-                          : 'bg-red-100'
-                        : 'bg-white'
-                    } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    maxLength={1}
-                  />
-                  <input
-                    type="text"
-                    value={hundredths}
-                    onChange={handleHundredthsChange}
-                    disabled={!isTenthsCorrect}
-                    className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ml-4 ${
-                      hundredths.length > 0 
-                        ? parseInt(hundredths) === Math.floor((numerator % denominator) % 10)
-                          ? 'bg-green-100' 
-                          : 'bg-red-100'
-                        : 'bg-white'
-                    } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    maxLength={2}
-                  />
+              ))}
+              <div className="w-[200px]">
+                <Bar2d
+                  numerator={numerator % denominator}
+                  denominator={100}
+                  handlePieceClick={() => {}}
+                  active={false}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-2 text-2xl">
+              <div className="w-screen bg-[#F7F5DD] py-8">
+                <div className="max-w-[500px] mx-auto px-4">
+                  <div className="text-center -mb-4 relative z-10">
+                    <span className="text-lg font-bold bg-[#FFE4B5] px-6 py-2 rounded-t-lg">
+                      Decimal Form
+                    </span>
+                  </div>
+                  <div className="border-2 border-black p-6 bg-white rounded-lg">
+                    <div className="flex flex-col items-center">
+                      <div className="flex w-full justify-center mb-2">
+                        <div className="w-16 text-center">
+                          <span className="text-sm font-bold">Wholes</span>
+                        </div>
+                        <div className="w-16 text-center ml-12">
+                          <span className="text-sm font-bold">Tenths</span>
+                        </div>
+                        <div className="w-16 text-center ml-4">
+                          <span className="text-sm font-bold">Hundredths</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <input
+                          type="text"
+                          value={wholes}
+                          onChange={handleWholesChange}
+                          className={`w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl ${
+                            wholes.length > 0 
+                              ? parseInt(wholes) === Math.floor(numerator / denominator)
+                                ? 'bg-green-100' 
+                                : 'bg-red-100'
+                              : 'bg-white'
+                          }`}
+                          maxLength={1}
+                        />
+                        <span className="text-4xl mx-4">.</span>
+                        <input 
+                          type="text"
+                          value={tenths}
+                          onChange={handleTenthsChange}
+                          disabled={!isWholesCorrect}
+                          className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
+                            tenths.length > 0 
+                              ? parseInt(tenths) === Math.floor((numerator % denominator) / 10)
+                                ? 'bg-green-100' 
+                                : 'bg-red-100'
+                              : 'bg-white'
+                          } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          maxLength={1}
+                        />
+                        <input
+                          type="text"
+                          value={hundredths}
+                          onChange={handleHundredthsChange}
+                          disabled={!isTenthsCorrect}
+                          className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ml-4 ${
+                            hundredths.length > 0 
+                              ? parseInt(hundredths) === Math.floor((numerator % denominator) % 10)
+                                ? 'bg-green-100' 
+                                : 'bg-red-100'
+                              : 'bg-white'
+                          } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          maxLength={2}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {showHintButton && (
+                    <div className="relative mt-8 flex justify-center">
+                      <div className="absolute top-1 left-1 bg-black px-6 py-2 w-[180px] h-[40px] -z-10">
+                        <span className="text-xl text-white invisible">Need a hint?</span>
+                      </div>
+                      <button
+                        onClick={() => setShowHint(true)}
+                        className="relative bg-[#FF9DB1] px-6 py-2 text-xl text-white hover:bg-[#FF8DA3] transition-colors w-[180px] h-[40px]"
+                      >
+                        Need a hint?
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
       {step === 3 && (

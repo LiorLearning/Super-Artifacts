@@ -9,11 +9,27 @@ interface HintVisual2Props {
   onClose: () => void;
   sendAdminMessage?: (role: string, message: string) => void;
   setGameStateRef: (value: React.SetStateAction<any>) => void;
+  currentScreen?: 'second' | 'third';
 }
-export default function HintVisual2({ numerator, denominator, onClose, sendAdminMessage}: HintVisual2Props) {
+
+interface GameState {
+  state2: {
+    step: number;
+  };
+  screen: string;
+}
+
+export default function HintVisual2({ 
+  numerator, 
+  denominator, 
+  onClose, 
+  sendAdminMessage,
+  setGameStateRef: setGameStateRefProp,
+  currentScreen = 'second'
+}: HintVisual2Props) {
   const completeRows = Math.floor(numerator / 10); 
   const [answer, setAnswer] = useState('');
-  const { gameStateRef, setGameStateRef } = useGameState();
+  const { gameStateRef } = useGameState();
   const [purpleBoxAnswer, setPurpleBoxAnswer] = useState('');
   const [remainingAnswer, setRemainingAnswer] = useState('');
   const [showFraction, setShowFraction] = useState(false);
@@ -24,7 +40,7 @@ export default function HintVisual2({ numerator, denominator, onClose, sendAdmin
   const onwardsButtonRef = useRef<HTMLDivElement>(null);
 
   const setStep = (value: number) => {
-    setGameStateRef(prev => ({
+    setGameStateRefProp((prev: GameState) => ({
       ...prev,
       state2: {
         ...prev.state2,
@@ -34,10 +50,17 @@ export default function HintVisual2({ numerator, denominator, onClose, sendAdmin
   };
 
   const handleProceed = () => {
-    setGameStateRef(prev => ({
-      ...prev,
-      screen: 'third'
-    }));
+    if (currentScreen === 'second') {
+      setGameStateRefProp((prev: GameState) => ({
+        ...prev,
+        screen: 'third'
+      }));
+    } else {
+      setGameStateRefProp((prev: GameState) => ({
+        ...prev,
+        screen: 'fourth'
+      }));
+    }
     sounds.levelUp();
   };
   
@@ -93,7 +116,7 @@ export default function HintVisual2({ numerator, denominator, onClose, sendAdmin
   };
 
   return (
-    <div className='fixed inset-0 bg-white z-50 flex items-start justify-center'>
+    <div className='w-full bg-white flex items-start justify-center'>
       <div className='w-screen transform scale-[0.7] -mt-40'>
         <div className="flex flex-col items-center">
           <div className="flex w-full justify-center pl-[200px] relative items-start">
@@ -225,18 +248,18 @@ export default function HintVisual2({ numerator, denominator, onClose, sendAdmin
                 ) : (
                   // Show full equation with input when not answered correctly
                   <div className="flex items-center gap-6 text-2xl">
-                    <div className="flex flex-col items-center mb-2">
+                    <div className="flex flex-col items-center mb-1">
                       <span className="font-bold">{completeRows * 10}</span>
                       <div className="h-0.5 w-8 bg-black my-1"></div>
                       <span className="font-bold">100</span>
                     </div>
                     <span className="mx-2">=</span>
-                    <div className="flex flex-col items-center mb-2">
+                    <div className="flex flex-col items-center -bottom-1">
                       <input
                         type="text"
                         value={purpleBoxAnswer}
                         onChange={handlePurpleBoxChange}
-                        className={`w-10 h-10 border-2 border-black font-bold text-center text-xl ${
+                        className={`w-9 h-9 border-2 border-black font-bold text-center text-xl ${
                           purpleBoxAnswer.length > 0 
                             ? parseInt(purpleBoxAnswer) === completeRows 
                               ? 'bg-green-100' 
