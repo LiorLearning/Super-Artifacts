@@ -4,14 +4,14 @@ import { BaseProps } from '../../utils/types';
 import NewKey from '../../components/newKey';
 import NewInput from '@/components/ui/newinput';
 import chest from '../../assets/chest-without-border.png';
-import background from '../../assets/bg-small-without-chest.png'
+import background from '../../assets/bg-small-with-hammer.png'
 
 
-export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
+export default function Screen3Step2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
-  const n = gameStateRef.current.state2.key.numerator;
-  const a = gameStateRef.current.state2.key.denominator_1;
-  const b = gameStateRef.current.state2.key.denominator_2;
+  const n = gameStateRef.current.state3.key.numerator;
+  const a = gameStateRef.current.state3.key.denominator_1;
+  const b = gameStateRef.current.state3.key.denominator_2;
 
   const [num, setNum] = useState('');
   const [den, setDen] = useState('');
@@ -46,7 +46,7 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
 
       <div className='relative min-h-screen min-w-full transform -translate-x-[4vh] translate-y-[27vh] flex justify-center items-center'>
         <img src={chest.src}
-          className='absolute scale-[1.2] h-[48vh] w-auto z-10'
+          className='absolute scale-[1.2] h-[48vh] w-auto z-10 select-none'
           alt="chest"
         />
       </div>    

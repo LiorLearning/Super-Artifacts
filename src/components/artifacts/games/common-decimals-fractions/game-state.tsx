@@ -106,3 +106,34 @@ export const initialGameState: GameState = {
 };
 
 
+/* 
+Screen1 (state1) or Screen2 (state2)
+
+nuerator < denominator_1 * denominator_2
+
+denominator1 has to be 1
+
+denominator2 can be {2, 5, 10}
+
+E.g. 1 / (1 * 5),   6 / (1 * 10)
+
+
+--------------------------------------------------
+
+
+Screen3 (state3) or Screen3 (state3)
+
+nuerator < (denominator_1 * denominator_2)
+
+denominator1 can't be 1
+
+denominator1 can be {2, 5}
+denominator2 can be {2, 5}
+
+E.g  3 / (2 * 2),    7 / (2 * 5)   
+
+
+*/
+
+
+

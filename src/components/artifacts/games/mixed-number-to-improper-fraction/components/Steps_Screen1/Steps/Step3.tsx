@@ -56,7 +56,9 @@ const Step3: React.FC<Step3Props> = ({ mixedFraction, onComplete, sendAdminMessa
       setIsCorrectOption(true)
     }
     
+
     sendAdminMessage("agent", "Click on the whole to slice them up.")
+
   }
 
   const handlePieClick = (pieIndex: number) => {
