@@ -193,7 +193,7 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
 
           </div>
           :
-          <div className="flex justify-center text-2xl font-bold items-center gap-4">
+          <div className="flex justify-center text-2xl  items-center gap-4">
             {Array.from({length: wholechocolate}, (_, index) => (
               <div 
                 key={index}
@@ -224,7 +224,7 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
                 piece(s), but you need 10
             </div>
           : ( step === 1 ?
-            <div className="flex justify-center text-2xl font-bold items-center gap-4">
+            <div className="flex justify-center text-2xl  items-center gap-4">
               <DecimalBox
                 wholes={Math.floor((wholechocolate*selectedKnife + selectedPieces) / selectedKnife).toString()}
                 tenths={ (wholechocolate*selectedKnife + selectedPieces) % selectedKnife === 0 ? '0' : ((wholechocolate*selectedKnife + selectedPieces) % selectedKnife).toString()}

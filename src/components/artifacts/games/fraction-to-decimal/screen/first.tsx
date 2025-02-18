@@ -165,6 +165,15 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
                 <motion.div
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
+                  animate={step === 1 && denominator === 1 ? {
+                    scale: [1, 1.05, 1],
+                    backgroundColor: ["#d3ea00", "#e5ff00", "#d3ea00"]
+                  } : {}}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
                 >
                   <Button
                     onClick={handleSplitClick}
@@ -189,7 +198,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
               </div>
             ) : (step >= 2) && (
               <div className={`flex flex-col gap-4 absolute ${isSelectionLocked ? '-right-24' : '-right-32'} ${isSelectionLocked ? 'top-[50%]' : 'top-[75%]'} -translate-y-1/2 bg-white rounded-lg p-4`}>
-                <div className="flex items-center text-4xl font-bold">
+                <div className="flex items-center text-4xl">
                   <div className="flex flex-col items-center">
                     <span>{selectedPieces}</span>
                     <div className="w-full border-t-2 border-black"></div>

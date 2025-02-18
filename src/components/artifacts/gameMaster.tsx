@@ -24,7 +24,9 @@ const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) =>
   
   return (
     <Provider>
-      <Game sendAdminMessage={sendAdminMessage} />
+      <div className="font-jersey">
+        <Game sendAdminMessage={sendAdminMessage} />
+      </div>
     </Provider>
   );
 }

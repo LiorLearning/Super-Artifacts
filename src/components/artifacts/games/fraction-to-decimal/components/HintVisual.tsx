@@ -127,12 +127,12 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
 
           <div className="w-1/2 bg-[#FFF8E7] flex flex-col items-center py-8">
             <div className="text-center mb-2">
-              <span className="text-lg font-bold bg-[#FFE4B5] px-4 py-1">Decimal</span>
+              <span className="text-lg bg-[#FFE4B5] px-4 py-1">Decimal</span>
             </div>
             <div className="border-2 border-black p-4 bg-white">
               <div className="flex items-center gap-2">
                 <div className="flex flex-col items-center">
-                  <span className="text-sm font-bold">Wholes</span>
+                  <span className="text-sm">Wholes</span>
                   <input
                     type="text"
                     value="0"
@@ -142,7 +142,7 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
                 </div>
                 <span className="text-4xl mb-6">.</span>
                 <div className='flex flex-col items-center'>
-                  <span className="text-sm font-bold">Tenths</span>
+                  <span className="text-sm">Tenths</span>
                   <input 
                     type="text"
                     value={tenths}
@@ -156,7 +156,7 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
                   />
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className="text-sm font-bold">Hundredths</span>
+                  <span className="text-sm">Hundredths</span>
                   <input
                     type="text"
                     value={hundredths}

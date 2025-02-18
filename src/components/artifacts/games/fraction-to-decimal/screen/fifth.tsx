@@ -185,7 +185,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
             <div className="border-2 border-black p-4 bg-white">
               <div className="flex items-center gap-2">
                 <div className="flex flex-col items-center">
-                  <span className="text-sm font-bold">Wholes</span>
+                  <span className="text-sm">Wholes</span>
                   <input
                     type="text"
                     value={wholes}
@@ -207,7 +207,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
                 </div>
                 <span className="text-4xl mb-6">.</span>
                 <div className='flex flex-col items-center'>
-                  <span className={`text-sm font-bold ${disabled ? 'opacity-50' : ''}`}>
+                  <span className={`text-sm ${disabled ? 'opacity-50' : ''}`}>
                     Tenths
                   </span>
                   <input
@@ -232,7 +232,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
                   />
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className={`text-sm font-bold ${disabled ? 'opacity-50' : ''}`}>
+                  <span className={`text-sm ${disabled ? 'opacity-50' : ''}`}>
                     hundredths
                   </span>
                   <input
@@ -270,7 +270,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
           <div className='flex justify-center mb-20 scale-125'>
             <button
               onClick={handleFinish}
-              className="bg-[#ff3971] text-white font-bold text-xl rounded-none px-4 py-2 shadow-[-5px_5px_0px_rgba(0,0,0,1)]"
+              className="bg-[#ff3971] text-white text-xl rounded-none px-4 py-2 shadow-[-5px_5px_0px_rgba(0,0,0,1)]"
             >
               Finish 🚀
             </button>

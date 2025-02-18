@@ -164,7 +164,7 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
               piece(s), but you need 100
           </div>
         :
-          <div className="flex justify-center text-2xl font-bold items-center gap-4">
+          <div className="flex justify-center text-2xl items-center gap-4">
             <span className='border-2 border-[#fa787f] px-2 py-1 rounded-md'>
               <Fraction numerator={selectedPieces + wholechocolate * selectedKnife * chocolate} denominator={selectedKnife * chocolate} />
             </span>
@@ -288,7 +288,7 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
           />
         ) : (
           <>
-            <div className="flex justify-center text-2xl font-bold items-center gap-4 mb-16">
+            <div className="flex justify-center text-2xl items-center gap-4 mb-16">
               {Array.from({length: wholechocolate}, (_, index) => (
                 <div key={index} className="w-[200px]">
                   <Bar2d
@@ -313,7 +313,7 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
               <div className="w-screen bg-[#F7F5DD] py-8">
                 <div className="max-w-[500px] mx-auto px-4">
                   <div className="text-center -mb-4 relative z-10">
-                    <span className="text-lg font-bold bg-[#FFE4B5] px-6 py-2 rounded-t-lg">
+                    <span className="text-lg bg-[#FFE4B5] px-6 py-2 rounded-t-lg">
                       Decimal Form
                     </span>
                   </div>
@@ -321,13 +321,13 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
                     <div className="flex flex-col items-center">
                       <div className="flex w-full justify-center mb-2">
                         <div className="w-16 text-center">
-                          <span className="text-sm font-bold">Wholes</span>
+                          <span className="text-sm">Wholes</span>
                         </div>
                         <div className="w-16 text-center ml-12">
-                          <span className="text-sm font-bold">Tenths</span>
+                          <span className="text-sm">Tenths</span>
                         </div>
                         <div className="w-16 text-center ml-4">
-                          <span className="text-sm font-bold">Hundredths</span>
+                          <span className="text-sm">Hundredths</span>
                         </div>
                       </div>
                       <div className="flex items-center justify-center">
