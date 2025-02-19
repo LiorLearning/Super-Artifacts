@@ -86,8 +86,8 @@ export default function checkGameStateLimits(state?: Partial<GameState>): Valida
     
     const denom1 = parseInt(fraction1.denominator);
     const denom2 = parseInt(fraction2.denominator);
-    if (gcd <= 0 || gcd > Math.min(denom1, denom2)) {
-      return { isValid: false, reason: `Screen 3: Invalid GCD value (${gcd}) for denominators ${denom1} and ${denom2}` };
+    if (gcd <= 0 || gcd > (denom1*denom2)) {
+      return { isValid: false, reason: `Screen 3: Invalid LCM value (${gcd}) for denominators ${denom1} and ${denom2}` };
     }
   }
 

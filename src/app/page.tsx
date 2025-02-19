@@ -1,5 +1,7 @@
 import { getSession } from '@auth0/nextjs-auth0';
 import { redirect } from 'next/navigation';
+import { getSession } from '@auth0/nextjs-auth0';
+import { redirect } from 'next/navigation';
 import Main from "@/components/main";
 import { Suspense } from "react";
 

@@ -1,0 +1,54 @@
+import { useGameState } from '../../state-utils';
+import { BaseProps } from '../../utils/types';
+import LeftArrow from '../../assets/LeftArrow.png';
+import NewKey from '../../components/newKey';
+import chest from '../../assets/chest-without-border.png';
+import background from '../../assets/bg-small-without-chest.png'
+import { useEffect, useRef } from 'react';
+import { narrations } from '../../narrations';
+import { formatMessage } from '../../components/commonFunctions'
+
+
+export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  
+  const { numerator, denominator_1, denominator_2, level } = gameStateRef.current.state1.key;
+
+  const hasGameStartedRef = useRef(false);
+  
+    useEffect(() => {
+      if (!hasGameStartedRef.current) {
+        hasGameStartedRef.current = true;
+        sendAdminMessage(narrations.Screen1Step1Message1.role, formatMessage(narrations.Screen1Step1Message1.content, {a: level}));
+      }
+    }, []);
+
+  return (
+    <div className="mx-auto min-h-screen overflow-hidden" style={{ backgroundImage: `url(${background.src})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat' }}>
+
+      <div className='absolute flex items-center justify-center w-full gap-[3vh] translate-y-[5vh]'>
+        <img src={LeftArrow.src} className='w-[3vh] h-auto' alt="left-arrow" />
+        <div className='flex flex-col items-center justify-center'>
+          <h1 className='translate-y-[4vh] text-[2.5vh]'>Level {gameStateRef.current.state3.key.level}</h1>
+          <NewKey n={gameStateRef.current.state3.key.numerator} a={gameStateRef.current.state3.key.denominator_1} b={gameStateRef.current.state3.key.denominator_2} isActive={false} />
+        </div>
+        <div className='flex flex-col items-center justify-center'>
+          <h1 className='-translate-y-[2vh] text-[3vh]'>Level {gameStateRef.current.state1.key.level}</h1>
+          <NewKey  n={gameStateRef.current.state1.key.numerator} a={gameStateRef.current.state1.key.denominator_1} b={gameStateRef.current.state1.key.denominator_2} isActive={true} />
+        </div>
+        <div className='flex flex-col items-center justify-center'>
+          <h1 className='translate-y-[4vh] text-[2.5vh]'>Level {gameStateRef.current.state2.key.level}</h1>
+          <NewKey  n={gameStateRef.current.state2.key.numerator} a={gameStateRef.current.state2.key.denominator_1} b={gameStateRef.current.state2.key.denominator_2} isActive={false} />
+        </div>
+        <img src={LeftArrow.src} className='w-[3vh] h-auto transform rotate-180' alt="left-arrow" />
+      </div>  
+
+      <div className='relative min-h-screen min-w-full transform -translate-x-[4vh] translate-y-[27vh] flex justify-center items-center'>
+        <img src={chest.src}
+          className='absolute scale-[1.2] h-[48vh] w-auto z-10'
+          alt="chest"
+        />
+      </div>
+    </div>
+  );
+}

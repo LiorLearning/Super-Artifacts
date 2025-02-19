@@ -23,7 +23,7 @@ export default function IntroScreen({ sendAdminMessage }: BaseProps) {
   return (
     <div className='w-full space-y-16 flex flex-col'>
       <div className={cn('flex justify-center text-3xl font-bold py-10 items-center gap-4 bg-[#F9F871] shadow-[0_5px_1px_rgba(0,0,0,1)]')}>
-          Convert fractions in base 10 to decimals
+        Convert fractions in base 10 to decimals
       </div>
 
       <div className='flex justify-center items-center gap-4'>
@@ -38,6 +38,7 @@ export default function IntroScreen({ sendAdminMessage }: BaseProps) {
           </p>
         </div>
       </div>
+
       <button
         onClick={() => {
           setGameStateRef(prev => ({
@@ -45,7 +46,6 @@ export default function IntroScreen({ sendAdminMessage }: BaseProps) {
             screen: 'first',
           }));
         }}
-
         className="flex gap-2 font-bold text-3xl justify-center items-center bg-transparent hover:bg-transparent"
       >
         Let's Figure out
