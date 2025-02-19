@@ -29,6 +29,9 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
   const [allowadd, setAllowadd] = useState<boolean>(false)
 
   const start = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const tenthsInputRef = useRef<HTMLInputElement>(null);
+  const hundredthsInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!start.current) {
@@ -36,7 +39,6 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
       start.current = true;
     }
   }, []);
-
 
   const setStep = (value: number) => {
     setGameStateRef((prev) => ({
@@ -54,8 +56,6 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
     }
   }, [selectedKnife])
 
-
-
   useEffect(() => {
     if(wholechocolate + 1 < question6 && selectedPieces === selectedKnife * chocolate) {
       setAllowadd(true)
@@ -68,14 +68,53 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
   }, [selectedPieces])
 
   useEffect(() => {
-    if (numerator === question6*selectedKnife && denominator === selectedKnife) {
-      setStep(3)
-      sendAdminMessage('agent', `Great job, let's head to the final level!`);
-    } else if ( numerator >= 1 || denominator >= 1) {
-      sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+    const correctNumerator = question6 * selectedKnife;
+    const correctDenominator = selectedKnife;
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
-  }, [numerator, denominator])
 
+    if (numerator.toString().length > 0) {
+      if (numerator.toString().length < correctNumerator.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctNumerator}. Your answer ${numerator} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
+      if (numerator === correctNumerator && denominator === 0) {
+        sendAdminMessage('agent', 'Perfect! Now enter the denominator - how many pieces are there in total?');
+      }
+    }
+
+    if (denominator.toString().length > 0) {
+      if (denominator.toString().length < correctDenominator.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctDenominator}. Your answer ${denominator} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
+      if (denominator === correctDenominator) {
+        setStep(3);
+        sendAdminMessage('agent', `Great job, let's head to the final level!`);
+      } else {
+        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correctDenominator}, but user answered ${denominator}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
+      }
+    } else if (denominator.toString().length >= correctDenominator.toString().length && 
+               numerator !== correctNumerator) {
+      sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correctNumerator}, but user answered ${numerator}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
+    }
+  }, [numerator, denominator]);
+
+  useEffect(() => {
+    if (step === 2) {
+      sendAdminMessage('agent', 'Awesome, now enter the fraction these chocolates display');
+    }
+  }, [step]);
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -108,30 +147,48 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
             
             <span className='flex flex-col justify-center h-full mx-16 w-1/6 text-center text-xl'>
               {Array.from({length: wholechocolate}, (_, index) => (
-                <div 
-                  key={index}
-                >
-                  <VerticalBar
-                    numerator={selectedKnife * chocolate}
-                    denominator={selectedKnife * chocolate}
-                    handlePieceClick={() => {}}
-                    active={false}
-                />
+                <div key={index}>
+                  {selectedKnife === 100 ? (
+                    <Bar2d
+                      numerator={selectedKnife * chocolate}
+                      denominator={selectedKnife * chocolate}
+                      handlePieceClick={() => {}}
+                      active={false}
+                    />
+                  ) : (
+                    <VerticalBar
+                      numerator={selectedKnife * chocolate}
+                      denominator={selectedKnife * chocolate}
+                      handlePieceClick={() => {}}
+                      active={false}
+                    />
+                  )}
                 </div>
               ))}
             </span>
 
             <span className='relative w-4/6 text-center text-xl'>
-              <VerticalBar
-                numerator={selectedPieces}
-                denominator={selectedKnife * chocolate}
-                handlePieceClick={(index) => {  
-                  setSelectedPieces(index)
-                  sounds.join()
-
-                }}
-                active={step > 0}
-              />
+              {selectedKnife === 100 ? (
+                <Bar2d
+                  numerator={selectedPieces}
+                  denominator={selectedKnife * chocolate}
+                  handlePieceClick={(index) => {  
+                    setSelectedPieces(index)
+                    sounds.join()
+                  }}
+                  active={step > 0}
+                />
+              ) : (
+                <VerticalBar
+                  numerator={selectedPieces}
+                  denominator={selectedKnife * chocolate}
+                  handlePieceClick={(index) => {  
+                    setSelectedPieces(index)
+                    sounds.join()
+                  }}
+                  active={step > 0}
+                />
+              )}
             </span>
 
             <span className='relative flex flex-col justify-center mx-10 w-1/6 text-center text-xl'>
@@ -158,7 +215,7 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
 
           </div>
           :
-          <div className="flex justify-center text-2xl font-bold items-center gap-4">
+          <div className="flex justify-center text-2xl  items-center gap-4">
             {Array.from({length: wholechocolate}, (_, index) => (
               <div 
                 key={index}
@@ -189,10 +246,12 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
                 piece(s), but you need 10
             </div>
           : ( step === 1 ?
-            <div className="flex justify-center text-2xl font-bold items-center gap-4">
+            <div className="flex justify-center text-2xl  items-center gap-4">
               <DecimalBox
                 wholes={Math.floor((wholechocolate*selectedKnife + selectedPieces) / selectedKnife).toString()}
                 tenths={ (wholechocolate*selectedKnife + selectedPieces) % selectedKnife === 0 ? '0' : ((wholechocolate*selectedKnife + selectedPieces) % selectedKnife).toString()}
+                tenthsRef={tenthsInputRef}
+                hundredthsRef={hundredthsInputRef}
               />
             </div>
           :
@@ -220,7 +279,7 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
                 }))
                 sounds.levelUp();
               }}
-              text="Onward"
+              text="Onward! 🚀"
             />
           }
       </div>

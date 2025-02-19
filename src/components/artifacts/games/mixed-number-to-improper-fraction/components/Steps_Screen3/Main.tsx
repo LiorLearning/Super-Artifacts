@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MixedFraction } from '../../game-state';
 import Image from 'next/image';
-import DirectionArrows from '@/assets/direction.png';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 
 interface FractionBoxProps {
@@ -130,7 +129,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
         <span className="text-3xl">{mixedFraction.whole}</span>
 
         <Image 
-          src={DirectionArrows} 
+          src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/direction.png" 
           alt="Direction arrows"
           width={35}
           height={35}
@@ -221,7 +220,7 @@ const FractionBox: React.FC<FractionBoxProps> = ({
                 <span className="text-3xl">{mixedFraction.whole}</span>
 
                 <Image 
-                  src={DirectionArrows} 
+                  src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/direction.png" 
                   alt="Direction arrows"
                   width={35}
                   height={35}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
+import { soundFiles } from '../../../utils/sound'
 
 
 interface Step1Props {
@@ -17,8 +18,6 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [showSuccess, setShowSuccess] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const messageShown = useRef(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const completeAudioRef = useRef<HTMLAudioElement | null>(null)
 
 
   const showInitialMessage = useCallback(() => {
@@ -32,15 +31,9 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
     showInitialMessage();
   }, [showInitialMessage]);
 
-  const playSound = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0
-      audioRef.current.play()
-    }
-  }
-
   const handleWholeClick = () => {
-    playSound()
+    const audio = new Audio(soundFiles.Drag)
+    audio.play()
     if (wholeCount < mixedFraction.whole) {
       setWholeCount(prev => prev + 1);
       if (wholeCount + 1 === mixedFraction.whole) {
@@ -52,7 +45,8 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
 
   const handleQuarterClick = () => {
-    playSound()
+    const audio = new Audio(soundFiles.Drag)
+    audio.play()
     if (!canAddQuarters) {
       return;
     }
@@ -60,10 +54,8 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
       setQuarterCount(prev => prev + 1);
       if (quarterCount + 1 === mixedFraction.numerator) {
         setShowSuccess(true);
-        if (completeAudioRef.current) {
-          completeAudioRef.current.currentTime = 0;
-          completeAudioRef.current.play();
-        }
+        const completeAudio = new Audio(soundFiles.PartComplete)
+        completeAudio.play()
         sendAdminMessage("agent", "Awesome, this is 3 and 2/4", () => {
           onComplete();
         });
@@ -238,8 +230,6 @@ const Step1: React.FC<Step1Props> = ({ mixedFraction, onComplete, sendAdminMessa
           </div>
         </div>
       </div>
-      <audio ref={audioRef} src="/sounds/DragAndDrop.mp3" />
-      <audio ref={completeAudioRef} src="/sounds/PartComplete.mp3" />
     </div>
   );
 };

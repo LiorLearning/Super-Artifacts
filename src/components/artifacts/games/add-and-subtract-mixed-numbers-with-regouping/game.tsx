@@ -30,7 +30,7 @@ export default function MixedFractionGameWithRegouping({sendAdminMessage}: GameP
   
 
   return (
-    <div className="mx-auto game">
+    <div className="mx-auto game font-jersey">
       <DevHelper />
       {/* Game screens */}
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}

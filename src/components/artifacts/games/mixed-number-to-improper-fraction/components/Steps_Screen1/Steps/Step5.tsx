@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react"
 import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
+import { soundFiles } from '../../../utils/sound'
 
 interface Step5Props {
   mixedFraction: MixedFraction
@@ -25,8 +26,6 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const numeratorMessageShown = useRef(false)
 
   const messageShown = useRef(false)
-
-  const levelCompleteAudioRef = useRef<HTMLAudioElement | null>(null)
 
   const [showSuccess, setShowSuccess] = useState(false)
 
@@ -89,20 +88,16 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
         setDenominatorIsCorrect(true)
         setDenominatorIsWrong(false)
         if (isNumeratorCorrect) {
-          if (levelCompleteAudioRef.current) {
-            levelCompleteAudioRef.current.currentTime = 0
-            setShowSuccess(true)  // Show animation immediately with sound
-            levelCompleteAudioRef.current.play()
-            levelCompleteAudioRef.current.addEventListener('ended', () => {
-              sendAdminMessage("agent", "Awesome, you have converted the mixed number to an improper fraction.", () => {
-                setShowFinal(true)
-                setTimeout(() => {
-                  setShowSuccess(false)  // Hide animation after delay
-                  sendAdminMessage("agent", "What to do next? Learn a quick way to solve this, or maybe do this again?")
-                }, 1000)
-              })
-            }, { once: true })
-          }
+          setShowSuccess(true)
+          const audio = new Audio(soundFiles.LevelComplete)
+          audio.play()
+          sendAdminMessage("agent", "Awesome, you have converted the mixed number to an improper fraction.", () => {
+            setShowFinal(true)
+            setTimeout(() => {
+              setShowSuccess(false)
+              sendAdminMessage("agent", "What to do next? Learn a quick way to solve this, or maybe do this again?")
+            }, 1000)
+          })
         }
       } else {
         setDenominatorIsWrong(true)
@@ -327,8 +322,6 @@ const Step5: React.FC<Step5Props> = ({ mixedFraction, onComplete, sendAdminMessa
           <SuccessAnimation />
         </div>
       )}
-      
-      <audio ref={levelCompleteAudioRef} src="/sounds/LevelComplete.mp3" />
     </div>
   )
 }
