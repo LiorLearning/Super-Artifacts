@@ -8,6 +8,12 @@ interface Auth0Role {
   description?: string;
 }
 
+interface TokenResponse {
+  access_token: string;
+  expires_in: number;
+  token_type: string;
+}
+
 // Type guard for Axios errors
 function isAxiosError(error: unknown): error is { response?: { data: unknown, status?: number, headers?: unknown } } {
   return (
@@ -25,12 +31,30 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch user roles using the token from environment variables
+    // Get Management API token
+    const tokenResponse = await axios.post<TokenResponse>(
+      'https://dev-ngkqwqrzndhtedqf.us.auth0.com/oauth/token',
+      new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: process.env.AUTH0_API_CLIENT_ID || '',
+        client_secret: process.env.AUTH0_API_CLIENT_SECRET || '',
+        audience: 'https://dev-ngkqwqrzndhtedqf.us.auth0.com/api/v2/'
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    );
+
+    console.log(tokenResponse.data);
+
+    // Fetch user roles using the obtained token
     const rolesResponse = await axios.get<Auth0Role[]>(
       `https://dev-ngkqwqrzndhtedqf.us.auth0.com/api/v2/users/${encodeURIComponent(session.user.sub)}/roles`,
       {
         headers: { 
-          'Authorization': `Bearer ${process.env.AUTH0_MANAGEMENT_API_TOKEN}`,
+          'Authorization': `Bearer ${tokenResponse.data.access_token}`,
           'Accept': 'application/json'
         }
       }
@@ -55,3 +79,4 @@ export async function GET(request: NextRequest) {
     }, { status: 500 });
   }
 } 
+
