@@ -53,12 +53,12 @@ export const DevHelper = () => {
             <SelectValue placeholder="Select a screen" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="first">First Screen</SelectItem>
-            <SelectItem value="second">Second Screen</SelectItem>
-            <SelectItem value="third">Third Screen</SelectItem>
-            <SelectItem value="fourth">Fourth Screen</SelectItem>
-            <SelectItem value="fifth">Fifth Screen</SelectItem>
-            <SelectItem value="sixth">Sixth Screen</SelectItem>
+            <SelectItem value="1">First Screen</SelectItem>
+            <SelectItem value="2">Second Screen</SelectItem>
+            <SelectItem value="3">Third Screen</SelectItem>
+            <SelectItem value="4">Fourth Screen</SelectItem>
+            <SelectItem value="5">Fifth Screen</SelectItem>
+            <SelectItem value="6">Sixth Screen</SelectItem>
           </SelectContent>
         </Select>
       </div>
