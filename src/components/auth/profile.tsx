@@ -21,12 +21,7 @@ export default function Profile() {
     const fetchUserRoles = async () => {
       if (user) {
         try {
-          const response = await axios.get<Auth0Role[]>('https://dev-ngkqwqrzndhtedqf.us.auth0.com/api/v2/users/google-oauth2%7C108882611927153682992/roles', {
-            headers: {
-              'Accept': 'application/json',
-              'Authorization': `Bearer ${process.env.AUTH0_MANAGEMENT_API_TOKEN}`
-            },
-          });
+          const response = await axios.get<Auth0Role[]>('/api/user/roles');
           setUserRoles(response.data.map(role => role.name));
         } catch (error) {
           console.error('Error fetching user roles:', error);
