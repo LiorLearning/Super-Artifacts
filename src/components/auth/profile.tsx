@@ -2,11 +2,40 @@
 
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+// Define the structure of an Auth0 role
+interface Auth0Role {
+  id: string;
+  name: string;
+  description?: string;
+}
 
 export default function Profile() {
   const { user, isLoading } = useUser();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchUserRoles = async () => {
+      if (user) {
+        try {
+          const response = await axios.get<Auth0Role[]>('https://dev-ngkqwqrzndhtedqf.us.auth0.com/api/v2/users/google-oauth2%7C108882611927153682992/roles', {
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${process.env.AUTH0_MANAGEMENT_API_TOKEN}`
+            },
+          });
+          setUserRoles(response.data.map(role => role.name));
+        } catch (error) {
+          console.error('Error fetching user roles:', error);
+        }
+      }
+    };
+
+    fetchUserRoles();
+  }, [user]);
 
   if (isLoading || !user) return null;
 
@@ -32,6 +61,11 @@ export default function Profile() {
           <p className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
             {user.name}
           </p>
+          {userRoles.length > 0 && (
+            <p className="px-4 py-2 text-xs text-gray-500">
+              Roles: {userRoles.join(', ')}
+            </p>
+          )}
           <a 
             href="/api/auth/logout"
             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
@@ -46,4 +80,10 @@ export default function Profile() {
       )}
     </div>
   );
-} 
+}
+
+
+
+
+
+

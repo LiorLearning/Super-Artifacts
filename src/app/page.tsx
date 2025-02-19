@@ -11,6 +11,7 @@ export default async function Home() {
     redirect('/api/auth/login');
   }
 
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Main />
