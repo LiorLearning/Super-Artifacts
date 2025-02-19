@@ -22,6 +22,8 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
   const start = useRef(false);
   const proceedRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const tenthsInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!start.current) {
@@ -36,7 +38,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
     if (denominator === 10) { 
       setStep(2);
       sendAdminMessage('agent', `Awesome, now let's select pieces so that we get ${question1.numerator}/${question1.denominator}th of the chocolate!`);
-    }
+    } 
   }, [denominator]);
 
   useEffect(() => {
@@ -105,9 +107,26 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
     const value = e.target.value;
     setWholes(value);
     
-    if (value && parseInt(value) !== Math.floor(question1.numerator/question1.denominator)) {
-      sounds.join();
-      sendAdminMessage('admin', `User answered incorrectly for the numerator pie, correct answer is ${Math.floor(question1.numerator/question1.denominator)}, but user answered ${value} . Diagnose socratically.`);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    const correctWholes = Math.floor(question1.numerator/question1.denominator);
+    
+    if (value.length > 0) {
+      if (value.length < correctWholes.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+      if (parseInt(value) !== correctWholes) {
+        sounds.join();
+        sendAdminMessage('admin', `User answered incorrectly for the numerator pie, correct answer is ${correctWholes}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+      } else {
+        tenthsInputRef.current?.focus();
+      }
     }
   };
 
@@ -115,9 +134,25 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
     const value = e.target.value;
     setTenths(value);
     
-    if (value && parseInt(value) !== Math.floor(question1.numerator*10/question1.denominator)) {
-      sounds.join();
-      sendAdminMessage('admin', `User answered incorrectly for the numerator pie, correct answer is ${Math.floor(question1.numerator*10/question1.denominator)}, but user answered ${value} . Diagnose socratically.`);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    const correctTenths = Math.floor(question1.numerator*10/question1.denominator);
+    
+    if (value.length > 0) {
+      if (value.length < correctTenths.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
+      if (parseInt(value) !== correctTenths) {
+        sounds.join();
+        sendAdminMessage('admin', `User answered incorrectly for the numerator pie, correct answer is ${correctTenths}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+      }
     }
   };
 
@@ -254,38 +289,47 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
                 <input
                   type="text"
                   value={wholes}
-                  min={0}
-                  max={9}
                   onChange={handleWholesChange}
-                  maxLength={1}
-                  className="w-20 h-20 border-4 border-green-600 rounded-lg text-center text-5xl"
-                  disabled={step != 3}
+                  className={`w-12 h-12 border-4 border-green-600 flex items-center justify-center text-2xl rounded-lg text-center ${
+                    wholes.length > 0 
+                      ? parseInt(wholes) === Math.floor(question1.numerator/question1.denominator)
+                        ? 'bg-green-100' 
+                        : 'bg-red-100'
+                      : 'bg-white'
+                  }`}
+                  maxLength={2}
                 />
               </div>
-              <div className="relative">
-                <span className="text-7xl top-1 relative mt-6 flex flex-col justify-end h-full">.</span>
+              <div className="relative flex items-center">
+                <span className="text-6xl font-bold relative z-10">.</span>
                 {step >= 5 && (
-                  <div className="absolute  left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16">
-                    <svg width="64" height="64" viewBox="0 0 193 129" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M75.7301 111.569C76.8695 110.949 77.9968 109.945 79.1423 109.768C89.2693 108.291 99.4268 107.598 109.523 105.398C117.432 103.671 125.293 100.437 133.141 97.3372C142.147 93.7793 151.207 90.62 160.067 85.4973C168.146 80.8174 176.318 76.0194 183.672 65.8772C184.58 64.6224 185.476 63.3232 186.347 61.9355C191.088 54.3473 189.899 45.0023 186.438 38.0194C181.972 29.014 176.464 25.338 170.925 22.1196C160.396 15.993 149.69 12.8337 138.905 10.8997C120.57 7.62235 102.242 7.19422 83.8768 9.46773C67.8272 11.446 51.942 16.2883 36.191 23.7141C27.9956 27.582 19.8732 32.498 12.3603 41.6068C9.86812 44.6332 7.5405 48.8555 5.4627 53.4025C2.89135 59.042 3.07414 66.2611 5.4566 72.4911C9.4355 82.899 14.7001 88.2284 19.8854 93.7203C29.5371 103.936 39.6337 110.919 49.9191 116.116C55.8112 119.083 61.8009 120.884 67.7357 123.305C69.1798 123.896 70.5996 124.826 72.1412 125.667C65.0486 132.148 58.0901 127.646 51.1987 124.959C41.486 121.165 31.9744 115.2 22.8407 106.151C15.9248 99.3007 9.13693 91.7716 3.48848 79.5921C-1.96498 67.8259 -0.533062 52.62 4.39638 43.216C11.5803 29.5011 20.2449 23.5812 29.0375 18.9604C33.778 16.4654 38.5247 14.0147 43.3018 11.9922C48.0667 9.98444 52.8621 8.43432 57.6575 6.95802C58.8274 6.58894 60.0522 7.26804 60.7163 7.37138C62.1848 6.61847 63.2085 6.10177 64.226 5.55554C65.7737 4.74357 67.5164 4.81739 68.9178 4.7731C70.9895 4.69928 73.0917 0.905191 75.3706 4.35974C76.2297 5.65888 77.9115 3.57729 79.2276 3.31155C82.5911 2.61769 85.9607 2.02716 89.3302 1.48093C92.9435 0.905172 96.5629 0.152259 100.182 0.0046284C102.358 -0.0839497 104.533 1.12663 106.714 1.25949C108.353 1.36284 109.999 0.358962 111.638 0.418014C114.313 0.506592 116.981 1.22996 119.656 1.34807C121.362 1.42188 123.203 -0.24633 124.756 0.801844C128.833 3.533 132.94 1.99766 137.016 2.63247C141.994 3.40014 146.979 4.46308 151.926 6.04272C163.01 9.57108 174.154 12.8337 184.397 24.7917C186.377 27.1095 188.297 30.3131 189.851 34.0629C194.823 46.0948 193.756 62.1569 187.718 70.8819C179.602 82.6037 170.718 89.2028 161.566 93.6169C149.824 99.2859 137.997 103.951 126.231 109.354C115.214 114.418 104.106 116.854 92.9131 116.677C87.746 116.588 82.585 115.141 77.4179 114.211C76.8634 114.108 76.3333 113.355 75.791 112.897C75.7728 112.455 75.7545 112.012 75.7362 111.569H75.7301Z" fill="#FF856A"/>
-                    </svg>
-                  </div>
-                )}
+                  <div className="absolute  -left-3 w-10 h-10 transform translate-y-1">
+                    <svg width="50" height="50" viewBox="0 0 193 129" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M75.7301 111.569C76.8695 110.949 77.9968 109.945 79.1423 109.768C89.2693 108.291 99.4268 107.598 109.523 105.398C117.432 103.671 125.293 100.437 133.141 97.3372C142.147 93.7793 151.207 90.62 160.067 85.4973C168.146 80.8174 176.318 76.0194 183.672 65.8772C184.58 64.6224 185.476 63.3232 186.347 61.9355C191.088 54.3473 189.899 45.0023 186.438 38.0194C181.972 29.014 176.464 25.338 170.925 22.1196C160.396 15.993 149.69 12.8337 138.905 10.8997C120.57 7.62235 102.242 7.19422 83.8768 9.46773C67.8272 11.446 51.942 16.2883 36.191 23.7141C27.9956 27.582 19.8732 32.498 12.3603 41.6068C9.86812 44.6332 7.5405 48.8555 5.4627 53.4025C2.89135 59.042 3.07414 66.2611 5.4566 72.4911C9.4355 82.899 14.7001 88.2284 19.8854 93.7203C29.5371 103.936 39.6337 110.919 49.9191 116.116C55.8112 119.083 61.8009 120.884 67.7357 123.305C69.1798 123.896 70.5996 124.826 72.1412 125.667C65.0486 132.148 58.0901 127.646 51.1987 124.959C41.486 121.165 31.9744 115.2 22.8407 106.151C15.9248 99.3007 9.13693 91.7716 3.48848 79.5921C-1.96498 67.8259 -0.533062 52.62 4.39638 43.216C11.5803 29.5011 20.2449 23.5812 29.0375 18.9604C33.778 16.4654 38.5247 14.0147 43.3018 11.9922C48.0667 9.98444 52.8621 8.43432 57.6575 6.95802C58.8274 6.58894 60.0522 7.26804 60.7163 7.37138C62.1848 6.61847 63.2085 6.10177 64.226 5.55554C65.7737 4.74357 67.5164 4.81739 68.9178 4.7731C70.9895 4.69928 73.0917 0.905191 75.3706 4.35974C76.2297 5.65888 77.9115 3.57729 79.2276 3.31155C82.5911 2.61769 85.9607 2.02716 89.3302 1.48093C92.9435 0.905172 96.5629 0.152259 100.182 0.0046284C102.358 -0.0839497 104.533 1.12663 106.714 1.25949C108.353 1.36284 109.999 0.358962 111.638 0.418014C114.313 0.506592 116.981 1.22996 119.656 1.34807C121.362 1.42188 123.203 -0.24633 124.756 0.801844C128.833 3.533 132.94 1.99766 137.016 2.63247C141.994 3.40014 146.979 4.46308 151.926 6.04272C163.01 9.57108 174.154 12.8337 184.397 24.7917C186.377 27.1095 188.297 30.3131 189.851 34.0629C194.823 46.0948 193.756 62.1569 187.718 70.8819C179.602 82.6037 170.718 89.2028 161.566 93.6169C149.824 99.2859 137.997 103.951 126.231 109.354C115.214 114.418 104.106 116.854 92.9131 116.677C87.746 116.588 82.585 115.141 77.4179 114.211C76.8634 114.108 76.3333 113.355 75.791 112.897C75.7728 112.455 75.7545 112.012 75.7362 111.569H75.7301Z" 
+                    fill="#FF856A"
+                  />
+                </svg>
               </div>
-              <div className="flex flex-col items-center">
-                <span className="text-sm">Tenths</span>
-                <input
-                  type="text"
-                  value={tenths}
-                  min={0}
-                  max={9}
-                  onChange={handleTenthsChange}
-                  className="w-20 h-20 border-4 border-pink-400 rounded-lg text-center text-5xl"
-                  maxLength={1}
-                  disabled={step != 4}
-                />
-              </div>
+            )}
+          </div>
+            <div className="flex flex-col items-center">
+              <span className="text-sm">Tenths</span>
+              <input
+                type="text"
+                value={tenths}
+                onChange={handleTenthsChange}
+                className={`w-12 h-12 border-4 border-pink-400 flex items-center justify-center text-2xl rounded-lg text-center ${
+                  tenths.length > 0 
+                    ? parseInt(tenths) === Math.floor(question1.numerator*10/question1.denominator)
+                      ? 'bg-green-100' 
+                      : 'bg-red-100'
+                    : 'bg-white'
+                }`}
+                maxLength={2}
+                ref={tenthsInputRef}
+              />
             </div>
+          </div>
             {step >= 5 && (
               <>
                 <p className="text-2xl text-center mt-4 mb-8">

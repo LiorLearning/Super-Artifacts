@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { sounds } from '../utils/sound';
 import { useGameState } from '../state-utils';
 import Proceed from './proceed';
+import DecimalBox from './DecimalBox';
 
 interface HintVisual2Props {
   numerator: number;
@@ -38,6 +39,9 @@ export default function HintVisual2({
   const [showOnwardsButton, setShowOnwardsButton] = useState(false);
   const decimalFormRef = useRef<HTMLDivElement>(null);
   const onwardsButtonRef = useRef<HTMLDivElement>(null);
+  const [decimalTenths, setDecimalTenths] = useState('');
+  const [decimalHundredths, setDecimalHundredths] = useState('');
+  const [showDecimalPrompt, setShowDecimalPrompt] = useState(false);
 
   const setStep = (value: number) => {
     setGameStateRefProp((prev: GameState) => ({
@@ -98,19 +102,46 @@ export default function HintVisual2({
       if (value.length > 0) {
         if (parseInt(value) === (numerator % 10)) {
           sounds.levelUp();
-          sendAdminMessage?.('agent', 'Perfect! You found all the parts of the decimal.');
+          sendAdminMessage?.('agent', 'Perfect! Now let\'s write this as a decimal. Look at the decimal box below.');
           setShowDecimalForm(true);
-          setShowOnwardsButton(true);
+          setShowDecimalPrompt(true);
           setTimeout(() => {
             decimalFormRef.current?.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-              onwardsButtonRef.current?.scrollIntoView({ behavior: 'smooth' });
-            }, 1000);
           }, 500);
         } else {
           sounds.join();
           sendAdminMessage?.('agent', 'Count the remaining dark brown pieces in the last row.');
         }
+      }
+    }
+  };
+
+  const handleDecimalTenthsChange = (value: string) => {
+    setDecimalTenths(value);
+    if (value.length > 0) {
+      if (parseInt(value) === completeRows) {
+        sounds.levelUp();
+        sendAdminMessage?.('agent', 'Great! Now enter the hundredths digit.');
+      } else {
+        sounds.join();
+        sendAdminMessage?.('agent', 'Look at the purple box - how many tenths did we find?');
+      }
+    }
+  };
+
+  const handleDecimalHundredthsChange = (value: string) => {
+    setDecimalHundredths(value);
+    if (value.length > 0) {
+      if (parseInt(value) === (numerator % 10)) {
+        sounds.levelUp();
+        sendAdminMessage?.('agent', 'Perfect! You\'ve written the decimal correctly!');
+        setShowOnwardsButton(true);
+        setTimeout(() => {
+          onwardsButtonRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 1000);
+      } else {
+        sounds.join();
+        sendAdminMessage?.('agent', 'Look at the orange box - how many hundredths did we find?');
       }
     }
   };
@@ -167,64 +198,25 @@ export default function HintVisual2({
               {/* Decimal Form Box Container */}
               <div 
                 ref={decimalFormRef}
-                className={`w-full bg-[#FFFFE0] py-12 transition-opacity duration-300 ${!showDecimalForm ? 'opacity-50 pointer-events-none' : ''}`}
+                className={`w-full bg-[#F7F5DD] py-12 transition-opacity duration-300 ${!showDecimalForm ? 'opacity-50 pointer-events-none' : ''}`}
               >
                 <div className="flex justify-center">
-                  <div className="shadow-2xl transform scale-110 border-2 border-black rounded-lg overflow-hidden">
-                    <div className="bg-[#FFE4B5] px-10 py-3 text-center border-b-2 border-black shadow-md">
-                      <span className="text-xl font-medium">Decimal form</span>
-                    </div>
-                    <div className="bg-white p-6">
-                      <div className="flex items-center gap-8 pt-2">
-                        {/* Wholes input - always disabled */}
-                        <div className="flex flex-col items-center">
-                          <span className="text-base font-medium mb-2">Wholes</span>
-                          <input
-                            type="text"
-                            value="0"
-                            className="w-16 h-16 border-4 border-green-600 rounded-lg text-center text-3xl bg-white shadow-lg"
-                            disabled
-                          />
-                        </div>
-                        <span className="text-5xl mb-8">.</span>
-                        {/* Tenths input */}
-                        <div className="flex flex-col items-center">
-                          <span className="text-base font-medium mb-2">Tenths</span>
-                          <input
-                            type="text"
-                            value={purpleBoxAnswer}
-                            onChange={handlePurpleBoxChange}
-                            className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-3xl shadow-lg ${
-                              purpleBoxAnswer.length > 0 
-                                ? parseInt(purpleBoxAnswer) === completeRows 
-                                  ? 'bg-green-100' 
-                                  : 'bg-red-100'
-                                : 'bg-white'
-                            }`}
-                            maxLength={1}
-                            placeholder="0"
-                          />
-                        </div>
-                        {/* Hundredths input */}
-                        <div className="flex flex-col items-center">
-                          <span className="text-base font-medium mb-2">Hundredths</span>
-                          <input
-                            type="text"
-                            value={remainingAnswer}
-                            onChange={handleRemainingInputChange}
-                            className={`w-16 h-16 border-4 border-orange-400 rounded-lg text-center text-3xl shadow-lg ${
-                              remainingAnswer.length > 0 
-                                ? parseInt(remainingAnswer) === (numerator % 10)
-                                  ? 'bg-green-100' 
-                                  : 'bg-red-100'
-                                : 'bg-white'
-                            }`}
-                            maxLength={1}
-                            placeholder="0"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                  <div className="transform scale-125">
+                    <DecimalBox 
+                      wholes="0"
+                      tenths={decimalTenths}
+                      hundredths={decimalHundredths}
+                      onChange={{
+                        wholes: () => {}, // Disabled for wholes
+                        tenths: handleDecimalTenthsChange,
+                        hundredths: handleDecimalHundredthsChange
+                      }}
+                      correctWholes="0"
+                      correctTenths={String(completeRows)}
+                      correctHundredths={String(numerator % 10)}
+                      disabled={!showDecimalPrompt}
+                      showHundredths={true}
+                    />
                   </div>
                 </div>
               </div>
@@ -241,17 +233,17 @@ export default function HintVisual2({
                 {showFraction ? (
                   // Show only the fraction when answer is correct
                   <div className="flex flex-col items-center">
-                    <span className="font-bold text-2xl">{completeRows}</span>
+                    <span className=" text-2xl">{completeRows}</span>
                     <div className="h-0.5 w-8 bg-black my-1"></div>
-                    <span className="font-bold text-2xl">10</span>
+                    <span className=" text-2xl">10</span>
                   </div>
                 ) : (
                   // Show full equation with input when not answered correctly
                   <div className="flex items-center gap-6 text-2xl">
                     <div className="flex flex-col items-center mb-1">
-                      <span className="font-bold">{completeRows * 10}</span>
+                      <span className="">{completeRows * 10}</span>
                       <div className="h-0.5 w-8 bg-black my-1"></div>
-                      <span className="font-bold">100</span>
+                      <span className="">100</span>
                     </div>
                     <span className="mx-2">=</span>
                     <div className="flex flex-col items-center -bottom-1">
@@ -259,7 +251,7 @@ export default function HintVisual2({
                         type="text"
                         value={purpleBoxAnswer}
                         onChange={handlePurpleBoxChange}
-                        className={`w-9 h-9 border-2 border-black font-bold text-center text-xl ${
+                        className={`w-9 h-9 border-2 border-black  text-center text-xl ${
                           purpleBoxAnswer.length > 0 
                             ? parseInt(purpleBoxAnswer) === completeRows 
                               ? 'bg-green-100' 
@@ -269,7 +261,7 @@ export default function HintVisual2({
                         maxLength={1}
                       />
                       <div className="h-0.5 w-8 bg-black my-1"></div>
-                      <span className="font-bold">10</span>
+                      <span className="">10</span>
                     </div>
                   </div>
                 )}
@@ -289,7 +281,7 @@ export default function HintVisual2({
                         type="text"
                         value={remainingAnswer}
                         onChange={handleRemainingInputChange}
-                        className={`w-8 h-8 border-2 border-black font-bold text-center text-xl mt-3 ${
+                        className={`w-8 h-8 border-2 border-black  text-center text-xl mt-3 ${
                           remainingAnswer.length > 0 
                             ? parseInt(remainingAnswer) === (numerator % 10)
                               ? 'bg-green-100' 
@@ -299,7 +291,7 @@ export default function HintVisual2({
                         maxLength={1}
                       />
                       <div className="h-0.5 w-8 bg-black mt-1"></div>
-                      <span className="font-bold">100</span>
+                      <span className="">100</span>
                     </div>
                   </div>
                 </div>

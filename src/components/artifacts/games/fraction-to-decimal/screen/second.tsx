@@ -39,6 +39,10 @@ function Tenth({ sendAdminMessage }: BaseProps) {
   const hintRef = useRef<HTMLDivElement>(null);
   const [showHintVisual, setShowHintVisual] = useState(false);
   const [isTenthsIncorrect, setIsTenthsIncorrect] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const tenthsInputRef = useRef<HTMLInputElement>(null);
+  const hundredthsInputRef = useRef<HTMLInputElement>(null);
+  const proceedRef = useRef<HTMLDivElement>(null);
 
   const start = useRef(false);
 
@@ -83,45 +87,87 @@ function Tenth({ sendAdminMessage }: BaseProps) {
   };
 
   const handleFractionNumeratorChange = (value: string) => {
-    if (value.length >= String(question2.numerator).length) {
+    setFractionNumerator(value);
+    
+    // Clear any existing timeouts
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    if (value.length > 0) {
+      if (value.length < question2.numerator.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question2.numerator}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
+        }, 5000);
+        return;
+      }
+
       if (parseInt(value) !== question2.numerator) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question2.numerator}, but user answered ${value}. Diagnose socratically.`);
+        sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question2.numerator}, but user answered ${value}. Diagnose socratically.Don't repeat the same narration for every wrong answer.`);
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
       }
     }
-    setFractionNumerator(value);
   };
 
   const handleFractionDenominatorChange = (value: string) => {
-    if (value.length >= String(question2.denominator).length) {
+    setFractionDenominator(value);
+    
+    // Clear any existing timeouts
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    if (value.length > 0) {
+      if (value.length < question2.denominator.toString().length) {
+        // Set timeout for incomplete answer feedback
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer seems incomplete. The denominator should be ${question2.denominator}. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
       if (parseInt(value) !== question2.denominator) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question2.denominator}, but user answered ${value}. Diagnose socratically.`);
+        sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question2.denominator}, but user answered ${value}. Diagnose socratically.Don't repeat the same narration for every wrong answer.`);
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Perfect! You got the denominator right.');
       }
     }
-    setFractionDenominator(value);
   };
 
   const handleWholesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setWholes(value);
     
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     const correctWholes = Math.floor(question2.numerator/question2.denominator);
+    
     if (value.length > 0) {
+      if (value.length < correctWholes.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
       if (parseInt(value) !== correctWholes) {
         sounds.join();
-        sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+        sendAdminMessage('admin', `User answered incorrectly...`);
         setIsWholesCorrect(false);
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Excellent! Now enter the tenths digit.');
         setIsWholesCorrect(true);
+        setTimeout(() => tenthsInputRef.current?.focus(), 100);
       }
     }
   };
@@ -130,12 +176,24 @@ function Tenth({ sendAdminMessage }: BaseProps) {
     const value = e.target.value;
     setTenths(value);
     
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     const correctTenths = Math.floor((question2.numerator * 10) / question2.denominator) % 10;
+    
     if (value.length > 0) {
+      if (value.length < correctTenths.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
       if (parseInt(value) !== correctTenths) {
         sounds.join();
         scrollToHint();
-        sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
+        sendAdminMessage('agent', 'Oops, I see what you did there...');
         setIsTenthsCorrect(false);
         setIsTenthsIncorrect(true);
       } else {
@@ -143,6 +201,7 @@ function Tenth({ sendAdminMessage }: BaseProps) {
         sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
         setIsTenthsCorrect(true);
         setIsTenthsIncorrect(false);
+        setTimeout(() => proceedRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
       }
     }
   };
@@ -155,12 +214,12 @@ function Tenth({ sendAdminMessage }: BaseProps) {
     if (value.length > 0 && parseInt(value) !== correctTenths) {
       sounds.join();
       scrollToHint();
-      sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+      sendAdminMessage('admin', `User answered incorrectly for the Tenths, correct answer is ${correctTenths}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
     } else if (value.length > 0 && parseInt(value) === correctTenths) {
       sounds.levelUp();
       sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
     }
-  };
+  };      
 
   const scrollToHint = () => {
     if (!showHint) {  
@@ -232,8 +291,10 @@ function Tenth({ sendAdminMessage }: BaseProps) {
                   tenths: (value: string) => handleTenthsChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>)
                 }}
                 correctWholes={String(Math.floor(question2.numerator/question2.denominator))}
-                correctTenths={String(question2.numerator)}
+                correctTenths={String(Math.floor((question2.numerator * 10) / question2.denominator) % 10)}
                 disabled={step === 1}
+                tenthsRef={tenthsInputRef}
+                hundredthsRef={hundredthsInputRef}
               />
             </div>
           </div>
@@ -267,6 +328,9 @@ function Hundred({ sendAdminMessage }: BaseProps) {
   const [isTenthsCorrect, setIsTenthsCorrect] = useState(false);
   const [isTenthsIncorrect, setIsTenthsIncorrect] = useState(false);
   const [isHundredthsIncorrect, setIsHundredthsIncorrect] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const tenthsInputRef = useRef<HTMLInputElement>(null);
+  const hundredthsInputRef = useRef<HTMLInputElement>(null);
 
   const start = useRef(false);
 
@@ -315,29 +379,59 @@ function Hundred({ sendAdminMessage }: BaseProps) {
   };
 
   const handleFractionNumeratorChange = (value: string) => {
-    if (value.length >= String(question3.numerator).length) {
+    setFractionNumerator(value);
+    
+    // Clear any existing timeouts
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    if (value.length > 0) {
+      if (value.length < question3.numerator.toString().length) {
+        // Set timeout for incomplete answer feedback
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question3.numerator}. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
       if (parseInt(value) !== question3.numerator) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question3.numerator}, but user answered ${value}. Diagnose socratically.`);
+        sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question3.numerator}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
       }
     }
-    setFractionNumerator(value);
   };
 
   const handleFractionDenominatorChange = (value: string) => {
-    if (value.length >= String(question3.denominator).length) {
+    setFractionDenominator(value);
+    
+    // Clear any existing timeouts
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    if (value.length > 0) {
+      if (value.length < question3.denominator.toString().length) {
+        // Set timeout for incomplete answer feedback
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer seems incomplete. The denominator should be ${question3.denominator}. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
       if (parseInt(value) !== question3.denominator) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question3.denominator}, but user answered ${value}. Diagnose socratically.`);
+        sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question3.denominator}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Perfect! You got the denominator right.');
       }
     }
-    setFractionDenominator(value);
   };
 
   const scrollToHint = () => {
@@ -353,16 +447,29 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     const value = e.target.value;
     setWholes(value);
     
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     const correctWholes = Math.floor(question3.numerator/question3.denominator);
+    
     if (value.length > 0) {
+      if (value.length < correctWholes.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
       if (parseInt(value) !== correctWholes) {
         sounds.join();
-        sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+        sendAdminMessage('admin', `User answered incorrectly for the wholes, correct answer is ${correctWholes}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
         setIsWholesCorrect(false);
       } else {
         sounds.levelUp();
-        sendAdminMessage('agent', 'Excellent! Now enter the tenths digit.');
+        sendAdminMessage('agent', 'Excellent! Now enter the tenths digit.');    
         setIsWholesCorrect(true);
+        setTimeout(() => tenthsInputRef.current?.focus(), 100);
       }
     }
   };
@@ -371,19 +478,32 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     const value = e.target.value;
     setTenths(value);
     
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     const correctTenths = Math.floor((question3.numerator * 10) / question3.denominator) % 10;
+    
     if (value.length > 0) {
+      if (value.length < correctTenths.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
       if (parseInt(value) !== correctTenths) {
         sounds.join();
         scrollToHint();
         sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
         setIsTenthsCorrect(false);
-        setIsTenthsIncorrect(true);
+        setIsTenthsIncorrect(true); 
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
         setIsTenthsCorrect(true);
         setIsTenthsIncorrect(false);
+        setTimeout(() => hundredthsInputRef.current?.focus(), 100);
       }
     }
   };
@@ -440,86 +560,52 @@ function Hundred({ sendAdminMessage }: BaseProps) {
           active={false}
         />
 
-        <div className="flex w-full">
-          <div className="w-1/2 bg-[#E8FFE9] flex items-center justify-center">
-            <FractionBox 
-              numerator={fractionNumerator}
-              denominator={fractionDenominator}
-              onChange={{
-                numerator: handleFractionNumeratorChange,
-                denominator: handleFractionDenominatorChange
-              }}
-              correctnumerator={String(question3.numerator)}
-              correctdenominator={String(question3.denominator)}
-            />
-          </div>
+<div className="flex w-full">
+  {/* Left side - Fraction section */}
+  <div className="flex-1 bg-[#EDFFEE] flex justify-end pr-16 pb-8">
+    <div className="pt-8">
+      <FractionBox 
+        numerator={fractionNumerator}
+        denominator={fractionDenominator}
+        onChange={{
+          numerator: handleFractionNumeratorChange,
+          denominator: handleFractionDenominatorChange
+        }}
+        correctnumerator={String(question3.numerator)}
+        correctdenominator={String(question3.denominator)}
+      />
+    </div>
+  </div>
 
-          <div className={`w-1/2 bg-[#FFF8E7] flex flex-col items-center py-8 ${step >= 5 ? 'opacity-100' : 'opacity-50'}`}>
-            <div className="text-center mb-2">
-              <span className="text-lg bg-[#FFE4B5] px-4 py-1">Decimal</span>
-            </div>
-            <div className="border-2 border-black p-4 bg-white">
-              <div className="flex items-center gap-2">
-                <div className="flex flex-col items-center">
-                  <span className="text-sm">Wholes</span>
-                  <input
-                    type="text"
-                    value={wholes}
-                    onChange={handleWholesChange}
-                    className={`w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl ${
-                      wholes === String(Math.floor(question3.numerator/question3.denominator)) 
-                        ? 'bg-green-100' 
-                        : wholes.length > 0 ? 'bg-red-100' : 'bg-white'
-                    }`}
-                    maxLength={1}
-                    disabled={step !== 5}
-                  />
-                </div>
-                <span className="text-4xl mb-6">.</span>
-                <div className='flex flex-col items-center'>
-                  <span className="text-sm">Tenths</span>
-                  <input 
-                    type="text"
-                    value={tenths}
-                    onChange={handleTenthsChange}
-                    className={`w-12 h-12 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                      tenths.length > 0 
-                        ? parseInt(tenths) === Math.floor((question3.numerator * 10) / question3.denominator) % 10
-                          ? 'bg-green-100' 
-                          : 'bg-red-100'
-                        : 'bg-white'
-                    } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    maxLength={1}
-                    disabled={!isWholesCorrect}
-                  />
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-sm">Hundredths</span>
-                  <input
-                    type="text"
-                    value={hundredths}
-                    onChange={handleHundredthsChange}
-                    className={`w-12 h-12 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                      hundredths.length > 0 
-                        ? parseInt(hundredths) === Math.floor((question3.numerator * 100) / question3.denominator) % 10
-                          ? 'bg-green-100' 
-                          : 'bg-red-100'
-                        : 'bg-white'
-                    } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    maxLength={1}
-                    disabled={!isTenthsCorrect}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+  {/* Right side - Decimal section */}
+  <div className={`flex-1 bg-[#F7F5DD] flex justify-start pl-16 pb-16 ${step >= 5 ? 'opacity-100' : 'opacity-50'}`}>
+    <div className="pt-8">
+      <DecimalBox 
+        wholes={wholes}
+        tenths={tenths}
+        hundredths={hundredths}
+        onChange={{
+          wholes: (value: string) => handleWholesChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>),
+          tenths: (value: string) => handleTenthsChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>),
+          hundredths: (value: string) => handleHundredthsChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>)
+        }}
+        correctWholes={String(Math.floor(question3.numerator/question3.denominator))}
+        correctTenths={String(Math.floor((question3.numerator * 10) / question3.denominator) % 10)}
+        correctHundredths={String(Math.floor((question3.numerator * 100) / question3.denominator) % 10)}
+        disabled={step < 5}
+        showHundredths={true}
+        tenthsRef={tenthsInputRef}
+        hundredthsRef={hundredthsInputRef}
+      />
+    </div>
+  </div>
+</div>
 
         {(isTenthsIncorrect || isHundredthsIncorrect) && (
           <div className="relative mt-8" ref={hintRef}>
             <button
               onClick={handleNeedHelp}
-              className="relative bg-[#FF9DB1] px-6 py-2 text-xl text-white hover:bg-[#FF8DA3] transition-colors"
+              className="bg-[#ff3971] text-white text-xl rounded-none px-4 py-2 shadow-[-5px_5px_0px_rgba(0,0,0,1)]"
             >
               Need a hint?
             </button>
@@ -564,6 +650,9 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     const [isTenthsCorrect, setIsTenthsCorrect] = useState(false);
     const [isTenthsIncorrect, setIsTenthsIncorrect] = useState(false);
     const [isHundredthsIncorrect, setIsHundredthsIncorrect] = useState(false);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const tenthsInputRef = useRef<HTMLInputElement>(null);
+    const hundredthsInputRef = useRef<HTMLInputElement>(null);
 
     const start = useRef(false);
   
@@ -631,16 +720,29 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       const value = e.target.value;
       setWholes(value);
       
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
       const correctWholes = Math.floor(question4.numerator/question4.denominator);
+      
       if (value.length > 0) {
+        if (value.length < correctWholes.toString().length) {
+          timeoutRef.current = setTimeout(() => {
+            sounds.join();
+            sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
+          }, 5000);
+          return;
+        }
         if (parseInt(value) !== correctWholes) {
           sounds.join();
-          sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+          sendAdminMessage('admin', `User answered incorrectly for the wholes, correct answer is ${correctWholes}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
           setIsWholesCorrect(false);
         } else {
           sounds.levelUp();
           sendAdminMessage('agent', 'Excellent! That\'s the correct number of wholes.');
           setIsWholesCorrect(true);
+          setTimeout(() => tenthsInputRef.current?.focus(), 100);
         }
       }
     };
@@ -649,8 +751,20 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       const value = e.target.value;
       setTenths(value);
       
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
       const correctTenths = Math.floor((question4.numerator * 10) / question4.denominator) % 10;
+      
       if (value.length > 0) {
+        if (value.length < correctTenths.toString().length) {
+          timeoutRef.current = setTimeout(() => {
+            sounds.join();
+            sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+          }, 5000);
+          return;
+        }
         if (parseInt(value) !== correctTenths) {
           sounds.join();
           scrollToHint();
@@ -662,6 +776,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
           setIsTenthsCorrect(true);
           setIsTenthsIncorrect(false);
+          setTimeout(() => hundredthsInputRef.current?.focus(), 100);
         }
       }
     };
@@ -686,20 +801,51 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     };
   
     const handleFractionNumeratorChange = (value: string) => {
-      if (value.length >= String(question4.numerator).length) {
+      setFractionNumerator(value);
+      
+      // Clear any existing timeouts
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      if (value.length > 0) {
+        if (value.length < question4.numerator.toString().length) {
+          // Set timeout for incomplete answer feedback
+          timeoutRef.current = setTimeout(() => {
+            sounds.join();
+            sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question4.numerator}. Try entering the full number.`);
+          }, 5000);
+          return;
+        }
+
         if (parseInt(value) !== question4.numerator) {
           sounds.join();
-          sendAdminMessage('agent', `I notice you entered ${value} pieces. Let's count the filled pieces together - each row has 10 pieces, and we need to count both the complete rows and any extra pieces.`);
+          sendAdminMessage('admin', `User answered incorrectly, correct answer is ${question4.numerator}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
         } else {
           sounds.levelUp();
           sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
         }
       }
-      setFractionNumerator(value);
     };
 
     const handleFractionDenominatorChange = (value: string) => {
-      if (value.length >= String(question4.denominator).length) {
+      setFractionDenominator(value);
+      
+      // Clear any existing timeouts
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      if (value.length > 0) {
+        if (value.length < question4.denominator.toString().length) {
+          // Set timeout for incomplete answer feedback
+          timeoutRef.current = setTimeout(() => {
+            sounds.join();
+            sendAdminMessage('agent', `Let's think about this - we're looking at a chocolate bar divided into 10 rows of 10 pieces each. How many total pieces would that make?`);
+          }, 5000);
+          return;
+        }
+
         if (parseInt(value) !== question4.denominator) {
           sounds.join();
           sendAdminMessage('agent', `Let's think about this - we're looking at a chocolate bar divided into 10 rows of 10 pieces each. How many total pieces would that make?`);
@@ -708,7 +854,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           sendAdminMessage('agent', 'Perfect! You got the denominator right.');
         }
       }
-      setFractionDenominator(value);
     };
   
     const handleNeedHelp = () => {
@@ -755,89 +900,52 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
                 active={false}
               />
   
-              <div className="flex w-full">
-                <div className="w-1/2 bg-[#E8FFE9] flex items-center justify-center">
-                  <FractionBox 
-                    numerator={fractionNumerator}
-                    denominator={fractionDenominator}
-                    onChange={{
-                      numerator: handleFractionNumeratorChange,
-                      denominator: handleFractionDenominatorChange
-                    }}
-                    correctnumerator={String(question4.numerator)}
-                    correctdenominator={String(question4.denominator)}
-                  />
-                </div>
-  
-                <div className={`w-1/2 bg-[#FFF8E7] flex flex-col items-center py-8 ${step >= 8 ? 'opacity-100' : 'opacity-50'}`}>
-                  <div className="text-center mb-2">
-                    <span className="text-lg bg-[#FFE4B5] px-4 py-1">Decimal</span>
-                  </div>
-                  <div className="border-2 border-black p-4 bg-white">
-                    <div className="flex items-center gap-2">
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm">Wholes</span>
-                        <input
-                          type="text"
-                          value={wholes}
-                          onChange={handleWholesChange}
-                          className={`w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl ${
-                            wholes === String(Math.floor(question4.numerator/question4.denominator)) 
-                              ? 'bg-green-100' 
-                              : wholes.length > 0 ? 'bg-red-100' : 'bg-white'
-                          }`}
-                          maxLength={1}
-                          disabled={step !== 8}
-                        />
-                      </div>
-                      <span className="text-4xl mb-6">.</span>
-                      <div className='flex flex-col items-center'>
-                        <span className="text-sm">Tenths</span>
-                        <input 
-                          type="text"
-                          value={tenths}
-                          onChange={handleTenthsChange}
-                          className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                            tenths.length > 0 
-                              ? parseInt(tenths) === Math.floor((question4.numerator * 10) / question4.denominator) % 10
-                                ? 'bg-green-100' 
-                                : 'bg-red-100'
-                              : 'bg-white'
-                          } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          maxLength={1}
-                          disabled={!isWholesCorrect}
-                        />
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm">Hundredths</span>
-                        <input
-                          type="text"
-                          value={hundredths}
-                          onChange={handleHundredthsChange}
-                          className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                            hundredths.length > 0 
-                              ? parseInt(hundredths) === Math.floor((question4.numerator * 100) / question4.denominator) % 10
-                                ? 'bg-green-100' 
-                                : 'bg-red-100'
-                              : 'bg-white'
-                          } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          maxLength={1}
-                          disabled={!isTenthsCorrect}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+  <div className="flex w-full">
+  {/* Left side - Fraction section */}
+  <div className="flex-1 bg-[#EDFFEE] flex justify-end pr-16 pb-8">
+    <div className="pt-8">
+      <FractionBox 
+        numerator={fractionNumerator}
+        denominator={fractionDenominator}
+        onChange={{
+          numerator: handleFractionNumeratorChange,
+          denominator: handleFractionDenominatorChange
+        }}
+        correctnumerator={String(question4.numerator)}
+        correctdenominator={String(question4.denominator)}
+      />
+    </div>
+  </div>
+
+  {/* Right side - Decimal section */}
+  <div className={`flex-1 bg-[#F7F5DD] flex justify-start pl-16 pb-16 ${step >= 5 ? 'opacity-100' : 'opacity-50'}`}>
+    <div className="pt-8">
+      <DecimalBox 
+        wholes={wholes}
+        tenths={tenths}
+        hundredths={hundredths}
+        onChange={{
+          wholes: (value: string) => handleWholesChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>),
+          tenths: (value: string) => handleTenthsChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>),
+          hundredths: (value: string) => handleHundredthsChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>)
+        }}
+        correctWholes={String(Math.floor(question4.numerator/question4.denominator))}
+        correctTenths={String(Math.floor((question4.numerator * 10) / question4.denominator) % 10)}
+        correctHundredths={String(Math.floor((question4.numerator * 100) / question4.denominator) % 10)}
+        disabled={step < 5}
+        showHundredths={true}
+        tenthsRef={tenthsInputRef}
+        hundredthsRef={hundredthsInputRef}
+      />
+    </div>
+  </div>
+</div>
   
               {showHint && step === 8 && (
                 <div className="relative mt-8" ref={hintRef}>
-                  <div className="absolute -top-1 -left-1 bg-black px-6 py-2">
-                    <span className="text-xl text-white invisible">Need a hint?</span>
-                  </div>
                   <button
                     onClick={handleNeedHelp}
-                    className="relative bg-[#FF9DB1] px-6 py-2 text-xl text-white hover:bg-[#FF8DA3] transition-colors"
+                    className="bg-[#ff3971] text-white text-xl rounded-none px-4 py-2 shadow-[-5px_5px_0px_rgba(0,0,0,1)]"
                   >
                     Need a hint?
                   </button>

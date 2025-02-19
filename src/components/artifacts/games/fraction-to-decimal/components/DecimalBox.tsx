@@ -3,22 +3,35 @@ import React from 'react';
 interface DecimalBoxProps {
   wholes?: string;
   tenths?: string;
+  hundredths?: string;
   className?: string;
   disabled?: boolean;
   onChange?: {
     wholes: (value: string) => void;
     tenths: (value: string) => void;
+    hundredths?: (value: string) => void;
   };
   correctWholes?: string;
   correctTenths?: string;
+  correctHundredths?: string;
+  showHundredths?: boolean;
+  tenthsRef?: React.RefObject<HTMLInputElement>;
+  hundredthsRef?: React.RefObject<HTMLInputElement>;
 }
 
 const DecimalBox = ({ 
   wholes = '', 
   tenths = '', 
+  hundredths = '', 
   className = '',
   disabled = false,
-  onChange
+  onChange,
+  correctWholes,
+  correctTenths,
+  correctHundredths,
+  showHundredths = false,
+  tenthsRef,
+  hundredthsRef
 }: DecimalBoxProps) => {
   return (
     <div className={`flex flex-col ${className} ${disabled ? 'opacity-50' : ''}`}>
@@ -33,23 +46,58 @@ const DecimalBox = ({
               type="text"
               value={wholes}
               onChange={(e) => onChange?.wholes(e.target.value)}
-              className="w-12 h-12 border-4 border-green-600 flex items-center justify-center text-2xl rounded-lg text-center"
+              className={`w-12 h-12 border-4 flex items-center justify-center text-2xl rounded-lg text-center ${
+                wholes.length > 0 
+                  ? parseInt(wholes) === parseInt(correctWholes || '0')
+                    ? 'border-green-600' 
+                    : 'border-red-500'
+                  : 'border-green-600'
+              } bg-white`}
               maxLength={1}
               disabled={disabled}
             />
           </div>
-          <span className="text-4xl mb-6">.</span>
+          <span className="text-6xl font-bold mb-2">.</span>
           <div className="flex flex-col items-center">
             <span className="text-sm ">Tenths</span>
             <input
               type="text"
               value={tenths}
               onChange={(e) => onChange?.tenths(e.target.value)}
-              className="w-12 h-12 border-4 border-pink-400 flex items-center justify-center text-2xl rounded-lg text-center"
+              className={`w-12 h-12 border-4 flex items-center justify-center text-2xl rounded-lg text-center ${
+                tenths.length > 0 
+                  ? parseInt(tenths) === parseInt(correctTenths || '0')
+                    ? 'border-pink-400' 
+                    : 'border-red-500'
+                  : 'border-pink-400'
+              } bg-white`}
               maxLength={1}
               disabled={disabled}
+              ref={tenthsRef}
             />
           </div>
+          {showHundredths && (
+            <>
+              <div className="flex flex-col items-center">
+                <span className="text-sm ">Hundredths</span>
+                <input
+                  type="text"
+                  value={hundredths}
+                  onChange={(e) => onChange?.hundredths?.(e.target.value)}
+                  className={`w-12 h-12 border-4 flex items-center justify-center text-2xl rounded-lg text-center ${
+                    hundredths?.length > 0 
+                      ? parseInt(hundredths) === parseInt(correctHundredths || '0')
+                        ? 'border-pink-400' 
+                        : 'border-red-500'
+                      : 'border-pink-400'
+                  } bg-white`}
+                  maxLength={1}
+                  disabled={disabled}
+                  ref={hundredthsRef}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

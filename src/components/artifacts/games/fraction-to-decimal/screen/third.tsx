@@ -8,6 +8,7 @@ import Fraction from '../components/Fraction';
 import KnifeSelector from '../components/knifeselector';
 import { sounds } from '../utils/sound';
 import HintVisual2 from '../components/HintVisual2';
+import DecimalBox from '../components/DecimalBox';
 
 interface ThirdScreenProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -17,6 +18,8 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step } = gameStateRef.current.state3
   const {numerator, denominator} = gameStateRef.current.question.question5
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   return (
     <div className="flex flex-col mb-10 h-full w-full">
@@ -66,9 +69,7 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
       sendAdminMessage('agent', `Let's practice more challenging problems now. Try creating ${numerator}/${denominator} of a chocolate`);
       start.current = true;
     }
-  }, []);
-
-
+    }, []);
   const setStep = (value: number) => {
     setGameStateRef((prev) => ({
       ...prev,
@@ -101,11 +102,12 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
 
   useEffect(() => {
     if (wholechocolate * selectedKnife + selectedPieces < numerator && selectedPieces === 100) {
-      setAllowadd(true)
+      setAllowadd(true);
+      sendAdminMessage('agent', 'Fill this one completely to be able to add a new bar.');
     } else {
-      setAllowadd(false)
+      setAllowadd(false);
     }
-  }, [selectedPieces])
+  }, [selectedPieces]);
 
   return (
       <div className="flex flex-col items-center max-w-screen-lg w-full mx-auto justify-center flex-1 gap-8">
@@ -187,11 +189,20 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
 
   const [isWholesCorrect, setIsWholesCorrect] = useState(false);
   const [isTenthsCorrect, setIsTenthsCorrect] = useState(false);
+  const [isTenthsIncorrect, setIsTenthsIncorrect] = useState(false);
+  const [isHundredthsIncorrect, setIsHundredthsIncorrect] = useState(false);
 
   const [showHint, setShowHint] = useState(false);
   const [showHintButton, setShowHintButton] = useState(false);
 
   const start = useRef(false);
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const hintButtonRef = useRef<HTMLDivElement>(null);
+
+  const tenthsInputRef = useRef<HTMLInputElement>(null);
+  const hundredthsInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!start.current) {
@@ -212,64 +223,113 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
     }
   }, [wholes, tenths, hundredths])
 
+  useEffect(() => {
+    if (showHintButton && hintButtonRef.current) {
+      setTimeout(() => {
+        hintButtonRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [showHintButton]);
+
+  const scrollToHint = () => {
+    setShowHint(true);
+    setShowHintButton(true);
+  };
+
   const handleWholesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length <= 1) {
-      setWholes(value);
-      
-      if (value.length > 0) {
-        const isCorrect = parseInt(value) === Math.floor(numerator / denominator);
-        setIsWholesCorrect(isCorrect);
-        
-        if (isCorrect) {
-          sounds.levelUp();
-          sendAdminMessage('agent', 'Correct! Now enter the tenths digit.');
-        } else {
+    setWholes(value);
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    const correctWholes = Math.floor(numerator/denominator);
+    
+    if (value.length > 0) {
+      if (value.length < correctWholes.toString().length) {
+        timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('agent', 'Look at how many complete chocolates you have.');
-        }
+          sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+      if (parseInt(value) !== correctWholes) {
+        sounds.join();
+        sendAdminMessage('admin', `User answered incorrectly...`);
+        setIsWholesCorrect(false);
+      } else {
+        sounds.levelUp();
+        sendAdminMessage('agent', 'Excellent! Now enter the tenths digit.');
+        setIsWholesCorrect(true);
+        setTimeout(() => tenthsInputRef.current?.focus(), 100);
       }
     }
   };
 
   const handleTenthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length <= 1) {
-      setTenths(value);
-      
-      if (value.length > 0) {
-        const isCorrect = parseInt(value) === Math.floor((numerator % denominator) / 10);
-        setIsTenthsCorrect(isCorrect);
-        
-        if (isCorrect) {
-          sounds.levelUp();
-          sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
-          setShowHintButton(false);
-        } else {
+    setTenths(value);
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    const correctTenths = Math.floor((numerator * 10) / denominator) % 10;
+    
+    if (value.length > 0) {
+      if (value.length < correctTenths.toString().length) {
+        timeoutRef.current = setTimeout(() => {
           sounds.join();
-          setShowHintButton(true);
-          sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
-        }
+          sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+      if (parseInt(value) !== correctTenths) {
+        sounds.join();
+        setShowHintButton(true);
+        sendAdminMessage('agent', 'That\'s not quite right. Need a hint?');
+        setIsTenthsCorrect(false);
+        setIsTenthsIncorrect(true);
+      } else {
+        sounds.levelUp();
+        sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
+        setIsTenthsCorrect(true);
+        setIsTenthsIncorrect(false);
+        setTimeout(() => hundredthsInputRef.current?.focus(), 100);
+        setShowHintButton(false);
       }
     }
   };
 
   const handleHundredthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length <= 1) {
-      setHundredths(value);
-      
-      if (value.length > 0) {
-        const isCorrect = parseInt(value) === Math.floor((numerator % denominator) % 10);
-        if (isCorrect) {
-          sounds.levelUp();
-          sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
-          setShowHintButton(false);
-        } else {
+    setHundredths(value);
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    const correctHundredths = Math.floor((numerator * 100) / denominator) % 10;
+    
+    if (value.length > 0) {
+      if (value.length < correctHundredths.toString().length) {
+        timeoutRef.current = setTimeout(() => {
           sounds.join();
-          setShowHintButton(true);
-          sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
-        }
+          sendAdminMessage('admin', `The answer should be ${correctHundredths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+      if (parseInt(value) !== correctHundredths) {
+        sounds.join();
+        setShowHintButton(true);
+        sendAdminMessage('agent', 'That\'s not quite right. Need a hint?');
+        setIsHundredthsIncorrect(true);
+      } else {
+        sounds.levelUp();
+        sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
+        setIsHundredthsIncorrect(false);
+        setShowHintButton(false);
       }
     }
   };
@@ -312,90 +372,86 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
             <div className="flex flex-col items-center gap-2 text-2xl">
               <div className="w-screen bg-[#F7F5DD] py-8">
                 <div className="max-w-[500px] mx-auto px-4">
-                  <div className="text-center -mb-4 relative z-10">
-                    <span className="text-lg bg-[#FFE4B5] px-6 py-2 rounded-t-lg">
-                      Decimal Form
-                    </span>
-                  </div>
-                  <div className="border-2 border-black p-6 bg-white rounded-lg">
-                    <div className="flex flex-col items-center">
-                      <div className="flex w-full justify-center mb-2">
-                        <div className="w-16 text-center">
-                          <span className="text-sm">Wholes</span>
-                        </div>
-                        <div className="w-16 text-center ml-12">
-                          <span className="text-sm">Tenths</span>
-                        </div>
-                        <div className="w-16 text-center ml-4">
-                          <span className="text-sm">Hundredths</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-center">
-                        <input
-                          type="text"
-                          value={wholes}
-                          onChange={handleWholesChange}
-                          className={`w-16 h-16 border-4 border-green-600 rounded-lg text-center text-2xl ${
-                            wholes.length > 0 
-                              ? parseInt(wholes) === Math.floor(numerator / denominator)
-                                ? 'bg-green-100' 
-                                : 'bg-red-100'
-                              : 'bg-white'
-                          }`}
-                          maxLength={1}
-                        />
-                        <span className="text-4xl mx-4">.</span>
-                        <input 
-                          type="text"
-                          value={tenths}
-                          onChange={handleTenthsChange}
-                          disabled={!isWholesCorrect}
-                          className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ${
-                            tenths.length > 0 
-                              ? parseInt(tenths) === Math.floor((numerator % denominator) / 10)
-                                ? 'bg-green-100' 
-                                : 'bg-red-100'
-                              : 'bg-white'
-                          } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          maxLength={1}
-                        />
-                        <input
-                          type="text"
-                          value={hundredths}
-                          onChange={handleHundredthsChange}
-                          disabled={!isTenthsCorrect}
-                          className={`w-16 h-16 border-4 border-pink-400 rounded-lg text-center text-2xl ml-4 ${
-                            hundredths.length > 0 
-                              ? parseInt(hundredths) === Math.floor((numerator % denominator) % 10)
-                                ? 'bg-green-100' 
-                                : 'bg-red-100'
-                              : 'bg-white'
-                          } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          maxLength={2}
-                        />
-                      </div>
+                  <div className="flex flex-col">
+                    <div className="text-center mb-4">
+                      <span className="text-xl mb-2 bg-[#FFE4B5] shadow-[-5px_5px_0_0_rgba(0,0,0,1)] px-4 py-1">Decimal</span>
                     </div>
-                  </div>
+                    <div className="border-2 border-black p-8 bg-white">
+                      <div className="flex justify-center items-end gap-4">
+                        <div className="flex flex-col items-center">
+                          <span className="text-sm mb-2">Wholes</span>
+                          <input
+                            type="text"
+                            value={wholes}
+                            onChange={handleWholesChange}
+                            className={`w-12 h-12 border-4 border-green-600 text-2xl rounded-lg text-center ${
+                              wholes.length > 0 
+                                ? parseInt(wholes) === Math.floor(numerator / denominator)
+                                  ? 'bg-green-100' 
+                                  : 'bg-red-100'
+                                : 'bg-white'
+                            }`}
+                            maxLength={1}
+                          />
+                        </div>
+                        <span className="text-6xl font-bold mb-2">.</span>
+                        <div className="flex flex-col items-center">
+                          <span className="text-sm mb-2">Tenths</span>
+                          <input
+                            type="text"
+                            value={tenths}
+                            onChange={handleTenthsChange}
+                            className={`w-12 h-12 border-4 border-pink-400 text-2xl rounded-lg text-center ${
+                              tenths.length > 0 
+                                ? parseInt(tenths) === Math.floor((numerator % denominator) / 10)
+                                  ? 'bg-green-100' 
+                                  : 'bg-red-100'
+                                : 'bg-white'
+                            } ${!isWholesCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            maxLength={1}
+                            disabled={!isWholesCorrect}
+                            ref={tenthsInputRef}
+                          />
+                        </div>
 
-                  {showHintButton && (
-                    <div className="relative mt-8 flex justify-center">
-                      <div className="absolute top-1 left-1 bg-black px-6 py-2 w-[180px] h-[40px] -z-10">
-                        <span className="text-xl text-white invisible">Need a hint?</span>
+                        <div className="flex flex-col items-center">
+                          <span className="text-sm mb-2">Hundredths</span>
+                          <input
+                            type="text"
+                            value={hundredths}
+                            onChange={handleHundredthsChange}
+                            className={`w-12 h-12 border-4 border-pink-400 text-2xl rounded-lg text-center ${
+                              hundredths.length > 0 
+                                ? parseInt(hundredths) === Math.floor((numerator % denominator) % 10)
+                                  ? 'bg-green-100' 
+                                  : 'bg-red-100'
+                                : 'bg-white'
+                            } ${!isTenthsCorrect ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            maxLength={1}
+                            disabled={!isTenthsCorrect}
+                            ref={hundredthsInputRef}
+                          />
+                        </div>
                       </div>
-                      <button
-                        onClick={() => setShowHint(true)}
-                        className="relative bg-[#FF9DB1] px-6 py-2 text-xl text-white hover:bg-[#FF8DA3] transition-colors w-[180px] h-[40px]"
-                      >
-                        Need a hint?
-                      </button>
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
           </>
         )}
       </div>
+
+      {showHintButton && !showHint && (
+        <div ref={hintButtonRef} className="mt-8">
+          <button
+            onClick={() => setShowHint(true)}
+            className="bg-[#ff3971] text-white text-xl rounded-none px-4 py-2 shadow-[-5px_5px_0px_rgba(0,0,0,1)]"
+          >
+            Need a hint?
+          </button>
+        </div>
+      )}
 
       {step === 3 && (
         <Proceed 

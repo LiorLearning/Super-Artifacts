@@ -31,7 +31,7 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
     
     if (value.length > 0 && parseInt(value) !== correctTenths) {
       sounds.join();
-      sendAdminMessage?.('agent', "Let's count the complete horizontal bars. Each bar represents one tenth. How many complete bars do you see?");
+      sendAdminMessage?.('admin', `User answered incorrectly for the Tenths, correct answer is ${correctTenths}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
     } else if (value.length > 0 && parseInt(value) === correctTenths) {
       sounds.levelUp();
       sendAdminMessage?.('agent', "Awesome, now how many complete hundredths do you see?");
@@ -45,7 +45,7 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
     
     if (value.length > 0 && parseInt(value) !== correctHundredths) {
       sounds.join();
-      sendAdminMessage?.('admin', "Look at the individual pieces in the first row. Each piece represents one hundredth. Count how many are filled.");
+      sendAdminMessage?.('admin', `User answered incorrectly for the Hundredths, correct answer is ${correctHundredths}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
     } else if (value.length > 0 && parseInt(value) === correctHundredths) {
       sounds.levelUp();
       sendAdminMessage?.('agent', "Excellent! You've correctly converted the fraction to a decimal!");

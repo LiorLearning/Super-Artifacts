@@ -29,6 +29,9 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
   const [allowadd, setAllowadd] = useState<boolean>(false)
 
   const start = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const tenthsInputRef = useRef<HTMLInputElement>(null);
+  const hundredthsInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!start.current) {
@@ -68,23 +71,42 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
     const correctNumerator = question6 * selectedKnife;
     const correctDenominator = selectedKnife;
     
-    if (numerator.toString().length >= correctNumerator.toString().length) {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    if (numerator.toString().length > 0) {
+      if (numerator.toString().length < correctNumerator.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctNumerator}. Your answer ${numerator} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
       if (numerator === correctNumerator && denominator === 0) {
         sendAdminMessage('agent', 'Perfect! Now enter the denominator - how many pieces are there in total?');
       }
     }
 
-    if (denominator.toString().length >= correctDenominator.toString().length && 
-        numerator === correctNumerator) {
+    if (denominator.toString().length > 0) {
+      if (denominator.toString().length < correctDenominator.toString().length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correctDenominator}. Your answer ${denominator} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
       if (denominator === correctDenominator) {
-        setStep(3)
+        setStep(3);
         sendAdminMessage('agent', `Great job, let's head to the final level!`);
       } else {
-        sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correctDenominator}, but user answered ${denominator}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
       }
     } else if (denominator.toString().length >= correctDenominator.toString().length && 
                numerator !== correctNumerator) {
-      sendAdminMessage('admin', `user is incorrect, diagnose socratically by referring to their current game state.`);
+      sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correctNumerator}, but user answered ${numerator}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
     }
   }, [numerator, denominator]);
 
@@ -228,6 +250,8 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
               <DecimalBox
                 wholes={Math.floor((wholechocolate*selectedKnife + selectedPieces) / selectedKnife).toString()}
                 tenths={ (wholechocolate*selectedKnife + selectedPieces) % selectedKnife === 0 ? '0' : ((wholechocolate*selectedKnife + selectedPieces) % selectedKnife).toString()}
+                tenthsRef={tenthsInputRef}
+                hundredthsRef={hundredthsInputRef}
               />
             </div>
           :

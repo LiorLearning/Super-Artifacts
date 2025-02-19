@@ -28,6 +28,11 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
 
   const [showFinish, setShowFinish] = useState(false);
 
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const tenthsInputRef = useRef<HTMLInputElement>(null);
+  const hundredthsInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!start.current) {
       sendAdminMessage('agent', `this time, let's try converting a fraction to decimal without the visuals. Let me know if you need help!`);
@@ -94,57 +99,95 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
 
   const handleWholesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length <= 1) {
-      setWholes(value);
+    setWholes(value);
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    if (value.length > 0) {
+      const currentQuestion = step < 2 ? question7 : question8;
+      const correct = getCorrectValues(currentQuestion.numerator, currentQuestion.denominator);
       
-      if (value.length > 0) {
-        const currentQuestion = step < 2 ? question7 : question8;
-        const correct = getCorrectValues(currentQuestion.numerator, currentQuestion.denominator);
-        
-        if (value === correct.wholes) {
-          sendAdminMessage('agent', 'Correct! Now enter the tenths digit.');
-          setDisabled(false);
-        } else {
-          sendAdminMessage('admin', 'user is incorrect, diagnose socratically by referring to their current game state.');
-        }
+      if (value.length < correct.wholes.length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correct.wholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
+      if (value === correct.wholes) {
+        sounds.levelUp();
+        sendAdminMessage('agent', 'Correct! Now enter the tenths digit.');
+        setDisabled(false);
+        setTimeout(() => tenthsInputRef.current?.focus(), 100);
+      } else {
+        sounds.join();
+        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.wholes}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
       }
     }
   };
 
   const handleTenthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length <= 1) {
-      setTenths(value);
+    setTenths(value);
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    if (value.length > 0) {
+      const currentQuestion = step < 2 ? question7 : question8;
+      const correct = getCorrectValues(currentQuestion.numerator, currentQuestion.denominator);
       
-      if (value.length > 0) {
-        const currentQuestion = step < 2 ? question7 : question8;
-        const correct = getCorrectValues(currentQuestion.numerator, currentQuestion.denominator);
-        
-        if (value === correct.tenths) {
-          sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
-          setIsTenthsCorrect(true);
-        } else {
-          sendAdminMessage('admin', 'user is incorrect, diagnose socratically by referring to their current game state.');
-          setIsTenthsCorrect(false);
-        }
+      if (value.length < correct.tenths.length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correct.tenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
+      if (value === correct.tenths) {
+        sounds.levelUp();
+        sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
+        setIsTenthsCorrect(true);
+        setTimeout(() => hundredthsInputRef.current?.focus(), 100);
+      } else {
+        sounds.join();
+        sendAdminMessage('admin', `That's not quite right. Need a hint?`);
+        setIsTenthsCorrect(false);
       }
     }
   };
 
   const handleHundredthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length <= 1) {
-      setHundredths(value);
+    setHundredths(value);
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    if (value.length > 0) {
+      const currentQuestion = step < 2 ? question7 : question8;
+      const correct = getCorrectValues(currentQuestion.numerator, currentQuestion.denominator);
       
-      if (value.length > 0) {
-        const currentQuestion = step < 2 ? question7 : question8;
-        const correct = getCorrectValues(currentQuestion.numerator, currentQuestion.denominator);
-        
-        if (value === correct.hundredths) {
-          sendAdminMessage('agent', 'Excellent! You\'ve converted the fraction to a decimal.');
-        } else {
-          sendAdminMessage('admin', 'user is incorrect, diagnose socratically by referring to their current game state.');
-        }
+      if (value.length < correct.hundredths.length) {
+        timeoutRef.current = setTimeout(() => {
+          sounds.join();
+          sendAdminMessage('admin', `The answer should be ${correct.hundredths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+        }, 5000);
+        return;
+      }
+
+      if (value === correct.hundredths) {
+        sounds.levelUp();
+        sendAdminMessage('agent', 'Excellent! You\'ve converted the fraction to a decimal.');
+      } else {
+        sounds.join();
+        sendAdminMessage('admin', `That's not quite right. Need a hint?`);
       }
     }
   };
@@ -205,7 +248,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
                     disabled={!disabled || step === 1 || step === 3}
                   />
                 </div>
-                <span className="text-4xl mb-6">.</span>
+                <span className="text-6xl mb-1">.</span>
                 <div className='flex flex-col items-center'>
                   <span className={`text-sm ${disabled ? 'opacity-50' : ''}`}>
                     Tenths
@@ -229,6 +272,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
                     maxLength={1}
                     placeholder={!disabled ? '?' : ''}
                     disabled={disabled || step === 1 || step === 3}
+                    ref={tenthsInputRef}
                   />
                 </div>
                 <div className="flex flex-col items-center">
@@ -254,6 +298,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
                     maxLength={1}
                     disabled={disabled || step === 1 || step === 3 || !isTenthsCorrect}
                     placeholder={!disabled && isTenthsCorrect ? '?' : ''}
+                    ref={hundredthsInputRef}
                   />
                 </div>
               </div>
