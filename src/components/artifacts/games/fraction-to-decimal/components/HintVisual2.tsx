@@ -230,9 +230,7 @@ export default function HintVisual2({
                   height: `${(completeRows * 75 + 5)}px`,
                   width: '330px',
                   transform: 'translateX(-80px)',
-                  background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #A71DFD40 24.5%)',
-                  border: '4px solid transparent',
-                  borderImage: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, black 24.5%) 1'
+                  background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #A71DFD40 24.5%)'
                 }}
               >
                 {showFraction ? (
@@ -280,9 +278,7 @@ export default function HintVisual2({
                     height: '80px',
                     width: '330px',
                     transform: 'translateX(-80px)',
-                    background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #FFA50040 24.5%)',
-                    border: '4px solid transparent',
-                    borderImage: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, black 24.5%) 1'
+                    background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #FFA50040 24.5%)'
                   }}
                 >
                   <div className="flex items-center justify-center w-full">
