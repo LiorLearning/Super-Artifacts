@@ -224,34 +224,37 @@ export default function HintVisual2({
 
             {/* Purple box */}
             <div className="flex flex-col">
-              <div className="bg-[#A71DFD40] px-6 border-4 border-black flex items-center justify-center"
+              <div 
+                className="px-6 flex items-center justify-center"
                 style={{
                   height: `${(completeRows * 75 + 5)}px`,
-                  width: '250px'
+                  width: '330px',
+                  transform: 'translateX(-80px)',
+                  background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #A71DFD40 24.5%)'
                 }}
               >
                 {showFraction ? (
                   // Show only the fraction when answer is correct
-                  <div className="flex flex-col items-center">
-                    <span className=" text-2xl">{completeRows}</span>
+                  <div className="flex flex-col items-center justify-center w-full">
+                    <span className="text-2xl">{completeRows}</span>
                     <div className="h-0.5 w-8 bg-black my-1"></div>
-                    <span className=" text-2xl">10</span>
+                    <span className="text-2xl">10</span>
                   </div>
                 ) : (
                   // Show full equation with input when not answered correctly
-                  <div className="flex items-center gap-6 text-2xl">
-                    <div className="flex flex-col items-center mb-1">
-                      <span className="">{completeRows * 10}</span>
+                  <div className="flex items-center justify-center w-full gap-6 text-2xl">
+                    <div className="flex flex-col items-center">
+                      <span>{completeRows * 10}</span>
                       <div className="h-0.5 w-8 bg-black my-1"></div>
-                      <span className="">100</span>
+                      <span>100</span>
                     </div>
                     <span className="mx-2">=</span>
-                    <div className="flex flex-col items-center -bottom-1">
+                    <div className="flex flex-col items-center">
                       <input
                         type="text"
                         value={purpleBoxAnswer}
                         onChange={handlePurpleBoxChange}
-                        className={`w-9 h-9 border-2 border-black  text-center text-xl ${
+                        className={`w-9 h-9 border-2 border-black text-center text-xl ${
                           purpleBoxAnswer.length > 0 
                             ? parseInt(purpleBoxAnswer) === completeRows 
                               ? 'bg-green-100' 
@@ -261,7 +264,7 @@ export default function HintVisual2({
                         maxLength={1}
                       />
                       <div className="h-0.5 w-8 bg-black my-1"></div>
-                      <span className="">10</span>
+                      <span>10</span>
                     </div>
                   </div>
                 )}
@@ -269,19 +272,22 @@ export default function HintVisual2({
 
               {/* Orange box */}
               {showFraction && (
-                <div className="bg-[#FFA50040] px-6 border-4 border-black flex items-center justify-center"
+                <div 
+                  className="px-6 flex items-center justify-center"
                   style={{
                     height: '80px',
-                    width: '250px'
+                    width: '330px',
+                    transform: 'translateX(-80px)',
+                    background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #FFA50040 24.5%)'
                   }}
                 >
-                  <div className="flex items-center gap-6 text-xl">
+                  <div className="flex items-center justify-center w-full">
                     <div className="flex flex-col items-center">
                       <input
                         type="text"
                         value={remainingAnswer}
                         onChange={handleRemainingInputChange}
-                        className={`w-8 h-8 border-2 border-black  text-center text-xl mt-3 ${
+                        className={`w-8 h-8 border-2 border-black text-center text-xl ${
                           remainingAnswer.length > 0 
                             ? parseInt(remainingAnswer) === (numerator % 10)
                               ? 'bg-green-100' 
@@ -291,7 +297,7 @@ export default function HintVisual2({
                         maxLength={1}
                       />
                       <div className="h-0.5 w-8 bg-black mt-1"></div>
-                      <span className="">100</span>
+                      <span>100</span>
                     </div>
                   </div>
                 </div>

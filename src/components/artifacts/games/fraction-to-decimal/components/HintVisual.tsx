@@ -180,7 +180,7 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
             <div className="transform scale-125">
               <Proceed 
                 onComplete={handleProceed}
-                text="Onward! 🚀"
+                text="Onward!🚀"
               />
             </div>
           </div>
