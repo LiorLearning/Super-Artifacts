@@ -98,14 +98,14 @@ function Tenth({ sendAdminMessage }: BaseProps) {
       if (value.length < question2.numerator.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question2.numerator}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
-        }, 5000);
+          sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question2.numerator}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
+        }, 3000);
         return;
       }
 
       if (parseInt(value) !== question2.numerator) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question2.numerator}, but user answered ${value}. Diagnose socratically.Don't repeat the same narration for every wrong answer.`);
+        sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question2.numerator}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
@@ -126,14 +126,14 @@ function Tenth({ sendAdminMessage }: BaseProps) {
         // Set timeout for incomplete answer feedback
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer seems incomplete. The denominator should be ${question2.denominator}. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question2.denominator}, but user answered ${value}. Diagnose socratically.Explain every time with different approach.`);
+        }, 3000);
         return;
       }
 
       if (parseInt(value) !== question2.denominator) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question2.denominator}, but user answered ${value}. Diagnose socratically.Don't repeat the same narration for every wrong answer.`);
+        sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question2.denominator}, but user answered ${value}. Diagnose socratically.Explain every time with different approach.`);
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Perfect! You got the denominator right.');
@@ -155,13 +155,13 @@ function Tenth({ sendAdminMessage }: BaseProps) {
       if (value.length < correctWholes.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User has entered wrong wholes.The answer should be ${correctWholes}, but user answered ${value}. Diagnose socratically. Explain every time with different approach.`);
+        }, 3000);
         return;
       }
       if (parseInt(value) !== correctWholes) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly...`);
+        sendAdminMessage('admin', `User has entered wrong wholes.The answer should be ${correctWholes}, but user answered ${value}. Diagnose socratically. Explain every time with different approach.`);
         setIsWholesCorrect(false);
       } else {
         sounds.levelUp();
@@ -186,14 +186,14 @@ function Tenth({ sendAdminMessage }: BaseProps) {
       if (value.length < correctTenths.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `The answer should be ${correctTenths}, but user answered ${value}. Diagnose socratically. Explain every time with different approach.`);
+        }, 3000);
         return;
       }
       if (parseInt(value) !== correctTenths) {
         sounds.join();
         scrollToHint();
-        sendAdminMessage('agent', 'Oops, I see what you did there...');
+        sendAdminMessage('admin', `The answer should be ${correctTenths}, but user answered ${value}. Diagnose socratically. Explain every time with different approach.`);
         setIsTenthsCorrect(false);
         setIsTenthsIncorrect(true);
       } else {
@@ -334,6 +334,14 @@ function Hundred({ sendAdminMessage }: BaseProps) {
 
   const start = useRef(false);
 
+  // Add ref for container
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Add useEffect for auto-scroll
+  useEffect(() => {
+    containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   useEffect(() => {
     if (!start.current) {
       sendAdminMessage('agent', "Here's a giant chocolate bar with 100 pieces. Enter the fraction for the pieces selected!");
@@ -369,7 +377,6 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     ) {
       setStep(6);
       sounds.levelUp();
-      sendAdminMessage('agent', `Perfect! You've converted ${question3.numerator}/${question3.denominator} to ${wholes}.${tenths}${hundredths}. Well done!`);
     }
   }, [wholes, tenths, hundredths, step, question3]);
 
@@ -392,13 +399,13 @@ function Hundred({ sendAdminMessage }: BaseProps) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
           sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question3.numerator}. Try entering the full number.`);
-        }, 5000);
+        }, 3000);
         return;
       }
 
       if (parseInt(value) !== question3.numerator) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question3.numerator}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+        sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question3.numerator}, but user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints. `);
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
@@ -419,14 +426,14 @@ function Hundred({ sendAdminMessage }: BaseProps) {
         // Set timeout for incomplete answer feedback
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer seems incomplete. The denominator should be ${question3.denominator}. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `The answer seems incomplete. The denominator should be ${question3.denominator}. but user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
+        }, 3000);
         return;
       }
 
       if (parseInt(value) !== question3.denominator) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question3.denominator}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+        sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question3.denominator}, but user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
       } else {
         sounds.levelUp();
         sendAdminMessage('agent', 'Perfect! You got the denominator right.');
@@ -458,12 +465,12 @@ function Hundred({ sendAdminMessage }: BaseProps) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
           sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
-        }, 5000);
+        }, 3000);
         return;
       }
       if (parseInt(value) !== correctWholes) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the wholes, correct answer is ${correctWholes}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+        sendAdminMessage('admin', `User answered incorrectly for the wholes, correct answer is ${correctWholes}, but  user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
         setIsWholesCorrect(false);
       } else {
         sounds.levelUp();
@@ -488,8 +495,8 @@ function Hundred({ sendAdminMessage }: BaseProps) {
       if (value.length < correctTenths.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User answered incorrectly for the tenths, The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Explain everytime deeply and in detail but remember just hints.`);
+        }, 3000);
         return;
       }
       if (parseInt(value) !== correctTenths) {
@@ -534,7 +541,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
   };
 
   return (
-    <div className='flex flex-col items-center justify-center h-full w-full pb-16'>
+    <div ref={containerRef} className='flex flex-col items-center justify-center h-full w-full pb-16'>
       <Header
         title={
           <div className='flex items-center justify-center'>
@@ -656,6 +663,14 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
 
     const start = useRef(false);
   
+    // Add ref for container
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // Add useEffect for auto-scroll
+    useEffect(() => {
+      containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, []);
+  
     useEffect(() => {
       if (!start.current) {
         sendAdminMessage('agent', `Let's try a slightly tougher challenge. Enter the fraction and the decimal for the selected pieces. I'm here if you need help`);
@@ -695,7 +710,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       ) {
         setStep(9);
         sounds.levelUp();
-        sendAdminMessage('agent', `Outstanding! You've mastered converting ${question4.numerator}/${question4.denominator} to ${wholes}.${tenths}${hundredths}. You're really getting good at this!`);
       }
     }, [wholes, tenths, hundredths, step, question4]);
   
@@ -708,7 +722,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     };
   
     const scrollToHint = () => {
-      if (!showHint) {  // Only scroll if hint wasn't already showing
+      if (!showHint) {  
         setShowHint(true);
         setTimeout(() => {
           hintRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -730,13 +744,13 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
         if (value.length < correctWholes.toString().length) {
           timeoutRef.current = setTimeout(() => {
             sounds.join();
-            sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
+            sendAdminMessage('admin', `User has answered incorrectly wholes wrong.The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Explain everytime deeply and in detail but remember just hints.`);
           }, 5000);
           return;
         }
         if (parseInt(value) !== correctWholes) {
           sounds.join();
-          sendAdminMessage('admin', `User answered incorrectly for the wholes, correct answer is ${correctWholes}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+          sendAdminMessage('admin', `User answered incorrectly for the wholes, correct answer is ${correctWholes}, but  user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
           setIsWholesCorrect(false);
         } else {
           sounds.levelUp();
@@ -761,7 +775,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
         if (value.length < correctTenths.toString().length) {
           timeoutRef.current = setTimeout(() => {
             sounds.join();
-            sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+            sendAdminMessage('admin', `User answered incorrectly for the tenths.The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Explain everytime deeply and in detail but remember just hints.`);
           }, 5000);
           return;
         }
@@ -813,14 +827,14 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           // Set timeout for incomplete answer feedback
           timeoutRef.current = setTimeout(() => {
             sounds.join();
-            sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question4.numerator}. Try entering the full number.`);
+            sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question4.numerator}. But user has entered ${value}. Explain everytime deeply and in detail but remember just hints.`);
           }, 5000);
           return;
         }
 
         if (parseInt(value) !== question4.numerator) {
           sounds.join();
-          sendAdminMessage('admin', `User answered incorrectly, correct answer is ${question4.numerator}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+          sendAdminMessage('admin', `User answered incorrectly, correct answer is ${question4.numerator}. But user has entered ${value}. Diagnose socratically.Explain everytime deeply and in detail but remember just hints. `);
         } else {
           sounds.levelUp();
           sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
@@ -863,7 +877,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     };
   
     return (
-      <div className='flex flex-col items-center justify-center h-full w-full pb-16'>
+      <div ref={containerRef} className='flex flex-col items-center justify-center h-full w-full pb-16'>
         <Header
           title={
             <div className='flex items-center justify-center'>
