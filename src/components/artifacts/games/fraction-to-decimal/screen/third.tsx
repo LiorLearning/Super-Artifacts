@@ -8,7 +8,6 @@ import Fraction from '../components/Fraction';
 import KnifeSelector from '../components/knifeselector';
 import { sounds } from '../utils/sound';
 import HintVisual2 from '../components/HintVisual2';
-import DecimalBox from '../components/DecimalBox';
 
 interface ThirdScreenProps {
   sendAdminMessage: (role: string, content: string) => void;
@@ -23,15 +22,12 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Force scroll the page and container to top
     window.scrollTo(0, 0);
     containerRef.current?.scrollIntoView();
     
-    // Temporarily disable scrolling
     document.body.style.position = 'fixed';
     document.body.style.top = '0';
     
-    // Re-enable scrolling after a moment
     setTimeout(() => {
       document.body.style.position = '';
       document.body.style.top = '';
@@ -93,7 +89,6 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
     }, []);
 
   useEffect(() => {
-    // Also ensure Part1 starts at top
     window.scrollTo(0, 0);
   }, []);
 
@@ -278,7 +273,7 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
           sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctWholes}. User has entered ${value} seems incomplete. Diagnose socratically. Explain every time with different approach.`);
-        }, 5000);
+        }, 3000);
         return;
       }
       if (parseInt(value) !== correctWholes) {
@@ -286,8 +281,6 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
         sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctWholes}. User has entered ${value} seems incomplete. Diagnose socratically. Explain every time with different approach.`);
         setIsWholesCorrect(false);
       } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Excellent! Now enter the tenths digit.');
         setIsWholesCorrect(true);
         setTimeout(() => tenthsInputRef.current?.focus(), 100);
       }
@@ -309,7 +302,7 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
           sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctTenths}. User has entered ${value} seems incomplete. Diagnose socratically. Explain every time with different approach.`);
-        }, 5000);
+        }, 3000);
         return;
       }
       if (parseInt(value) !== correctTenths) {
@@ -319,8 +312,6 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
         setIsTenthsCorrect(false);
         setIsTenthsIncorrect(true);
       } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
         setIsTenthsCorrect(true);
         setIsTenthsIncorrect(false);
         setTimeout(() => hundredthsInputRef.current?.focus(), 100);
@@ -344,7 +335,7 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
           sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctHundredths}. User has entered ${value} seems incomplete. Diagnose socratically.Explain every time with different approach.`);
-        }, 5000);
+        }, 3000);
         return;
       }
       if (parseInt(value) !== correctHundredths) {
@@ -353,7 +344,6 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
         sendAdminMessage('agent', 'That\'s not quite right. Need a hint?');
         setIsHundredthsIncorrect(true);
       } else {
-        sounds.levelUp();
         sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
         setIsHundredthsIncorrect(false);
         setShowHintButton(false);

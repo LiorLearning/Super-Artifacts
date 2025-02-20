@@ -68,16 +68,12 @@ function Tenth({ sendAdminMessage }: BaseProps) {
         fractionDenominator === String(question2.denominator)) 
     {
       setStep(2);
-      sounds.levelUp();
-      sendAdminMessage('agent', 'Perfect! You got the fraction right. Now, how do we write that as a decimal?');
     }
   }, [fractionNumerator, fractionDenominator, question2]);
 
   useEffect(() => {
     if (step === 2 && wholes === '0' && tenths === String(question2.numerator)) {
       setStep(3);
-      sounds.levelUp();
-      sendAdminMessage('agent', `Excellent! You've successfully converted ${question2.numerator}/${question2.denominator} to ${wholes}.${tenths}. Let's try another one!`);
     }
   }, [wholes, tenths, step, question2]);
 
@@ -89,7 +85,6 @@ function Tenth({ sendAdminMessage }: BaseProps) {
   const handleFractionNumeratorChange = (value: string) => {
     setFractionNumerator(value);
     
-    // Clear any existing timeouts
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -106,9 +101,6 @@ function Tenth({ sendAdminMessage }: BaseProps) {
       if (parseInt(value) !== question2.numerator) {
         sounds.join();
         sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question2.numerator}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
-      } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
       }
     }
   };
@@ -116,14 +108,12 @@ function Tenth({ sendAdminMessage }: BaseProps) {
   const handleFractionDenominatorChange = (value: string) => {
     setFractionDenominator(value);
     
-    // Clear any existing timeouts
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     if (value.length > 0) {
       if (value.length < question2.denominator.toString().length) {
-        // Set timeout for incomplete answer feedback
         timeoutRef.current = setTimeout(() => {
           sounds.join();
           sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question2.denominator}, but user answered ${value}. Diagnose socratically.Explain every time with different approach.`);
@@ -134,9 +124,6 @@ function Tenth({ sendAdminMessage }: BaseProps) {
       if (parseInt(value) !== question2.denominator) {
         sounds.join();
         sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question2.denominator}, but user answered ${value}. Diagnose socratically.Explain every time with different approach.`);
-      } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Perfect! You got the denominator right.');
       }
     }
   };
@@ -164,8 +151,6 @@ function Tenth({ sendAdminMessage }: BaseProps) {
         sendAdminMessage('admin', `User has entered wrong wholes.The answer should be ${correctWholes}, but user answered ${value}. Diagnose socratically. Explain every time with different approach.`);
         setIsWholesCorrect(false);
       } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Excellent! Now enter the tenths digit.');
         setIsWholesCorrect(true);
         setTimeout(() => tenthsInputRef.current?.focus(), 100);
       }
@@ -197,8 +182,6 @@ function Tenth({ sendAdminMessage }: BaseProps) {
         setIsTenthsCorrect(false);
         setIsTenthsIncorrect(true);
       } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
         setIsTenthsCorrect(true);
         setIsTenthsIncorrect(false);
         setTimeout(() => proceedRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
@@ -215,9 +198,6 @@ function Tenth({ sendAdminMessage }: BaseProps) {
       sounds.join();
       scrollToHint();
       sendAdminMessage('admin', `User answered incorrectly for the Tenths, correct answer is ${correctTenths}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
-    } else if (value.length > 0 && parseInt(value) === correctTenths) {
-      sounds.levelUp();
-      sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
     }
   };      
 
@@ -250,7 +230,7 @@ function Tenth({ sendAdminMessage }: BaseProps) {
         leftBox={`STEP ${step}`}
         rightBox={
           step === 1 
-            ? "Enter mixed fraction" 
+            ? "Enter Fraction" 
             : "Enter decimal form"
         }
       />
@@ -265,7 +245,7 @@ function Tenth({ sendAdminMessage }: BaseProps) {
 
         <div className="flex w-full">
           {/* Left side - Fraction section */}
-          <div className="flex-1 bg-[#EDFFEE] flex justify-end pr-16 pb-8">
+          <div className="flex-1 bg-[#EDFFEE] flex justify-center pb-8">
             <div className="pt-8">
               <FractionBox 
                 numerator={fractionNumerator}
@@ -281,7 +261,7 @@ function Tenth({ sendAdminMessage }: BaseProps) {
           </div>
 
           {/* Right side - Decimal section */}
-          <div className={`flex-1 bg-[#F7F5DD] flex justify-start pl-16 pb-8 ${step === 1 ? 'opacity-50' : 'opacity-100'}`}>
+          <div className={`flex-1 bg-[#F7F5DD] flex justify-center pb-8 ${step === 1 ? 'opacity-50' : 'opacity-100'}`}>
             <div className="pt-8">
               <DecimalBox 
                 wholes={wholes}
@@ -364,8 +344,6 @@ function Hundred({ sendAdminMessage }: BaseProps) {
     if (fractionNumerator === String(question3.numerator) && 
         fractionDenominator === String(question3.denominator)) {
       setStep(5);
-      sounds.levelUp();
-      sendAdminMessage('agent', 'Great job with the fraction! Now let\'s convert it to a decimal.');
     }
   }, [fractionNumerator, fractionDenominator, question3]);
 
@@ -376,7 +354,6 @@ function Hundred({ sendAdminMessage }: BaseProps) {
       parseInt(hundredths) === Math.floor((question3.numerator * 100) / question3.denominator) % 10
     ) {
       setStep(6);
-      sounds.levelUp();
     }
   }, [wholes, tenths, hundredths, step, question3]);
 
@@ -388,14 +365,12 @@ function Hundred({ sendAdminMessage }: BaseProps) {
   const handleFractionNumeratorChange = (value: string) => {
     setFractionNumerator(value);
     
-    // Clear any existing timeouts
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     if (value.length > 0) {
       if (value.length < question3.numerator.toString().length) {
-        // Set timeout for incomplete answer feedback
         timeoutRef.current = setTimeout(() => {
           sounds.join();
           sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question3.numerator}. Try entering the full number.`);
@@ -406,9 +381,6 @@ function Hundred({ sendAdminMessage }: BaseProps) {
       if (parseInt(value) !== question3.numerator) {
         sounds.join();
         sendAdminMessage('admin', `User answered incorrectly for the fraction numerator, correct answer is ${question3.numerator}, but user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints. `);
-      } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
       }
     }
   };
@@ -416,14 +388,12 @@ function Hundred({ sendAdminMessage }: BaseProps) {
   const handleFractionDenominatorChange = (value: string) => {
     setFractionDenominator(value);
     
-    // Clear any existing timeouts
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     if (value.length > 0) {
       if (value.length < question3.denominator.toString().length) {
-        // Set timeout for incomplete answer feedback
         timeoutRef.current = setTimeout(() => {
           sounds.join();
           sendAdminMessage('admin', `The answer seems incomplete. The denominator should be ${question3.denominator}. but user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
@@ -434,9 +404,6 @@ function Hundred({ sendAdminMessage }: BaseProps) {
       if (parseInt(value) !== question3.denominator) {
         sounds.join();
         sendAdminMessage('admin', `User answered incorrectly for the fraction denominator, correct answer is ${question3.denominator}, but user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
-      } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Perfect! You got the denominator right.');
       }
     }
   };
@@ -472,9 +439,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
         sounds.join();
         sendAdminMessage('admin', `User answered incorrectly for the wholes, correct answer is ${correctWholes}, but  user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
         setIsWholesCorrect(false);
-      } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Excellent! Now enter the tenths digit.');    
+        } else {  
         setIsWholesCorrect(true);
         setTimeout(() => tenthsInputRef.current?.focus(), 100);
       }
@@ -506,8 +471,6 @@ function Hundred({ sendAdminMessage }: BaseProps) {
         setIsTenthsCorrect(false);
         setIsTenthsIncorrect(true); 
       } else {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
         setIsTenthsCorrect(true);
         setIsTenthsIncorrect(false);
         setTimeout(() => hundredthsInputRef.current?.focus(), 100);
@@ -527,7 +490,6 @@ function Hundred({ sendAdminMessage }: BaseProps) {
         sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
         setIsHundredthsIncorrect(true);
       } else {
-        sounds.levelUp();
         sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
         setIsHundredthsIncorrect(false);
       }
@@ -554,7 +516,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
         leftBox={`STEP ${step === 4 ? 1 : 2}`}
         rightBox={
           step === 4 
-            ? "Enter mixed fraction" 
+            ? "Enter Fraction" 
             : "Enter decimal form"
         }
       />
@@ -569,7 +531,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
 
 <div className="flex w-full">
   {/* Left side - Fraction section */}
-  <div className="flex-1 bg-[#EDFFEE] flex justify-end pr-16 pb-8">
+  <div className="flex-1 bg-[#EDFFEE] flex justify-center pb-8">
     <div className="pt-8">
       <FractionBox 
         numerator={fractionNumerator}
@@ -585,7 +547,7 @@ function Hundred({ sendAdminMessage }: BaseProps) {
   </div>
 
   {/* Right side - Decimal section */}
-  <div className={`flex-1 bg-[#F7F5DD] flex justify-start pl-16 pb-16 ${step >= 5 ? 'opacity-100' : 'opacity-50'}`}>
+  <div className={`flex-1 bg-[#F7F5DD] flex justify-center pb-8 ${step >= 5 ? 'opacity-100' : 'opacity-50'}`}>
     <div className="pt-8">
       <DecimalBox 
         wholes={wholes}
@@ -694,8 +656,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       if (fractionNumerator === String(question4.numerator) && 
           fractionDenominator === String(question4.denominator)) {
         setStep(8);
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Excellent work on the fraction! Now for the final step - converting to decimal.');
       }
     }, [fractionNumerator, fractionDenominator, question4]);
   
@@ -709,7 +669,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
         parseInt(hundredths) === Math.floor((question4.numerator * 100) / question4.denominator) % 10
       ) {
         setStep(9);
-        sounds.levelUp();
       }
     }, [wholes, tenths, hundredths, step, question4]);
   
@@ -753,8 +712,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           sendAdminMessage('admin', `User answered incorrectly for the wholes, correct answer is ${correctWholes}, but  user answered ${value}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
           setIsWholesCorrect(false);
         } else {
-          sounds.levelUp();
-          sendAdminMessage('agent', 'Excellent! That\'s the correct number of wholes.');
           setIsWholesCorrect(true);
           setTimeout(() => tenthsInputRef.current?.focus(), 100);
         }
@@ -786,8 +743,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           setIsTenthsCorrect(false);
           setIsTenthsIncorrect(true);
         } else {
-          sounds.levelUp();
-          sendAdminMessage('agent', 'Perfect! Finally, enter the hundredths digit.');
           setIsTenthsCorrect(true);
           setIsTenthsIncorrect(false);
           setTimeout(() => hundredthsInputRef.current?.focus(), 100);
@@ -807,8 +762,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           sendAdminMessage('agent', 'Oops, I see what you did there. Let\'s click on the hint to understand this better');
           setIsHundredthsIncorrect(true);
         } else {
-          sounds.levelUp();
-          sendAdminMessage('agent', "Excellent! You've converted the fraction to a decimal.");
           setIsHundredthsIncorrect(false);
         }
       }
@@ -817,14 +770,12 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     const handleFractionNumeratorChange = (value: string) => {
       setFractionNumerator(value);
       
-      // Clear any existing timeouts
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
 
       if (value.length > 0) {
         if (value.length < question4.numerator.toString().length) {
-          // Set timeout for incomplete answer feedback
           timeoutRef.current = setTimeout(() => {
             sounds.join();
             sendAdminMessage('admin', `The answer seems incomplete. The numerator should be ${question4.numerator}. But user has entered ${value}. Explain everytime deeply and in detail but remember just hints.`);
@@ -835,9 +786,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
         if (parseInt(value) !== question4.numerator) {
           sounds.join();
           sendAdminMessage('admin', `User answered incorrectly, correct answer is ${question4.numerator}. But user has entered ${value}. Diagnose socratically.Explain everytime deeply and in detail but remember just hints. `);
-        } else {
-          sounds.levelUp();
-          sendAdminMessage('agent', 'Great! That\'s the correct numerator.');
         }
       }
     };
@@ -845,18 +793,16 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
     const handleFractionDenominatorChange = (value: string) => {
       setFractionDenominator(value);
       
-      // Clear any existing timeouts
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
 
       if (value.length > 0) {
         if (value.length < question4.denominator.toString().length) {
-          // Set timeout for incomplete answer feedback
           timeoutRef.current = setTimeout(() => {
             sounds.join();
             sendAdminMessage('agent', `Let's think about this - we're looking at a chocolate bar divided into 10 rows of 10 pieces each. How many total pieces would that make?`);
-          }, 5000);
+          }, 3000);
           return;
         }
 
@@ -864,8 +810,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           sounds.join();
           sendAdminMessage('agent', `Let's think about this - we're looking at a chocolate bar divided into 10 rows of 10 pieces each. How many total pieces would that make?`);
         } else {
-          sounds.levelUp();
-          sendAdminMessage('agent', 'Perfect! You got the denominator right.');
         }
       }
     };
@@ -890,7 +834,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
           leftBox={`STEP ${step === 7 ? 1 : 2}`}
           rightBox={
             step === 7 
-              ? "Enter mixed fraction" 
+              ? "Enter Fraction" 
               : "Enter decimal form"
           }
         />
@@ -916,7 +860,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
   
   <div className="flex w-full">
   {/* Left side - Fraction section */}
-  <div className="flex-1 bg-[#EDFFEE] flex justify-end pr-16 pb-8">
+  <div className="flex-1 bg-[#EDFFEE] flex justify-center pb-8">
     <div className="pt-8">
       <FractionBox 
         numerator={fractionNumerator}
@@ -932,7 +876,7 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
   </div>
 
   {/* Right side - Decimal section */}
-  <div className={`flex-1 bg-[#F7F5DD] flex justify-start pl-16 pb-16 ${step >= 5 ? 'opacity-100' : 'opacity-50'}`}>
+  <div className={`flex-1 bg-[#F7F5DD] flex justify-center pb-8 ${step >= 5 ? 'opacity-100' : 'opacity-50'}`}>
     <div className="pt-8">
       <DecimalBox 
         wholes={wholes}
