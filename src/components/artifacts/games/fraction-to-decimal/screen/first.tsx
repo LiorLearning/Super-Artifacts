@@ -123,7 +123,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       }
       if (parseInt(value) !== correctWholes) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the numerator pie, correct answer is ${correctWholes}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+        sendAdminMessage('admin', `User answered incorrectly for the numerator pieces, correct answer is ${correctWholes}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
       } else {
         tenthsInputRef.current?.focus();
       }

@@ -48,6 +48,7 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
   const hundredthsInputRef = useRef<HTMLInputElement>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const messageTriggered = useRef<boolean>(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -110,43 +111,30 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
       clearTimeout(timeoutRef.current);
     }
 
-    // Only handle numerator validation if denominator is empty
     if (numerator.toString().length > 0 && denominator === 0) {
-      if (numerator.toString().length < correctNumerator.toString().length) {
-        timeoutRef.current = setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
+        if (numerator === correctNumerator) {
+          sounds.levelUp();
+          sendAdminMessage('agent', 'Perfect! Now enter the denominator - how many pieces are there in total?');
+        } else {
           sounds.join();
-          sendAdminMessage('admin', `User has entered incomplete numerator. The answer should be ${correctNumerator}. User has entered ${numerator}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.Don't repeat preivous narration`);
-        }, 3000);
-        return;
-      }
-
-      if (numerator === correctNumerator) {
-        sounds.levelUp();
-        sendAdminMessage('agent', 'Perfect! Now enter the denominator - how many pieces are there in total?');
-      } else {
-        sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the numerator. The answer should be ${correctNumerator}, but user entered ${numerator}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.Don't repeat preivous narration`);
-      }
+          sendAdminMessage('admin', `User has entered incomplete numerator. The answer should be ${correctNumerator}. User has entered ${numerator}. Diagnose socratically. Ask how many shaded pieces are there types.`);
+        }
+      }, 500); 
+      return;
     }
 
-    // Only handle denominator validation if numerator is correct
     if (denominator.toString().length > 0 && numerator === correctNumerator) {
-      if (denominator.toString().length < correctDenominator.toString().length) {
-        timeoutRef.current = setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
+        if (denominator === correctDenominator) {
+          setStep(3);
+          sounds.levelUp();
+          sendAdminMessage('agent', `Great job, let's head to the final level!`);
+        } else {
           sounds.join();
-          sendAdminMessage('admin', `User has entered incomplete denominator. The answer should be ${correctDenominator}. User has entered ${denominator}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.Don't repeat preivous narration`);
-        }, 3000);
-        return;
-      }
-
-      if (denominator === correctDenominator) {
-        setStep(3);
-        sounds.levelUp();
-        sendAdminMessage('agent', `Great job, let's head to the final level!`);
-      } else {
-        sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the denominator. The answer should be ${correctDenominator}, but user entered ${denominator}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.Don't repeat preivous narration`);
-      }
+          sendAdminMessage('admin', `User has entered incomplete denominator. The answer should be ${correctDenominator}. User has entered ${denominator}. Diagnose socratically. Ask how many rows are there in single box`);
+        }
+      }, 500); 
     }
   }, [numerator, denominator]);
 
@@ -163,7 +151,8 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
 
   const handleKnifeSelect = (value: number) => {
     setSelectedKnife(value);
-    if (value === 10) {
+    if (value === 10 && !messageTriggered.current) {
+      messageTriggered.current = true;
       sendAdminMessage('agent', 'Awesome, can you try selecting 1.7 chocolates?');
     }
   };

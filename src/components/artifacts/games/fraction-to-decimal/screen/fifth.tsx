@@ -112,8 +112,8 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
       if (value.length < correct.wholes.length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correct.wholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.wholes}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer, and don't teach using divison.`);
+        }, 3000);
         return;
       }
 
@@ -124,14 +124,14 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
         setTimeout(() => tenthsInputRef.current?.focus(), 100);
       } else {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.wholes}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
+        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.wholes}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer, and don't teach using divison.`);
       }
     }
   };
 
   const handleTenthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setTenths(value);
+    setTenths(value); 
     
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -144,8 +144,8 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
       if (value.length < correct.tenths.length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correct.tenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.tenths}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer, and don't teach using divison.`);
+        }, 3000);
         return;
       }
 
@@ -156,7 +156,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
         setTimeout(() => hundredthsInputRef.current?.focus(), 100);
       } else {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.tenths}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
+        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.tenths}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer, and don't teach using divison.`);
         setIsTenthsCorrect(false);
       }
     }
@@ -177,8 +177,8 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
       if (value.length < correct.hundredths.length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correct.hundredths}. Your answer ${value} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.hundredths}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer, and don't teach using divison.`);
+        }, 3000);
         return;
       }
 
@@ -187,7 +187,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
         sendAdminMessage('agent', 'Excellent! You\'ve converted the fraction to a decimal.');
       } else {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.hundredths}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
+        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.hundredths}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer, and don't teach using divison.`);
       }
     }
   };

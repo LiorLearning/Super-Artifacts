@@ -235,11 +235,11 @@ export default function HintVisual2({
                 <div className="flex justify-center">
                   <div className="transform scale-125">
                     <DecimalBox 
-                      wholes={decimalWholes}
+                      wholes={String(getCorrectWholes())}
                       tenths={decimalTenths}
                       hundredths={decimalHundredths}
                       onChange={{
-                        wholes: handleDecimalWholesChange,
+                        wholes: () => {},
                         tenths: handleDecimalTenthsChange,
                         hundredths: handleDecimalHundredthsChange
                       }}
