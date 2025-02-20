@@ -18,10 +18,14 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
   const [showProceed, setShowProceed] = useState(false);
   const chocolateRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasNarrated = useRef(false);
 
   useEffect(() => {
-    sendAdminMessage?.('agent', "Notice that one shaded horizontal bar makes one tenth. How many complete tenths do you see in the chocolate?");
-  }, []);
+    if (!hasNarrated.current && sendAdminMessage) {
+      hasNarrated.current = true;
+      sendAdminMessage('agent', "Notice that one shaded horizontal bar makes one tenth. How many complete tenths do you see in the chocolate?");
+    }
+  }, [sendAdminMessage]);
 
   useEffect(() => {
     containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -55,9 +59,6 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
       sounds.levelUp();
       sendAdminMessage?.('agent', "Excellent! You've correctly converted the fraction to a decimal!");
       setShowProceed(true);
-      setTimeout(() => {
-        sendAdminMessage?.('agent', "Click on Onwards to continue to the next challenge!");
-      }, 2500);
     }
   };
 

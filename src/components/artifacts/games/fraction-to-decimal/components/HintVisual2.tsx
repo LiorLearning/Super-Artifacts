@@ -270,14 +270,12 @@ export default function HintVisual2({
                 }}
               >
                 {showFraction ? (
-                  // Show only the fraction when answer is correct
                   <div className="flex flex-col items-center justify-center w-full">
                     <span className="text-2xl">{completeRows}</span>
                     <div className="h-0.5 w-8 bg-black my-1"></div>
                     <span className="text-2xl">10</span>
                   </div>
                 ) : (
-                  // Show full equation with input when not answered correctly
                   <div className="flex items-center justify-center w-full gap-6 text-2xl">
                     <div className="flex flex-col items-center">
                       <span>{completeRows * 10}</span>

@@ -277,13 +277,13 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
       if (value.length < correctWholes.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctWholes}. User has entered ${value} seems incomplete. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
+          sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctWholes}. User has entered ${value} seems incomplete. Diagnose socratically. Explain every time with different approach.`);
         }, 5000);
         return;
       }
       if (parseInt(value) !== correctWholes) {
         sounds.join();
-        sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctWholes}. User has entered ${value} seems incomplete. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
+        sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctWholes}. User has entered ${value} seems incomplete. Diagnose socratically. Explain every time with different approach.`);
         setIsWholesCorrect(false);
       } else {
         sounds.levelUp();
@@ -308,7 +308,7 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
       if (value.length < correctTenths.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctTenths}. User has entered ${value} seems incomplete. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
+          sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctTenths}. User has entered ${value} seems incomplete. Diagnose socratically. Explain every time with different approach.`);
         }, 5000);
         return;
       }
@@ -343,7 +343,7 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
       if (value.length < correctHundredths.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctHundredths}. User has entered ${value} seems incomplete. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
+          sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctHundredths}. User has entered ${value} seems incomplete. Diagnose socratically.Explain every time with different approach.`);
         }, 5000);
         return;
       }
