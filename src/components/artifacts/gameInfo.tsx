@@ -10,7 +10,7 @@ import CommonDenominatorGame from './games/common-denominators/game';
 import CompareFractionGame from './games/compare-fractions-with-different-numerator-and-denominator/game';
 import DecimalGame from './games/fraction-to-decimal/game';
 import MixedFractionGameWithRegouping from './games/add-and-subtract-mixed-numbers-with-regouping/game';
-import MixedNumberToImproperFractionGame from './games/mixed-number-to-improper-fraction/game';
+import MixedNumberToImproperFractionGame from './games/writing-mixed-numbers-as-improper-fractions/game';
 import MultiplyingWholesAndFractionsGame from './games/multiplying-wholes-and-Fractions/game';
 import CommonDecimalsFractions from './games/common-decimals-fractions/game';
 import CommonDecimalsAndFractions from './games/Common-Decimals-And-Fractions/game';
@@ -29,7 +29,7 @@ import { initialGameState as commonDenominatorGameInitialState } from './games/c
 import { initialGameState as compareFractionGameInitialState } from './games/compare-fractions-with-different-numerator-and-denominator/game-state';
 import { initialGameState as decimalGameInitialState } from './games/fraction-to-decimal/game-state';
 import { initialGameState as mixedFractionGameWithRegoupingInitialState } from './games/add-and-subtract-mixed-numbers-with-regouping/game-state';
-import { initialGameState as mixedNumberToImproperFractionGameInitialState } from './games/mixed-number-to-improper-fraction/game-state';
+import { initialGameState as mixedNumberToImproperFractionGameInitialState } from './games/writing-mixed-numbers-as-improper-fractions/game-state';
 import { initialGameState as multiplyingWholesAndFractionsGameInitialState } from './games/multiplying-wholes-and-Fractions/game-state';
 import { initialGameState as mixedFractionWithoutRegoupingInitialState } from './games/add-and-subtract-mixed-numbers-without-regouping/game-state';
 import { initialGameState as commonDecimalsAndFractionsInitialState } from './games/Common-Decimals-And-Fractions/game-state';
@@ -48,7 +48,7 @@ import { GameStateProvider as MixedFractionWithoutRegoupingGameStateProvider, us
 import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fractions-with-different-numerator-and-denominator/state-utils'
 import { GameStateProvider as DecimalGameStateProvider, useGameState as DecimalGameState } from './games/fraction-to-decimal/state-utils'
 import { GameStateProvider as MixedFractionWithRegoupingGameStateProvider, useGameState as MixedFractionWithRegoupingGameState } from './games/add-and-subtract-mixed-numbers-with-regouping/state-utils'
-import { GameStateProvider as MixedNumberToImproperFractionGameStateProvider, useGameState as MixedNumberToImproperFractionGameState } from './games/mixed-number-to-improper-fraction/state-utils'
+import { GameStateProvider as MixedNumberToImproperFractionGameStateProvider, useGameState as MixedNumberToImproperFractionGameState } from './games/writing-mixed-numbers-as-improper-fractions/state-utils'
 import { GameStateProvider as MultiplyingWholesAndFractionsGameStateProvider, useGameState as MultiplyingWholesAndFractionsGameState } from './games/multiplying-wholes-and-Fractions/state-utils'
 import { GameStateProvider as CommonDecimalsAndFractionsProvider, useGameState as CommonDecimalsAndFractionsState } from './games/Common-Decimals-And-Fractions/state-utils';
 
