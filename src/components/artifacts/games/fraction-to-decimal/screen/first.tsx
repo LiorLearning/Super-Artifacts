@@ -37,7 +37,6 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (denominator === 10) { 
       setStep(2);
-      sendAdminMessage('agent', `Awesome, now let's select pieces so that we get ${question1.numerator}/${question1.denominator}th of the chocolate!`);
     } 
   }, [denominator]);
 
@@ -51,7 +50,6 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (parseInt(wholes) === Math.floor(question1.numerator/question1.denominator)) {
       setStep(4);
-      sendAdminMessage('agent', 'Awesome, how many tenths do we have?');
     }
   }, [wholes]);
 
@@ -117,8 +115,8 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       if (value.length < correctWholes.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User answered incorrectly for the numerator pieces, correct answer is ${correctWholes}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+        }, 3000);
         return;
       }
       if (parseInt(value) !== correctWholes) {
@@ -144,8 +142,8 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
       if (value.length < correctTenths.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User answered incorrectly for the Tenths, correct answer is ${correctTenths}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+        }, 3000);
         return;
       }
 
@@ -232,35 +230,38 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
                 </motion.div>
               </div>
             ) : (step >= 2) && (
-              <div className={`flex flex-col gap-4 absolute ${isSelectionLocked ? '-right-24' : '-right-32'} ${isSelectionLocked ? 'top-[50%]' : 'top-[75%]'} -translate-y-1/2 bg-white rounded-lg p-4`}>
-                <div className="flex items-center text-4xl">
-                  <div className="flex flex-col items-center">
-                    <span>{selectedPieces}</span>
-                    <div className="w-full border-t-2 border-black"></div>
-                    <span>{denominator}</span>
+              <>
+                <div className="flex flex-col gap-4 absolute -right-32 top-1/2 -translate-y-1/2 bg-white rounded-lg p-4">
+                  <div className="flex items-center text-4xl">
+                    <div className="flex flex-col items-center">
+                      <span>{selectedPieces}</span>
+                      <div className="w-full border-t-2 border-black"></div>
+                      <span>{denominator}</span>
+                    </div>
                   </div>
                 </div>
                 {step === 2 && !isSelectionLocked && (
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="mt-4"
-                  >
-                    <Button
-                      onClick={handleSubmitSelection}
-                      className="bg-[#d3ea00] hover:bg-[#d3ea00]/80 text-black px-4 py-2 rounded-sm flex items-center gap-2 transition-all duration-200 shadow-lg"
+                  <div className="absolute left-1/2 -translate-x-1/2" style={{ top: 'calc(100% + 2rem)' }}>
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      Done ✓
-                    </Button>
-                  </motion.div>
+                      <Button
+                        onClick={handleSubmitSelection}
+                        className="bg-[#E65A5A] hover:bg-[#E65A5A]/80 text-black px-6 py-3 rounded-sm flex text-xl items-center gap-2 transition-all duration-200 shadow-lg"
+                      >
+                        Done 
+                      </Button>
+                    </motion.div>
+                  </div>
                 )}
-              </div>
+              </>
             )}
           </div>
           
           <div className="flex items-center text-2xl gap-4">
             {step === 1 && (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 w-full justify-center">
                 <RedBox>
                   {denominator || 0}
                 </RedBox> piece(s)
