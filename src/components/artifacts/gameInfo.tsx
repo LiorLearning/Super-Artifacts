@@ -14,7 +14,9 @@ import MixedNumberToImproperFractionGame from './games/mixed-number-to-improper-
 import MultiplyingWholesAndFractionsGame from './games/multiplying-wholes-and-Fractions/game';
 import CommonDecimalsFractions from './games/common-decimals-fractions/game';
 import CommonDecimalsAndFractions from './games/Common-Decimals-And-Fractions/game';
+import Multiplying2DigitsBy1DigitWithPartialProducts from './games/multiplying-2-digits-by-1-digit-with-partial-products/game'
 
+import { initialGameState as multiplying2DigitsBy1DigitWithPartialProductsInitialState } from './games/multiplying-2-digits-by-1-digit-with-partial-products/game-state';
 import { initialGameState as commonDecimalsFractionsInitialState } from './games/common-decimals-fractions/game-state';
 import { initialGameState as templateInitialState } from './games/template/game-state';
 import { initialGameState as fractionAdditionInitialState } from './games/add-fractions-with-common-denominator/game-state';
@@ -32,6 +34,7 @@ import { initialGameState as multiplyingWholesAndFractionsGameInitialState } fro
 import { initialGameState as mixedFractionWithoutRegoupingInitialState } from './games/add-and-subtract-mixed-numbers-without-regouping/game-state';
 import { initialGameState as commonDecimalsAndFractionsInitialState } from './games/Common-Decimals-And-Fractions/game-state';
 
+import { GameStateProvider as Multiplying2DigitsBy1DigitWithPartialProductsGameStateProvider, useGameState as Multiplying2DigitsBy1DigitWithPartialProductsGameState } from './games/multiplying-2-digits-by-1-digit-with-partial-products/state-utils'
 import { GameStateProvider as CommonDecimalsFractionsGameStateProvider, useGameState as CommonDecimalsFractionsGameState } from './games/common-decimals-fractions/state-utils'
 import { GameStateProvider as TemplateGameStateProvider, useGameState as TemplateGameState } from './games/template/state-utils'
 import { GameStateProvider as FractionAdditionGameStateProvider, useGameState as FractionAdditionGameState } from './games/add-fractions-with-common-denominator/state-utils'
@@ -153,4 +156,10 @@ export const gameInfo: Record<string, GameInfo> = {
     provider: LegoGameStateProvider,
     initialGameState: legoGameInitialState
   },
+  'multiplying-2-digits-by-1-digit-with-partial-products': {
+    game: Multiplying2DigitsBy1DigitWithPartialProducts,
+    useState: Multiplying2DigitsBy1DigitWithPartialProductsGameState,
+    provider: Multiplying2DigitsBy1DigitWithPartialProductsGameStateProvider,
+    initialGameState: multiplying2DigitsBy1DigitWithPartialProductsInitialState
+  }
 };
