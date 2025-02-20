@@ -205,7 +205,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ url, child
 
   const addToChat = (message: Message, onComplete?: () => void) => {
     setMessages(prevMessages => [...prevMessages, message]);
-    if (message.content) {
+    if (message.content && SPEAKOUT) {
       handlePlayAudio(message.messageId, message.content, onComplete);
     }
     wsRef.current?.sendMessage(message);
