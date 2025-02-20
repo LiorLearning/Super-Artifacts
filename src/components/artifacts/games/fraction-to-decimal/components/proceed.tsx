@@ -16,7 +16,7 @@ const Proceed: React.FC<ProceedProps> = ({ onComplete, text="Onward" }) => {
         onComplete();
       }}
 
-      className="bg-[#ff3971] text-white font-bold text-xl rounded-none px-4 py-2 shadow-[-5px_5px_0px_rgba(0,0,0,1)]"
+      className="bg-[#ff3971] text-white text-xl rounded-none px-4 py-2 shadow-[-5px_5px_0px_rgba(0,0,0,1)]"
     >
       {text}
     </Button>
