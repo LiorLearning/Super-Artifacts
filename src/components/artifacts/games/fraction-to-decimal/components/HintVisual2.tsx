@@ -257,16 +257,20 @@ export default function HintVisual2({
             {/* Purple box */}
             <div className="flex flex-col">
               <div 
+
                 className="flex items-center justify-center"
+
                 style={{
                   height: `${(completeRows * 75 + 5)}px`,
                   width: '330px',
                   transform: 'translateX(-80px)',
+
                   background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #A71DFD40 24.5%)',
                   borderRight: '2px solid black',
                   borderTop: '2px solid black',
                   borderBottom: '2px solid black',
                   padding: completeRows > 1 ? '24px' : '12px'
+
                 }}
               >
                 {showFraction ? (
@@ -290,7 +294,9 @@ export default function HintVisual2({
                         type="text"
                         value={purpleBoxAnswer}
                         onChange={handlePurpleBoxChange}
+
                         className={`w-9 h-9 border-2 mt-2 border-black text-center text-xl ${
+
                           purpleBoxAnswer.length > 0 
                             ? parseInt(purpleBoxAnswer) === completeRows 
                               ? 'bg-green-100' 
@@ -309,11 +315,14 @@ export default function HintVisual2({
               {/* Orange box */}
               {showFraction && (
                 <div 
+
                   className="flex items-center justify-center"
+
                   style={{
                     height: '80px',
                     width: '330px',
                     transform: 'translateX(-80px)',
+
                     background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #FFA50040 24.5%)',
                     borderRight: '2px solid black',
                     borderTop: '2px solid black',
