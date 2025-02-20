@@ -710,7 +710,6 @@ function ThirdScreen({ sendAdminMessage }: BaseProps) {
       ) {
         setStep(9);
         sounds.levelUp();
-        sendAdminMessage('agent', `Outstanding! You've mastered converting ${question4.numerator}/${question4.denominator} to ${wholes}.${tenths}${hundredths}. You're really getting good at this!`);
       }
     }, [wholes, tenths, hundredths, step, question4]);
   

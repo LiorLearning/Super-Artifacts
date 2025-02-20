@@ -13,6 +13,20 @@ interface FourthScreenProps {
   sendAdminMessage: (role: string, content: string) => void;
 }
 
+const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ block: 'start' });
+  }, []);
+
+  return (
+    <div ref={scrollRef} className="w-full">
+      {children}
+    </div>
+  );
+};
+
 const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
   const { gameStateRef, setGameStateRef } = useGameState();
   const { step } = gameStateRef.current.state4
@@ -33,6 +47,23 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
   const tenthsInputRef = useRef<HTMLInputElement>(null);
   const hundredthsInputRef = useRef<HTMLInputElement>(null);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    containerRef.current?.scrollIntoView();
+    
+    document.body.style.overflow = 'auto';
+    document.body.style.height = 'auto';
+    
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'auto'
+      });
+    }, 0);
+  }, []);
+
   useEffect(() => {
     if (!start.current) {
       sendAdminMessage('agent', `This time, let's convert a decimal to a fraction. Let's start by creating the decimal!`);
@@ -52,9 +83,13 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
 
   useEffect(() => {
     if (selectedKnife === 10) {
-      setStep(1)
+      window.scrollTo({
+        top: 0,
+        behavior: 'auto'
+      });
+      setStep(1);
     }
-  }, [selectedKnife])
+  }, [selectedKnife]);
 
   useEffect(() => {
     if(wholechocolate + 1 < question6 && selectedPieces === selectedKnife * chocolate) {
@@ -134,167 +169,177 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full">
-
-      <Header
-        title={
-          <>
-            Convert 
-            <span className='bg-white px-2 py-1 rounded-md'>
+    <ScrollContainer>
+      <div 
+        ref={containerRef}
+        className="flex flex-col min-h-screen w-full overflow-x-hidden"
+        style={{ 
+          scrollMarginTop: '0px',
+          marginTop: '0px',
+          paddingTop: '0px'
+        }}
+      >
+        <Header
+          title={
+            <>
+              Convert 
+              <span className='bg-white px-2 py-1 rounded-md'>
+                {question6}
+              </span>
+              to a fraction
+            </>
+          }
+          level='Level 3'
+          leftBox={step < 2 ? 'STEP 1' : 'STEP 2'}
+          rightBox={step < 2 ? <>
+            CREATE 
+            <span className='bg-white text-black px-2 ml-2 rounded-sm'>
               {question6}
             </span>
-            to a fraction
-          </>
-        }
-        level='Level 3'
-        leftBox={step < 2 ? 'STEP 1' : 'STEP 2'}
-        rightBox={step < 2 ? <>
-          CREATE 
-          <span className='bg-white text-black px-2 ml-2 rounded-sm'>
-            {question6}
-          </span>
-        </> : <>
-          Enter fraction
-        </>}
-      /> 
-      <div className='w-full bg-[#edffee] my-10 py-10'>
-        <div className="flex flex-col items-center max-w-screen-lg w-full mx-auto justify-center flex-1 gap-8">
-          {step < 2 ?
-          <div className='flex w-full justify-center'>
-            
-            <span className='flex flex-col justify-center h-full mx-16 w-1/6 text-center text-xl'>
+          </> : <>
+            Enter fraction
+          </>}
+        /> 
+        <div className='w-full bg-[#edffee] my-10 py-10'>
+          <div className="flex flex-col items-center max-w-screen-lg w-full mx-auto justify-center flex-1 gap-8">
+            {step < 2 ?
+            <div className='flex w-full justify-center'>
+              
+              <span className='flex flex-col justify-center h-full mx-16 w-1/6 text-center text-xl'>
+                {Array.from({length: wholechocolate}, (_, index) => (
+                  <div key={index}>
+                    {selectedKnife === 100 ? (
+                      <Bar2d
+                        numerator={selectedKnife * chocolate}
+                        denominator={selectedKnife * chocolate}
+                        handlePieceClick={() => {}}
+                        active={false}
+                      />
+                    ) : (
+                      <VerticalBar
+                        numerator={selectedKnife * chocolate}
+                        denominator={selectedKnife * chocolate}
+                        handlePieceClick={() => {}}
+                        active={false}
+                      />
+                    )}
+                  </div>
+                ))}
+              </span>
+
+              <span className='relative w-4/6 text-center text-xl'>
+                {selectedKnife === 100 ? (
+                  <Bar2d
+                    numerator={selectedPieces}
+                    denominator={selectedKnife * chocolate}
+                    handlePieceClick={handlePieceClick}
+                    active={step > 0}
+                  />
+                ) : (
+                  <VerticalBar
+                    numerator={selectedPieces}
+                    denominator={selectedKnife * chocolate}
+                    handlePieceClick={handlePieceClick}
+                    active={step > 0}
+                  />
+                )}
+              </span>
+
+              <span className='relative flex flex-col justify-center mx-10 w-1/6 text-center text-xl'>
+                  {step === 0 ?
+                    <KnifeSelector
+                      options={[10, 100]}
+                      selectedKnife={selectedKnife}
+                      setSelectedKnife={handleKnifeSelect}
+                    />
+                  :
+                    <div 
+                      className={`m-2 bg-amber-800/50 rounded-md aspect-square flex font-extrabold text-5xl items-center justify-center hover:bg-amber-800/60 transition-all duration-100 ${!allowadd ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      onClick={() => {
+                        if (allowadd) {
+                        setWholechocolate(wholechocolate + 1) 
+                        sounds.break()
+                        setSelectedPieces(0)
+                      }}}
+                    >
+                      +
+                    </div>
+                  }
+              </span>
+
+            </div>
+            :
+            <div className="flex justify-center text-2xl  items-center gap-4">
               {Array.from({length: wholechocolate}, (_, index) => (
-                <div key={index}>
-                  {selectedKnife === 100 ? (
-                    <Bar2d
-                      numerator={selectedKnife * chocolate}
-                      denominator={selectedKnife * chocolate}
-                      handlePieceClick={() => {}}
-                      active={false}
-                    />
-                  ) : (
-                    <VerticalBar
-                      numerator={selectedKnife * chocolate}
-                      denominator={selectedKnife * chocolate}
-                      handlePieceClick={() => {}}
-                      active={false}
-                    />
-                  )}
+                <div 
+                  key={index}
+                >
+                  <VerticalBar
+                    numerator={selectedKnife}
+                    denominator={selectedKnife}
+                    handlePieceClick={() => {}}
+                    active={false}
+                />
                 </div>
               ))}
-            </span>
-
-            <span className='relative w-4/6 text-center text-xl'>
-              {selectedKnife === 100 ? (
-                <Bar2d
-                  numerator={selectedPieces}
-                  denominator={selectedKnife * chocolate}
-                  handlePieceClick={handlePieceClick}
-                  active={step > 0}
-                />
-              ) : (
-                <VerticalBar
-                  numerator={selectedPieces}
-                  denominator={selectedKnife * chocolate}
-                  handlePieceClick={handlePieceClick}
-                  active={step > 0}
-                />
-              )}
-            </span>
-
-            <span className='relative flex flex-col justify-center mx-10 w-1/6 text-center text-xl'>
-                {step === 0 ?
-                  <KnifeSelector
-                    options={[10, 100]}
-                    selectedKnife={selectedKnife}
-                    setSelectedKnife={handleKnifeSelect}
-                  />
-                :
-                  <div 
-                    className={`m-2 bg-amber-800/50 rounded-md aspect-square flex font-extrabold text-5xl items-center justify-center hover:bg-amber-800/60 transition-all duration-100 ${!allowadd ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                    onClick={() => {
-                      if (allowadd) {
-                      setWholechocolate(wholechocolate + 1) 
-                      sounds.break()
-                      setSelectedPieces(0)
-                    }}}
-                  >
-                    +
-                  </div>
-                }
-            </span>
-
-          </div>
-          :
-          <div className="flex justify-center text-2xl  items-center gap-4">
-            {Array.from({length: wholechocolate}, (_, index) => (
-              <div 
-                key={index}
-              >
-                <VerticalBar
-                  numerator={selectedKnife}
-                  denominator={selectedKnife}
-                  handlePieceClick={() => {}}
-                  active={false}
+              <VerticalBar
+                numerator={selectedPieces}
+                denominator={selectedKnife}
+                handlePieceClick={() => {}}
+                active={false}
               />
+            </div>
+            }
+
+
+            {step < 1 ?
+              <div className="flex text-2xl items-center gap-4">
+                <RedBox2>
+                  {selectedKnife * chocolate}
+                </RedBox2>
+                  piece(s), but you need 10
               </div>
-            ))}
-            <VerticalBar
-              numerator={selectedPieces}
-              denominator={selectedKnife}
-              handlePieceClick={() => {}}
-              active={false}
-            />
-          </div>
-          }
-
-
-          {step < 1 ?
-            <div className="flex text-2xl items-center gap-4">
-              <RedBox2>
-                {selectedKnife * chocolate}
-              </RedBox2>
-                piece(s), but you need 10
-            </div>
-          : ( step === 1 ?
-            <div className="flex justify-center text-2xl  items-center gap-4">
-              <DecimalBox
-                wholes={Math.floor((wholechocolate*selectedKnife + selectedPieces) / selectedKnife).toString()}
-                tenths={ (wholechocolate*selectedKnife + selectedPieces) % selectedKnife === 0 ? '0' : ((wholechocolate*selectedKnife + selectedPieces) % selectedKnife).toString()}
-                tenthsRef={tenthsInputRef}
-                hundredthsRef={hundredthsInputRef}
+            : ( step === 1 ?
+              <div className="flex justify-center text-2xl  items-center gap-4">
+                <DecimalBox
+                  wholes={Math.floor((wholechocolate*selectedKnife + selectedPieces) / selectedKnife).toString()}
+                  tenths={ (wholechocolate*selectedKnife + selectedPieces) % selectedKnife === 0 ? '0' : ((wholechocolate*selectedKnife + selectedPieces) % selectedKnife).toString()}
+                  tenthsRef={tenthsInputRef}
+                  hundredthsRef={hundredthsInputRef}
+                />
+              </div>
+            :
+              <FractionBox
+                numerator={numerator.toString()}
+                denominator={denominator.toString()}
+                onChange={{
+                  numerator: (value) => setNumerator(parseInt(value) || 0),
+                  denominator: (value) => setDenominator(parseInt(value) || 0)
+                }}
+                correctnumerator={(question6*selectedKnife).toString()}
+                correctdenominator={selectedKnife.toString()}
               />
-            </div>
-          :
-            <FractionBox
-              numerator={numerator.toString()}
-              denominator={denominator.toString()}
-              onChange={{
-                numerator: (value) => setNumerator(parseInt(value) || 0),
-                denominator: (value) => setDenominator(parseInt(value) || 0)
-              }}
-              correctnumerator={(question6*selectedKnife).toString()}
-              correctdenominator={selectedKnife.toString()}
-            />
-          )}
+            )}
+          </div>
+        </div>
+
+        <div className='flex mb-20 justify-center'>
+            {step === 3 &&
+              <Proceed
+                onComplete={() => {
+                  window.scrollTo(0, 0);
+                  setGameStateRef((prev) => ({
+                    ...prev,
+                    screen: 'fifth'
+                  }))
+                  sounds.levelUp();
+                }}
+                text="Onward! 🚀"
+              />
+            }
         </div>
       </div>
-
-      <div className='flex mb-20 justify-center'>
-          {step === 3 &&
-            <Proceed
-              onComplete={() => {
-                setGameStateRef((prev) => ({
-                  ...prev,
-                  screen: 'fifth'
-                }))
-                sounds.levelUp();
-              }}
-              text="Onward! 🚀"
-            />
-          }
-      </div>
-    </div>
+    </ScrollContainer>
   );
 };
 

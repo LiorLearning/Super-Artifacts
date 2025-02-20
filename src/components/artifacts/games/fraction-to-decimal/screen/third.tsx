@@ -20,9 +20,30 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
   const {numerator, denominator} = gameStateRef.current.question.question5
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Force scroll the page and container to top
+    window.scrollTo(0, 0);
+    containerRef.current?.scrollIntoView();
+    
+    // Temporarily disable scrolling
+    document.body.style.position = 'fixed';
+    document.body.style.top = '0';
+    
+    // Re-enable scrolling after a moment
+    setTimeout(() => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+    }, 100);
+  }, []);
 
   return (
-    <div className="flex flex-col mb-10 h-full w-full">
+    <div 
+      ref={containerRef}
+      className="flex flex-col mb-10 min-h-screen w-full overflow-x-hidden"
+      style={{ scrollMarginTop: '0px' }}
+    >
       <Header 
         title={
           <>
@@ -70,6 +91,12 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
       start.current = true;
     }
     }, []);
+
+  useEffect(() => {
+    // Also ensure Part1 starts at top
+    window.scrollTo(0, 0);
+  }, []);
+
   const setStep = (value: number) => {
     setGameStateRef((prev) => ({
       ...prev,
