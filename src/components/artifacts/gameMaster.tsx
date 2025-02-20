@@ -9,6 +9,7 @@ import { Edit2Icon, RefreshCw, TimerResetIcon } from 'lucide-react';
 import Chat from '../Chat'
 import { handleScreenshot } from './utils/utils';
 import { gameInfo } from './gameInfo';
+import { SPEAKOUT } from '../websocket';
 
 type GameKey = keyof typeof gameInfo;
 
@@ -82,6 +83,9 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
         content: content,
         role: 'agent',
       } as AssistanceResponseMessage, onComplete);
+      if (!SPEAKOUT) {
+        onComplete?.();
+      }
     }
 
     return messageId;
