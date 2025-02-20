@@ -1,10 +1,10 @@
 import { useGameState } from '../../state-utils';
 import type { MixedFraction } from '../../game-state';
-import LockIcon from '@/assets/Lock.png';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import React from 'react';
 import SuccessAnimation from '@/components/artifacts/utils/success-animate'
+import { soundFiles } from '../../utils/sound'
 
 interface ExpressionWithAdditionProps {
   leftNumber: number;
@@ -72,11 +72,11 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
       if (parseInt(value) === expectedValue) {
         setFirstInputIsCorrect(true)
         setFirstInputIsWrong(false)
-        setShowNextStep(true);
-        if (correctAnswerAudioRef.current) {
-          correctAnswerAudioRef.current.currentTime = 0;
-          correctAnswerAudioRef.current.play();
-        }
+
+        setShowNextStep(true)
+        const audio = new Audio(soundFiles.correct)
+        audio.play()
+
         sendAdminMessage("agent", "Now just add the numerator to your previous answer!")
       } else {
         setFirstInputIsCorrect(false)
@@ -138,20 +138,18 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
         setBottomAnswerIsCorrect(true)
         setBottomAnswerIsWrong(false)
         if (topAnswerIsCorrect) {
-          setShowSuccess(true);
-          // Play level complete sound
-          if (levelCompleteAudioRef.current) {
-            levelCompleteAudioRef.current.currentTime = 0;
-            levelCompleteAudioRef.current.play();
-          }
+
+          setShowSuccess(true)
+          const audio = new Audio(soundFiles.LevelComplete)
+          audio.play()
           sendAdminMessage("agent", "It took just 2 steps to get to the answer. let's practice some more!", () => {
-            setShowSuccess(false);
+            setShowSuccess(false)
             setGameStateRef(prev => ({
               ...prev,
               screen: 'third' as const,
               state2: { ...prev.state2, step: 1 }
-            }));
-          });
+            }))
+          })
         }
       } else {
         setBottomAnswerIsCorrect(false)
@@ -170,7 +168,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
       <span className="text-3xl">{leftNumber}</span>
       <div className="relative ml-2">
         <Image 
-          src="/img/Addition.png"
+          src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/Addition.png"
           alt="add"
           width={48}
           height={48}
@@ -223,7 +221,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
           {/* First pink box */}
           <div className="bg-[#FF497C] rounded-[20px] p-3 pb-12 flex items-center mb-4">
             <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
-              <Image src={LockIcon} alt="Lock" width={35} height={35} />
+              <Image src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/Lock.png" alt="Lock" width={35} height={35} />
             </div>
 
             <div className="text-white text-[20px] mx-4 flex-1">
@@ -240,7 +238,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{whole}</span>
                     <Image 
-                      src="/img/Multiply.png" 
+                      src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/Multiply.png" 
                       alt="multiply" 
                       width={40} 
                       height={40} 
@@ -285,7 +283,7 @@ const QuickHack2: React.FC<QuickHack2Props> = ({ mixedFraction, sendAdminMessage
             {/* Second pink box */}
             <div className="bg-[#FF497C] rounded-[20px] p-3 pb-12 flex items-center mb-4">
               <div className="bg-[#B40033] rounded-xl w-[70px] h-[70px] flex items-center justify-center">
-                <Image src={LockIcon} alt="Lock" width={35} height={35} />
+                <Image src="https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/Lock.png" alt="Lock" width={35} height={35} />
               </div>
 
               <div className="text-white text-[20px] mx-4 flex-1">

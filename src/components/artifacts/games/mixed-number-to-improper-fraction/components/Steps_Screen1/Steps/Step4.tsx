@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import type { MixedFraction } from "../../../game-state"
 import Level from "../level"
+import { soundFiles } from '../../../utils/sound'
 
 interface Step4Props {
   mixedFraction: MixedFraction
@@ -21,7 +22,6 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
   const [numeratorIsCorrect, setNumeratorIsCorrect] = useState(false)
   const [numeratorIsWrong, setNumeratorIsWrong] = useState(false)
   const countMessageShown = useRef(false)
-  const correctAudioRef = useRef<HTMLAudioElement | null>(null)
   const errorMessageShown = useRef(false)
 
   useEffect(() => {
@@ -46,13 +46,9 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
       if (value === correctAnswer) {
         setNumeratorIsCorrect(true)
         setNumeratorIsWrong(false)
-        if (correctAudioRef.current) {
-          correctAudioRef.current.currentTime = 0
-          correctAudioRef.current.addEventListener('ended', () => {
-            onComplete()
-          }, { once: true })
-          correctAudioRef.current.play()
-        }
+        const audio = new Audio(soundFiles.correct)
+        audio.play()
+        onComplete()
       } else {
         setNumeratorIsWrong(true)
         setNumeratorIsCorrect(false)
@@ -90,12 +86,9 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
 
     const correctAnswer = (mixedFraction.whole * mixedFraction.denominator).toString()
     if (newValue === correctAnswer) {
-      if (correctAudioRef.current) {
-        correctAudioRef.current.currentTime = 0
-        correctAudioRef.current.play().then(() => {
-          onComplete()
-        })
-      }
+      const audio = new Audio(soundFiles.correct)
+      audio.play()
+      onComplete()
     }
   }
 
@@ -239,7 +232,6 @@ const Step4: React.FC<Step4Props> = ({ mixedFraction, onComplete, sendAdminMessa
           </div>
         </div>
       </div>
-      <audio ref={correctAudioRef} src="/sounds/CorrectAnswer2.mp3" />
     </div>
   )
 }
