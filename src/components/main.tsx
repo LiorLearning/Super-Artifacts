@@ -4,7 +4,8 @@ import { useRef } from 'react'
 import { MessageProvider } from './MessageContext'
 import { WebSocketProvider } from './websocket'
 import MathGamesContainer from './artifacts/gameMaster'
-import Profile from './auth/profile'
+// import Profile from './auth/profile'
+import { Suspense } from 'react'
 
 export default function Main() {
   const componentRef = useRef<HTMLDivElement | null>(null);
@@ -13,10 +14,12 @@ export default function Main() {
   };
 
   return (
-    <MessageProvider>
-      <WebSocketProvider url={`${process.env.NEXT_PUBLIC_WS_BASE_URL}/superartifacts/ws`}>
-        <MathGamesContainer setComponentRef={setComponentRef} />
-      </WebSocketProvider>
-    </MessageProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <MessageProvider>
+        <WebSocketProvider url={`${process.env.NEXT_PUBLIC_WS_BASE_URL}/superartifacts/ws`}>
+          <MathGamesContainer setComponentRef={setComponentRef} />
+        </WebSocketProvider>
+      </MessageProvider>
+    </Suspense>
   )
 }
