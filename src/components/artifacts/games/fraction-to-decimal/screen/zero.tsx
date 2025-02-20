@@ -22,7 +22,7 @@ export default function IntroScreen({ sendAdminMessage }: BaseProps) {
 
   return (
     <div className='w-full space-y-16 flex flex-col'>
-      <div className={cn('flex justify-center text-3xl font-bold py-10 items-center gap-4 bg-[#F9F871] shadow-[0_5px_1px_rgba(0,0,0,1)]')}>
+      <div className={cn('flex justify-center text-3xl py-10 items-center gap-4 bg-[#F9F871] shadow-[0_5px_1px_rgba(0,0,0,1)]')}>
         Convert fractions in base 10 to decimals
       </div>
 
@@ -31,7 +31,7 @@ export default function IntroScreen({ sendAdminMessage }: BaseProps) {
           <RedBox2 className="h-full text-3xl flex items-center">
             Question
           </RedBox2>
-          <p className='text-2xl bg-[#FF497C] font-bold text-white px-4 py-2 h-full flex items-center'>
+          <p className='text-2xl bg-[#FF497C] text-white px-4 py-2 h-full flex items-center'>
             Convert 
             <Fraction numerator={numerator} denominator={denominator} className='text-1xl bg-white text-black px-2 py-2 mx-2 h-full flex items-center' />
             to a decimal
@@ -46,7 +46,7 @@ export default function IntroScreen({ sendAdminMessage }: BaseProps) {
             screen: 'first',
           }));
         }}
-        className="flex gap-2 font-bold text-3xl justify-center items-center bg-transparent hover:bg-transparent"
+        className="flex gap-2 text-3xl justify-center items-center bg-transparent hover:bg-transparent"
       >
         Let's Figure out
         <Triangle className="w-8 h-8 text-green-500 fill-green-500 rotate-90" />

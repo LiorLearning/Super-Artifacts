@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ title, level, leftBox, rightBox }) => {
     <div className='w-full space-y-16 flex flex-col'>
       <div className={cn('flex justify-center items-center gap-4 bg-[#F9F871] p-4 shadow-[0_5px_1px_rgba(0,0,0,1)]')}>
         <span className='w-full'/>
-        <p className='flex text-3xl w-full items-center gap-2 font-bold'>
+        <p className='flex text-3xl w-full items-center gap-2 '>
           {title}
         </p>
         <div className='w-full flex justify-end'>
@@ -26,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ title, level, leftBox, rightBox }) => {
           <div className="h-20">
             <RedBox2>{leftBox}</RedBox2>
           </div>
-          <p className='text-xl bg-[#FF497C] font-bold text-white px-4 py-5 h-20 flex items-center'>
+          <p className='text-xl bg-[#FF497C]  text-white px-4 py-5 h-20 flex items-center'>
             {rightBox}
           </p>
         </div>
