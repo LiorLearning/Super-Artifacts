@@ -130,7 +130,7 @@ const Part1: React.FC <ThirdScreenProps> = ({sendAdminMessage}) => {
   useEffect(() => {
     if (wholechocolate * selectedKnife + selectedPieces < numerator && selectedPieces === 100) {
       setAllowadd(true);
-      sendAdminMessage('agent', 'Fill this one completely to be able to add a new bar.');
+      sendAdminMessage('agent', 'Click on Plus button to add a new bar.');
     } else {
       setAllowadd(false);
     }
