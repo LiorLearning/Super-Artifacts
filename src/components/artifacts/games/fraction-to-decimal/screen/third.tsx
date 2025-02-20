@@ -250,13 +250,13 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
       if (value.length < correctWholes.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctWholes}. Your answer ${value} seems incomplete. Try entering the full number.`);
+          sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctWholes}. User has entered ${value} seems incomplete. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
         }, 5000);
         return;
       }
       if (parseInt(value) !== correctWholes) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly...`);
+        sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctWholes}. User has entered ${value} seems incomplete. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
         setIsWholesCorrect(false);
       } else {
         sounds.levelUp();
@@ -281,7 +281,7 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
       if (value.length < correctTenths.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctTenths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+          sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctTenths}. User has entered ${value} seems incomplete. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
         }, 5000);
         return;
       }
@@ -316,7 +316,7 @@ const Part2: React.FC<ThirdScreenProps> = ({ sendAdminMessage }) => {
       if (value.length < correctHundredths.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctHundredths}. Your answer ${value} seems incomplete. Try entering the full number.`);
+          sendAdminMessage('admin', `User has entered incorrectly.The answer should be ${correctHundredths}. User has entered ${value} seems incomplete. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.`);
         }, 5000);
         return;
       }

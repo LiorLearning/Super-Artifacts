@@ -151,7 +151,7 @@ export default function FirstScreen({ sendAdminMessage }: BaseProps) {
 
       if (parseInt(value) !== correctTenths) {
         sounds.join();
-        sendAdminMessage('admin', `User answered incorrectly for the numerator pie, correct answer is ${correctTenths}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+        sendAdminMessage('admin', `User answered incorrectly for the Tenths, correct answer is ${correctTenths}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
       }
     }
   };

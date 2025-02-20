@@ -156,7 +156,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
         setTimeout(() => hundredthsInputRef.current?.focus(), 100);
       } else {
         sounds.join();
-        sendAdminMessage('admin', `That's not quite right. Need a hint?`);
+        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.tenths}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
         setIsTenthsCorrect(false);
       }
     }
@@ -187,7 +187,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({ sendAdminMessage }) => {
         sendAdminMessage('agent', 'Excellent! You\'ve converted the fraction to a decimal.');
       } else {
         sounds.join();
-        sendAdminMessage('admin', `That's not quite right. Need a hint?`);
+        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correct.hundredths}, but user answered ${value}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
       }
     }
   };

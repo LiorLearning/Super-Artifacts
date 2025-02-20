@@ -75,38 +75,43 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
       clearTimeout(timeoutRef.current);
     }
 
-    if (numerator.toString().length > 0) {
+    // Only handle numerator validation if denominator is empty
+    if (numerator.toString().length > 0 && denominator === 0) {
       if (numerator.toString().length < correctNumerator.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctNumerator}. Your answer ${numerator} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User has entered incomplete numerator. The answer should be ${correctNumerator}. User has entered ${numerator}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.Don't repeat preivous narration`);
+        }, 3000);
         return;
       }
 
-      if (numerator === correctNumerator && denominator === 0) {
+      if (numerator === correctNumerator) {
+        sounds.levelUp();
         sendAdminMessage('agent', 'Perfect! Now enter the denominator - how many pieces are there in total?');
+      } else {
+        sounds.join();
+        sendAdminMessage('admin', `User answered incorrectly for the numerator. The answer should be ${correctNumerator}, but user entered ${numerator}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.Don't repeat preivous narration`);
       }
     }
 
-    if (denominator.toString().length > 0) {
+    // Only handle denominator validation if numerator is correct
+    if (denominator.toString().length > 0 && numerator === correctNumerator) {
       if (denominator.toString().length < correctDenominator.toString().length) {
         timeoutRef.current = setTimeout(() => {
           sounds.join();
-          sendAdminMessage('admin', `The answer should be ${correctDenominator}. Your answer ${denominator} seems incomplete. Try entering the full number.`);
-        }, 5000);
+          sendAdminMessage('admin', `User has entered incomplete denominator. The answer should be ${correctDenominator}. User has entered ${denominator}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.Don't repeat preivous narration`);
+        }, 3000);
         return;
       }
 
       if (denominator === correctDenominator) {
         setStep(3);
+        sounds.levelUp();
         sendAdminMessage('agent', `Great job, let's head to the final level!`);
       } else {
-        sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correctDenominator}, but user answered ${denominator}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
+        sounds.join();
+        sendAdminMessage('admin', `User answered incorrectly for the denominator. The answer should be ${correctDenominator}, but user entered ${denominator}. Diagnose socratically. Explain everytime deeply and in detail but remember just hints.Don't repeat preivous narration`);
       }
-    } else if (denominator.toString().length >= correctDenominator.toString().length && 
-               numerator !== correctNumerator) {
-      sendAdminMessage('admin', `User answered incorrectly, correct answer is ${correctNumerator}, but user answered ${numerator}. Diagnose socratically. Don't repeat the same narration for every wrong answer.`);
     }
   }, [numerator, denominator]);
 
@@ -115,6 +120,18 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
       sendAdminMessage('agent', 'Awesome, now enter the fraction these chocolates display');
     }
   }, [step]);
+
+  const handlePieceClick = (index: number) => {
+    setSelectedPieces(index);
+    sounds.join();
+  };
+
+  const handleKnifeSelect = (value: number) => {
+    setSelectedKnife(value);
+    if (value === 10) {
+      sendAdminMessage('agent', 'Awesome, can you try selecting 1.7 chocolates?');
+    }
+  };
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -172,20 +189,14 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
                 <Bar2d
                   numerator={selectedPieces}
                   denominator={selectedKnife * chocolate}
-                  handlePieceClick={(index) => {  
-                    setSelectedPieces(index)
-                    sounds.join()
-                  }}
+                  handlePieceClick={handlePieceClick}
                   active={step > 0}
                 />
               ) : (
                 <VerticalBar
                   numerator={selectedPieces}
                   denominator={selectedKnife * chocolate}
-                  handlePieceClick={(index) => {  
-                    setSelectedPieces(index)
-                    sounds.join()
-                  }}
+                  handlePieceClick={handlePieceClick}
                   active={step > 0}
                 />
               )}
@@ -196,7 +207,7 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
                   <KnifeSelector
                     options={[10, 100]}
                     selectedKnife={selectedKnife}
-                    setSelectedKnife={setSelectedKnife}
+                    setSelectedKnife={handleKnifeSelect}
                   />
                 :
                   <div 

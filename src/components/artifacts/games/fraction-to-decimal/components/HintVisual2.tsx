@@ -42,6 +42,8 @@ export default function HintVisual2({
   const [decimalTenths, setDecimalTenths] = useState('');
   const [decimalHundredths, setDecimalHundredths] = useState('');
   const [showDecimalPrompt, setShowDecimalPrompt] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [decimalWholes, setDecimalWholes] = useState('');
 
   const setStep = (value: number) => {
     setGameStateRefProp((prev: GameState) => ({
@@ -74,6 +76,10 @@ export default function HintVisual2({
       setHasShownMessage(true);
     }
   }, [sendAdminMessage, hasShownMessage]);
+
+  useEffect(() => {
+    containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   const handlePurpleBoxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -146,8 +152,34 @@ export default function HintVisual2({
     }
   };
 
+  const getCorrectWholes = () => {
+    if (currentScreen === 'second') { 
+      return 0;
+    } else if (currentScreen === 'third') {  
+      return 2;
+    }
+    return Math.floor(numerator/100);
+  };
+
+  const handleDecimalWholesChange = (value: string) => {
+    setDecimalWholes(value);
+    if (value.length > 0) {
+      const correctWholes = getCorrectWholes();
+      if (parseInt(value) === correctWholes) {
+        sounds.levelUp();
+        sendAdminMessage?.('agent', 'Perfect! Now enter the tenths digit.');
+      } else {
+        sounds.join();
+        sendAdminMessage?.('admin', `User answered incorrectly for the Wholes, correct answer is ${correctWholes}, but user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
+      }
+    }
+  };
+
   return (
-    <div className='w-full bg-white flex items-start justify-center'>
+    <div 
+      ref={containerRef}
+      className='w-full bg-white flex items-start justify-center'
+    >
       <div className='w-screen transform scale-[0.7] -mt-40'>
         <div className="flex flex-col items-center">
           <div className="flex w-full justify-center pl-[200px] relative items-start">
@@ -203,15 +235,15 @@ export default function HintVisual2({
                 <div className="flex justify-center">
                   <div className="transform scale-125">
                     <DecimalBox 
-                      wholes="0"
+                      wholes={decimalWholes}
                       tenths={decimalTenths}
                       hundredths={decimalHundredths}
                       onChange={{
-                        wholes: () => {}, // Disabled for wholes
+                        wholes: handleDecimalWholesChange,
                         tenths: handleDecimalTenthsChange,
                         hundredths: handleDecimalHundredthsChange
                       }}
-                      correctWholes="0"
+                      correctWholes={String(getCorrectWholes())}
                       correctTenths={String(completeRows)}
                       correctHundredths={String(numerator % 10)}
                       disabled={!showDecimalPrompt}
@@ -225,12 +257,16 @@ export default function HintVisual2({
             {/* Purple box */}
             <div className="flex flex-col">
               <div 
-                className="px-6 flex items-center justify-center"
+                className="flex items-center justify-center"
                 style={{
                   height: `${(completeRows * 75 + 5)}px`,
                   width: '330px',
                   transform: 'translateX(-80px)',
-                  background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #A71DFD40 24.5%)'
+                  background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #A71DFD40 24.5%)',
+                  borderRight: '2px solid black',
+                  borderTop: '2px solid black',
+                  borderBottom: '2px solid black',
+                  padding: completeRows > 1 ? '24px' : '12px'
                 }}
               >
                 {showFraction ? (
@@ -254,7 +290,7 @@ export default function HintVisual2({
                         type="text"
                         value={purpleBoxAnswer}
                         onChange={handlePurpleBoxChange}
-                        className={`w-9 h-9 border-2 border-black text-center text-xl ${
+                        className={`w-9 h-9 border-2 mt-2 border-black text-center text-xl ${
                           purpleBoxAnswer.length > 0 
                             ? parseInt(purpleBoxAnswer) === completeRows 
                               ? 'bg-green-100' 
@@ -273,12 +309,16 @@ export default function HintVisual2({
               {/* Orange box */}
               {showFraction && (
                 <div 
-                  className="px-6 flex items-center justify-center"
+                  className="flex items-center justify-center"
                   style={{
                     height: '80px',
                     width: '330px',
                     transform: 'translateX(-80px)',
-                    background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #FFA50040 24.5%)'
+                    background: 'linear-gradient(to right, rgba(0,0,0,0) 24.5%, #FFA50040 24.5%)',
+                    borderRight: '2px solid black',
+                    borderTop: '2px solid black',
+                    borderBottom: '2px solid black',
+                    padding: '12px'
                   }}
                 >
                   <div className="flex items-center justify-center w-full">
