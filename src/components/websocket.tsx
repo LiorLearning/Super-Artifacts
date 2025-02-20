@@ -4,7 +4,7 @@ import { WifiOff, Wifi } from 'lucide-react';
 import { AudioContext } from './utils/elevenlabs_audio_stream';
 import Profile from './auth/profile';
 
-const SPEAKOUT = false;
+export const SPEAKOUT = false;
 
 type WebSocketContextType = {
   sendLog: (message: Message | Blob) => void;
