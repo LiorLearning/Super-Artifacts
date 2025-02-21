@@ -18,8 +18,8 @@ const RedBox2: React.FC<RedBoxProps> = ({ children, className='' }) => {
 
 const RedBox: React.FC<RedBoxProps> = ({ children, className='' }) => {
   return (
-    <div className={cn('h-full bg-[#FF497C] p-1 inline-flex flex-col items-center', className)}>
-      <div className='bg-white text-[#FF497C] text-xl px-3 py-1 font-medium inline-flex flex-col items-center'>
+    <div className={cn('h-full bg-[#E65A5A] p-1 inline-flex flex-col items-center', className)}>
+      <div className='bg-white text-[#E65A5A] text-xl px-3 py-1 font-medium inline-flex flex-col items-center'>
         {children}
       </div>
     </div>

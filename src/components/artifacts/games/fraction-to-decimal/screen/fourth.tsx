@@ -111,12 +111,9 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
       clearTimeout(timeoutRef.current);
     }
 
-    if (numerator.toString().length > 0 && denominator === 0) {
+    if (numerator > 0 && denominator === 0) {
       timeoutRef.current = setTimeout(() => {
-        if (numerator === correctNumerator) {
-          sounds.levelUp();
-          sendAdminMessage('agent', 'Perfect! Now enter the denominator - how many pieces are there in total?');
-        } else {
+        if(numerator !== correctNumerator) {
           sounds.join();
           sendAdminMessage('admin', `User has entered incomplete numerator. The answer should be ${correctNumerator}. User has entered ${numerator}. Diagnose socratically. Ask how many shaded pieces are there types.`);
         }
@@ -124,12 +121,10 @@ const FourthScreen: React.FC <FourthScreenProps> = ({sendAdminMessage}) => {
       return;
     }
 
-    if (denominator.toString().length > 0 && numerator === correctNumerator) {
+    if (denominator > 0 && numerator === correctNumerator) {
       timeoutRef.current = setTimeout(() => {
         if (denominator === correctDenominator) {
           setStep(3);
-          sounds.levelUp();
-          sendAdminMessage('agent', `Great job, let's head to the final level!`);
         } else {
           sounds.join();
           sendAdminMessage('admin', `User has entered incomplete denominator. The answer should be ${correctDenominator}. User has entered ${denominator}. Diagnose socratically. Ask how many rows are there in single box`);

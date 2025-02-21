@@ -1,6 +1,5 @@
 import React from 'react';
-// import { sound } from '../utils/sound';
-import { Triangle } from 'lucide-react';
+import { sounds } from '../utils/sound';
 import { Button } from '@/components/custom_ui/button';
 
 interface ProceedProps {
@@ -12,7 +11,7 @@ const Proceed: React.FC<ProceedProps> = ({ onComplete, text="Onward" }) => {
   return (
     <Button
       onClick={() => {
-        // sounds.button();
+        sounds.levelUp();
         onComplete();
       }}
 

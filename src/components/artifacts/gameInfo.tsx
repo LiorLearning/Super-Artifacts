@@ -161,5 +161,11 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: Multiplying2DigitsBy1DigitWithPartialProductsGameState,
     provider: Multiplying2DigitsBy1DigitWithPartialProductsGameStateProvider,
     initialGameState: multiplying2DigitsBy1DigitWithPartialProductsInitialState
+  },
+  'writing-mixed-numbers-as-improper-fractions': {
+    game: MixedNumberToImproperFractionGame,
+    useState: MixedNumberToImproperFractionGameState,
+    provider: MixedNumberToImproperFractionGameStateProvider,
+    initialGameState: mixedNumberToImproperFractionGameInitialState
   }
 };

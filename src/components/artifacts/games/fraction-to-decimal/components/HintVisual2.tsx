@@ -89,8 +89,6 @@ export default function HintVisual2({
       if (value.length > 0) {
         if (parseInt(value) === completeRows) {
           setShowFraction(true);
-          sounds.levelUp();
-          sendAdminMessage?.('agent', `Awesome, ${completeRows * 10} hundredths make ${completeRows} tenths. Now, how many hundredths are left?`);
         } else {
           setShowFraction(false);
           sounds.join();
@@ -107,7 +105,6 @@ export default function HintVisual2({
       
       if (value.length > 0) {
         if (parseInt(value) === (numerator % 10)) {
-          sounds.levelUp();
           sendAdminMessage?.('agent', 'Perfect! Now let\'s write this as a decimal. Look at the decimal box below.');
           setShowDecimalForm(true);
           setShowDecimalPrompt(true);
@@ -126,8 +123,6 @@ export default function HintVisual2({
     setDecimalTenths(value);
     if (value.length > 0) {
       if (parseInt(value) === completeRows) {
-        sounds.levelUp();
-        sendAdminMessage?.('agent', 'Great! Now enter the hundredths digit.');
       } else {
         sounds.join();
         sendAdminMessage?.('agent', 'Look at the purple box - how many tenths did we find?');
@@ -139,7 +134,6 @@ export default function HintVisual2({
     setDecimalHundredths(value);
     if (value.length > 0) {
       if (parseInt(value) === (numerator % 10)) {
-        sounds.levelUp();
         sendAdminMessage?.('agent', 'Perfect! You\'ve written the decimal correctly!');
         setShowOnwardsButton(true);
         setTimeout(() => {
@@ -178,10 +172,10 @@ export default function HintVisual2({
   return (
     <div 
       ref={containerRef}
-      className='w-full bg-white flex items-start justify-center'
+      className='w-full bg-white flex flex-col items-center justify-start'
     >
       <div className='w-screen transform scale-[0.7] -mt-40'>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center w-full">
           <div className="flex w-full justify-center pl-[200px] relative items-start">
             <div className="flex flex-col">
               <div className="w-[900px] relative mb-32">
@@ -344,11 +338,13 @@ export default function HintVisual2({
           </div>
 
           {showOnwardsButton && (
-            <div ref={onwardsButtonRef} className="py-16 scale-150">
-              <Proceed 
-                onComplete={handleProceed}
-                text="Onward! 🚀"
-              />
+            <div ref={onwardsButtonRef} className="w-full flex justify-center items-center py-14 -ml-[100px]">
+              <div className="scale-150">
+                <Proceed 
+                  onComplete={handleProceed}
+                  text="Onward! 🚀"
+                />
+              </div>
             </div>
           )}
         </div>
