@@ -89,8 +89,6 @@ export default function HintVisual2({
       if (value.length > 0) {
         if (parseInt(value) === completeRows) {
           setShowFraction(true);
-          sounds.levelUp();
-          sendAdminMessage?.('agent', `Awesome, ${completeRows * 10} hundredths make ${completeRows} tenths. Now, how many hundredths are left?`);
         } else {
           setShowFraction(false);
           sounds.join();
@@ -107,7 +105,6 @@ export default function HintVisual2({
       
       if (value.length > 0) {
         if (parseInt(value) === (numerator % 10)) {
-          sounds.levelUp();
           sendAdminMessage?.('agent', 'Perfect! Now let\'s write this as a decimal. Look at the decimal box below.');
           setShowDecimalForm(true);
           setShowDecimalPrompt(true);
@@ -126,8 +123,6 @@ export default function HintVisual2({
     setDecimalTenths(value);
     if (value.length > 0) {
       if (parseInt(value) === completeRows) {
-        sounds.levelUp();
-        sendAdminMessage?.('agent', 'Great! Now enter the hundredths digit.');
       } else {
         sounds.join();
         sendAdminMessage?.('agent', 'Look at the purple box - how many tenths did we find?');
@@ -139,7 +134,6 @@ export default function HintVisual2({
     setDecimalHundredths(value);
     if (value.length > 0) {
       if (parseInt(value) === (numerator % 10)) {
-        sounds.levelUp();
         sendAdminMessage?.('agent', 'Perfect! You\'ve written the decimal correctly!');
         setShowOnwardsButton(true);
         setTimeout(() => {
