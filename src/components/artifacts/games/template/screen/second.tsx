@@ -2,7 +2,7 @@ import { useGameState } from '../state-utils';
 import Header from '../components/header';
 import { BaseProps } from '../utils/types';
 import { useEffect, useRef, useState } from 'react';
-import NewInput from '@/components/ui/newinput';
+import {NewInput} from '@/components/ui/newinput';
 
 export default function SecondScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef } = useGameState();

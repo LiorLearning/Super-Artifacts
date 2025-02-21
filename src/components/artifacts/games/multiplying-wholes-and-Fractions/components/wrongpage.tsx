@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useGameState } from "../state-utils";
 import { BaseProps } from "../utils/types";
 import Bar from "./bar";
-import NewInput from "@/components/ui/newinput";
+import {NewInput} from "@/components/ui/newinput";
 
 interface WrongPageProps extends BaseProps {
   level: number;
