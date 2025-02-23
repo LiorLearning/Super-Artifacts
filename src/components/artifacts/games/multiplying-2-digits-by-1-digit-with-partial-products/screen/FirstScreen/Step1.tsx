@@ -6,7 +6,7 @@ import boxshadow from "../../assets/boxshadow.png"
 import blue from "../../assets/blue.png"
 import { useEffect, useState } from "react";
 import { useRef } from "react";
-import { goToStep } from "../../utils/helper";
+import { goToScreen, goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
 
 
@@ -45,6 +45,9 @@ export default function Screen1Step0({ sendAdminMessage }: BaseProps) {
     } else if (showRow) {
       setTimeout(() => {
         sendAdminMessage('agent', `Now that we know how ${number1} x ${number2} looks, let's start multiplying`);
+        setTimeout(() => {
+          goToScreen('second', setGameStateRef);
+        }, 4000);
       }, 5000);
     }
   }, [isMovingLeft, showColumn, showRow]);
@@ -57,15 +60,15 @@ export default function Screen1Step0({ sendAdminMessage }: BaseProps) {
         style={{ backgroundImage: `url(${grass.src})`, backgroundSize: '100% 100%' }}>
       </div>
 
-      <div className={`absolute ml-[12vw] max-w-[40vh] text-[4vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg transition-all duration-500 ${!showColumn && !showRow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}>
+      <div className={`absolute ml-[12vw] max-w-[40vh] text-[3.5vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg transition-all duration-500 ${!showColumn && !showRow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}>
         Hi, I am TILO!
       </div>
 
-      <div className={`absolute ml-[12vw] max-w-[40vh] text-[4vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg transition-all duration-500 ${showColumn && !showRow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}>
+      <div className={`absolute ml-[12vw] max-w-[40vh] text-[3.5vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg transition-all duration-500 ${showColumn && !showRow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}>
         This is 23
       </div>
 
-      <div className={`absolute ml-[12vw] max-w-[40vh] text-[4vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg transition-all duration-500 ${showRow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}>
+      <div className={`absolute ml-[12vw] max-w-[40vh] text-[3.5vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg transition-all duration-500 ${showRow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}>
         And this is 23 x 4
       </div>
 
@@ -76,10 +79,10 @@ export default function Screen1Step0({ sendAdminMessage }: BaseProps) {
         </div>
         <div className="flex flex-row">
           <div className={`absolute w-[2vh] -translate-x-[1vh] -translate-y-[1vh] border-l-4 border-b-4 border-t-4 border-white transition-all duration-200 ${showColumn ? 'opacity-100' : 'opacity-0'}`}
-            style={{ height: `${number1 * 2.6 + 1.5}vh` }}>
+            style={{ height: `${number1 * 2.5 + 1.5}vh` }}>
           </div>
           <div className={`absolute  -translate-x-[1vh] h-[2vh] -translate-y-[1vh] border-l-4 border-r-4 border-t-4 border-white transition-all duration-200 ${showRow ? 'opacity-100' : 'opacity-0'}`}
-            style={{ width: `${number2 * 2.6 + 1.5}vh` }}>
+            style={{ width: `${number2 * 2.5 + 1.5}vh` }}>
           </div>
 
           <div style={{height: `${number1 * 2.6 + 1.5}vh`}} className={`absolute flex items-center justify-center transition-all duration-200 ${showColumn ? 'opacity-100' : 'opacity-0 translate-x-[10vh]'}`}>
@@ -99,7 +102,7 @@ export default function Screen1Step0({ sendAdminMessage }: BaseProps) {
           <div style={{backgroundImage: `url(${boxshadow.src})`, backgroundSize: '100% 100%'}} className={`absolute -translate-x-[10vh] translate-y-[11.5vh]  bottom-0 w-[41vh] h-[10vh]`}></div>
 
 
-          <div className={`h-fit grid grid-cols-11 gap-[0.6vh] rounded-lg transition-all duration-500`}>
+          <div className={`h-fit grid grid-cols-11 gap-[0.5vh] rounded-lg transition-all duration-500`}>
             {Array.from({ length: number1 }, (_, rowIndex) => (
               Array.from({ length: 11 }, (_, colIndex) => (
                 <div
