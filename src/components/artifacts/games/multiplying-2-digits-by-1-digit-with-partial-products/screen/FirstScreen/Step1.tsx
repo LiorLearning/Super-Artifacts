@@ -1,0 +1,130 @@
+import { BaseProps } from "../../utils/types";
+import grass from "../../assets/grass.png"
+import tilo from "../../assets/tilo.png"
+import tiloshadow from "../../assets/tiloshadow.png"
+import boxshadow from "../../assets/boxshadow.png"
+import blue from "../../assets/blue.png"
+import { useEffect, useState } from "react";
+import { useRef } from "react";
+import { goToStep } from "../../utils/helper";
+import { useGameState } from "../../state-utils";
+
+
+export default function Screen1Step0({ sendAdminMessage }: BaseProps) {
+  const { gameStateRef, setGameStateRef } = useGameState();
+  let number1 = gameStateRef.current.state1.number1;
+  const number2 = gameStateRef.current.state1.number2;
+  const hasGameStartedRef = useRef(false);
+  const [isMovingLeft, setIsMovingLeft] = useState(false);
+  const [showColumn, setShowColumn] = useState(false);
+  const [showRow, setShowRow] = useState(false);
+  const [nextStep, setNextStep] = useState(false);
+
+  useEffect(() => {
+    if (!hasGameStartedRef.current) {
+      hasGameStartedRef.current = true;
+      sendAdminMessage('agent', `Let's start by helping Tilo visualize ${number1} times ${number2}`);
+
+      setTimeout(() => {
+        setIsMovingLeft(true);
+      }, 2000);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMovingLeft && !showColumn) {
+      setTimeout(() => {
+        setShowColumn(true);
+        sendAdminMessage('agent', `We first take ${number1} blocks vertically`);
+      }, 4000);
+    } else if (showColumn && !showRow) {
+      setTimeout(() => {
+        setShowRow(true);
+        sendAdminMessage('agent', `And then ${number2} times ${number1} blocks gives us ${number1} times ${number2}`);
+      }, 4000);
+    } else if (showRow) {
+      setTimeout(() => {
+        sendAdminMessage('agent', `Now that we know how ${number1} x ${number2} looks, let's start multiplying`);
+      }, 5000);
+    }
+  }, [isMovingLeft, showColumn, showRow]);
+
+
+  return (
+    <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
+
+      <div className="absolute w-full h-[25vh] z-10"
+        style={{ backgroundImage: `url(${grass.src})`, backgroundSize: '100% 100%' }}>
+      </div>
+
+      <div className={`absolute ml-[12vw] max-w-[40vh] text-[4vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg transition-all duration-500 ${!showColumn && !showRow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}>
+        Hi, I am TILO!
+      </div>
+
+      <div className={`absolute ml-[12vw] max-w-[40vh] text-[4vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg transition-all duration-500 ${showColumn && !showRow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}>
+        This is 23
+      </div>
+
+      <div className={`absolute ml-[12vw] max-w-[40vh] text-[4vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg transition-all duration-500 ${showRow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}>
+        And this is 23 x 4
+      </div>
+
+
+      <div className={`absolute translate-x-[14vw] mb-[10vh] bg-[#003a43] border-[1.5vh] border-[#006379] rounded-[3vh] flex flex-col items-center p-[3vh] py-[4vh] justify-start z-20 transition-all duration-500 ${isMovingLeft ? 'opacity-100' : 'opacity-0 translate-x-[20vw]'}`}>
+        <div className='text-[3.5vh] bg-white rounded-[2vh] px-[4vh] leading-none py-[1vh] shadow-[-0.2vw_0.2vw_0px_0px_rgba(0,0,0)] shadow-[#7f7f7f] mb-[2.5vh]'>
+          {number1} x {number2}
+        </div>
+        <div className="flex flex-row">
+          <div className={`absolute w-[2vh] -translate-x-[1vh] -translate-y-[1vh] border-l-4 border-b-4 border-t-4 border-white transition-all duration-200 ${showColumn ? 'opacity-100' : 'opacity-0'}`}
+            style={{ height: `${number1 * 2.6 + 1.5}vh` }}>
+          </div>
+          <div className={`absolute  -translate-x-[1vh] h-[2vh] -translate-y-[1vh] border-l-4 border-r-4 border-t-4 border-white transition-all duration-200 ${showRow ? 'opacity-100' : 'opacity-0'}`}
+            style={{ width: `${number2 * 2.6 + 1.5}vh` }}>
+          </div>
+
+          <div style={{height: `${number1 * 2.6 + 1.5}vh`}} className={`absolute flex items-center justify-center transition-all duration-200 ${showColumn ? 'opacity-100' : 'opacity-0 translate-x-[10vh]'}`}>
+            <div className="absolute w-[10vh] h-[7vh] text-[4vh] text-black pr-[3.2vh] text-center  pt-[0.6vh] z-10 -translate-x-[6vh]"
+              style={{ backgroundImage: `url(${blue.src})`, backgroundSize: '100% 100%' }}>
+              {number1}
+            </div>
+          </div>
+
+          <div style={{width: `${number2 * 2.6 + 1.5}vh`}} className={`absolute flex items-center justify-center transition-all duration-200 ${showRow ? 'opacity-100' : 'opacity-0 translate-y-[10vh]'}`}>
+            <div className="absolute w-[10vh] rotate-90 h-[7vh] text-[4vh] text-black text-center z-10 -translate-x-[1vh] -translate-y-[9vh]"
+              style={{ backgroundImage: `url(${blue.src})`, backgroundSize: '100% 100%' }}>
+            </div>
+            <span className="text-[4vh] text-black h-[6vh] w-[6vh] text-center z-10 -translate-x-[1vh] -translate-y-[10.5vh]">{number2}</span>
+          </div>
+          
+          <div style={{backgroundImage: `url(${boxshadow.src})`, backgroundSize: '100% 100%'}} className={`absolute -translate-x-[10vh] translate-y-[11.5vh]  bottom-0 w-[41vh] h-[10vh]`}></div>
+
+
+          <div className={`h-fit grid grid-cols-11 gap-[0.6vh] rounded-lg transition-all duration-500`}>
+            {Array.from({ length: number1 }, (_, rowIndex) => (
+              Array.from({ length: 11 }, (_, colIndex) => (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`aspect-square rounded-sm transition-colors w-[2vh] h-[2vh] duration-200 ${
+                    colIndex < number2 && rowIndex < number1 ? 
+                      showColumn ? 
+                        colIndex === 0 ? 'bg-[#40E0D0]' : 
+                        showRow ? 'bg-[#40E0D0]' : 'bg-[#4c757b]'
+                      : 'bg-[#4c757b]'
+                    : 'bg-[#4c757b]'
+                  }`}
+                />
+              ))
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute left-0 translate-x-[12vw] -translate-y-[10vh] w-[25vh] h-[30vh] z-30"
+        style={{ backgroundImage: `url(${tilo.src})`, backgroundSize: '100% 100%' }}>
+      </div>
+      <div className="absolute left-0 translate-x-[11vw] w-[25vh] h-[11vh] z-20"
+        style={{ backgroundImage: `url(${tiloshadow.src})`, backgroundSize: '100% 100%' }}>
+      </div>
+    </div>
+  )
+}

@@ -30,15 +30,26 @@ interface State1 {
   number2: number;
 }
 
+interface State2 {
+  step: number;
+  number1: number;
+  number2: number;
+}
 
 export interface GameState {
   screen: GameScreen;
   state1: State1;
+  state2: State2;
 }
 
 export const initialGameState: GameState = {
   screen: 'first',
   state1: {
+    step: 0,
+    number1: 23,
+    number2: 4
+  },
+  state2: {
     step: 0,
     number1: 23,
     number2: 4

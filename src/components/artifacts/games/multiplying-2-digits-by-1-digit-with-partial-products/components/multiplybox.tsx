@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import blue from '../components/blue.png'
-import orange from '../components/orange.png'
-
+import blue from '../assets/blue.png'
+import orange from '../assets/orange.png'
+import slider from '../assets/slider.png'
 interface MultiplyBoxProps {
   number1: number;  // 23
   number2: number;  // 4
@@ -62,8 +62,9 @@ export default function MultiplyBox({ number1, number2 }: MultiplyBoxProps) {
             ))}
           </div>
           <div className='realtive h-[95%] -translate-x-[3.2vh] -translate-y-[1.5vh]'>
-            <div className='absolute w-[2.5vh] h-[2.5vh] border-[0.7vh] border-[#d9d9d9] bg-[#808080] rounded-full'
-              style={{ top: `${(sliderValue / number1) * 100}%` }}
+            <div className='absolute w-[4.5vh] h-[4.5vh] -translate-x-[1.4vh] '
+              style={{ top: `${(sliderValue / number1) * 100}%`, backgroundImage: `url(${slider.src})`, backgroundSize: '100% 100%' }}
+              
             />
           </div>
         </div>
