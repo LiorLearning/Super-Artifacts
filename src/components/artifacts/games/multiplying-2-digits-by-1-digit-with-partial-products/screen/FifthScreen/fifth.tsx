@@ -1,10 +1,11 @@
 import { BaseProps } from "../../utils/types";
-import { images } from "../../assets/image";
+import { images } from "../../utils/image";
 import { useGameState } from "../../state-utils";
 import { useEffect, useRef, useState } from "react";
 import { NewInput } from "@/components/ui/newinput";
 import { goToScreen } from "../../utils/helper";
 import SuccessAnimation from "@/components/artifacts/utils/success-animate";
+import { sounds } from "../../utils/sound";
 
 
 export default function FifthScreen({ sendAdminMessage }: BaseProps) {
@@ -34,7 +35,7 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
-      // sendAdminMessage('agent', `Let's practice multiplying 2-digit numbers by 1-digit numbers with partial products!`);
+      sendAdminMessage('agent', `${number1} can be broken into ${Math.floor(number1 / 10)}0 and ${number1 % 10}. Can you complete the partial products?`);
       ans1Ref.current?.focus();
     }
   }, []);
@@ -66,17 +67,18 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
       <div className="flex items-center justify-center gap-[2vh] ml-[15.5vh] leading-none text-center bg-white text-[5vh] p-[1.5vh]">
         <NewInput
           value={ans1}
-          correctValue={((number1 % 10) * number2).toString()}
+          correctValue={(Math.floor(number1 / 10) * 10 * number2).toString()}
           onValueChange={(value) => setAns1(value)}
           placeholder="?"
-          className="w-[16vh] text-white placeholder:text-white border-none outline-none p-[1vh]   text-center text-[5vh] bg-[#c45500]"
+          className="w-[16vh] text-white placeholder:text-white border-none outline-none p-[1vh]   text-center text-[5vh] bg-[#0095b7]"
           ref={ans1Ref}
-          onCorrect={() => { setBlurAns2(false); ans2Ref.current?.focus(); }}
+          onCorrect={() => { setBlurAns2(false); ans2Ref.current?.focus(); sounds.right(); }}
           onIncorrect={(attempt, correct) => {
-            sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${(number1 % 10)} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
+            sounds.wrong();
+            sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${Math.floor(number1 / 10) * 10} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
           }}
         />
-        {hint1 && <><div className="pl-[2.5vh]">{number1 % 10}</div>
+        {hint1 && <><div>{Math.floor(number1 / 10) * 10}</div>
           <div>x</div>
           <div>{number2}</div></>}
 
@@ -89,17 +91,23 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
         <div className="flex items-center justify-center gap-[2vh] leading-none text-center bg-white text-[5vh] p-[1.5vh]">
           <NewInput
             value={ans2}
-            correctValue={(Math.floor(number1 / 10) * 10 * number2).toString()}
+            correctValue={((number1 % 10) * number2).toString()}
             onValueChange={(value) => setAns2(value)}
             placeholder="?"
-            className="w-[16vh] text-white placeholder:text-white border-none outline-none p-[1vh]   text-center text-[5vh] bg-[#0095b7]"
+            className="w-[16vh] text-white placeholder:text-white border-none outline-none p-[1vh]   text-center text-[5vh] bg-[#c45500]"
             ref={ans2Ref}
-            onCorrect={() => { setBlurAns3(false); ans3Ref.current?.focus(); }}
+            onCorrect={() => { 
+              setBlurAns3(false);
+              ans3Ref.current?.focus(); 
+              sounds.right();
+              sendAdminMessage('agent', `Perfect, now that we have the partial products, let's add them`);
+            }}
             onIncorrect={(attempt, correct) => {
-              sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${Math.floor(number1 / 10) * 10} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
+                sounds.wrong();
+              sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${(number1 % 10)} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
             }}
           />
-          {hint2 && <><div>{Math.floor(number1 / 10) * 10}</div>
+          {hint2 && <><div className="pl-[2.5vh]">{number1 % 10}</div>
             <div>x</div>
             <div>{number2}</div></>}
 
@@ -118,12 +126,15 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
           className="w-[16vh] text-white placeholder:text-white border-none outline-none p-[1vh]   text-center text-[5vh] bg-[#5c9f00]"
           ref={ans3Ref}
           onCorrect={() => {
+            sounds.right();
             setShowSuccess(true);
+            sendAdminMessage('agent', `Awesome, let's do one more.`);
             setTimeout(() => {
               setShowPopUp(true);
             }, 4000);
           }}
           onIncorrect={(attempt, correct) => {
+            sounds.wrong();
             sendAdminMessage('admin', `User has entered wrong sum ${attempt}, the answer is ${correct}, the question is sum after partial product  ${number1} x ${number2}, diagnose socratically with respect to user's current game state`);
           }}
         />

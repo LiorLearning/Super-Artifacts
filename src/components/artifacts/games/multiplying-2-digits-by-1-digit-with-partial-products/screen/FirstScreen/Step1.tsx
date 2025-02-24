@@ -1,9 +1,9 @@
 import { BaseProps } from "../../utils/types";
-import { images } from '../../assets/image';
+import { images } from '../../utils/image';
 import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
 import { goToStep } from "../../utils/helper";
-
+import { sounds } from "../../utils/sound";
 
 export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
 
@@ -17,6 +17,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
       hasGameStartedRef.current = true;
       setTimeout(() => {
         setTransition(true);
+        sounds.woosh();
         setTimeout(() => {
           setNextSentence(true);
           // goToStep('first', setGameStateRef, 2);

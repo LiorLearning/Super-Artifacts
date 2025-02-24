@@ -1,11 +1,17 @@
 import { BaseProps } from "../../utils/types";
-import { images } from "../../assets/image";
+import { images } from "../../utils/image";
 import MultiplyBox from '../../components/multiplybox';
 import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
 import { goToStep } from "../../utils/helper";
+import { sounds } from "../../utils/sound";
 
-export default function Screen2Step0({ sendAdminMessage }: BaseProps) {
+interface Screen2Step0Props extends BaseProps { 
+  sliderValue: number;
+  setSliderValue: (sliderValue: number) => void;
+}
+
+export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderValue }: Screen2Step0Props) {
   const {gameStateRef, setGameStateRef} = useGameState();
   const [transition, setTransition] = useState(false);
   const [isDragging, setIsDragging] = useState(true);
@@ -21,9 +27,10 @@ export default function Screen2Step0({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
-      sendAdminMessage('agent', `Can you make this easier for me by breaking ${number1} into two parts using slider?`);
+      sendAdminMessage('agent', `Can you make this easier for Tilo by breaking ${number1} into two parts using slider?`);
       setTimeout(() => {
         setTransition(true);
+        sounds.woosh();
       }, 2000);
     }
   }, []); 
@@ -92,7 +99,7 @@ export default function Screen2Step0({ sendAdminMessage }: BaseProps) {
         {isCorrect ? `That's right!` : `Can you make this easier for me by breaking ${number1} into two parts using slider?`}
       </div>
 
-      <div className="absolute z-20 translate-x-[12vw] -translate-y-[10vh]">
+      <div className="absolute z-20 translate-x-[11vw] -translate-y-[10vh]">
         <MultiplyBox 
           number1={number1} 
           number2={number2} 
@@ -102,11 +109,14 @@ export default function Screen2Step0({ sendAdminMessage }: BaseProps) {
           onCorrect={onCorrect}
           onIncorrect={onIncorrect}
           sendAdminMessage={sendAdminMessage}
+          stepSilder={true}
+          sliderValue={sliderValue}
+          setSliderValue={setSliderValue}
         />
       </div>
       
-      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%'}} className={`absolute z-10 translate-x-[14vw]  w-[18vw] h-[10vh]`}></div>
-      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%'}} className={`absolute z-10 translate-x-[14vw]  w-[18vw] h-[10vh] transition-all duration-1000 ${transition ? 'translate-x-[7vw] opacity-100' : 'translate-x-[18vw] opacity-0'}`}></div>
+      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%'}} className={`absolute z-10 translate-x-[10vw]  w-[9vw] h-[10vh]`}></div>
+      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%'}} className={`absolute z-10 translate-x-[14vw]  w-[17vw] h-[10vh] transition-all duration-1000 ${transition ? 'translate-x-[5vw] opacity-100' : 'translate-x-[18vw] opacity-0'}`}></div>
     </div>
   )
 }

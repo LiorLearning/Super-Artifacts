@@ -1,5 +1,5 @@
 import { BaseProps } from "../../utils/types";
-import { images } from "../../assets/image";
+import { images } from "../../utils/image";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
@@ -11,11 +11,13 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
   const [isMovingUp, setIsMovingUp] = useState(false);
+  const number1 = gameStateRef.current.state1.number1;
+  const number2 = gameStateRef.current.state1.number2;
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
-      sendAdminMessage('agent', narrations.Screen1Step0Message1.content);
+      sendAdminMessage('agent', `Can you help Tilo find ${number1} times ${number2}? Ready to begin?`);
     }
   }, []);
 

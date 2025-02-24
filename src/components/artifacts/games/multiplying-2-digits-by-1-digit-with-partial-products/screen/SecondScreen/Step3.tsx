@@ -1,5 +1,5 @@
 import { BaseProps } from "../../utils/types";
-import { images } from "../../assets/image";
+import { images } from "../../utils/image";
 import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
 import { goToScreen, goToStep } from "../../utils/helper";
@@ -18,6 +18,7 @@ export default function Screen3Step2({ sendAdminMessage }: BaseProps) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent', `You got the answer, ${number1} times ${number2} is ${number1 * number2}!`);
       setTimeout(() => {
+        sendAdminMessage('agent', `Ready to do one more problem using the tile board?`);
         setShowPopUp(true);
       }, 5000);
     }
@@ -32,7 +33,12 @@ export default function Screen3Step2({ sendAdminMessage }: BaseProps) {
 
       {showPopUp && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
         <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
-          onClick={() => { setShowPopUp(false); goToScreen('third', setGameStateRef); }}>
+          onClick={() => { 
+            setShowPopUp(false); 
+            setTimeout(() => {
+              goToScreen('third', setGameStateRef);
+            }, 1000);
+          }}>
           {'NEXT >>'}
         </button>
       </div>}

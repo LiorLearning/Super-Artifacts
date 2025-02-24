@@ -1,10 +1,10 @@
 import { BaseProps } from "../../utils/types";
-import { images } from "../../assets/image";
+import { images } from "../../utils/image";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToScreen, goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
-
+import { sounds } from "../../utils/sound";
 
 export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -14,14 +14,13 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const [isMovingLeft, setIsMovingLeft] = useState(false);
   const [showColumn, setShowColumn] = useState(false);
   const [showRow, setShowRow] = useState(false);
-  const [nextStep, setNextStep] = useState(false);
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent', `Let's start by helping Tilo visualize ${number1} times ${number2}`);
-
       setTimeout(() => {
+        sounds.woosh();
         setIsMovingLeft(true);
       }, 3000);
     }
@@ -101,7 +100,7 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
             <span className="text-[4vh] text-black h-[6vh] w-[6vh] text-center z-10 -translate-x-[1vh] -translate-y-[10.5vh]">{number2}</span>
           </div>
 
-          <div style={{ backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%' }} className={`absolute -translate-x-[10vh] translate-y-[11.5vh]  bottom-0 w-[41vh] h-[10vh]`}></div>
+          <div style={{ backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%' }} className={`absolute -translate-x-[9vh] translate-y-[11.5vh]  bottom-0 w-[38vh] h-[10vh]`}></div>
 
 
           <div className={`h-fit grid grid-cols-11 gap-[0.5vh] rounded-lg transition-all duration-500`}>

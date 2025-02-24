@@ -1,5 +1,5 @@
 import { BaseProps } from "../../utils/types";
-import { images } from "../../assets/image";
+import { images } from "../../utils/image";
 import MultiplyBox from '../../components/multiplybox';
 import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";

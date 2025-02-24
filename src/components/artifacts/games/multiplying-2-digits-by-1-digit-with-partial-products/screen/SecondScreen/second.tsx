@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import MultiplyBox from '../../components/multiplybox';
 import { useGameState } from '../../state-utils';
 import { BaseProps } from '../../utils/types';
@@ -8,19 +9,20 @@ import Screen3Step3 from './Step3';
 
 export default function SecondScreen({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
+  const [sliderValue, setSliderValue] = useState(0);
 
   
   if (gameStateRef.current.state2.step == 0) {
     return (
-      <Screen2Step0 sendAdminMessage={sendAdminMessage}/>
+      <Screen2Step0 sendAdminMessage={sendAdminMessage} sliderValue={sliderValue} setSliderValue={setSliderValue}/>
     )
   } else if (gameStateRef.current.state2.step == 1) {
     return (
-      <Screen2Step1 sendAdminMessage={sendAdminMessage}/>
+      <Screen2Step1 sendAdminMessage={sendAdminMessage} sliderValue={sliderValue} setSliderValue={setSliderValue}/>
     )
   } else if (gameStateRef.current.state2.step == 2) {
     return (
-      <Screen2Step2 sendAdminMessage={sendAdminMessage}/>
+      <Screen2Step2 sendAdminMessage={sendAdminMessage} sliderValue={sliderValue} setSliderValue={setSliderValue}/>
     )
   } else if (gameStateRef.current.state2.step == 3) {
     return (

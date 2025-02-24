@@ -1,11 +1,16 @@
 import { BaseProps } from "../../utils/types";
-import { images } from "../../assets/image";
+import { images } from "../../utils/image";
 import MultiplyBox from '../../components/multiplybox';
 import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
 import { goToStep } from "../../utils/helper";
 
-export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
+interface Screen2Step2Props extends BaseProps {
+  sliderValue: number;
+  setSliderValue: (sliderValue: number) => void;
+}
+
+export default function Screen2Step2({ sendAdminMessage, sliderValue, setSliderValue }: Screen2Step2Props) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
@@ -48,7 +53,7 @@ export default function Screen2Step2({ sendAdminMessage }: BaseProps) {
       </div>
 
       <div className="absolute z-20 translate-x-[6vw] -translate-y-[10vh]">
-        <MultiplyBox number1={number1} number2={number2} onCorrect={onCorrect} defaultSilderValue={number1 % 10} short={true} fixColorNotRed={true} stepSum={true} sendAdminMessage={sendAdminMessage} />
+        <MultiplyBox number1={number1} number2={number2} onCorrect={onCorrect} sliderValue={sliderValue} setSliderValue={setSliderValue} short={true} fixColorNotRed={true} stepSum={true} sendAdminMessage={sendAdminMessage} />
       </div>
       <div style={{ backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%' }} className={`absolute z-10 translate-x-[1vw]  w-[18vw] h-[10vh]`}></div>
     </div>
