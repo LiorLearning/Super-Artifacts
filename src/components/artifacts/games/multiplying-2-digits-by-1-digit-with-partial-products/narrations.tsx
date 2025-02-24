@@ -7,9 +7,9 @@ interface Message {
 
 
 export const narrations: { [key: string]: Message } = {
-  Screen1Step1Message1: {
+  Screen1Step0Message1: {
     role: 'agent',
-    content: 'Welcome to the Level ${a}',
+    content: 'Can you help Tilo find ${a} times ${b}? Ready to begin?',
     send: true
   }
 };

@@ -1,11 +1,10 @@
 import { BaseProps } from "../../utils/types";
-import grass from "../../assets/grass.png"
-import tilo from "../../assets/tilo.png"
-import tiloshadow from "../../assets/tiloshadow.png"
+import { images } from "../../assets/image";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
+import { narrations } from "../../narrations";
 
 
 export default function Screen1Step0({sendAdminMessage}: BaseProps) {
@@ -16,7 +15,7 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
-      sendAdminMessage('agent', `Can you help Tilo find 23 times 4? Ready to begin?`);
+      sendAdminMessage('agent', narrations.Screen1Step0Message1.content);
     }
   }, []);
 
@@ -31,7 +30,7 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
 
       <div className="absolute w-full h-[25vh] z-10"
-        style={{ backgroundImage: `url(${grass.src})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
 
       <div className={`flex flex-col items-center justify-center gap-[4vh] z-50 my-auto pb-[10vh] transition-all duration-500 ${isMovingUp ? 'transform -translate-y-[20vh] opacity-0' : ''}`}>
