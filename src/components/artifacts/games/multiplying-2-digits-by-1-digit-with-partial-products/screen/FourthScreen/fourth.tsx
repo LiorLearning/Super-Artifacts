@@ -2,7 +2,7 @@ import { BaseProps } from "../../utils/types";
 import practicebg from '../../assets/practicebg.png'
 import { useGameState } from "../../state-utils";
 import { useEffect, useRef, useState } from "react";
-import NewInput from "@/components/ui/newinput";
+import { NewInput } from "@/components/ui/newinput";
 import { goToScreen } from "../../utils/helper";
 import SuccessAnimation from "@/components/artifacts/utils/success-animate";
 
