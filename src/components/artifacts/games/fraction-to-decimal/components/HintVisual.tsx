@@ -23,7 +23,7 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
   useEffect(() => {
     if (!hasNarrated.current && sendAdminMessage) {
       hasNarrated.current = true;
-      sendAdminMessage('agent', "Notice that one shaded horizontal bar makes one tenth. How many complete tenths do you see in the chocolate?");
+      sendAdminMessage('agent', "Notice that one shaded horizontal bar makes one tenth. How many complete tenths are shaded in the chocolate?");
     }
   }, [sendAdminMessage]);
 
@@ -41,10 +41,7 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
     if (value.length > 0 && parseInt(value) !== correctTenths) {
       sounds.join();
       sendAdminMessage?.('admin', `User answered incorrectly for the Tenths, correct answer is ${correctTenths}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
-    } else if (value.length > 0 && parseInt(value) === correctTenths) {
-      sounds.levelUp();
-      sendAdminMessage?.('agent', "Awesome, now how many shaded hundredths do you see?");
-    }
+    } 
   };
 
   const handleHundredthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +53,6 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
       sounds.join();
       sendAdminMessage?.('admin', `User answered incorrectly for the Hundredths, correct answer is ${correctHundredths}, but  user answered ${value}. Diagnose socratically. If User giving the wrong answer, Explain the correct answer in a way that helps them understand.`);
     } else if (value.length > 0 && parseInt(value) === correctHundredths) {
-      sounds.levelUp();
       sendAdminMessage?.('agent', "Excellent! You've correctly converted the fraction to a decimal!");
       setShowProceed(true);
     }
@@ -77,9 +73,9 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
   return (
     <div 
       ref={containerRef} 
-      className='fixed inset-0 bg-white z-50 flex items-center justify-center'
+      className='fixed inset-0 bg-white z-50 flex items-center justify-center overflow-hidden'
     >
-      <div className='absolute top-[50px] w-full max-w-[1000px] transform scale-110 px-8'>
+      <div className='absolute w-full max-w-[1000px] transform scale-100 px-8 py-4'>
         <div className="flex my-4 mx-auto w-[600px] relative -space-x-[3px] min-w-52">
           <div className="flex flex-col w-full -space-y-[3px] min-w-52">
             <div className="flex w-full -space-x-[3px]">
@@ -149,7 +145,7 @@ export default function HintVisual({ numerator, denominator, onClose, sendAdminM
                     disabled
                   />
                 </div>
-                <span className="text-4xl mb-6">.</span>
+                <span className="text-7xl mb-2">.</span>
                 <div className='flex flex-col items-center'>
                   <span className="text-sm">Tenths</span>
                   <input 
