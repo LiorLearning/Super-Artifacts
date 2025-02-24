@@ -7,8 +7,7 @@ import MultiplyBox from '../../components/multiplybox';
 import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
 import { goToStep } from "../../utils/helper";
-
-export default function Screen2Step1({ sendAdminMessage }: BaseProps) {
+export default function Screen3Step1({ sendAdminMessage }: BaseProps) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
@@ -19,12 +18,13 @@ export default function Screen2Step1({ sendAdminMessage }: BaseProps) {
     }
   }, []);
 
-  const number1 = gameStateRef.current.state2.number1;
-  const number2 = gameStateRef.current.state2.number2;
-  
+  const number1 = gameStateRef.current.state3.number1;
+  const number2 = gameStateRef.current.state3.number2;
+
   function onCorrect() {
-    goToStep('second', setGameStateRef, 2);
+    goToStep('third', setGameStateRef, 2);
   }
+  
 
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">

@@ -11,7 +11,7 @@ import { useRef, useEffect, useState } from "react";
 import { goToScreen, goToStep } from "../../utils/helper";
 
 
-export default function Screen3Step2({ sendAdminMessage }: BaseProps) {
+export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const [showPopUp, setShowPopUp] = useState(false);
@@ -29,8 +29,8 @@ export default function Screen3Step2({ sendAdminMessage }: BaseProps) {
     }
   }, []);
 
-  const number1 = gameStateRef.current.state2.number1;
-  const number2 = gameStateRef.current.state2.number2;
+  const number1 = gameStateRef.current.state3.number1;
+  const number2 = gameStateRef.current.state3.number2;
 
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
@@ -38,7 +38,7 @@ export default function Screen3Step2({ sendAdminMessage }: BaseProps) {
 
       {showPopUp && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
         <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
-            onClick={() => {setShowPopUp(false); goToScreen('third', setGameStateRef);}}>
+            onClick={() => {setShowPopUp(false);}}>
             {'NEXT >>'}
           </button>
       </div>}

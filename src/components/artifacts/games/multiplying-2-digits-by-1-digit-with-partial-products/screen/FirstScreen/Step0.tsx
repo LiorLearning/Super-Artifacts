@@ -33,12 +33,8 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
       <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${grass.src})`, backgroundSize: '100% 100%' }}>
       </div>
-      
-      <div className=" absolute ml-[10vh] max-w-[40vh] text-[4vh] -translate-y-[45vh] left-0 bg-white py-[1vh] px-[2vh] border-[0.2vh] border-black z-50 drop-shadow-lg">
-      Hi, I am TILO!
-      </div>
 
-      <div className={`flex flex-col items-center justify-center gap-[4vh] z-50 my-auto pb-[40vh] transition-all duration-500 ${isMovingUp ? 'transform -translate-y-[20vh] opacity-0' : ''}`}>
+      <div className={`flex flex-col items-center justify-center gap-[4vh] z-50 my-auto pb-[10vh] transition-all duration-500 ${isMovingUp ? 'transform -translate-y-[20vh] opacity-0' : ''}`}>
         <div className="flex items-center justify-center text-center gap-[2vh]">
           <h1 className="leading-none w-[12vh] py-[2vh] bg-white text-[#003a43] text-[6vh] rounded-[4vh] shadow-xl drop-shadow-lg">23</h1>
           <h1 className="leading-none text-[#003a43] text-[7vh] drop-shadow-lg">x</h1>
@@ -52,15 +48,6 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
           {'START >>'}
         </button>
       </div>
-
-      <div className="absolute left-0 translate-x-[10vh] -translate-y-[10vh] w-[25vh] h-[30vh] z-30"
-        style={{ backgroundImage: `url(${tilo.src})`, backgroundSize: '100% 100%' }}>
-      </div>
-      <div className="absolute left-0 translate-x-[7vh] w-[25vh] h-[11vh] z-20"
-        style={{ backgroundImage: `url(${tiloshadow.src})`, backgroundSize: '100% 100%' }}>
-      </div>
-
-
     </div>
   )
 }
