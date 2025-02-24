@@ -32,7 +32,7 @@ export default function Game({sendAdminMessage}: GameProps) {
   }, [step1, step2, step3, step4, step5]);
 
   return (
-    <div className="mx-auto game">
+    <div className="mx-auto game font-jersey">
       <DevHelper />
       {/* Game screens */}
       {screen === 'zero' && <IntroScreen sendAdminMessage={sendAdminMessage} />}
