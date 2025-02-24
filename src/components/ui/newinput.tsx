@@ -12,7 +12,7 @@ export interface NewInputProps extends React.InputHTMLAttributes<HTMLInputElemen
   timeDelay?: number;
 }
 
-export default function NewInput({ 
+const NewInput = ({ 
   value, 
   useColor = false, 
   onValueChange, 
@@ -23,7 +23,7 @@ export default function NewInput({
   ref,
   timeDelay = 3000,
   ...props 
-}: NewInputProps) {
+}: NewInputProps) => {
   
   const NOT_ATTEMPTED = 'not_attempted';
   const ATTEMPTED = 'attempted';
@@ -109,4 +109,6 @@ export default function NewInput({
       {...props}
     />
   );
-}
+};
+
+export { NewInput };

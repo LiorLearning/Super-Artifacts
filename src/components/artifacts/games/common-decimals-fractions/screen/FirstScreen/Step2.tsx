@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useGameState } from '../../state-utils';
 import { BaseProps } from '../../utils/types';
 import NewKey from '../../components/newKey';
-import NewInput from '@/components/ui/newinput';
+import { NewInput } from '@/components/ui/newinput';
 import chest from '../../assets/chest-without-border.png';
 import background from '../../assets/bg-small-without-chest.png'
 
