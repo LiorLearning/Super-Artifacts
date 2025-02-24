@@ -6,7 +6,7 @@ import move from '../assets/move.gif'
 import bluebox from '../assets/bluebox.png'
 import orangebox from '../assets/orangebox.png'
 import sumbox from '../assets/sumbox.png'
-import NewInput from '@/components/ui/newinput';
+import { NewInput } from '@/components/ui/newinput';
 import { BaseProps } from '../utils/types';
 import { useGameState } from '../state-utils';
 import { goToStep } from '../utils/helper';

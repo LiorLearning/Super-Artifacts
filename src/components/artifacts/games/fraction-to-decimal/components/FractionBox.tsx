@@ -21,11 +21,13 @@ const FractionBox = ({
   correctdenominator
 }: FractionBoxProps) => {
   return (
-    <div className={`flex flex-col ${className}`}>
-      <div className="text-center mb-4">
-        <span className="text-xl bg-[#98FB98] shadow-[-5px_5px_0_0_rgba(0,0,0,1)] px-4 py-1">Fraction</span>
+    <div className={`flex flex-col items-center ${className}`}>
+      <div className="text-center mb-4 w-full">
+        <div className="flex justify-center">
+          <span className="text-xl bg-[#98FB98] shadow-[-5px_5px_0_0_rgba(0,0,0,1)] px-4 py-1">Fraction</span>
+        </div>
       </div>
-      <div className="border-2 border-black p-4 bg-white">
+      <div className="border-2 border-black p-4 bg-white flex justify-center items-center">
         <div className="flex flex-col items-center gap-1">
           <input
             type="text"

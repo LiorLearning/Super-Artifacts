@@ -2,7 +2,7 @@ import { BaseProps } from "../../utils/types";
 import practicebg from '../../assets/practicebg.png'
 import { useGameState } from "../../state-utils";
 import { useEffect, useRef, useState } from "react";
-import NewInput from "@/components/ui/newinput";
+import { NewInput } from "@/components/ui/newinput";
 import { goToScreen } from "../../utils/helper";
 import SuccessAnimation from "@/components/artifacts/utils/success-animate";
 
@@ -36,7 +36,7 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-hidden flex flex-col items-center gap-[2vh] justify-center" style={{ backgroundImage: `url('https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/multiplying-2-digits-by-1-digit-with-partial-products/practicebg.png')`, backgroundSize: '100% 100%', backgroundPosition: 'center' }}>
+    <div className="min-h-screen overflow-hidden flex flex-col items-center gap-[2vh] justify-center" style={{ backgroundImage: `url(${practicebg.src})`, backgroundSize: '100% 100%', backgroundPosition: 'center' }}>
 
       {showPopUp && <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center w-[74.5%]">
         <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"

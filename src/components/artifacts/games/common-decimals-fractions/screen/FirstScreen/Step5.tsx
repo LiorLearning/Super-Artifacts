@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGameState } from '../../state-utils';
 import { BaseProps } from '../../utils/types';
-import NewInput from '@/components/ui/newinput';
+import { NewInput } from '@/components/ui/newinput';
 import Chest from '../../assets/chest-with-border.png';
 import background from '../../assets/bg-big-without-chest.png'
 import yellowbar from '../../assets/yellow-key-bar.png'
