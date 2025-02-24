@@ -1,5 +1,5 @@
 import { BaseProps } from "../../utils/types";
-import practicebg from '../../assets/practicebg.png'
+import { images } from "../../assets/image";
 import { useGameState } from "../../state-utils";
 import { useEffect, useRef, useState } from "react";
 import { NewInput } from "@/components/ui/newinput";
@@ -36,7 +36,7 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-hidden flex flex-col items-center gap-[2vh] justify-center" style={{ backgroundImage: `url(${practicebg.src})`, backgroundSize: '100% 100%', backgroundPosition: 'center' }}>
+    <div className="min-h-screen overflow-hidden flex flex-col items-center gap-[2vh] justify-center" style={{ backgroundImage: `url(${images.practiceBg})`, backgroundSize: '100% 100%', backgroundPosition: 'center' }}>
 
       {showPopUp && <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center w-[74.5%]">
         <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
@@ -121,7 +121,7 @@ export default function FourthScreen({ sendAdminMessage }: BaseProps) {
         />
       </div>
 
-      {showSuccess && <SuccessAnimation/>}
+      {showSuccess && <SuccessAnimation />}
     </div>
   );
 }

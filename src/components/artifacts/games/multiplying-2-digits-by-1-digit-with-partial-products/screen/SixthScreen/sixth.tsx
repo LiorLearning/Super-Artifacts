@@ -1,5 +1,5 @@
 import { BaseProps } from "../../utils/types";
-import practicebg from '../../assets/practicebg.png'
+import { images } from "../../assets/image";
 import { useGameState } from "../../state-utils";
 import { useEffect, useRef, useState } from "react";
 import { NewInput } from "@/components/ui/newinput";
@@ -44,7 +44,7 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-hidden flex flex-col items-center gap-[2vh] justify-center" style={{ backgroundImage: `url(${practicebg.src})`, backgroundSize: '100% 100%', backgroundPosition: 'center' }}>
+    <div className="min-h-screen overflow-hidden flex flex-col items-center gap-[2vh] justify-center" style={{ backgroundImage: `url(${images.practiceBg})`, backgroundSize: '100% 100%', backgroundPosition: 'center' }}>
 
       {showPopUp && <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center w-[74.5%]">
         <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
@@ -92,7 +92,7 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
       <div className={`flex items-center justify-center gap-[2vh] ml-[15.5vh] leading-none text-center bg-white text-[5vh] p-[1.5vh] ${blurAns2 ? 'blur-[0.5vh]' : ''}`}>
         <NewInput
           value={ans2}
-          correctValue={(Number(number1.toString()[1]) * 10* number2).toString()}
+          correctValue={(Number(number1.toString()[1]) * 10 * number2).toString()}
           onValueChange={(value) => setAns2(value)}
           placeholder="?"
           className="w-[16vh] text-white placeholder:text-white border-none outline-none p-[1vh]   text-center text-[5vh] bg-[#0095b7]"
@@ -102,7 +102,7 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
             sendAdminMessage('agent', `User has entered ${attempt} which is wrong for ${parseInt(number1.toString()[1]) * 10} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
           }}
         />
-          {hint2 && <><div className="pl-[2.5vh]">{parseInt(number1.toString()[1]) * 10}</div>
+        {hint2 && <><div className="pl-[2.5vh]">{parseInt(number1.toString()[1]) * 10}</div>
           <div>x</div>
           <div>{number2}</div></>}
 

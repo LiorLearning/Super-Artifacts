@@ -1,10 +1,5 @@
 import { BaseProps } from "../../utils/types";
-import grass from '../../assets/grass.png';
-import tilohappy from '../../assets/tilohappy.png';
-import happy from '../../assets/happy.gif';
-import tiloshadow from '../../assets/tiloshadow.png';
-import boxshadow from '../../assets/boxshadow.png';
-import graybox from '../../assets/graybox.png';
+import { images } from "../../assets/image";
 import MultiplyBox from '../../components/multiplybox';
 import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
@@ -38,12 +33,12 @@ export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
 
       {showPopUp && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
         <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
-            onClick={() => {setShowPopUp(false); goToScreen('fourth', setGameStateRef);}}>
-            {'NEXT >>'}
-          </button>
+          onClick={() => { setShowPopUp(false); goToScreen('fourth', setGameStateRef); }}>
+          {'NEXT >>'}
+        </button>
       </div>}
       <div className="absolute w-full h-[25vh] z-10"
-        style={{ backgroundImage: `url(${grass.src})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
 
       <div className={`absolute ml-[10vw] max-w-[15vw] text-[1.6vw] -translate-y-[24vw] left-0 bg-white p-[1vw]  border-[0.1vw] border-black z-20 drop-shadow-lg transition-all duration-500`}>
@@ -51,15 +46,15 @@ export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
       </div>
 
       <div className="absolute left-0 translate-x-[8vw] -translate-y-[10vh] w-[14vw] h-[15vw] z-30"
-        style={{ backgroundImage: `url(${tilohappy.src})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${images.tiloHappy})`, backgroundSize: '100% 100%' }}>
       </div>
       <div className="absolute left-0 translate-x-[8vw] -translate-y-[9vw] w-[13vw] h-[13vw] z-30"
-        style={{ backgroundImage: `url(${happy.src})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${images.happyGif})`, backgroundSize: '100% 100%' }}>
       </div>
 
 
       <div className="absolute left-0 translate-x-[6vw] w-[15vw] h-[12vh] z-20"
-        style={{ backgroundImage: `url(${tiloshadow.src})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${images.tiloShadow})`, backgroundSize: '100% 100%' }}>
       </div>
 
       <div className="absolute z-10 w-full flex justify-center items-center gap-[2vw] -translate-y-[10vh] pl-[21vw]">
@@ -81,11 +76,11 @@ export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
         </div>
 
         <div className='text-[10vh] text-black'>=</div>
-        <div style={{ backgroundImage: `url(${graybox.src})`, backgroundSize: '100% 100%' }} className={`z-10 w-[8vw] h-[8vh] flex justify-center items-center pr-[0.9vw]`}>
+        <div style={{ backgroundImage: `url(${images.grayBox})`, backgroundSize: '100% 100%' }} className={`z-10 w-[8vw] h-[8vh] flex justify-center items-center pr-[0.9vw]`}>
           <span className='text-[4vh] text-black'>{number1 * number2}</span>
         </div>
       </div>
-      <div style={{ backgroundImage: `url(${boxshadow.src})`, backgroundSize: '100% 100%' }} className={`absolute z-10 translate-x-[1vw]  w-[14vw] h-[10vh]`}></div>
+      <div style={{ backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%' }} className={`absolute z-10 translate-x-[1vw]  w-[14vw] h-[10vh]`}></div>
     </div>
   )
 }
