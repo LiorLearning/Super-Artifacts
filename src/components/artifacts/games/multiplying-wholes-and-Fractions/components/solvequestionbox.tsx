@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import NewInput from '@/components/ui/newinput';
+import {NewInput} from '@/components/ui/newinput';
 import { BaseProps } from "../utils/types";
 
 interface SolveQuestionBoxProps extends BaseProps {

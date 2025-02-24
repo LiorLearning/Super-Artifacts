@@ -5,7 +5,7 @@ import StepCreateBox from "../../components/stepcreatebox";
 import { useGameState } from "../../state-utils";
 import SuccessAnimation from '@/components/artifacts/utils/success-animate';
 import { goToScreen } from "../../utils/helper";
-import NewInput from '@/components/ui/newinput';
+import {NewInput} from '@/components/ui/newinput';
 import { BaseProps } from "../../utils/types";
 import DropDown from "../../components/dropdown";
 import WrongPageProps from "../../components/wrongpage";
