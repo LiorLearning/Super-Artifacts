@@ -8,7 +8,7 @@ import MixedFractionGame from './games/add-and-subtract-mixed-numbers-without-re
 import LegoGame from './games/writing-improper-fractions-as-mixed-numbers/game';
 import CommonDenominatorGame from './games/common-denominators/game';
 import CompareFractionGame from './games/compare-fractions-with-different-numerator-and-denominator/game';
-import DecimalGame from './games/fraction-to-decimal/game';
+import DecimalGame from './games/write-fractions-as-decimals-denominators-of-10-100/game';
 import MixedFractionGameWithRegouping from './games/add-and-subtract-mixed-numbers-with-regouping/game';
 import MixedNumberToImproperFractionGame from './games/writing-mixed-numbers-as-improper-fractions/game';
 import MultiplyingWholesAndFractionsGame from './games/multiplying-wholes-and-Fractions/game';
@@ -27,7 +27,7 @@ import { initialGameState as equivalentFractionsGameInitialState } from './games
 import { initialGameState as legoGameInitialState } from './games/writing-improper-fractions-as-mixed-numbers/game-state';
 import { initialGameState as commonDenominatorGameInitialState } from './games/common-denominators/game-state';
 import { initialGameState as compareFractionGameInitialState } from './games/compare-fractions-with-different-numerator-and-denominator/game-state';
-import { initialGameState as decimalGameInitialState } from './games/fraction-to-decimal/game-state';
+import { initialGameState as decimalGameInitialState } from './games/write-fractions-as-decimals-denominators-of-10-100/game-state';
 import { initialGameState as mixedFractionGameWithRegoupingInitialState } from './games/add-and-subtract-mixed-numbers-with-regouping/game-state';
 import { initialGameState as mixedNumberToImproperFractionGameInitialState } from './games/writing-mixed-numbers-as-improper-fractions/game-state';
 import { initialGameState as multiplyingWholesAndFractionsGameInitialState } from './games/multiplying-wholes-and-Fractions/game-state';
@@ -46,7 +46,7 @@ import { GameStateProvider as LegoGameStateProvider, useGameState as LegoGameSta
 import { GameStateProvider as CommonDenominatorGameStateProvider, useGameState as CommonDenominatorGameState } from './games/common-denominators/state-utils'
 import { GameStateProvider as MixedFractionWithoutRegoupingGameStateProvider, useGameState as MixedFractionWithoutRegoupingGameState } from './games/add-and-subtract-mixed-numbers-without-regouping/state-utils'
 import { GameStateProvider as CompareFractionGameStateProvider, useGameState as CompareFractionGameState } from './games/compare-fractions-with-different-numerator-and-denominator/state-utils'
-import { GameStateProvider as DecimalGameStateProvider, useGameState as DecimalGameState } from './games/fraction-to-decimal/state-utils'
+import { GameStateProvider as DecimalGameStateProvider, useGameState as DecimalGameState } from './games/write-fractions-as-decimals-denominators-of-10-100/state-utils'
 import { GameStateProvider as MixedFractionWithRegoupingGameStateProvider, useGameState as MixedFractionWithRegoupingGameState } from './games/add-and-subtract-mixed-numbers-with-regouping/state-utils'
 import { GameStateProvider as MixedNumberToImproperFractionGameStateProvider, useGameState as MixedNumberToImproperFractionGameState } from './games/writing-mixed-numbers-as-improper-fractions/state-utils'
 import { GameStateProvider as MultiplyingWholesAndFractionsGameStateProvider, useGameState as MultiplyingWholesAndFractionsGameState } from './games/multiplying-wholes-and-Fractions/state-utils'
