@@ -1,8 +1,33 @@
 export const descriptions = [
   {
     title: 'zero',
-    oneliner: 'Introduction to fraction to decimal',
-    description: 'This screen introduces the concept of fraction to decimal using a visual fraction metaphor. It presents an initial fraction (e.g., 2/3) and asks students to think about how many pieces they would need out of a larger denominator (e.g., 6) to represent the same amount. The screen features a simple interface with the question and a "Let\'s find out" button to proceed to the interactive exercises.'
+    oneliner: 'Introduction to converting fractions to decimals',
+    description: 'This screen introduces students to the concept of converting fractions to decimals using visual representations. It presents a simple interface with an initial fraction and prompts students to think about how this fraction can be represented as a decimal. The screen features a "Let\'s Figure Out" button that leads to the interactive exercises.'
+  },
+  {
+    title: 'first',
+    oneliner: 'Convert visual fractions to decimals using chocolate bars',
+    description: 'Students work with a visual chocolate bar representation to understand how fractions convert to decimals. They can split and join chocolate pieces to create equal parts, select specific pieces, and learn how these selections translate to decimal notation. The interface guides students through the process of identifying whole numbers and decimal places, with immediate feedback on their inputs and interactive visual aids to reinforce the connection between fractions and decimals.'
+  },
+  {
+    title: 'second',
+    oneliner: 'Convert fractions to decimals with tenths',
+    description: 'This screen focuses on converting fractions with denominators of ten into decimals. Students work with visual representations and input fields for whole numbers and tenths. The interface provides immediate feedback on their answers and helps them understand the relationship between fractions and their decimal equivalents, particularly focusing on the tenths place value.'
+  },
+  {
+    title: 'third',
+    oneliner: 'Convert fractions to decimals with hundredths',
+    description: 'Students learn to convert fractions with denominators of hundred into decimals. The screen features a two-part exercise where students first work with visual representations to understand the concept, then practice converting given fractions to decimals. It includes input fields for whole numbers, tenths, and hundredths, with a hint system available for additional support.'
+  },
+  {
+    title: 'fourth',
+    oneliner: 'Convert decimals back to fractions',
+    description: 'This screen reverses the previous learning by having students convert decimals back to fractions. Students use visual aids and tools to understand how decimals can be represented as fractions. They use a knife selector tool to split representations into equal parts and learn how decimal numbers can be expressed as equivalent fractions.'
+  },
+  {
+    title: 'fifth',
+    oneliner: 'Master decimal and fraction conversions',
+    description: 'The final screen combines all previous learning objectives, having students work with both fraction-to-decimal and decimal-to-fraction conversions. Students demonstrate their understanding by completing conversion exercises in both directions, working with whole numbers, tenths, and hundredths. The screen provides immediate feedback and celebrates successful completion of the entire learning module.'
   }
 ];
 
@@ -125,4 +150,3 @@ export const initialGameState: GameState = {
     step: 0,
   },
 };
-
