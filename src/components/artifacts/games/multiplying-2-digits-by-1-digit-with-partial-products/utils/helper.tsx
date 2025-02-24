@@ -11,7 +11,9 @@ export const DevHelper = () => {
   const { step: step1 } = gameStateRef.current.state1;
   const { step: step2 } = gameStateRef.current.state2;
   const { step: step3 } = gameStateRef.current.state3;
-  // const { step: step4 } = gameStateRef.current.state4;
+  const { step: step4 } = gameStateRef.current.state4;
+  const { step: step5 } = gameStateRef.current.state5;
+  const { step: step6 } = gameStateRef.current.state6;
   const [directStep, setDirectStep] = useState('');
 
   const getCurrentStep = () => {
@@ -19,7 +21,9 @@ export const DevHelper = () => {
       case 'first': return step1;
       case 'second': return step2;
       case 'third': return step3;
-      // case 'fourth': return step4;
+      case 'fourth': return step4;
+      case 'fifth': return step5;
+      case 'sixth': return step6;
       default: return 0;
     }
   }
@@ -48,7 +52,9 @@ export const DevHelper = () => {
             <SelectItem value="first">First Screen</SelectItem>
             <SelectItem value="second">Second Screen</SelectItem>
             <SelectItem value="third">Third Screen</SelectItem>
-            {/* <SelectItem value="fourth">Fourth Screen</SelectItem> */}
+            <SelectItem value="fourth">Fourth Screen</SelectItem>
+            <SelectItem value="fifth">Fifth Screen</SelectItem>
+            <SelectItem value="sixth">Sixth Screen</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -85,9 +91,15 @@ export const nextStep = (
   else if (screen === 'third') {
     setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: prev.state3.step + 1 } }));
   } 
-  // else if(screen === 'fourth') {
-  //   setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: prev.state4.step + 1 } }));
-  // }
+  else if(screen === 'fourth') {
+    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: prev.state4.step + 1 } }));
+  }
+  else if (screen === 'fifth') {
+    setGameStateRef(prev => ({ ...prev, state5: { ...prev.state5, step: prev.state5.step + 1 } }));
+  }
+  else if (screen === 'sixth') {
+    setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: prev.state6.step + 1 } }));
+  }
 }
 
 export const goToStep = (
@@ -104,9 +116,15 @@ export const goToStep = (
   else if (screen === 'third') {
     setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step } }));
   } 
-  // else if(screen === 'fourth') {
-  //   setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step } }));
-  // }
+  else if(screen === 'fourth') {
+    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step } }));
+  }
+  else if (screen === 'fifth') {
+    setGameStateRef(prev => ({ ...prev, state5: { ...prev.state5, step } }));
+  }
+  else if (screen === 'sixth') {
+    setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step } }));
+  }
 }
 
 export const goToScreen = (
@@ -129,7 +147,13 @@ export const prevStep = (
   else if (screen === 'third') {
     setGameStateRef(prev => ({ ...prev, state3: { ...prev.state3, step: Math.max(prev.state3.step - 1, 0) } }));
   } 
-  // else if(screen === 'fourth') {
-  //   setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: Math.max(prev.state4.step - 1, 0) } }));
-  // } 
+  else if(screen === 'fourth') {
+    setGameStateRef(prev => ({ ...prev, state4: { ...prev.state4, step: Math.max(prev.state4.step - 1, 0) } }));
+  } 
+  else if (screen === 'fifth') {
+    setGameStateRef(prev => ({ ...prev, state5: { ...prev.state5, step: Math.max(prev.state5.step - 1, 0) } }));
+  }
+  else if (screen === 'sixth') {
+    setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: Math.max(prev.state6.step - 1, 0) } }));
+  }
 }

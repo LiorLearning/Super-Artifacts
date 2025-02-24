@@ -38,7 +38,7 @@ export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
 
       {showPopUp && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
         <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
-            onClick={() => {setShowPopUp(false);}}>
+            onClick={() => {setShowPopUp(false); goToScreen('fourth', setGameStateRef);}}>
             {'NEXT >>'}
           </button>
       </div>}

@@ -90,7 +90,7 @@ export default function MultiplyBox({
   }
 
   function handleSumIncorrect(attempt: string, correct: string) {
-    sendAdminMessage('admin', `User has entered wrong sum ${attempt}, the answer is ${correct}, the question is sum after partial product  ${((number1 % 10) * number2) + ((number1 - (number1 % 10)) * number2)}, diagnose socratically with respect to user's current game state`);
+    sendAdminMessage('admin', `User has entered wrong sum ${attempt}, the answer is ${correct}, the question is sum after partial product  ${number1} x ${number2}, diagnose socratically with respect to user's current game state`);
   }
 
   return (
