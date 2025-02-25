@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 const soundFiles = {
   bgm:'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/multiplying-2-digits-by-1-digit-with-partial-products/bgm.mp3',
   complete: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/multiplying-2-digits-by-1-digit-with-partial-products/complete.mp3',
@@ -14,40 +16,55 @@ const soundVolumes: { [key: string]: number } = {
   woosh: 1,
 };
 
+let bgmAudio: HTMLAudioElement;
 
-const bgmAudio = new Audio(soundFiles.bgm);
-bgmAudio.loop = true;
-bgmAudio.volume = soundVolumes.bgm;
+if (typeof window !== 'undefined') {
+  bgmAudio = new Audio(soundFiles.bgm);
+  bgmAudio.loop = true;
+  bgmAudio.volume = soundVolumes.bgm;
+}
 
 export const sounds = {
   bgm: () => {
-    const playPromise = bgmAudio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(e => console.log('Audio play failed:', e));
+    if (typeof window !== 'undefined') {
+      const playPromise = bgmAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(e => console.log('Audio play failed:', e));
+      }
     }
   },
   stopBgm: () => {
-    bgmAudio.pause();
-    bgmAudio.currentTime = 0;
+    if (typeof window !== 'undefined') {
+      bgmAudio.pause();
+      bgmAudio.currentTime = 0;
+    }
   },
   complete: () => {
-    const audio = new Audio(soundFiles.complete);
-    audio.volume = soundVolumes.complete;
-    audio.play().catch(e => console.log('Audio play failed:', e));
+    if (typeof window !== 'undefined') {
+      const audio = new Audio(soundFiles.complete);
+      audio.volume = soundVolumes.complete;
+      audio.play().catch(e => console.log('Audio play failed:', e));
+    }
   },  
   right: () => {
-    const audio = new Audio(soundFiles.right);
-    audio.volume = soundVolumes.right;
-    audio.play().catch(e => console.log('Audio play failed:', e));
+    if (typeof window !== 'undefined') {
+      const audio = new Audio(soundFiles.right);
+      audio.volume = soundVolumes.right;
+      audio.play().catch(e => console.log('Audio play failed:', e));
+    }
   },
   wrong: () => {
-    const audio = new Audio(soundFiles.wrong);  
-    audio.volume = soundVolumes.wrong;
-    audio.play().catch(e => console.log('Audio play failed:', e));
+    if (typeof window !== 'undefined') {
+      const audio = new Audio(soundFiles.wrong);  
+      audio.volume = soundVolumes.wrong;
+      audio.play().catch(e => console.log('Audio play failed:', e));
+    }
   },
   woosh: () => {
-    const audio = new Audio(soundFiles.woosh);
-    audio.volume = soundVolumes.woosh;
-    audio.play().catch(e => console.log('Audio play failed:', e));
+    if (typeof window !== 'undefined') {
+      const audio = new Audio(soundFiles.woosh);
+      audio.volume = soundVolumes.woosh;
+      audio.play().catch(e => console.log('Audio play failed:', e));
+    }
   }
 }; 
