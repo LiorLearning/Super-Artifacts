@@ -8,7 +8,8 @@ import FifthScreen from './screen/FifthScreen/fifth';
 import SixthScreen from './screen/SixthScreen/sixth';
 import { useGameState } from './state-utils';
 import { DevHelper } from './utils/helper';
-
+import { sounds } from './utils/sound';
+import { preloadAssets } from './utils/preloader';
 
 interface GameProps {
   sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string>;
@@ -24,14 +25,28 @@ export default function Game({sendAdminMessage}: GameProps) {
   const { step: step5 } = gameStateRef.current.state5;
   const { step: step6 } = gameStateRef.current.state6;
   
-  
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  
+  const hasGameStartedRef = useRef(false);
+  
+  useEffect(() => {
+    if (!hasGameStartedRef.current) {
+      hasGameStartedRef.current = true;
+      
+    }
+  }, []);
+
+  useEffect(() => {
+    preloadAssets();
+    console.log('--------------------------------');
+  }, []);
+
 
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [step1, step2]);
+  }, [step1, step2, step3, step4, step5, step6, screen]);
 
   return (
     <div className="mx-auto game font-jersey">

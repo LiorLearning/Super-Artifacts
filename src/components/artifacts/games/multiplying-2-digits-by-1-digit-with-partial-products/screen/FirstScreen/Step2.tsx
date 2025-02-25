@@ -1,14 +1,10 @@
 import { BaseProps } from "../../utils/types";
-import grass from "../../assets/grass.png"
-import tilo from "../../assets/tilohappy.png"
-import tiloshadow from "../../assets/tiloshadow.png"
-import boxshadow from "../../assets/boxshadow.png"
-import blue from "../../assets/blue.png"
+import { images } from "../../utils/image";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToScreen, goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
-
+import { sounds } from "../../utils/sound";
 
 export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -18,14 +14,13 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const [isMovingLeft, setIsMovingLeft] = useState(false);
   const [showColumn, setShowColumn] = useState(false);
   const [showRow, setShowRow] = useState(false);
-  const [nextStep, setNextStep] = useState(false);
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent', `Let's start by helping Tilo visualize ${number1} times ${number2}`);
-
       setTimeout(() => {
+        sounds.woosh();
         setIsMovingLeft(true);
       }, 3000);
     }
@@ -57,7 +52,7 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
 
       <div className="absolute w-full h-[25vh] z-10"
-        style={{ backgroundImage: `url(${grass.src})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
 
       <div className={`absolute ml-[10vw] max-w-[15vw] text-[1.6vw] -translate-y-[24vw] left-0 bg-white p-[1vw] border-[0.1vw] border-black z-20 drop-shadow-lg transition-all duration-500 ${!showColumn && !showRow ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
@@ -91,21 +86,21 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
             style={{ width: `${number2 * 2.5 + 1.5}vh` }}>
           </div>
 
-          <div style={{height: `${number1 * 2.6 + 1.5}vh`}} className={`absolute flex items-center justify-center transition-all duration-200 ${showColumn ? 'opacity-100' : 'opacity-0 translate-x-[10vh]'}`}>
+          <div style={{ height: `${number1 * 2.6 + 1.5}vh` }} className={`absolute flex items-center justify-center transition-all duration-200 ${showColumn ? 'opacity-100' : 'opacity-0 translate-x-[10vh]'}`}>
             <div className="absolute w-[10vh] h-[7vh] text-[4vh] text-black pr-[3.2vh] text-center  pt-[0.6vh] z-10 -translate-x-[6vh]"
-              style={{ backgroundImage: `url(${blue.src})`, backgroundSize: '100% 100%' }}>
+              style={{ backgroundImage: `url(${images.blue})`, backgroundSize: '100% 100%' }}>
               {number1}
             </div>
           </div>
 
-          <div style={{width: `${number2 * 2.6 + 1.5}vh`}} className={`absolute flex items-center justify-center transition-all duration-200 ${showRow ? 'opacity-100' : 'opacity-0 translate-y-[10vh]'}`}>
+          <div style={{ width: `${number2 * 2.6 + 1.5}vh` }} className={`absolute flex items-center justify-center transition-all duration-200 ${showRow ? 'opacity-100' : 'opacity-0 translate-y-[10vh]'}`}>
             <div className="absolute w-[10vh] rotate-90 h-[7vh] text-[4vh] text-black text-center z-10 -translate-x-[1vh] -translate-y-[9vh]"
-              style={{ backgroundImage: `url(${blue.src})`, backgroundSize: '100% 100%' }}>
+              style={{ backgroundImage: `url(${images.blue})`, backgroundSize: '100% 100%' }}>
             </div>
             <span className="text-[4vh] text-black h-[6vh] w-[6vh] text-center z-10 -translate-x-[1vh] -translate-y-[10.5vh]">{number2}</span>
           </div>
-          
-          <div style={{backgroundImage: `url(${boxshadow.src})`, backgroundSize: '100% 100%'}} className={`absolute -translate-x-[10vh] translate-y-[11.5vh]  bottom-0 w-[41vh] h-[10vh]`}></div>
+
+          <div style={{ backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%' }} className={`absolute -translate-x-[9vh] translate-y-[11.5vh]  bottom-0 w-[38vh] h-[10vh]`}></div>
 
 
           <div className={`h-fit grid grid-cols-11 gap-[0.5vh] rounded-lg transition-all duration-500`}>
@@ -113,14 +108,13 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
               Array.from({ length: 11 }, (_, colIndex) => (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className={`aspect-square rounded-sm transition-colors w-[2vh] h-[2vh] duration-200 ${
-                    colIndex < number2 && rowIndex < number1 ? 
-                      showColumn ? 
-                        colIndex === 0 ? 'bg-[#40E0D0]' : 
-                        showRow ? 'bg-[#40E0D0]' : 'bg-[#4c757b]'
+                  className={`aspect-square rounded-sm transition-colors w-[2vh] h-[2vh] duration-200 ${colIndex < number2 && rowIndex < number1 ?
+                      showColumn ?
+                        colIndex === 0 ? 'bg-[#40E0D0]' :
+                          showRow ? 'bg-[#40E0D0]' : 'bg-[#4c757b]'
+                        : 'bg-[#4c757b]'
                       : 'bg-[#4c757b]'
-                    : 'bg-[#4c757b]'
-                  }`}
+                    }`}
                 />
               ))
             ))}
@@ -129,10 +123,10 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
       </div>
 
       <div className="absolute left-0 -translate-y-[10vh] w-[14vw] h-[15vw] translate-x-[8vw] z-30"
-        style={{ backgroundImage: `url(${tilo.src})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${images.tiloHappy})`, backgroundSize: '100% 100%' }}>
       </div>
       <div className="absolute left-0 w-[15vw] h-[12vh] z-20 translate-x-[6vw]"
-        style={{ backgroundImage: `url(${tiloshadow.src})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${images.tiloShadow})`, backgroundSize: '100% 100%' }}>
       </div>
     </div>
   )
