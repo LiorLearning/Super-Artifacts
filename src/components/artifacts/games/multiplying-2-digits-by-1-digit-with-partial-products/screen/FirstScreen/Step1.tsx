@@ -11,6 +11,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
   const [transition, setTransition] = useState(false);
   const [nextSentence, setNextSentence] = useState(false);
   const hasGameStartedRef = useRef(false);
+  
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
@@ -29,9 +30,10 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
 
   useEffect(() => {
     if (nextSentence) {
+      sendAdminMessage('agent', `Tilo has something that can make it easier for us to multiply ${number1} and ${number2}`);
       setTimeout(() => {
         goToStep('first', setGameStateRef, 2);
-      }, 5000);
+      }, 8000);
     }
   }, [nextSentence]);
 

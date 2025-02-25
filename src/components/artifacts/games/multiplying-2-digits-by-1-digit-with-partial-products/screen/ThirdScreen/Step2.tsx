@@ -52,7 +52,7 @@ export default function Screen3Step2({ sendAdminMessage, sliderValue, setSliderV
       <div className="absolute z-20 translate-x-[6vw] -translate-y-[10vh]">
         <MultiplyBox number1={number1} number2={number2} sliderValue={sliderValue} setSliderValue={setSliderValue} short={true} onCorrect={onCorrect} fixColorNotRed={true} stepSum={true} sendAdminMessage={sendAdminMessage} />
       </div>
-      <div style={{ backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%' }} className={`absolute z-10 translate-x-[1vw]  w-[18vw] h-[10vh]`}></div>
+      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%'}} className={`absolute z-10 translate-x-[2.5vw]  w-[25vw] h-[10vh]`}></div>
     </div>
   )
 }

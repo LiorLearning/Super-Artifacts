@@ -79,7 +79,7 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
           ref={ans1Ref}
           onCorrect={() => { setBlurAns2(false); ans2Ref.current?.focus(); sounds.right(); }}
           onIncorrect={(attempt, correct) => {
-            sounds.wrong();
+            sounds.wronginput();
             sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${parseInt(number1.toString()[0]) * 100} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
           }}
         />
@@ -101,7 +101,7 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
           ref={ans2Ref}
           onCorrect={() => { setBlurAns3(false); ans3Ref.current?.focus(); sounds.right(); }}
           onIncorrect={(attempt, correct) => {
-            sounds.wrong();
+            sounds.wronginput();
             sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${parseInt(number1.toString()[1]) * 10} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
           }}
         />
@@ -130,7 +130,7 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
               sendAdminMessage('agent', `Perfect, now that we have the partial products, let's add them`);
             }}
             onIncorrect={(attempt, correct) => {
-              sounds.wrong();
+              sounds.wronginput();
               sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${(number1 % 10)} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
             }}
           />
@@ -159,7 +159,7 @@ export default function SixthScreen({ sendAdminMessage }: BaseProps) {
             sounds.stopBgm();
           }}
           onIncorrect={(attempt, correct) => {
-            sounds.wrong();
+            sounds.wronginput();
             sendAdminMessage('admin', `User has entered wrong sum ${attempt}, the answer is ${correct}, the question is sum after partial product  ${number1} x ${number2}, diagnose socratically with respect to user's current game state`);
           }}
         />

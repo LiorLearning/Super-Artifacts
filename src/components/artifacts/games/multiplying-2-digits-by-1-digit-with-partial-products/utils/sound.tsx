@@ -6,6 +6,7 @@ export const soundFiles = {
   right: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/multiplying-2-digits-by-1-digit-with-partial-products/right.mp3',
   wrong: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/multiplying-2-digits-by-1-digit-with-partial-products/wrong.mp3',
   woosh: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/multiplying-2-digits-by-1-digit-with-partial-products/woosh.mp3',
+  wronginput: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/multiplying-2-digits-by-1-digit-with-partial-products/wronginput.mp3',
 };
 
 const soundVolumes: { [key: string]: number } = {
@@ -13,7 +14,8 @@ const soundVolumes: { [key: string]: number } = {
   complete: 1,
   right: 1, 
   wrong: 1,
-  woosh: 1,
+  woosh: 1, 
+  wronginput: 1,
 };
 
 let bgmAudio: HTMLAudioElement;
@@ -64,6 +66,13 @@ export const sounds = {
     if (typeof window !== 'undefined') {
       const audio = new Audio(soundFiles.woosh);
       audio.volume = soundVolumes.woosh;
+      audio.play().catch(e => console.log('Audio play failed:', e));
+    }
+  },
+  wronginput: () => {
+    if (typeof window !== 'undefined') {
+      const audio = new Audio(soundFiles.wronginput);
+      audio.volume = soundVolumes.wronginput;
       audio.play().catch(e => console.log('Audio play failed:', e));
     }
   }

@@ -18,7 +18,7 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
-      sendAdminMessage('agent', `Let's start by helping Tilo visualize ${number1} times ${number2}`);
+      sendAdminMessage('agent', `Let's start by helping Tilo visualize ${number1} times ${number2} on the tile board`);
       setTimeout(() => {
         sounds.woosh();
         setIsMovingLeft(true);
@@ -100,12 +100,12 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
             <span className="text-[4vh] text-black h-[6vh] w-[6vh] text-center z-10 -translate-x-[1vh] -translate-y-[10.5vh]">{number2}</span>
           </div>
 
-          <div style={{ backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%' }} className={`absolute -translate-x-[9vh] translate-y-[11.5vh]  bottom-0 w-[38vh] h-[10vh]`}></div>
+          <div style={{ backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%' }} className={`absolute -translate-x-[9vh] translate-y-[11.5vh]  bottom-0 w-[33vh] h-[10vh]`}></div>
 
 
-          <div className={`h-fit grid grid-cols-11 gap-[0.5vh] rounded-lg transition-all duration-500`}>
+          <div className={`h-fit grid grid-cols-9 gap-[0.5vh] rounded-lg transition-all duration-500`}>
             {Array.from({ length: number1 }, (_, rowIndex) => (
-              Array.from({ length: 11 }, (_, colIndex) => (
+              Array.from({ length:9 }, (_, colIndex) => (
                 <div
                   key={`${rowIndex}-${colIndex}`}
                   className={`aspect-square rounded-sm transition-colors w-[2vh] h-[2vh] duration-200 ${colIndex < number2 && rowIndex < number1 ?
