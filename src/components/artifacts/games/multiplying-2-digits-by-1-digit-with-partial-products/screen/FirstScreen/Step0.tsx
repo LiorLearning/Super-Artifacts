@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
-import { narrations } from "../../narrations";
+import { narrations } from "../../narrations";  
 
 
 export default function Screen1Step0({sendAdminMessage}: BaseProps) {

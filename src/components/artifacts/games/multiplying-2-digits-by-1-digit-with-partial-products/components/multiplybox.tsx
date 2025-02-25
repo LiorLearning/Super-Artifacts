@@ -77,7 +77,7 @@ export default function MultiplyBox({
   }
 
   function handleInputIncorrect(type: 'first' | 'second', attempt: string, correct: string) {
-    sounds.wrong();
+    sounds.wronginput();
     if (type === 'first') {
       sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${sliderValue} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
     } else if (type === 'second') {
@@ -93,15 +93,15 @@ export default function MultiplyBox({
   }
 
   function handleSumIncorrect(attempt: string, correct: string) {
-    sounds.wrong();
+    sounds.wronginput();
     sendAdminMessage('admin', `User has entered wrong sum ${attempt}, the answer is ${correct}, the question is sum after partial product  ${number1} x ${number2}, diagnose socratically with respect to user's current game state`);
   }
 
   return (
     <div className="flex w-[50vh]">
       <div className={`flex flex-col items-center justify-start ${transition ? 'transition-all duration-1000 opacity-100' : 'opacity-0 translate-x-[10vh]'}`}>
-        <button onClick={handleFIX} className={`${fixColorNotRed ? 'bg-[#c8c8c8] border-[#707070]' : 'bg-[#f00004] border-[#a70003]'}  text-[3vh] border-t-[0.7vh] border-x-[1.2vh]  px-[2vh] mx-[3vh] mt-[4vh] text-white -translate-x-[4vh]`}>
-          FIX
+        <button onClick={handleFIX} className={`${fixColorNotRed ? 'bg-[#c8c8c8] border-[#707070]' : 'bg-[#f00004] border-[#a70003]'}  text-[2.7vh] border-t-[0.7vh] border-x-[1.2vh]  px-[1.5vh] mx-[3vh] mt-[4vh] text-white -translate-x-[4vh]`}>
+          STOP
         </button>
 
         <div className={`bg-white border-[1.5vh] border-[#006379] rounded-[3vh] w-[25vh] flex items-center justify-center p-[2vh] pl-[5vh]`}
@@ -124,13 +124,7 @@ export default function MultiplyBox({
 
           {stepPartialProduct && <div className={`relative h-full flex flex-col items-center justify-start z-20`}
             style={{
-              transform: `translateX(${number2 <= 4 ? 35.7 :
-                number2 === 5 ? 36.5 :
-                  number2 === 6 ? 39 :
-                    number2 === 7 ? 41.5 :
-                      number2 === 8 ? 44 :
-                        46.5
-                }vh)`
+              transform: `translateX(46.5vh)`
             }}>
             <div style={{ height: `${(sliderValue / number1) * 100}%` }} className='flex items-center justify-center'>
               {sliderValue !== 0 && <div style={{ backgroundImage: `url(${images.orangeBox})`, backgroundSize: '100% 100%' }} className='absolute text-black flex items-center justify-center gap-[0.7vh] w-[20vh] h-[7vh] text-[3vh] pb-[0.5vh] text-center z-10 -translate-x-[7vh]'>
@@ -174,13 +168,7 @@ export default function MultiplyBox({
 
           {stepSilder && <div className={`relative h-full flex flex-col items-center justify-start z-20`}
             style={{
-              transform: `translateX(${number2 <= 4 ? 33.4 :
-                number2 === 5 ? 34.1 :
-                  number2 === 6 ? 36.6 :
-                    number2 === 7 ? 39.1 :
-                      number2 === 8 ? 41.6 :
-                        44.1
-                }vh)`
+              transform: `translateX(44.1vh)`
             }}>
             <div style={{ height: `${(sliderValue / number1) * 100}%` }} className='flex items-center justify-center'>
               {sliderValue !== 0 && <div style={{ backgroundImage: `url(${images.orangeBox})`, backgroundSize: '100% 100%' }} className='absolute text-black flex items-center justify-center gap-[0.7vh] w-[15vh] h-[7vh] text-[3vh] pb-[0.5vh] text-center z-10 -translate-x-[7vh]'>
@@ -202,13 +190,7 @@ export default function MultiplyBox({
           {stepSum && <div className={`relative h-full flex flex-col items-center justify-start z-20`}>
             <div style={{
               backgroundImage: `url(${images.sumBox})`, backgroundSize: '100% 100%',
-              transform: `translateX(${number2 <= 4 ? 35.7 :
-                number2 === 5 ? 36.5 :
-                  number2 === 6 ? 39 :
-                    number2 === 7 ? 41.5 :
-                      number2 === 8 ? 44 :
-                        46.5
-                }vh)`,
+              transform: `translateX(44.1vh)`,
               
             }} className={`absolute text-[4vh] w-[20vh] h-[30vh] text-black flex flex-col items-center justify-start pl-[2vh] pt-[2.6vh] gap-[2.5vh] z-10`}>
               <h1 className='text-[#ed7708]'>{sliderValue * number2}</h1>
@@ -279,10 +261,10 @@ export default function MultiplyBox({
           {number1} x {number2}
         </div>
         <div className={`h-fit grid gap-[0.5vh] rounded-lg`}
-          style={{ gridTemplateColumns: `repeat(${number2}, minmax(0, 1fr))` }}
+          style={{ gridTemplateColumns: `repeat(9, minmax(0, 1fr))` }}
         >
           {Array.from({ length: number1 }, (_, rowIndex) => (
-            Array.from({ length: number2 }, (_, colIndex) => (
+            Array.from({ length: 9 }, (_, colIndex) => (
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className={`aspect-square rounded-sm transition-colors w-[2vh] h-[2vh] duration-200

@@ -44,7 +44,7 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
   }, [isDragging, isCorrect])
 
   function onCorrect() {
-    sendAdminMessage('agent', `Awesome, ${number1} x ${number2} is same as ${number1 - unit} times ${number2} and ${number1} times ${number2}`);
+    sendAdminMessage('agent', `Awesome, ${number1} x ${number2} is same as ${number1 - unit} times ${number2} and ${number1 % 10} times ${number2}`);
     setIsCorrect(true);
     setTimeout(() => {
       goToStep('second', setGameStateRef, 1);
@@ -52,7 +52,7 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
   }
 
   function onIncorrect() {
-    sendAdminMessage('agent', `Tilo still looks confused. Let's try a different combination.`);
+    sendAdminMessage('agent', `Tilo still looks confused. ${number1 - sliderValue > sliderValue ? number1 - sliderValue : sliderValue} x ${number2} is too tough to calculate. Maybe try breaking it into tens and ones?`);
     setIsCorrect(false);
     setIsLost(true);
   }
@@ -62,10 +62,10 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
       {showPopUp && !isCorrect && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
         <div className="z-50 flex flex-col items-center justify-center gap-[1vh] content-center w-[65vh] px-[2vw] py-[2vh] bg-white border-[1.5vh] border-[#007179] rounded-[5vh]">
           <div className="text-[4vh]">
-            Click on <span className="bg-[#f00004] text-[3vh] border-[0.7vh] border-[#a70003] px-[2vh] py-[0.7vh] mx-[2vh] mt-[4vh] text-white -translate-x-[4vh]">FIX</span> when you want to
+            Click on <span className="bg-[#f00004] text-[2.5vh] border-[0.7vh] border-[#a70003] px-[2vh] py-[0.7vh] mx-[1vh] mt-[4vh] text-white -translate-x-[4vh]">STOP</span> when you want to
           </div>
           <div className="text-[4vh]">
-            fix the slider..
+            stop the slider..
           </div>
 
           <button className="bg-[#007179] mt-[3vh] text-white text-[2.5vh] py-[1vh] px-[3vh] rounded-[6vh]"
@@ -115,7 +115,7 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
         />
       </div>
       
-      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%'}} className={`absolute z-10 translate-x-[10vw]  w-[9vw] h-[10vh]`}></div>
+      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%'}} className={`absolute z-10 translate-x-[12vw]  w-[16vw] h-[10vh]`}></div>
       <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%'}} className={`absolute z-10 translate-x-[14vw]  w-[17vw] h-[10vh] transition-all duration-1000 ${transition ? 'translate-x-[5vw] opacity-100' : 'translate-x-[18vw] opacity-0'}`}></div>
     </div>
   )
