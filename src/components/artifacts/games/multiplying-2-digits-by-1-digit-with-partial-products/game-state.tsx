@@ -9,20 +9,35 @@ interface Description {
 export const descriptions: Description[] = [
   {
     title: 'first',
-    oneliner: 'Changelog',
-    description: 'Track all changes and feature additions'
+    oneliner: 'Meet Tilo and the Multiplying Board',
+    description: 'Welcome to multiplication with partial products! Meet Tilo, your friendly guide who will introduce you to the multiplying tile board. This interactive board will help you understand how to break down 2-digit by 1-digit multiplication into smaller, manageable steps using partial products method.'
   },
   {
     title: 'second',
-    oneliner: 'First screen',
-    description: 'First screen description'
+    oneliner: 'Learn Partial Products with Tile Board',
+    description: 'Practice multiplying a two-digit number by a one-digit number using the multiplying tile board. Use the slider to split the two-digit number into tens and ones. Then multiply each part separately to find partial products. The board will help you visualize how breaking down numbers makes multiplication easier.'
   },
   {
     title: 'third',
-    oneliner: 'Second screen',
-    description: 'Second screen description'
+    oneliner: 'Master Tile Board Multiplication',
+    description: 'Continue practicing with the multiplying tile board using new numbers. Split the two-digit number into tens and ones using the slider, then find partial products. The visual board helps reinforce how breaking down numbers into parts makes multiplication more manageable.'
+  },
+  {
+    title: 'fourth',
+    oneliner: 'Begin Abstract Multiplication',
+    description: 'Now try solving without the tile board! Apply what you learned about partial products in a more abstract way. Break down the two-digit number into tens and ones, multiply each part, and add the results. This helps transition from concrete visual aids to mental math strategies.'
+  },
+  {
+    title: 'fifth',
+    oneliner: 'Practice Abstract Multiplication',
+    description: 'Continue practicing the partial products method abstractly with new numbers. Split the two-digit number into tens and ones, multiply each part, and combine the results. This reinforces your understanding of breaking down larger multiplication problems into simpler calculations.'
+  },
+  {
+    title: 'sixth',
+    oneliner: 'Advanced Multiplication Challenge',
+    description: 'Take on a bigger challenge with larger numbers! Use the partial products strategy to break down this multiplication. Split the number into hundreds, tens, and ones, multiply each part, and add the results. This final exercise solidifies your mastery of the partial products method.'
   }
-]
+];
 
 interface State1 {
   step: number;
