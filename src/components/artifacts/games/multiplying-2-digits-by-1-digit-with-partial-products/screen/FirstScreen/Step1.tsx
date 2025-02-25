@@ -15,6 +15,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
+      sounds.bgm();
       setTimeout(() => {
         setTransition(true);
         sounds.woosh();

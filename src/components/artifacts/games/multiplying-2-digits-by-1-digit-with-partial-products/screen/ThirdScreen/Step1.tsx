@@ -43,7 +43,7 @@ export default function Screen3Step1({ sendAdminMessage, sliderValue, setSliderV
       </div>
 
       <div className="absolute left-0 translate-x-[8vw] -translate-y-[10vh] w-[14vw] h-[15vw] z-30"
-        style={{ backgroundImage: `url(${images.tiloHappy})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${images.tilo})`, backgroundSize: '100% 100%' }}>
       </div>
 
 

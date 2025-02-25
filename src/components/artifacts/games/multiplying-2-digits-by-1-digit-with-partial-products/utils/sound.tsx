@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const soundFiles = {
+export const soundFiles = {
   bgm:'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/multiplying-2-digits-by-1-digit-with-partial-products/bgm.mp3',
   complete: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/multiplying-2-digits-by-1-digit-with-partial-products/complete.mp3',
   right: 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/sound/multiplying-2-digits-by-1-digit-with-partial-products/right.mp3',

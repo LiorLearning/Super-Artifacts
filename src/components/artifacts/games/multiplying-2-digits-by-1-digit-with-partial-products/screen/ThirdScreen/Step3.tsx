@@ -19,6 +19,7 @@ export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent', `You got the answer, ${number1} times ${number2} is ${number1 * number2}!`);
       setTimeout(() => {
+        sendAdminMessage('agent', `Let's practice with some more problems!`);
         setShowPopUp(true);
       }, 5000);
     }
