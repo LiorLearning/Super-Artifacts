@@ -6,9 +6,12 @@ import { useRef, useEffect, useState } from "react";
 import { goToScreen, goToStep } from "../../utils/helper";
 
 
-export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
+export default function Screen4Step3({ sendAdminMessage }: BaseProps) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
+  const [showPopUp, setShowPopUp] = useState(false);
+
+
   const hasGameStartedRef = useRef(false);
 
   useEffect(() => {
@@ -16,17 +19,25 @@ export default function Screen3Step3({ sendAdminMessage }: BaseProps) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent', `You got the answer, ${number1} times ${number2} is ${number1 * number2}!`);
       setTimeout(() => {
-        goToScreen('fourth', setGameStateRef);
+        sendAdminMessage('agent', `Let's practice with some more problems!`);
+        setShowPopUp(true);
       }, 5000);
     }
   }, []);
 
-  const number1 = gameStateRef.current.state3.number1;
-  const number2 = gameStateRef.current.state3.number2;
+  const number1 = gameStateRef.current.state4.number1;
+  const number2 = gameStateRef.current.state4.number2;
 
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
 
+
+      {showPopUp && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
+        <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
+          onClick={() => { setShowPopUp(false); goToScreen('fifth', setGameStateRef); }}>
+          {'NEXT >>'}
+        </button>
+      </div>}
       <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
