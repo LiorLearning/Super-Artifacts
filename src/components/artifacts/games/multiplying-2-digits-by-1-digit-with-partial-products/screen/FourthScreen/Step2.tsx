@@ -5,12 +5,12 @@ import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
 import { goToStep } from "../../utils/helper";
 
-interface Screen3Step2Props extends BaseProps {
+interface Screen4Step2Props extends BaseProps {
   sliderValue: number;
   setSliderValue: (sliderValue: number) => void;
 }
 
-export default function Screen3Step2({ sendAdminMessage, sliderValue, setSliderValue }: Screen3Step2Props) {
+export default function Screen4Step2({ sendAdminMessage, sliderValue, setSliderValue }: Screen4Step2Props) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
@@ -22,11 +22,11 @@ export default function Screen3Step2({ sendAdminMessage, sliderValue, setSliderV
     }
   }, []);
 
-  const number1 = gameStateRef.current.state3.number1;
-  const number2 = gameStateRef.current.state3.number2;
+  const number1 = gameStateRef.current.state4.number1;
+  const number2 = gameStateRef.current.state4.number2;
 
   function onCorrect() {
-    goToStep('third', setGameStateRef, 3);
+    goToStep('fourth', setGameStateRef, 3);
   }
 
   return (

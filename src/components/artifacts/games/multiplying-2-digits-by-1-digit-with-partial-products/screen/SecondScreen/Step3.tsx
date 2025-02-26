@@ -18,9 +18,12 @@ export default function Screen3Step2({ sendAdminMessage }: BaseProps) {
       hasGameStartedRef.current = true;
       sendAdminMessage('agent', `You got the answer, ${number1} times ${number2} is ${number1 * number2}!`);
       setTimeout(() => {
-        sendAdminMessage('agent', `Ready to do one more problem using the tile board?`);
-        setShowPopUp(true);
-      }, 5000);
+        sendAdminMessage('agent', `Ready to do some more problem using the tile board?`);
+        setTimeout(() => {
+          goToScreen('third', setGameStateRef);
+        }, 5000)
+
+      }, 5000)
     }
   }, []);
 
@@ -30,18 +33,6 @@ export default function Screen3Step2({ sendAdminMessage }: BaseProps) {
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
 
-
-      {showPopUp && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
-        <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
-          onClick={() => { 
-            setShowPopUp(false); 
-            setTimeout(() => {
-              goToScreen('third', setGameStateRef);
-            }, 1000);
-          }}>
-          {'NEXT >>'}
-        </button>
-      </div>}
       <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>

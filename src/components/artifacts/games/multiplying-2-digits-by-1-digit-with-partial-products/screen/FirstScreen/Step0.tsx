@@ -35,11 +35,11 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
 
-      <div className={`flex flex-col items-center justify-center gap-[4vh] z-50 my-auto pb-[10vh] transition-all duration-500 ${isMovingUp ? 'transform -translate-y-[20vh] opacity-0' : ''}`}>
+      <div className={`flex flex-col items-center justify-center gap-[4vh] z-20 my-auto pb-[10vh] transition-all duration-500 ${isMovingUp ? 'transform -translate-y-[20vh] opacity-0' : ''}`}>
         <div className="flex items-center justify-center text-center gap-[2vh]">
-          <h1 className="leading-none w-[12vh] py-[2vh] bg-white text-[#003a43] text-[6vh] rounded-[4vh] shadow-xl drop-shadow-lg">23</h1>
+          <h1 className="leading-none w-[12vh] py-[2vh] bg-white text-[#003a43] text-[6vh] rounded-[4vh] shadow-xl drop-shadow-lg">{number1}</h1>
           <h1 className="leading-none text-[#003a43] text-[7vh] drop-shadow-lg">x</h1>
-          <h1 className="leading-none w-[12vh] text-center py-[2vh] bg-white text-[#003a43] text-[6vh] rounded-[4vh] shadow-xl drop-shadow-lg">4</h1>
+          <h1 className="leading-none w-[12vh] text-center py-[2vh] bg-white text-[#003a43] text-[6vh] rounded-[4vh] shadow-xl drop-shadow-lg">{number2}</h1>
         </div>
 
         <button 
