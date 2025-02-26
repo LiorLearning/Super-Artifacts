@@ -52,7 +52,7 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
   }
 
   function onIncorrect() {
-    sendAdminMessage('agent', `Tilo still looks confused. ${number1 - sliderValue > sliderValue ? number1 - sliderValue : sliderValue} x ${number2} is too tough to calculate. Maybe try breaking it into tens and ones?`);
+    sendAdminMessage('admin', `User has splited ${number1} into ${sliderValue} and ${number1 - sliderValue}, the correct split is ${number1 % 10} and ${Math.floor(number1 / 10)}, the question is ${number1} x ${number2} partial product, correct the user's mistake and tell the user to split the number into tens and ones if user is not able to do it after first wrong attempt`);
     setIsCorrect(false);
     setIsLost(true);
   }
