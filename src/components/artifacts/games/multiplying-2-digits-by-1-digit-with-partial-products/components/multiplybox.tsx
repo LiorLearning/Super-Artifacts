@@ -99,7 +99,7 @@ export default function MultiplyBox({
 
   return (
     <div className="flex w-[50vh]">
-      <div className={`flex flex-col items-center justify-start ${transition ? 'transition-all duration-1000 opacity-100' : 'opacity-0 translate-x-[10vh]'}`}>
+      <div className={`flex flex-col items-center justify-start ${transition ? 'transition-all duration-1000 opacity-100' : 'opacity-0 translate-x-[5vh]'}`}>
         <button onClick={handleFIX} className={`${fixColorNotRed ? 'bg-[#c8c8c8] border-[#707070]' : 'bg-[#f00004] border-[#a70003]'}  text-[2.7vh] border-t-[0.7vh] border-x-[1.2vh]  px-[1.5vh] mx-[3vh] mt-[4vh] text-white -translate-x-[4vh]`}>
           LOCK
         </button>

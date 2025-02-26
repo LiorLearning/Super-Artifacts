@@ -1,38 +1,83 @@
 import { GameState } from "./game-state";
 
-export default function checkGameStateLimits(state?: Partial<GameState>): boolean {
-  if (!state) return false;
+interface ValidationResult {
+  isValid: boolean;
+  reason?: string;
+}
 
-  // if (state.screen && !['first', 'second', 'third'].includes(state.screen)) {
-  //   return false;
-  // }
-
-  // if (state.state1) {
-  //   if (typeof state.state1.step !== 'number' || state.state1.step < 0 || state.state1.step > 2) {
-  //     return false;
-  //   }
-  //   if (typeof state.state1.variable !== 'number') {
-  //     return false;
-  //   }
-  // }
-
-  // if (state.state2) {
-  //   if (typeof state.state2.step !== 'number' || state.state2.step < 0) {
-  //     return false;
-  //   }
-  //   if (typeof state.state2.variable !== 'number') {
-  //     return false;
-  //   }
-  // }
-
-  // if (state.state3) {
-  //   if (typeof state.state3.step !== 'number' || state.state3.step < 0) {
-  //     return false;
-  //   }
-  //   if (typeof state.state3.variable !== 'number') {
-  //     return false;
-  //   }
-  // }
-
-  return true;
+const isValidNumber1 = (number1: number, screen: string): ValidationResult => {
+  // For screens 1-5, number1 should be between 10-25
+  if (['first', 'second', 'third', 'fourth', 'fifth'].includes(screen)) {
+    if (number1 <= 10 || number1 >= 25) {
+      return { isValid: false, reason: `Invalid state: First number (${number1}) must be between 10 and 25 for this screen` };
+    }
+  } else if (screen === 'seventh') {
+    // For screen seven, number1 should be a 3-digit number
+    if (number1 <= 100 || number1 >= 999) {
+      return { isValid: false, reason: `Invalid state: First number (${number1}) must be a three-digit number (100-999)` };
+    }
+  } else {
+    // For other screens, number1 should be any 2-digit number
+    if (number1 <= 10 || number1 >= 99) {
+      return { isValid: false, reason: `Invalid state: First number (${number1}) must be a two-digit number (10-99)` };
+    }
+  }
+  return { isValid: true };
 };
+
+const isValidNumber2 = (number2: number): ValidationResult => {
+  if (number2 < 1 || number2 > 9) {
+    return { isValid: false, reason: `Invalid state: Second number (${number2}) must be a single digit (1-9)` };
+  }
+  return { isValid: true };
+};
+
+export default function checkGameStateLimits(state?: Partial<GameState>): ValidationResult {
+  if (!state) return { isValid: false, reason: "No game state provided" };
+
+  if (state.screen && !['first', 'second', 'third', 'fourth', 'fifth'].includes(state.screen)) {
+    return { isValid: false, reason: "Invalid screen state" };
+  }
+
+  if (state.state1) {
+    const number1Result = isValidNumber1(state.state1.number1, state.screen || '');
+    if (!number1Result.isValid) return { isValid: false, reason: `Screen 1: ${number1Result.reason}` };
+
+    const number2Result = isValidNumber2(state.state1.number2);
+    if (!number2Result.isValid) return { isValid: false, reason: `Screen 1: ${number2Result.reason}` };
+  }
+
+  if (state.state2) {
+    const number1Result = isValidNumber1(state.state2.number1, state.screen || '');
+    if (!number1Result.isValid) return { isValid: false, reason: `Screen 2: ${number1Result.reason}` };
+
+    const number2Result = isValidNumber2(state.state2.number2);
+    if (!number2Result.isValid) return { isValid: false, reason: `Screen 2: ${number2Result.reason}` };
+  }
+
+  if (state.state3) {
+    const number1Result = isValidNumber1(state.state3.number1, state.screen || '');
+    if (!number1Result.isValid) return { isValid: false, reason: `Screen 3: ${number1Result.reason}` };
+
+    const number2Result = isValidNumber2(state.state3.number2);
+    if (!number2Result.isValid) return { isValid: false, reason: `Screen 3: ${number2Result.reason}` };
+  }
+
+  if (state.state4) {
+    const number1Result = isValidNumber1(state.state4.number1, state.screen || '');
+    if (!number1Result.isValid) return { isValid: false, reason: `Screen 4: ${number1Result.reason}` };
+
+    const number2Result = isValidNumber2(state.state4.number2);
+    if (!number2Result.isValid) return { isValid: false, reason: `Screen 4: ${number2Result.reason}` };
+  }
+
+  if (state.state5) {
+    const number1Result = isValidNumber1(state.state5.number1, state.screen || '');
+    if (!number1Result.isValid) return { isValid: false, reason: `Screen 5: ${number1Result.reason}` };
+
+    const number2Result = isValidNumber2(state.state5.number2);
+    if (!number2Result.isValid) return { isValid: false, reason: `Screen 5: ${number2Result.reason}` };
+  }
+
+  return { isValid: true };
+}
