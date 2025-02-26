@@ -62,10 +62,10 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
       {showPopUp && !isCorrect && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
         <div className="z-50 flex flex-col items-center justify-center gap-[1vh] content-center w-[65vh] px-[2vw] py-[2vh] bg-white border-[1.5vh] border-[#007179] rounded-[5vh]">
           <div className="text-[4vh]">
-            Click on <span className="bg-[#f00004] text-[2.5vh] border-[0.7vh] border-[#a70003] px-[2vh] py-[0.7vh] mx-[1vh] mt-[4vh] text-white -translate-x-[4vh]">STOP</span> when you want to
+            Click on <span className="bg-[#f00004] text-[2.5vh] border-[0.7vh] border-[#a70003] px-[2vh] py-[0.7vh] mx-[1vh] mt-[4vh] text-white -translate-x-[4vh]">LOCK</span> when you want to
           </div>
           <div className="text-[4vh]">
-            stop the slider..
+            lock the slider..
           </div>
 
           <button className="bg-[#007179] mt-[3vh] text-white text-[2.5vh] py-[1vh] px-[3vh] rounded-[6vh]"
@@ -96,7 +96,7 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
       </div>
 
       <div className={`absolute ml-[10vw] max-w-[15vw] text-[1.6vw] -translate-y-[24vw] left-0 bg-white p-[1vw]  border-[0.1vw] border-black z-20 drop-shadow-lg transition-all duration-500`}>
-        {isCorrect ? `That's right!` : `Can you make this easier for me by breaking ${number1} into two parts using slider?`}
+        {isCorrect ? `That's right!` : `Can you break ${number1} into tens and ones using the slider?`}
       </div>
 
       <div className="absolute z-20 translate-x-[11vw] -translate-y-[10vh]">
