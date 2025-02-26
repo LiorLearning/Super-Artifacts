@@ -47,7 +47,7 @@ export default function Game({sendAdminMessage}: GameProps) {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [step1, step2, step3, step4, step5, step6, screen]);
+  }, [step1, step2, step3, step4, step5, step6, step7, screen]);
 
   return (
     <div className="mx-auto game font-jersey">
