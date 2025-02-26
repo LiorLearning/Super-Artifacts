@@ -35,14 +35,6 @@ export default function Screen4Step0({ sendAdminMessage, sliderValue, setSliderV
     }
   }, []);
 
-  useEffect(() => {
-    if (!isDragging) {
-      setTimeout(() => {
-        setShowPopUp(true);
-      }, 5000)
-    }
-  }, [isDragging, isCorrect])
-
   function onCorrect() {
     sendAdminMessage('agent', `Awesome, ${number1} x ${number2} is same as ${number1 - unit} times ${number2} and ${number1 % 10} times ${number2}`);
     setIsCorrect(true);
