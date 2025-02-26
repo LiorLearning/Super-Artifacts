@@ -6,6 +6,7 @@ import ThirdScreen from './screen/ThirdScreen/third';
 import FourthScreen from './screen/FourthScreen/fourth';
 import FifthScreen from './screen/FifthScreen/fifth';
 import SixthScreen from './screen/SixthScreen/sixth';
+import SeventhScreen from './screen/SeventhScreen/seventh';
 import { useGameState } from './state-utils';
 import { DevHelper } from './utils/helper';
 import { sounds } from './utils/sound';
@@ -24,7 +25,7 @@ export default function Game({sendAdminMessage}: GameProps) {
   const { step: step4 } = gameStateRef.current.state4;
   const { step: step5 } = gameStateRef.current.state5;
   const { step: step6 } = gameStateRef.current.state6;
-  
+  const { step: step7 } = gameStateRef.current.state7;
   const bottomRef = useRef<HTMLDivElement | null>(null);
   
   const hasGameStartedRef = useRef(false);
@@ -58,6 +59,7 @@ export default function Game({sendAdminMessage}: GameProps) {
       {screen === 'fourth' && <FourthScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'fifth' && <FifthScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'sixth' && <SixthScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 'seventh' && <SeventhScreen sendAdminMessage={sendAdminMessage} />}
       <div ref={bottomRef} style={{ height: 0 }} />
 
       {/* Select font */}

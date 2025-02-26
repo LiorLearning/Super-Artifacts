@@ -14,17 +14,12 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
   const number1 = gameStateRef.current.state5.number1;
   const number2 = gameStateRef.current.state5.number2;
 
-  const [ans1, setAns1] = useState('');
+  const [ans1, setAns1] = useState(''); 
   const [ans2, setAns2] = useState('');
   const [ans3, setAns3] = useState('');
 
   const [blurAns2, setBlurAns2] = useState(true);
   const [blurAns3, setBlurAns3] = useState(true);
-
-  const [hint1, setHint1] = useState(false);
-  const [hint2, setHint2] = useState(false);
-
-  const [showPopUp, setShowPopUp] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const ans1Ref = useRef<HTMLInputElement>(null);
   const ans2Ref = useRef<HTMLInputElement>(null);
@@ -35,7 +30,7 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
-      sendAdminMessage('agent', `${number1} can be broken into ${Math.floor(number1 / 10)}0 and ${number1 % 10}. Can you complete the partial products?`);
+      sendAdminMessage('agent', `${number1} can be broken into ${Math.floor(number1 / 10)} and ${number1 % 10}. Can you complete the partial products?`);
       ans1Ref.current?.focus();
     }
   }, []);
@@ -45,13 +40,7 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
       <div className="absolute w-full h-[25vh] "
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
-
-      {showPopUp && <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center w-[74.5%]">
-        <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
-          onClick={() => { setShowPopUp(false); goToScreen('sixth', setGameStateRef); }}>
-          {'NEXT >>'}
-        </button>
-      </div>}
+  
 
       <div className="flex flex-col items-center gap-[2vh] justify-center min-h-screen drop-shadow-xl">
         <div className={`flex items-center justify-center leading-none text-center bg-white text-[6vh]`}>
@@ -67,6 +56,7 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
         <div className="px-[15vh] h-0 border-t-[0.4vh] border-black"></div>
 
         <div className="flex items-center justify-center gap-[2vh] ml-[15.5vh] leading-none text-center bg-white text-[5vh] p-[1.5vh]">
+
           <NewInput
             value={ans1}
             correctValue={(Math.floor(number1 / 10) * 10 * number2).toString()}
@@ -80,11 +70,9 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
               sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${Math.floor(number1 / 10) * 10} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
             }}
           />
-          {hint1 && <><div>{Math.floor(number1 / 10) * 10}</div>
-            <div>x</div>
-            <div>{number2}</div></>}
-
-          {!hint1 && <button className="px-[2vh] mx-[1vh] text-[4vh] bg-[#ffde73]" onClick={() => setHint1(true)}>HINT</button>}
+          <div>{Math.floor(number1 / 10) * 10}</div>
+          <div>x</div>
+          <div>{number2}</div>
         </div>
 
         <div className={`flex items-center justify-center gap-[2vh] ml-[10vh] transition-all duration-500 ${blurAns2 ? 'blur-[0.5vh]' : ''}`}>
@@ -109,11 +97,9 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
                 sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${(number1 % 10)} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
               }}
             />
-            {hint2 && <><div className="pl-[2.5vh]">{number1 % 10}</div>
-              <div>x</div>
-              <div>{number2}</div></>}
-
-            {!hint2 && <button className="px-[2vh] mx-[1vh] text-[4vh] bg-[#ffde73]" onClick={() => setHint2(true)}>HINT</button>}
+            <div className="pl-[2.5vh]">{number1 % 10}</div>
+            <div>x</div>
+            <div>{number2}</div>
           </div>
         </div>
 
@@ -128,11 +114,11 @@ export default function FifthScreen({ sendAdminMessage }: BaseProps) {
             className="w-[16vh] text-white placeholder:text-white border-none outline-none p-[1vh]   text-center text-[5vh] bg-[#5c9f00]"
             ref={ans3Ref}
             onCorrect={() => {
-              sounds.right();
               setShowSuccess(true);
-              sendAdminMessage('agent', `Awesome, let's do one more.`);
+              sounds.right();
+              sendAdminMessage('agent', `Awesome, let's do some more.`);
               setTimeout(() => {
-                setShowPopUp(true);
+                goToScreen('sixth', setGameStateRef);
               }, 4000);
             }}
             onIncorrect={(attempt, correct) => {

@@ -6,12 +6,12 @@ import { useRef, useEffect, useState } from "react";
 import { goToStep } from "../../utils/helper";
 import { sounds } from "../../utils/sound";
 
-interface Screen3Step0Props extends BaseProps {
+interface Screen4Step0Props extends BaseProps {
   sliderValue: number;
   setSliderValue: (sliderValue: number) => void;
 }
 
-export default function Screen3Step0({ sendAdminMessage, sliderValue, setSliderValue }: Screen3Step0Props) {
+export default function Screen4Step0({ sendAdminMessage, sliderValue, setSliderValue }: Screen4Step0Props) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const [transition, setTransition] = useState(false);
   const [isDragging, setIsDragging] = useState(true);
@@ -20,8 +20,8 @@ export default function Screen3Step0({ sendAdminMessage, sliderValue, setSliderV
   const hasGameStartedRef = useRef(false);
   const wrongAttemptRef = useRef(1);
 
-  const number1 = gameStateRef.current.state3.number1;
-  const number2 = gameStateRef.current.state3.number2;
+  const number1 = gameStateRef.current.state4.number1;
+  const number2 = gameStateRef.current.state4.number2;
   const unit = number1 % 10;
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function Screen3Step0({ sendAdminMessage, sliderValue, setSliderV
     sendAdminMessage('agent', `Awesome, ${number1} x ${number2} is same as ${number1 - unit} times ${number2} and ${number1 % 10} times ${number2}`);
     setIsCorrect(true);
     setTimeout(() => {
-      goToStep('third', setGameStateRef, 1);
+      goToStep('fourth', setGameStateRef, 1);
     }, 5000)
   }
 

@@ -14,6 +14,7 @@ export const DevHelper = () => {
   const { step: step4 } = gameStateRef.current.state4;
   const { step: step5 } = gameStateRef.current.state5;
   const { step: step6 } = gameStateRef.current.state6;
+  const { step: step7 } = gameStateRef.current.state7;
   const [directStep, setDirectStep] = useState('');
 
   const getCurrentStep = () => {
@@ -24,6 +25,7 @@ export const DevHelper = () => {
       case 'fourth': return step4;
       case 'fifth': return step5;
       case 'sixth': return step6;
+      case 'seventh': return step7;
       default: return 0;
     }
   }
@@ -55,6 +57,7 @@ export const DevHelper = () => {
             <SelectItem value="fourth">Fourth Screen</SelectItem>
             <SelectItem value="fifth">Fifth Screen</SelectItem>
             <SelectItem value="sixth">Sixth Screen</SelectItem>
+            <SelectItem value="seventh">Seventh Screen</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -100,6 +103,9 @@ export const nextStep = (
   else if (screen === 'sixth') {
     setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: prev.state6.step + 1 } }));
   }
+  else if (screen === 'seventh') {
+    setGameStateRef(prev => ({ ...prev, state7: { ...prev.state7, step: prev.state7.step + 1 } }));
+  }
 }
 
 export const goToStep = (
@@ -124,6 +130,9 @@ export const goToStep = (
   }
   else if (screen === 'sixth') {
     setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step } }));
+  }
+  else if (screen === 'seventh') {
+    setGameStateRef(prev => ({ ...prev, state7: { ...prev.state7, step } }));
   }
 }
 
@@ -155,5 +164,8 @@ export const prevStep = (
   }
   else if (screen === 'sixth') {
     setGameStateRef(prev => ({ ...prev, state6: { ...prev.state6, step: Math.max(prev.state6.step - 1, 0) } }));
+  } 
+  else if (screen === 'seventh') {
+    setGameStateRef(prev => ({ ...prev, state7: { ...prev.state7, step: Math.max(prev.state7.step - 1, 0) } }));
   }
 }

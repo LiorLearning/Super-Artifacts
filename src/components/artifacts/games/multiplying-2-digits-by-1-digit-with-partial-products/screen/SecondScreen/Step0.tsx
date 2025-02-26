@@ -19,6 +19,7 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
   const [isCorrect, setIsCorrect] = useState(false);
   const [isLost, setIsLost] = useState(false);
   const hasGameStartedRef = useRef(false);
+  const wrongAttemptRef = useRef(1);
 
   const number1 = gameStateRef.current.state2.number1;
   const number2 = gameStateRef.current.state2.number2;
@@ -52,9 +53,14 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
   }
 
   function onIncorrect() {
-    sendAdminMessage('admin', `User has splited ${number1} into ${sliderValue} and ${number1 - sliderValue}, the correct split is ${number1 % 10} and ${Math.floor(number1 / 10)}, the question is ${number1} x ${number2} partial product, correct the user's mistake and tell the user to split the number into tens and ones if user is not able to do it after first wrong attempt`);
+    if(wrongAttemptRef.current <= 1) {
+      sendAdminMessage('admin', `User has splited ${number1} into ${sliderValue} and ${number1 - sliderValue}, the correct split is ${number1 % 10} and ${Math.floor(number1 / 10)}, the question is ${number1} x ${number2} partial product, correct the user's mistake and tell the user to split the number into tens and ones, but don't tell the answer dire.ctly`);
+    } else {
+      sendAdminMessage('admin', `User has splited ${number1} into ${sliderValue} and ${number1 - sliderValue}, the correct split is ${number1 % 10} and ${Math.floor(number1 / 10)}, the question is ${number1} x ${number2} partial product, User has already tried twice, explain the logic of splitting some other number into tens and ones, and apply the same logic for this question`);
+    }
     setIsCorrect(false);
     setIsLost(true);
+    wrongAttemptRef.current++;
   }
 
   return (
