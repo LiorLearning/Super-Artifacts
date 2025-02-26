@@ -21,7 +21,7 @@ export default function MultiplyBox({
   const [verticalSliderValue, setVerticalSliderValue] = useState(0);
 
   return (
-    <div className="flex w-[50vh]">
+    <div className="flex h-auto w-auto relative">
       <div className={`bg-[#003a43] relative h-fit w-fit border-[1.5vh] border-[#006379] rounded-[3vh] flex flex-row items-center justify-center opacity-100 gap-[2vh] p-[2vh]'}`}>
 
         <div className={`flex items-start justify-center`}>
@@ -84,7 +84,7 @@ export default function MultiplyBox({
           </div>
         </div>
 
-        {/* Display current multiplication part */}
+        {/* Display current multiplication part
         <div className='text-white text-[2vh] mt-[1vh]'>
           <div className="flex flex-col items-center">
             <div className="flex gap-[1vh] items-center">
@@ -102,7 +102,7 @@ export default function MultiplyBox({
               <span>{number2}</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
