@@ -89,7 +89,7 @@ const Chat: React.FC<ChatProps> = ({ desc, gameState, componentRef }) => {
   
   return (
     <div className="flex flex-col h-full bg-background">
-      <div className="flex items-center justify-between px-4 py-3 border-b">
+      <div className="flex items-center justify-between p-3 border-b">
         <h2 className="text-lg font-semibold">Chat</h2>
         <WebSocketStatus />
       </div>
