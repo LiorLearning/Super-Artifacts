@@ -22,7 +22,7 @@ export default function MultiplyBox({
 
   return (
     <div className="flex h-auto w-auto relative">
-      <div className={`bg-[#003a43] relative h-fit w-fit border-[1.5vh] border-[#006379] rounded-[3vh] flex flex-row items-center justify-center opacity-100 gap-[2vh] p-[2vh]'}`}>
+      <div className={`bg-[#003a43] relative h-fit w-fit border-[1.5vh] border-[#006379] rounded-[3vh] flex flex-col items-center justify-center opacity-100 gap-[2vh] p-[2vh]`}>
 
         <div className={`flex items-start justify-center`}>
           {/* Horizontal slider for number1 */}
@@ -68,14 +68,14 @@ export default function MultiplyBox({
                 {Array.from({ length: number1 }, (_, colIndex) => (
                   <div
                     key={`${rowIndex}-${colIndex}`}
-                    className={`aspect-square rounded-[0.1vw] w-[2vh] h-[2vh] transition-colors duration-200
+                    className={`aspect-square rounded-[0.1vw] w-[1.8vh] h-[1.8vh] transition-colors duration-200
                         ${colIndex < horizontalSliderValue
                         ? rowIndex < verticalSliderValue
-                          ? 'bg-[#ffa500]'  // First split section
-                          : 'bg-[#40E0D0]'  // Second split section
+                          ? 'bg-[#84da52]'  // First split section
+                          : 'bg-[#f8a34b]'  // Second split section
                         : rowIndex < verticalSliderValue
-                          ? 'bg-[#ff69b4]'  // Third split section
-                          : 'bg-[#8ff78f]'  // Fourth split section
+                          ? 'bg-[#d9c61e]'  // Third split section
+                          : 'bg-[#5cdbec]'  // Fourth split section
                       }`}
                   />
                 ))}
@@ -83,8 +83,7 @@ export default function MultiplyBox({
             ))}
           </div>
         </div>
-
-        {/* Display current multiplication part
+        
         <div className='text-white text-[2vh] mt-[1vh]'>
           <div className="flex flex-col items-center">
             <div className="flex gap-[1vh] items-center">
@@ -102,7 +101,7 @@ export default function MultiplyBox({
               <span>{number2}</span>
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
     </div>
   );

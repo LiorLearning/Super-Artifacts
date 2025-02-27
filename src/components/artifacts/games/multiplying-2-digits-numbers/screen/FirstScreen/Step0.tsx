@@ -24,7 +24,7 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
       
-      <div className="absolute bottom-0 left-0 right-0 flex justify-center items-center z-20">
+      <div className="absolute -translate-y-[10vh] translate-x-[10vw] flex justify-center items-center z-20">
         <MultiplyBox number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} />
       </div>
 
