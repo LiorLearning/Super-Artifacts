@@ -32,7 +32,7 @@ export default function Screen4Step3({ sendAdminMessage }: BaseProps) {
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
 
 
-      {showPopUp && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
+      {showPopUp && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center ml-[25.2%] w-[74.5%]">
         <button className="bg-[#007179] mt-[3vh] border-[2vh] border-white text-white text-[5vh] py-[1vh] px-[7vh] rounded-[8vw]"
           onClick={() => { setShowPopUp(false); goToScreen('fifth', setGameStateRef); }}>
           {'NEXT >>'}

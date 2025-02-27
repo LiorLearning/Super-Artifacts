@@ -65,7 +65,7 @@ export default function Screen2Step0({ sendAdminMessage, sliderValue, setSliderV
 
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
-      {showPopUp && !isCorrect && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center w-[74.5%]">
+      {showPopUp && !isCorrect && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center right-0 ml-[25.2%] w-[74.5%]">
         <div className="z-50 flex flex-col items-center justify-center gap-[1vh] content-center w-[65vh] px-[2vw] py-[2vh] bg-white border-[1.5vh] border-[#007179] rounded-[5vh]">
           <div className="text-[4vh]">
             Click on <span className="bg-[#f00004] text-[2.5vh] border-[0.7vh] border-[#a70003] px-[2vh] py-[0.7vh] mx-[1vh] mt-[4vh] text-white -translate-x-[4vh]">LOCK</span> when you want to
