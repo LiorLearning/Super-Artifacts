@@ -24,25 +24,22 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
       
-      <div className="absolute -translate-y-[10vh] translate-x-[10vw] flex justify-center items-center z-20">
+      <div className="absolute -translate-y-[8vh] translate-x-[17vh] flex justify-center items-center z-30">
         <MultiplyBox number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} />
       </div>
+      
+      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%', width: `${(number1 * 2.2) + ((number1 - 1) * 0.5)}vh`, height: `10vh`}} className={`absolute z-20 translate-x-[7vw]`}></div>
+
 
       <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
 
-      {/* <div className={`absolute ml-[10vw] max-w-[15vw] text-[1.6vw] -translate-y-[24vw] left-0 bg-white p-[1vw] border-[0.1vw] border-black z-20 drop-shadow-lg`}>
-        <div className={`transition-opacity duration-500`}>
-          Hi, I am Tilo. Can you help me find {number1} times {number2}?
-        </div>
-      </div> */}
-
-      <div className={`absolute left-0 -translate-y-[10vh] w-[14vw] h-[15vw] z-30 transition-all duration-500 translate-x-[8vw] opacity-100`}
+      <div className={`absolute left-0 -translate-y-[8vh] w-[12vw] h-[13vw] z-30 transition-all duration-500 translate-x-[7vw] opacity-100`}
         style={{ backgroundImage: `url(${images.tilo})`, backgroundSize: '100% 100%' }}>
       </div>
 
-      <div className={`absolute left-0 w-[15vw] h-[12vh] z-20 transition-all duration-500 translate-x-[6vw] opacity-100 `}
+      <div className={`absolute left-0 w-[12vw] h-[9vh] z-20 transition-all duration-500 translate-x-[6vw] opacity-100 `}
         style={{ backgroundImage: `url(${images.tiloShadow})`, backgroundSize: '100% 100%' }}>
       </div>
     </div>
