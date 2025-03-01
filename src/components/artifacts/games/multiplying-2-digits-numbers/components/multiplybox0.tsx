@@ -13,20 +13,26 @@ import yellowboxH from '../assets/yellowboxH.png';
 import greenboxV from '../assets/greenboxV.png';
 import greenboxH from '../assets/greenboxH.png';
 
-interface MultiplyBoxProps extends BaseProps {
+interface MultiplyBoxProps0 extends BaseProps {
   number1: number;  // 23 (horizontal)
   number2: number;  // 14 (vertical)
+  horizontalSliderValue: number;
+  setHorizontalSliderValue: (value: number) => void;
+  verticalSliderValue: number;
+  setVerticalSliderValue: (value: number) => void;
 }
 
-export default function MultiplyBox({
+export default function MultiplyBox0({
   number1,
   number2,
-  sendAdminMessage }: MultiplyBoxProps) {
+  horizontalSliderValue,
+  setHorizontalSliderValue,
+  verticalSliderValue,
+  setVerticalSliderValue,
+  sendAdminMessage }: MultiplyBoxProps0) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
-  // Sliders to control the split points
-  const [horizontalSliderValue, setHorizontalSliderValue] = useState(0);
-  const [verticalSliderValue, setVerticalSliderValue] = useState(0);
+
   const [transition, setTransition] = useState(false);
   const [horizontalStep, setHorizontalStep] = useState(false);
   const [verticalStep, setVerticalStep] = useState(false);
@@ -123,7 +129,7 @@ export default function MultiplyBox({
         </div>
       </div>
 
-      
+      {/* Sliders Values Boxes */}
       {horizontalSliderValue !== number1 && <div className={`absolute flex items-center justify-center -translate-x-[4vh] right-[1vh] transition-all duration-100 ${horizontalStep ? 'opacity-100 -translate-y-[6vh]' : isCorrectHorizontalLock ? 'opacity-100 -translate-y-[3vh]' : 'opacity-0'}`} style={{ width: `${(((number1 - horizontalSliderValue) / number1) * 100) * 0.9}%` }}>
           <div style={{ backgroundImage: `url(${verticalSliderValue != 0 ? yellowboxV.src : blueboxV.src})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
             {number1 -horizontalSliderValue}
@@ -149,6 +155,7 @@ export default function MultiplyBox({
       </div>}
       
       
+      {/* Hints Lines */}
       {hint && horizontalStep && <div className='absolute translate-x-[4vh] h-[80%] z-20 overflow-hidden'
         style={{width: `${(number1 * 1.8) + ((number1 - 1) * 0.5) + 0.5}vh`}}>
         <div className='absolute w-[0.5vh] top-[4.5vh] bg-white animate-ping '
@@ -162,6 +169,24 @@ export default function MultiplyBox({
           style={{width: `${(number1 * 1.8) + ((number1 - 1) * 0.5)}vh`, top: `${((number2 % 10) / number2) * 100}%`}}>
         </div>
       </div>}
+
+
+      {/* Distinguishing Lines */}
+      {horizontalSliderValue !== 0 && <div className='absolute translate-x-[4vh] h-[80%] z-20 overflow-hidden'
+        style={{width: `${(number1 * 1.8) + ((number1 - 1) * 0.5) + 0.5}vh`}}>
+        <div className='absolute w-[0.5vh] top-[4.5vh] bg-white'
+          style={{height: `${(number2 * 1.8) + ((number2 - 1) * 0.5)}vh`, left: `${((horizontalSliderValue) / number1) * 100}%`}}>
+        </div>
+      </div>}
+
+      {verticalSliderValue !== 0 && <div className='absolute w-[100%] translate-y-[4vh] z-20 overflow-hidden'
+        style={{height: `${(number2 * 1.8) + ((number2 - 1) * 0.5) + 0.5}vh`}}>
+        <div className='absolute h-[0.5vh] left-[4.5vh]  bg-white'
+          style={{width: `${(number1 * 1.8) + ((number1 - 1) * 0.5)}vh`, top: `${((verticalSliderValue) / number2) * 100}%`}}>
+        </div>
+      </div>}
+
+      
 
       {/* Vertical */}
       <div className={`absolute mt-[1.5vh] bg-white  py-[1.5vh] border-[1.5vh] border-[#006379] rounded-[3vh] w-[20vh]  flex items-center justify-center transition-all duration-500 ${true && verticalStep ? 'opacity-100 -translate-x-[12vh]' : 'opacity-0 translate-x-[1vh]'}`}
@@ -230,7 +255,7 @@ export default function MultiplyBox({
                       : rowIndex < verticalSliderValue
                         ? 'bg-[#d9c61e]'  // Third split section
                         : 'bg-[#5cdbec]'  // Fourth split section
-                    }`}
+                    }`} 
                 />
               ))
             ))}
@@ -251,7 +276,6 @@ export default function MultiplyBox({
           </button>
         </div>
       </div>
-
     </div>
   );
 }
