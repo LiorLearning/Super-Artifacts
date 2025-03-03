@@ -278,4 +278,4 @@ export default function MultiplyBox0({
       </div>
     </div>
   );
-}
+} 
