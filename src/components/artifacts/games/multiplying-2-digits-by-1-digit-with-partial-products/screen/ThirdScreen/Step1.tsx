@@ -18,6 +18,7 @@ export default function Screen3Step1({ sendAdminMessage, sliderValue, setSliderV
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
+      sendAdminMessage('agent', `Let's fill in the partial products now`);
     }
   }, []);
 
