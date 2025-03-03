@@ -5,49 +5,52 @@ import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
 import { narrations } from "../../narrations";  
-import MultiplyBox0 from "../../components/multiplybox0";
+import { formatMessage } from "../../components/commonFunctions";
 
-interface Screen1Step0Props extends BaseProps {
-  horizontalSliderValue: number;
-  setHorizontalSliderValue: (value: number) => void;
-  verticalSliderValue: number;
-  setVerticalSliderValue: (value: number) => void;
-}
 
-export default function Screen1Step0({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen1Step0Props) {
+export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
+  const [isMovingUp, setIsMovingUp] = useState(false);
   const number1 = gameStateRef.current.state1.number1;
   const number2 = gameStateRef.current.state1.number2;
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
-      sendAdminMessage('agent', `Can you help Tilo find ${number1} times ${number2}? Ready to begin?`);
+      if (narrations.Screen1Step0Message1.send) {
+        sendAdminMessage(narrations.Screen1Step0Message1.role, formatMessage(narrations.Screen1Step0Message1.content, { number1, number2 }));
+      }
     }
   }, []);
 
+  const handleClick = () => {
+    setIsMovingUp(true);
+    setTimeout(() => {
+      goToStep('first', setGameStateRef, 1);
+    }, 500);
+  };
 
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
-      
-      <div className="absolute -translate-y-[8vh] translate-x-[17vh] flex justify-center items-center z-30">
-        <MultiplyBox0 number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} horizontalSliderValue={horizontalSliderValue} setHorizontalSliderValue={setHorizontalSliderValue} verticalSliderValue={verticalSliderValue} setVerticalSliderValue={setVerticalSliderValue} />
-      </div>
-      
-      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%', width: `${(number1 * 2.2) + ((number1 - 1) * 0.5)}vh`, height: `10vh`}} className={`absolute z-20 translate-x-[7vw]`}></div>
-
 
       <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
 
-      <div className={`absolute left-0 -translate-y-[8vh] w-[12vw] h-[13vw] z-30 transition-all duration-500 translate-x-[7vw] opacity-100`}
-        style={{ backgroundImage: `url(${images.tilo})`, backgroundSize: '100% 100%' }}>
-      </div>
+      <div className={`flex flex-col items-center justify-center gap-[4vh] z-20 my-auto pb-[10vh] transition-all duration-500 ${isMovingUp ? 'transform -translate-y-[20vh] opacity-0' : ''}`}>
+        <div className="flex items-center justify-center text-center gap-[2vh]">
+          <h1 className="leading-none w-[12vh] py-[2vh] bg-white text-[#003a43] text-[6vh] rounded-[4vh] shadow-xl drop-shadow-lg">{number1}</h1>
+          <h1 className="leading-none text-[#003a43] text-[7vh] drop-shadow-lg">x</h1>
+          <h1 className="leading-none w-[12vh] text-center py-[2vh] bg-white text-[#003a43] text-[6vh] rounded-[4vh] shadow-xl drop-shadow-lg">{number2}</h1>
+        </div>
 
-      <div className={`absolute left-0 w-[12vw] h-[9vh] z-20 transition-all duration-500 translate-x-[6vw] opacity-100 `}
-        style={{ backgroundImage: `url(${images.tiloShadow})`, backgroundSize: '100% 100%' }}>
+        <button 
+          className={`w-[22vw] text-[6vh] leading-none py-[1vh] rounded-[6vh] bg-[#007179] border-[1vh] border-white text-white shadow-xl drop-shadow-lg hover:drop-shadow-2xl`}
+          onClick={handleClick}
+        >
+          {'START >>'}
+        </button>
       </div>
     </div>
   )

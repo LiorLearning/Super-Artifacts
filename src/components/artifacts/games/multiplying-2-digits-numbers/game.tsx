@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRef } from 'react';
 import FirstScreen from './screen/FirstScreen/first';
-// import SecondScreen from './screen/SecondScreen/second';
+import SecondScreen from './screen/SecondScreen/second';
 // import ThirdScreen from './screen/ThirdScreen/third';
 // import FourthScreen from './screen/FourthScreen/fourth';
 // import FifthScreen from './screen/FifthScreen/fifth';
@@ -53,8 +53,8 @@ export default function Game({sendAdminMessage}: GameProps) {
       <DevHelper />
       {/* Game screens */}
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
-      {/* {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
+      {/* {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'fourth' && <FourthScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'fifth' && <FifthScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'sixth' && <SixthScreen sendAdminMessage={sendAdminMessage} />} */}

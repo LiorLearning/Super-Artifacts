@@ -5,19 +5,20 @@ import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
 import { narrations } from "../../narrations";  
-import MultiplyBox3 from "../../components/multiplybox3";
-interface Screen1Step3Props extends BaseProps {
+import MultiplyBox4 from "../../components/multiplybox4";
+
+interface Screen2Step4Props extends BaseProps {
   horizontalSliderValue: number;
   setHorizontalSliderValue: (value: number) => void;
   verticalSliderValue: number;
   setVerticalSliderValue: (value: number) => void;
 }
 
-export default function Screen1Step3({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen1Step3Props) {
+export default function Screen2Step4({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen2Step4Props) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
-  const number1 = gameStateRef.current.state1.number1;
-  const number2 = gameStateRef.current.state1.number2;
+  const number1 = gameStateRef.current.state2.number1;
+  const number2 = gameStateRef.current.state2.number2;
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
@@ -31,7 +32,7 @@ export default function Screen1Step3({sendAdminMessage, horizontalSliderValue, s
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
       
       <div className="absolute -translate-y-[8vh] translate-x-[17vh] flex justify-center items-center z-30">
-        <MultiplyBox3 number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} horizontalSliderValue={horizontalSliderValue} setHorizontalSliderValue={setHorizontalSliderValue} verticalSliderValue={verticalSliderValue} setVerticalSliderValue={setVerticalSliderValue} />
+        <MultiplyBox4 number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} horizontalSliderValue={horizontalSliderValue} setHorizontalSliderValue={setHorizontalSliderValue} verticalSliderValue={verticalSliderValue} setVerticalSliderValue={setVerticalSliderValue} />
       </div>
       
       <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%', width: `${(number1 * 2.2) + ((number1 - 1) * 0.5)}vh`, height: `10vh`}} className={`absolute z-20 translate-x-[7vw]`}></div>

@@ -1,54 +1,71 @@
 import { BaseProps } from "../../utils/types";
-import { images } from "../../utils/image";
-import { useEffect, useState } from "react";
-import { useRef } from "react";
-import { goToStep } from "../../utils/helper";
+import { images } from '../../utils/image';
 import { useGameState } from "../../state-utils";
-import { narrations } from "../../narrations";  
-import MultiplyBox1 from "../../components/multiplybox1";
+import { useRef, useEffect, useState } from "react";
+import { goToStep } from "../../utils/helper";
+import { sounds } from "../../utils/sound";
+import { narrations } from "../../narrations";
+import { formatMessage } from "../../components/commonFunctions";
 
-interface Screen1Step1Props extends BaseProps {
-  horizontalSliderValue: number;
-  setHorizontalSliderValue: (value: number) => void;
-  verticalSliderValue: number;
-  setVerticalSliderValue: (value: number) => void;
-}
+export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
 
-export default function Screen1Step1({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen1Step1Props) {
   const { gameStateRef, setGameStateRef } = useGameState();
+  const [transition, setTransition] = useState(false);
+  const [nextSentence, setNextSentence] = useState(false);
   const hasGameStartedRef = useRef(false);
-  const number1 = gameStateRef.current.state1.number1;
-  const number2 = gameStateRef.current.state1.number2;
+  
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
-      sendAdminMessage('agent', `Can you help Tilo find ${number1} times ${number2}? Ready to begin?`);
+      sounds.bgm();
+      setTimeout(() => {
+        setTransition(true);
+        sounds.woosh();
+        setTimeout(() => {
+          setNextSentence(true);
+        }, 5000);
+      }, 1000);
     }
   }, []);
 
+  useEffect(() => {
+    if (nextSentence) {
+      if (narrations.Screen1Step1Message1.send) {
+        sendAdminMessage(narrations.Screen1Step1Message1.role, formatMessage(narrations.Screen1Step1Message1.content, { number1, number2 }));
+      }
+      setTimeout(() => {
+        goToStep('first', setGameStateRef, 2);
+      }, 8000);
+    }
+  }, [nextSentence]);
+
+  const number1 = gameStateRef.current.state1.number1;
+  const number2 = gameStateRef.current.state1.number2;  
 
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
-      
-      <div className="absolute -translate-y-[8vh] translate-x-[17vh] flex justify-center items-center z-30">
-        <MultiplyBox1 number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} horizontalSliderValue={horizontalSliderValue} setHorizontalSliderValue={setHorizontalSliderValue} verticalSliderValue={verticalSliderValue} setVerticalSliderValue={setVerticalSliderValue} />
-      </div>
-      
-      <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%', width: `${(number1 * 2.2) + ((number1 - 1) * 0.5)}vh`, height: `10vh`}} className={`absolute z-20 translate-x-[7vw]`}></div>
-
-
       <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
 
-      <div className={`absolute left-0 -translate-y-[8vh] w-[12vw] h-[13vw] z-30 transition-all duration-500 translate-x-[7vw] opacity-100`}
-        style={{ backgroundImage: `url(${images.tilo})`, backgroundSize: '100% 100%' }}>
+      <div className={`absolute ml-[8vw] max-w-[15vw] text-[3vh] -translate-y-[20vw] left-0 bg-white p-[1vw] border-[0.1vw] border-black z-20 drop-shadow-lg transition-all duration-500 ${transition ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0 '}`}>
+        <div className={`transition-opacity duration-500 ${nextSentence ? 'opacity-0' : 'opacity-100'}`}>
+          Hi, I am Tilo. Can you help me find {number1} times {number2}?
+        </div>
+        <div className={`absolute top-[1vw] left-[1vw] transition-opacity duration-500 ${nextSentence ? 'opacity-100' : 'opacity-0'}`}>
+          I have something which can make it easier for us...
+        </div>
       </div>
 
-      <div className={`absolute left-0 w-[12vw] h-[9vh] z-20 transition-all duration-500 translate-x-[6vw] opacity-100 `}
+      <div className={`absolute left-0 -translate-y-[8vh] w-[12vw] h-[13vw] z-30 transition-all duration-500 ${transition ? 'translate-x-[7vw] opacity-100' : '-translate-x-full opacity-0'}`}
+        style={{ backgroundImage: `url(${nextSentence ? images.tiloHappy : images.tilo})`, backgroundSize: '100% 100%' }}>
+      </div>
+
+      <div className={`absolute left-0 w-[12vw] h-[9vh] z-20 transition-all duration-500 ${transition ? 'translate-x-[6vw] opacity-100' : '-translate-x-full opacity-0'}`}
         style={{ backgroundImage: `url(${images.tiloShadow})`, backgroundSize: '100% 100%' }}>
       </div>
+
     </div>
   )
 }
