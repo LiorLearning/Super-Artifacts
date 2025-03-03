@@ -18,6 +18,7 @@ export default function Screen4Step1({ sendAdminMessage, sliderValue, setSliderV
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
+      sendAdminMessage('agent', `Great, you have split ${number1}x${number2} into two parts, now fill in the partial products in the input boxes`);
     }
   }, []);
 

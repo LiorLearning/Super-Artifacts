@@ -18,6 +18,7 @@ export default function Screen2Step1({ sendAdminMessage, sliderValue, setSliderV
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
+      sendAdminMessage('agent', `Great, you have split ${number1}x${number2} into two parts, now fill in the partial products in the input boxes`);
     }
   }, []);
 
@@ -38,7 +39,7 @@ export default function Screen2Step1({ sendAdminMessage, sliderValue, setSliderV
       </div>
 
       <div className={`absolute ml-[10vw] max-w-[15vw] text-[1.6vw] -translate-y-[24vw] left-0 bg-white p-[1vw]  border-[0.1vw] border-black z-20 drop-shadow-lg transition-all duration-500`}>
-        Is it easy now?
+      Let’s fill in the partial products now
       </div>
 
       <div className="absolute left-0 translate-x-[8vw] -translate-y-[10vh] w-[14vw] h-[15vw] z-30"

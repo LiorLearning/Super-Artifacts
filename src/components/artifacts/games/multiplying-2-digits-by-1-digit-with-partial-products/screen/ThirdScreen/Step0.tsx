@@ -36,7 +36,7 @@ export default function Screen3Step0({ sendAdminMessage, sliderValue, setSliderV
   }, []);
 
   function onCorrect() {
-    sendAdminMessage('agent', `Awesome, ${number1} x ${number2} is same as ${number1 - unit} times ${number2} and ${number1 % 10} times ${number2}`);
+    sendAdminMessage('agent', `Awesome, ${number1} x ${number2} is same as ${number1 - unit} times ${number2} plus ${number1 % 10} times ${number2}`);
     setIsCorrect(true);
     setTimeout(() => {
       goToStep('third', setGameStateRef, 1);
@@ -44,11 +44,15 @@ export default function Screen3Step0({ sendAdminMessage, sliderValue, setSliderV
   }
 
   function onIncorrect() {
+
+    console.log('wrongAttemptRef.current -------', wrongAttemptRef.current)
+
+
     if(wrongAttemptRef.current <= 1) {
-      sendAdminMessage('admin', `User has splited ${number1} into ${sliderValue} and ${number1 - sliderValue}, the correct split is ${number1 % 10} and ${Math.floor(number1 / 10)}, the question is ${number1} x ${number2} partial product, correct the user's mistake and tell the user to split the number into tens and ones, but don't tell the answer dire.ctly`);
-    } else {
-      sendAdminMessage('admin', `User has splited ${number1} into ${sliderValue} and ${number1 - sliderValue}, the correct split is ${number1 % 10} and ${Math.floor(number1 / 10)}, the question is ${number1} x ${number2} partial product, User has already tried twice, explain the logic of splitting some other number into tens and ones, and apply the same logic for this question`);
-    }
+      sendAdminMessage('agent', `Think about place values, how many tens and ones add up to become ${number1}?`);
+  } else if(wrongAttemptRef.current <= 2) {
+    sendAdminMessage('admin', `User is solving a 2×1 digit partial product multiplication problem where they need to split a two-digit number into tens and ones using a slider. The user has split ${number1} into ${sliderValue} and ${number1 - sliderValue}, but the correct split is ${Math.floor(number1 / 10) * 10} and ${number1 % 10}. User has made the mistake twice, so acknowledge user’s efforts. Provide a stronger nudge by reminding the user that the tens part is always a multiple of 10, and the ones part is what remains. Frame the response as a question to help them self-correct.`);
+  } 
     setIsCorrect(false);
     setIsLost(true);
     wrongAttemptRef.current++;
@@ -77,7 +81,7 @@ export default function Screen3Step0({ sendAdminMessage, sliderValue, setSliderV
       </div>
 
       <div className={`absolute ml-[10vw] max-w-[15vw] text-[1.6vw] -translate-y-[24vw] left-0 bg-white p-[1vw]  border-[0.1vw] border-black z-20 drop-shadow-lg transition-all duration-500`}>
-      {isCorrect ? `That's right!` : `Can you break ${number1} into tens and ones using the slider?`}
+      {isCorrect ? `That's right!` : `How many full tens fit inside ${number1}? And how many ones are left?`}
       </div>
 
       <div className="absolute z-20 translate-x-[11vw] -translate-y-[10vh]">
