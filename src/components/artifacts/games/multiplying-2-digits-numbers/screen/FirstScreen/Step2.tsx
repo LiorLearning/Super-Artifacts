@@ -7,8 +7,8 @@ import { useGameState } from "../../state-utils";
 import { sounds } from "../../utils/sound";
 import blueboxV from "../../assets/blueboxV.png"
 import blueboxH from "../../assets/blueboxH.png"
-import { narrations } from "../../narrations";
 import { formatMessage } from "../../components/commonFunctions";
+import { getMergedNarrations } from "../../narration-utils";
 
 export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -19,6 +19,7 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const [showColumn, setShowColumn] = useState(false);
   const [showRow, setShowRow] = useState(false);
   const [tiloLost, setTiloLost] = useState(false);
+  const narrations = getMergedNarrations('multiplying-2-digits-numbers');
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {

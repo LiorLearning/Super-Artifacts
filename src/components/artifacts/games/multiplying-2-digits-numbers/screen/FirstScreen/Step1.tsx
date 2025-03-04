@@ -4,8 +4,8 @@ import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
 import { goToStep } from "../../utils/helper";
 import { sounds } from "../../utils/sound";
-import { narrations } from "../../narrations";
 import { formatMessage } from "../../components/commonFunctions";
+import { getMergedNarrations } from "../../narration-utils";
 
 export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
 
@@ -13,7 +13,7 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
   const [transition, setTransition] = useState(false);
   const [nextSentence, setNextSentence] = useState(false);
   const hasGameStartedRef = useRef(false);
-  
+  const narrations = getMergedNarrations('multiplying-2-digits-numbers');
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {

@@ -17,6 +17,7 @@ import CommonDecimalsAndFractions from './games/Common-Decimals-And-Fractions/ga
 import Multiplying2DigitsBy1DigitWithPartialProducts from './games/multiplying-2-digits-by-1-digit-with-partial-products/game'
 import Multiplying2DigitsNumbers from './games/multiplying-2-digits-numbers/game'
 
+import { narrations as multiplying2DigitsNumbersNarrations } from './games/multiplying-2-digits-numbers/narrations';
 
 import { initialGameState as multiplying2DigitsNumbersInitialState } from './games/multiplying-2-digits-numbers/game-state';
 import { initialGameState as multiplying2DigitsBy1DigitWithPartialProductsInitialState } from './games/multiplying-2-digits-by-1-digit-with-partial-products/game-state';
@@ -60,7 +61,8 @@ interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string> }>;
   useState: any;
   provider: React.ComponentType<{ children: React.ReactNode }>;
-  initialGameState: any
+  initialGameState: any;
+  narrations?: any;
 }
 
 export const gameInfo: Record<string, GameInfo> = {
@@ -176,6 +178,7 @@ export const gameInfo: Record<string, GameInfo> = {
     game: Multiplying2DigitsNumbers,
     useState: Multiplying2DigitsNumbersGameState,
     provider: Multiplying2DigitsNumbersGameStateProvider,
-    initialGameState: multiplying2DigitsNumbersInitialState
+    initialGameState: multiplying2DigitsNumbersInitialState,
+    narrations: multiplying2DigitsNumbersNarrations
   }
 };

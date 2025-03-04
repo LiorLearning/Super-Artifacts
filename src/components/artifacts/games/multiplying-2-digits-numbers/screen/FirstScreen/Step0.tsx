@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
-import { narrations } from "../../narrations";  
 import { formatMessage } from "../../components/commonFunctions";
+import { getMergedNarrations } from "../../narration-utils";
 
 
 export default function Screen1Step0({sendAdminMessage}: BaseProps) {
@@ -14,6 +14,7 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   const [isMovingUp, setIsMovingUp] = useState(false);
   const number1 = gameStateRef.current.state1.number1;
   const number2 = gameStateRef.current.state1.number2;
+  const narrations = getMergedNarrations('multiplying-2-digits-numbers');
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
