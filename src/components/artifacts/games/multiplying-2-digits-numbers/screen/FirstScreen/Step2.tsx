@@ -3,15 +3,15 @@ import { images } from "../../utils/image";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToScreen, goToStep } from "../../utils/helper";
-import { useGameState } from "../../state-utils";
+import { useGameState, useNarrations } from "../../state-utils";
 import { sounds } from "../../utils/sound";
 import blueboxV from "../../assets/blueboxV.png"
 import blueboxH from "../../assets/blueboxH.png"
 import { formatMessage } from "../../components/commonFunctions";
-import { getMergedNarrations } from "../../narration-utils";
 
 export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
+  const narrations = useNarrations();
   let number1 = gameStateRef.current.state1.number1;
   const number2 = gameStateRef.current.state1.number2;
   const hasGameStartedRef = useRef(false);
@@ -19,7 +19,6 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
   const [showColumn, setShowColumn] = useState(false);
   const [showRow, setShowRow] = useState(false);
   const [tiloLost, setTiloLost] = useState(false);
-  const narrations = getMergedNarrations('multiplying-2-digits-numbers');
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {

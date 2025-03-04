@@ -3,18 +3,17 @@ import { images } from "../../utils/image";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
-import { useGameState } from "../../state-utils";
+import { useGameState, useNarrations } from "../../state-utils";
 import { formatMessage } from "../../components/commonFunctions";
-import { getMergedNarrations } from "../../narration-utils";
 
 
 export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
+  const narrations = useNarrations();
   const hasGameStartedRef = useRef(false);
   const [isMovingUp, setIsMovingUp] = useState(false);
   const number1 = gameStateRef.current.state1.number1;
   const number2 = gameStateRef.current.state1.number2;
-  const narrations = getMergedNarrations('multiplying-2-digits-numbers');
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {

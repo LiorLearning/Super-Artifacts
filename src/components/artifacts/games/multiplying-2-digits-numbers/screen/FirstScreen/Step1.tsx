@@ -1,19 +1,21 @@
 import { BaseProps } from "../../utils/types";
 import { images } from '../../utils/image';
-import { useGameState } from "../../state-utils";
+import { useGameState, useNarrations } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
 import { goToStep } from "../../utils/helper";
 import { sounds } from "../../utils/sound";
 import { formatMessage } from "../../components/commonFunctions";
-import { getMergedNarrations } from "../../narration-utils";
 
 export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
+  const narrations = useNarrations();
   const [transition, setTransition] = useState(false);
   const [nextSentence, setNextSentence] = useState(false);
   const hasGameStartedRef = useRef(false);
-  const narrations = getMergedNarrations('multiplying-2-digits-numbers');
+  const number1 = gameStateRef.current.state1.number1;
+  const number2 = gameStateRef.current.state1.number2;  
+  
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
@@ -39,9 +41,6 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
       }, 8000);
     }
   }, [nextSentence]);
-
-  const number1 = gameStateRef.current.state1.number1;
-  const number2 = gameStateRef.current.state1.number2;  
 
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
