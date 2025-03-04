@@ -3,13 +3,13 @@ import { images } from "../../utils/image";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
-import { useGameState } from "../../state-utils";
-import { narrations } from "../../narrations";  
+import { useGameState, useNarrations } from "../../state-utils";
 import { formatMessage } from "../../components/commonFunctions";
 
 
 export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
+  const narrations = useNarrations();
   const hasGameStartedRef = useRef(false);
   const [isMovingUp, setIsMovingUp] = useState(false);
   const number1 = gameStateRef.current.state1.number1;

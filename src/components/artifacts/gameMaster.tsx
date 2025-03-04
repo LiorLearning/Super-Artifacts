@@ -47,6 +47,7 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
   const [loading, setLoading] = useState(false);
   const { sendLog, addToChat, isConnected, reconnectWebSocket } = useWebSocketLogger()
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isNarrationEditorOpen, setIsNarrationEditorOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -182,6 +183,37 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
           </Button>
         </div>
 
+        <div className='flex items-center justify-center gap-2 w-full'>
+          <Button
+            variant="outline"
+            onClick={() => setIsNarrationEditorOpen(true)}
+            className="hover:bg-gray-100 text-sm text-foreground px-4 py-2 flex items-center gap-2 w-[50%]"
+            title="Edit Narrations"
+          >
+            <Edit2Icon className="h-4 w-4" />
+            <span>Edit Narrations</span>
+          </Button>
+          <NarrationEditor
+            isOpen={isNarrationEditorOpen}
+            onClose={() => setIsNarrationEditorOpen(false)}
+            gameKey={currentGame}
+            initialNarrations={gameInfo[currentGame].narrations || {}}
+          />
+          <Button
+            variant="outline"
+            onClick={() => {
+              localStorage.removeItem(`${currentGame}-narrations`);
+              window.location.reload();
+            }}
+            className="hover:bg-gray-100 text-sm text-foreground px-4 py-2 flex items-center gap-2 w-[50%]"
+            title="Reset Narrations"
+            disabled={localStorage.getItem(`${currentGame}-narrations`) === null}
+          >
+            <TimerResetIcon className="h-4 w-4" />
+            <span>Reset Narrations</span>
+          </Button>
+        </div>
+
         <div className='flex items-center justify-center gap-2 w-full'  >
           <Button
             variant="outline"
@@ -271,7 +303,128 @@ export function GameStateEditor({ isOpen, onClose, initialState, gameKey }: Game
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button variant="outline" onClick={handleApply}>Apply Test State</Button>
+            <Button variant="outline" onClick={handleApply}>Apply Game State</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface NarrationEditorProps {
+  isOpen: boolean;
+  onClose: () => void;
+  gameKey: string;
+  initialNarrations: any;
+}
+
+export function NarrationEditor({ isOpen, onClose, initialNarrations, gameKey }: NarrationEditorProps) {
+  const narrationStorageKey = `${gameKey}-narrations`;
+  const [testNarrations, setTestNarrations] = useState(() => {
+    // Get stored narration overrides
+    const savedNarrationsString = localStorage.getItem(narrationStorageKey);
+    const savedNarrations = savedNarrationsString ? JSON.parse(savedNarrationsString) : {};
+    
+    // Create a merged narrations object (defaults + overrides)
+    const mergedNarrations = { ...initialNarrations };
+    
+    // Apply any overrides from localStorage
+    Object.keys(savedNarrations).forEach(key => {
+      if (mergedNarrations[key]) {
+        mergedNarrations[key] = { ...mergedNarrations[key], ...savedNarrations[key] };
+      }
+    });
+    
+    return JSON.stringify(mergedNarrations, null, 2);
+  });
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    // Get stored narration overrides
+    const savedNarrationsString = localStorage.getItem(narrationStorageKey);
+    const savedNarrations = savedNarrationsString ? JSON.parse(savedNarrationsString) : {};
+    
+    // Create a merged narrations object (defaults + overrides)
+    const mergedNarrations = { ...initialNarrations };
+    
+    // Apply any overrides from localStorage
+    Object.keys(savedNarrations).forEach(key => {
+      if (mergedNarrations[key]) {
+        mergedNarrations[key] = { ...mergedNarrations[key], ...savedNarrations[key] };
+      }
+    });
+    
+    setTestNarrations(JSON.stringify(mergedNarrations, null, 2));
+  }, [gameKey, initialNarrations, narrationStorageKey]);
+
+  if (!isOpen) return null;
+
+  const handleApply = () => {
+    try {
+      // Parse the edited narrations
+      const editedNarrations = JSON.parse(testNarrations);
+      
+      // Get the current overrides from localStorage
+      const savedNarrationsString = localStorage.getItem(narrationStorageKey);
+      const currentOverrides = savedNarrationsString ? JSON.parse(savedNarrationsString) : {};
+      
+      // Find which narrations have been modified from the defaults
+      const newOverrides = { ...currentOverrides };
+      
+      Object.keys(editedNarrations).forEach(key => {
+        // If this narration exists in the defaults
+        if (initialNarrations[key]) {
+          const defaultNarration = initialNarrations[key];
+          const editedNarration = editedNarrations[key];
+          
+          const handleFieldChange = (field: string) => {
+            if (editedNarration[field] !== defaultNarration[field]) {
+              if (!newOverrides[key]) newOverrides[key] = {};
+              newOverrides[key][field] = editedNarration[field];
+            } else if (newOverrides[key] && (field === 'send' ? field in newOverrides[key] : newOverrides[key][field])) {
+              delete newOverrides[key][field];
+            }
+          };
+
+          // Check changes for each field
+          ['content', 'role', 'send'].forEach(handleFieldChange);
+          
+          // If all properties are back to default, remove this narration from overrides
+          if (newOverrides[key] && Object.keys(newOverrides[key]).length === 0) {
+            delete newOverrides[key];
+          }
+        } else {
+          // This is a new narration that doesn't exist in defaults
+          newOverrides[key] = editedNarrations[key];
+        }
+      });
+      
+      // Save only the overrides to localStorage
+      localStorage.setItem(narrationStorageKey, JSON.stringify(newOverrides));
+      window.location.reload();
+    } catch (e) {
+      setError("Invalid JSON");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-2 rounded-lg max-w-3xl w-full mx-4">
+        <div className="flex justify-between mx-2 items-center">
+          <h2 className="text-xl font-bold">Edit Narrations</h2>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <textarea
+              value={testNarrations || "Narrations not found"}
+              onChange={(e) => setTestNarrations(e.target.value)}
+              className="w-full min-h-[70vh] h-full font-mono text-sm p-4 border rounded-lg"
+            />
+          </div>
+          {error && <p className="text-red-500">{error}</p>}
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button variant="outline" onClick={handleApply}>Apply Narrations</Button>
           </div>
         </div>
       </div>
