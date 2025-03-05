@@ -73,3 +73,18 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes drawCircle {
+  0% {
+    stroke-dasharray: 350;
+    stroke-dashoffset: 350;
+  }
+  100% {
+    stroke-dasharray: 350;
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-drawCircle {
+  animation: drawCircle 2s ease-out forwards;
+}

@@ -15,6 +15,7 @@ import MultiplyingWholesAndFractionsGame from './games/multiplying-wholes-and-Fr
 import CommonDecimalsFractions from './games/common-decimals-fractions/game';
 import CommonDecimalsAndFractions from './games/Common-Decimals-And-Fractions/game';
 import Multiplying2DigitsBy1DigitWithPartialProducts from './games/multiplying-2-digits-by-1-digit-with-partial-products/game'
+import MultiplyWithAndWithoutRegrouping from './games/multiply-with-and-without-regrouping/game'
 
 import { initialGameState as multiplying2DigitsBy1DigitWithPartialProductsInitialState } from './games/multiplying-2-digits-by-1-digit-with-partial-products/game-state';
 import { initialGameState as commonDecimalsFractionsInitialState } from './games/common-decimals-fractions/game-state';
@@ -33,6 +34,7 @@ import { initialGameState as mixedNumberToImproperFractionGameInitialState } fro
 import { initialGameState as multiplyingWholesAndFractionsGameInitialState } from './games/multiplying-wholes-and-Fractions/game-state';
 import { initialGameState as mixedFractionWithoutRegoupingInitialState } from './games/add-and-subtract-mixed-numbers-without-regouping/game-state';
 import { initialGameState as commonDecimalsAndFractionsInitialState } from './games/Common-Decimals-And-Fractions/game-state';
+import { initialGameState as multiplyWithAndWithoutRegroupingInitialState } from './games/multiply-with-and-without-regrouping/game-state';
 
 import { GameStateProvider as Multiplying2DigitsBy1DigitWithPartialProductsGameStateProvider, useGameState as Multiplying2DigitsBy1DigitWithPartialProductsGameState } from './games/multiplying-2-digits-by-1-digit-with-partial-products/state-utils'
 import { GameStateProvider as CommonDecimalsFractionsGameStateProvider, useGameState as CommonDecimalsFractionsGameState } from './games/common-decimals-fractions/state-utils'
@@ -51,6 +53,7 @@ import { GameStateProvider as MixedFractionWithRegoupingGameStateProvider, useGa
 import { GameStateProvider as MixedNumberToImproperFractionGameStateProvider, useGameState as MixedNumberToImproperFractionGameState } from './games/writing-mixed-numbers-as-improper-fractions/state-utils'
 import { GameStateProvider as MultiplyingWholesAndFractionsGameStateProvider, useGameState as MultiplyingWholesAndFractionsGameState } from './games/multiplying-wholes-and-Fractions/state-utils'
 import { GameStateProvider as CommonDecimalsAndFractionsProvider, useGameState as CommonDecimalsAndFractionsState } from './games/Common-Decimals-And-Fractions/state-utils';
+import { GameStateProvider as MultiplyWithAndWithoutRegroupingGameStateProvider, useGameState as MultiplyWithAndWithoutRegroupingGameState } from './games/multiply-with-and-without-regrouping/state-utils';
 
 interface GameInfo {
   game: React.ComponentType<{ sendAdminMessage: (role: string, content: string, onComplete?: () => void) => Promise<string> }>;
@@ -167,5 +170,11 @@ export const gameInfo: Record<string, GameInfo> = {
     useState: MixedNumberToImproperFractionGameState,
     provider: MixedNumberToImproperFractionGameStateProvider,
     initialGameState: mixedNumberToImproperFractionGameInitialState
+  },
+  'multiply-with-and-without-regrouping': {
+    game: MultiplyWithAndWithoutRegrouping,
+    useState: MultiplyWithAndWithoutRegroupingGameState,
+    provider: MultiplyWithAndWithoutRegroupingGameStateProvider,
+    initialGameState: multiplyWithAndWithoutRegroupingInitialState
   }
 };
