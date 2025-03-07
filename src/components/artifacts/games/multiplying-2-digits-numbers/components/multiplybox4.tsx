@@ -57,6 +57,7 @@ export default function MultiplyBox4({
   const [bounce, setBounce] = useState(true);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showSum, setShowSum] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
   const [sumValue, setSumValue] = useState('');
   const [sumBounce, setSumBounce] = useState(true);
 
@@ -84,7 +85,9 @@ export default function MultiplyBox4({
   useEffect(() => {
     if (isCorrect) {
       setShowSum(true);
-      setTiloHappy(true);
+      setTimeout(() => {
+        setTiloHappy(true);
+      }, 600);
       if (narrations.Screen2Step4Message1.send) {
         sendAdminMessage(narrations.Screen2Step4Message1.role, formatMessage(narrations.Screen2Step4Message1.content, {}))
       }
@@ -154,10 +157,13 @@ export default function MultiplyBox4({
               placeholder='?'
               correctValue={(number1 * number2).toString()}
               onCorrect={() => {
+                sounds.right();
                 setCorrectSum(true);
+                setShowAnswer(true);
                 onCorrect();
               }}
               onIncorrect={(attempt, correct) => {
+                sounds.wronginput();
                 sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${number1} x ${number2}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
               }}
             />
@@ -167,7 +173,7 @@ export default function MultiplyBox4({
 
 
       {/* Sliders Values Boxes */}
-      {true ? <>{(isYellow || isBlue) && <div className={`absolute flex items-center justify-center -translate-x-[4vh] right-[1vh] transition-all duration-100 opacity-100 -translate-y-[3vh]`} style={{ width: `${(((number1 - horizontalSliderValue) / number1) * 100) * 0.9}%` }}>
+      {!tiloHappy ? <>{(isYellow || isBlue) && <div className={`absolute flex items-center justify-center -translate-x-[4vh] right-[1vh] transition-all duration-100 opacity-100 -translate-y-[3vh]`} style={{ width: `${(((number1 - horizontalSliderValue) / number1) * 100) * 0.9}%` }}>
         <div style={{ backgroundImage: `url(${isYellow ? yellowboxV.src : blueboxV.src})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
           {number1 - horizontalSliderValue}
         </div>
@@ -235,7 +241,7 @@ export default function MultiplyBox4({
 
       {/* Grid */}
       <div className={`bg-[#003a43] relative h-fit w-fit border-[1.5vh] border-[#006379] rounded-[3vh] flex flex-col items-center justify-center opacity-100 gap-[2vh] pt-[3vh] px-[3vh] pb-[2vh]`}>
-        {true ? <div className={`flex items-start justify-center`}>
+        {!tiloHappy ? <div className={`flex items-start justify-center`}>
           <div className="h-fit grid gap-[0.5vh]"
             style={{ gridTemplateColumns: `repeat(${number1}, minmax(0, 1fr))` }}>
             {Array.from({ length: number2 }, (_: number, rowIndex: number) => (
@@ -280,7 +286,7 @@ export default function MultiplyBox4({
         </div>}
 
         <div className={`flex items-center justify-center w-full `}>
-          <div className={`bg-[#ffffff] border-[#7f7f7f] border-[0.2vh] rounded-[1vh] text-[#003a43] leading-none text-[3vh] px-[2vh] py-[1vh] shadow-[0.2vh_0.2vh_0_0_#7f7f7f]`}>
+          {!tiloHappy ? <><div className={`bg-[#ffffff] border-[#7f7f7f] border-[0.2vh] rounded-[1vh] text-[#003a43] leading-none text-[3vh] px-[2vh] py-[1vh] shadow-[0.2vh_0.2vh_0_0_#7f7f7f]`}>
             {number2 - (number2 % 10)} x {number1 - (number1 % 10)}
           </div>
           <div className='text-[4vh] leading-none text-white ml-[2vh]'>=</div>
@@ -291,15 +297,21 @@ export default function MultiplyBox4({
               onValueChange={(value) => { setValue(value); setBounce(false) }}
               className='text-[3vh] leading-none text-[#003a43] bg-white/0 placeholder:text-[#003a43] ml-[1.5vh] w-[8.5vh] outline-none text-center'
               placeholder='?'
-              correctValue={'200'}
+              correctValue={((number2 - (number2 % 10)) * (number1 - (number1 % 10))).toString()}
               onCorrect={() => {
                 setIsCorrect(true);
+                sounds.right();
               }}
               onIncorrect={(attempt, correct) => {
+                sounds.wronginput();
                 sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${number2 - (number2 % 10)} x ${number1 - (number1 % 10)}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
               }}
             />
-          </div>
+          </div></> :
+            <div className={`bg-[#ffffff] border-[#7f7f7f] border-[0.2vh] rounded-[1vh] text-[#003a43] leading-none text-[3vh] px-[2vh] py-[1vh] shadow-[0.2vh_0.2vh_0_0_#7f7f7f]`}>
+              {number1} x {number2} {showAnswer && <span>= {number1 * number2}</span>}
+            </div>
+          }
         </div>
       </div>
     </div>

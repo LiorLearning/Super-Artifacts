@@ -209,10 +209,12 @@ export default function MultiplyBox1({
               placeholder='?'
               correctValue={((number1 % 10) * (number2 % 10)).toString()}
               onCorrect={() => {
+                sounds.right();
                 setIsCorrect(true);
                 onCorrect();
               }}
               onIncorrect={(attempt, correct) => {
+                sounds.wronginput();
                 sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${number1 % 10} x ${number2 % 10}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
               }}
             />

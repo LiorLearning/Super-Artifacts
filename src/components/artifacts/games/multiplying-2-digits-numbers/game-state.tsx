@@ -1,4 +1,4 @@
-export type GameScreen = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth';
+export type GameScreen = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth' | 'seventh';
 
 interface Description {
   title: GameScreen;
@@ -36,6 +36,11 @@ export const descriptions: Description[] = [
     title: 'sixth',
     oneliner: 'Advanced Multiplication Challenge',
     description: 'Take on a bigger challenge with larger numbers! Use the partial products strategy to break down this multiplication. Split the number into hundreds, tens, and ones, multiply each part, and add the results. This final exercise solidifies your mastery of the partial products method.'
+  },
+  {
+    title: 'seventh',
+    oneliner: 'Final Challenge',
+    description: 'Congratulations! You\'ve mastered the partial products method. Now, try solving a final challenge with a larger number. Use the partial products strategy to break down this multiplication. Split the number into hundreds, tens, and ones, multiply each part, and add the results. This final exercise solidifies your mastery of the partial products method.'
   }
 ];
 
@@ -75,6 +80,12 @@ interface State6 {
   number2: number;
 }
 
+interface State7 {
+  step: number;
+  number1: number;
+  number2: number;
+}
+
 export interface GameState {
   screen: GameScreen;
   state1: State1;  
@@ -83,6 +94,7 @@ export interface GameState {
   state4: State4;
   state5: State5;
   state6: State6;
+  state7: State7;
 }
 
 export const initialGameState: GameState = {
@@ -109,13 +121,18 @@ export const initialGameState: GameState = {
   },
   state5: {
     step: 0,
-    number1: 54,
-    number2: 7
+    number1: 28,
+    number2: 14
   },
   state6: {
     step: 0,
-    number1: 235,
-    number2: 4
+    number1: 45,
+    number2: 24
+  },
+  state7: {
+    step: 0,
+    number1: 63,
+    number2: 55
   }
 };
 

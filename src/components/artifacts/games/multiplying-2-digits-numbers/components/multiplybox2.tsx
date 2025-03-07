@@ -81,10 +81,8 @@ export default function MultiplyBox2({
 
         <div className='text-[4vh] leading-none text-[#003a43] ml-[1.5vh]'>=</div>
         
-
-
         <div className='flex flex-col items-center justify-center'>
-          <div style={{ backgroundImage: `url(${isGreen ? yellowinput.src : isYellow ? greeninput.src : isOrange ? blueinput.src : isBlue ? blueinput.src : orangeinput.src})`, backgroundSize: '100% 100%' }} className={`opacity-100 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
+          <div style={{ backgroundImage: `url(${isGreen ? greeninput.src : isYellow ? yellowinput.src : isOrange ? blueinput.src : isBlue ? orangeinput.src : grayinput.src})`, backgroundSize: '100% 100%' }} className={`opacity-100 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
             <div className='text-[3vh] leading-none text-[#003a43] bg-white/0 placeholder:text-[#003a43] mt-[0.5vh] ml-[1.3vh] w-[8.5vh] outline-none text-center'>
               {((number1 % 10) * (number2 % 10)).toString()}
             </div>
@@ -212,10 +210,12 @@ export default function MultiplyBox2({
               placeholder='?'
               correctValue={((number2 % 10) * (number1 - (number1 % 10))).toString()}
               onCorrect={() => {
+                sounds.right();
                 setIsCorrect(true);
                 onCorrect();
               }}
               onIncorrect={(attempt, correct) => {
+                sounds.wronginput();
                 sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${number2 % 10} x ${number1 - (number1 % 10)}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
               }}
             />

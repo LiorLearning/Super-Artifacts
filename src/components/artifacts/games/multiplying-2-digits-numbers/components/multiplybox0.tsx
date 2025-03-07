@@ -91,6 +91,7 @@ export default function MultiplyBox0({
       
     if(horizontalStep) {
       if(horizontalSliderValue === number1 % 10 || horizontalSliderValue === (number1 - (number1 % 10))) {
+        sounds.right();
         setIsCorrectHorizontalLock(true);
         if(narrations.Screen2Step0Message2.send) {
           sendAdminMessage(narrations.Screen2Step0Message2.role, formatMessage(narrations.Screen2Step0Message2.content, {}));
@@ -104,6 +105,7 @@ export default function MultiplyBox0({
           setShowVerticalHand(true);
         }, 300);
       } else {
+        sounds.wrong();
         wrongAttempt.current++;
 
         if(narrations.Screen2Step0Message4.send && wrongAttempt.current === 1) {
@@ -122,6 +124,7 @@ export default function MultiplyBox0({
       }
     } else if(verticalStep) {
       if(verticalSliderValue === number2 % 10 || verticalSliderValue === (number2 - (number2 % 10))) {
+        sounds.right();
         setIsCorrectVerticalLock(true);
         if(narrations.Screen2Step0Message3.send) {
           sendAdminMessage(narrations.Screen2Step0Message3.role, formatMessage(narrations.Screen2Step0Message3.content, { number1, number2 }));
@@ -136,9 +139,9 @@ export default function MultiplyBox0({
         setHorizontalStep(false);
       } else {
         wrongAttempt.current++;
-        console.log('---------------------------------');
+        sounds.wrong();
+
         if(narrations.Screen2Step0Message4.send && wrongAttempt.current === 1) {
-          console.log('++++++++++++++++++++++++++++++++++++');
           sendAdminMessage(narrations.Screen2Step0Message4.role, formatMessage(narrations.Screen2Step0Message4.content, {
             number: number2, 
             a: verticalSliderValue, 
