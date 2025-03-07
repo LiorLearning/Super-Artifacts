@@ -23,21 +23,31 @@ interface Screen2Step2Props extends BaseProps {
   useEffect(() => {
     if (!hasGameStartedRef.current) {
       hasGameStartedRef.current = true;
-      sendAdminMessage('agent', `Can you help Tilo find ${number1} times ${number2}? Ready to begin?`);
     }
   }, []);
+
+  function onCorrect() {
+    setTimeout(() => {
+      goToStep('second', setGameStateRef, 3);
+    }, 2000);
+  }
 
 
   return (
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
       
       <div className="absolute -translate-y-[8vh] translate-x-[17vh] flex justify-center items-center z-30">
-        <MultiplyBox2 number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} horizontalSliderValue={horizontalSliderValue} setHorizontalSliderValue={setHorizontalSliderValue} verticalSliderValue={verticalSliderValue} setVerticalSliderValue={setVerticalSliderValue} />
+        <MultiplyBox2 number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} horizontalSliderValue={horizontalSliderValue} setHorizontalSliderValue={setHorizontalSliderValue} verticalSliderValue={verticalSliderValue} setVerticalSliderValue={setVerticalSliderValue} onCorrect={onCorrect}/>
       </div>
       
       <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%', width: `${(number1 * 2.2) + ((number1 - 1) * 0.5)}vh`, height: `10vh`}} className={`absolute z-20 translate-x-[7vw]`}></div>
 
-
+      <div className={`absolute ml-[8vw] max-w-[12vw] text-[2.5vh] -translate-y-[20vw] left-0 bg-white p-[1vw] border-[0.1vw] border-black z-20 drop-shadow-lg`}>
+        <div className={`transition-opacity duration-500`}>
+          Let’s fill in the partial products now
+        </div>
+      </div>
+      
       <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>

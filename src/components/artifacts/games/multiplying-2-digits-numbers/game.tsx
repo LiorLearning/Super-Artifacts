@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { useRef } from 'react';
 import FirstScreen from './screen/FirstScreen/first';
 import SecondScreen from './screen/SecondScreen/second';
-// import ThirdScreen from './screen/ThirdScreen/third';
-// import FourthScreen from './screen/FourthScreen/fourth';
+import ThirdScreen from './screen/ThirdScreen/third';
+import FourthScreen from './screen/FourthScreen/fourth';
 // import FifthScreen from './screen/FifthScreen/fifth';
 // import SixthScreen from './screen/SixthScreen/sixth';
 import { useGameState } from './state-utils';
@@ -19,9 +19,9 @@ export default function Game({sendAdminMessage}: GameProps) {
   const { gameStateRef } = useGameState();
   const { screen } = gameStateRef.current;
   const { step: step1 } = gameStateRef.current.state1;
-  // const { step: step2 } = gameStateRef.current.state2;
-  // const { step: step3 } = gameStateRef.current.state3;
-  // const { step: step4 } = gameStateRef.current.state4;
+  const { step: step2 } = gameStateRef.current.state2;
+  const { step: step3 } = gameStateRef.current.state3;
+  const { step: step4 } = gameStateRef.current.state4;
   // const { step: step5 } = gameStateRef.current.state5;
   // const { step: step6 } = gameStateRef.current.state6;
   
@@ -46,7 +46,7 @@ export default function Game({sendAdminMessage}: GameProps) {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [step1, screen]);
+  }, [step1, step2, step3, step4, screen]);
 
   return (
     <div className="mx-auto game font-jersey">
@@ -54,10 +54,10 @@ export default function Game({sendAdminMessage}: GameProps) {
       {/* Game screens */}
       {screen === 'first' && <FirstScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'second' && <SecondScreen sendAdminMessage={sendAdminMessage} />}
-      {/* {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 'third' && <ThirdScreen sendAdminMessage={sendAdminMessage} />}
       {screen === 'fourth' && <FourthScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'fifth' && <FifthScreen sendAdminMessage={sendAdminMessage} />}
-      {screen === 'sixth' && <SixthScreen sendAdminMessage={sendAdminMessage} />} */}
+      {/* {screen === 'fifth' && <FifthScreen sendAdminMessage={sendAdminMessage} />}
+      {screen === 'sixth' && <SixthScreen sendAdminMessage={sendAdminMessage} />}  */}
       <div ref={bottomRef} style={{ height: 0 }} />
 
       {/* Select font */}

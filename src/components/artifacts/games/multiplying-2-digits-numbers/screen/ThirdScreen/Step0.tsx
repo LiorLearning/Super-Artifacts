@@ -8,19 +8,19 @@ import MultiplyBox0 from "../../components/multiplybox0";
 import { formatMessage } from "../../components/commonFunctions";
 import HintPopup from "../../components/hintpopup";
 
-interface Screen2Step0Props extends BaseProps {
+interface Screen3Step0Props extends BaseProps {
   horizontalSliderValue: number;
   setHorizontalSliderValue: (value: number) => void;
   verticalSliderValue: number;
   setVerticalSliderValue: (value: number) => void;
 }
 
-export default function Screen2Step0({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen2Step0Props) {
+export default function Screen3Step0({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen3Step0Props) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const narrations = useNarrations();
   const hasGameStartedRef = useRef(false);
-  const number1 = gameStateRef.current.state2.number1;
-  const number2 = gameStateRef.current.state2.number2;
+  const number1 = gameStateRef.current.state3.number1;
+  const number2 = gameStateRef.current.state3.number2;
   const [breakNumber2, setBreakNumber2] = useState(false);
   const [correctSplit, setCorrectSplit] = useState(false);
   const [lockPopup, setLockPopup] = useState(false);
@@ -36,7 +36,7 @@ export default function Screen2Step0({sendAdminMessage, horizontalSliderValue, s
   }, []);
 
   function onCorrect() {
-    goToStep('second', setGameStateRef, 1);
+    goToStep('third', setGameStateRef, 1);
   }
 
 

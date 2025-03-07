@@ -12,6 +12,9 @@ import yellowboxV from '../assets/yellowboxV.png';
 import yellowboxH from '../assets/yellowboxH.png';
 import greenboxV from '../assets/greenboxV.png';
 import greenboxH from '../assets/greenboxH.png';
+import hand from '../assets/hand.png';
+import { useNarrations } from '../state-utils';
+import { formatMessage } from './commonFunctions';
 
 interface MultiplyBoxProps0 extends BaseProps {
   number1: number;  // 23 (horizontal)
@@ -20,6 +23,13 @@ interface MultiplyBoxProps0 extends BaseProps {
   setHorizontalSliderValue: (value: number) => void;
   verticalSliderValue: number;
   setVerticalSliderValue: (value: number) => void;
+  setBreakNumber2: (value: boolean) => void;
+  setCorrectSplit: (value: boolean) => void;
+  lockPopup: boolean;
+  setLockPopup: (value: boolean) => void;
+  hintPopup: boolean;
+  setHintPopup: (value: boolean) => void;
+  onCorrect: () => void;
 }
 
 export default function MultiplyBox0({
@@ -29,17 +39,29 @@ export default function MultiplyBox0({
   setHorizontalSliderValue,
   verticalSliderValue,
   setVerticalSliderValue,
-  sendAdminMessage }: MultiplyBoxProps0) {
+  setBreakNumber2,
+  setCorrectSplit,
+  lockPopup,
+  setLockPopup,
+  hintPopup,
+  setHintPopup,
+  sendAdminMessage,
+  onCorrect
+}: MultiplyBoxProps0) {
 
-  const { gameStateRef, setGameStateRef } = useGameState();
-
-  const [transition, setTransition] = useState(false);
+  
   const [horizontalStep, setHorizontalStep] = useState(false);
   const [verticalStep, setVerticalStep] = useState(false);
+  const [showHorizontalHand, setShowHorizontalHand] = useState(false);
+  const [showVerticalHand, setShowVerticalHand] = useState(false);
   const [isCorrectHorizontalLock, setIsCorrectHorizontalLock] = useState(false);
   const [isCorrectVerticalLock, setIsCorrectVerticalLock] = useState(false);
-  const [hint, setHint] = useState(false);
-
+  const [isDragging, setIsDragging] = useState(false);
+  const [lockAvailable, setLockAvailable] = useState(false);
+  const [hintAvailable, setHintAvailable] = useState(false);    
+  const wrongAttempt = useRef<number>(0);
+  const narrations = useNarrations();
+  const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
 
 
@@ -48,42 +70,108 @@ export default function MultiplyBox0({
       hasGameStartedRef.current = true;
       setTimeout(() => {
         setHorizontalStep(true);
+        setShowHorizontalHand(true);
       }, 1000);
     }
   }, []);
 
-  function handleHint() {
-    setHint(true);
-  }
+  useEffect(() => {
+    if (isDragging && gameStateRef.current.state2.step === 0) {
+      setTimeout(() => {
+        setLockPopup(true);
+        setLockAvailable(true);
+      }, 2000);
+    } else if (isDragging) {
+      setLockAvailable(true);
+    }
+  }, [isDragging]);
 
 
   function handleLock() {
-    setHint(false);
+      
     if(horizontalStep) {
       if(horizontalSliderValue === number1 % 10 || horizontalSliderValue === (number1 - (number1 % 10))) {
         setIsCorrectHorizontalLock(true);
-        sendAdminMessage('agent', 'correct');
+        if(narrations.Screen2Step0Message2.send) {
+          sendAdminMessage(narrations.Screen2Step0Message2.role, formatMessage(narrations.Screen2Step0Message2.content, {}));
+        }
         setHorizontalStep(false);
         setVerticalStep(true);
+        wrongAttempt.current = 0;
+        setBreakNumber2(true);
+        setHintAvailable(false);
+        setTimeout(() => {
+          setShowVerticalHand(true);
+        }, 300);
       } else {
-        sendAdminMessage('agent', 'incorrect');
+        wrongAttempt.current++;
+
+        if(narrations.Screen2Step0Message4.send && wrongAttempt.current === 1) {
+          sendAdminMessage(narrations.Screen2Step0Message4.role, formatMessage(narrations.Screen2Step0Message4.content, {
+            number: number1, 
+            a: horizontalSliderValue, 
+            b: number1 - horizontalSliderValue, 
+            c: Math.floor(number1 / 10) * 10, 
+            d: number1 % 10
+          }));
+        } else if(narrations.Screen2Step0Message5.send && wrongAttempt.current === 2) {
+          sendAdminMessage(narrations.Screen2Step0Message5.role, formatMessage(narrations.Screen2Step0Message5.content, {}));
+          setHintAvailable(true);
+        }
+        
       }
     } else if(verticalStep) {
       if(verticalSliderValue === number2 % 10 || verticalSliderValue === (number2 - (number2 % 10))) {
         setIsCorrectVerticalLock(true);
-        sendAdminMessage('agent', 'correct');
+        if(narrations.Screen2Step0Message3.send) {
+          sendAdminMessage(narrations.Screen2Step0Message3.role, formatMessage(narrations.Screen2Step0Message3.content, { number1, number2 }));
+        }
+        setCorrectSplit(true);
+        setTimeout(() => {
+          onCorrect();
+        }, 4000);
+        setShowHorizontalHand(false);
+        setShowVerticalHand(false);
         setVerticalStep(false);
         setHorizontalStep(false);
       } else {
-        sendAdminMessage('agent', 'incorrect');
+        wrongAttempt.current++;
+        console.log('---------------------------------');
+        if(narrations.Screen2Step0Message4.send && wrongAttempt.current === 1) {
+          console.log('++++++++++++++++++++++++++++++++++++');
+          sendAdminMessage(narrations.Screen2Step0Message4.role, formatMessage(narrations.Screen2Step0Message4.content, {
+            number: number2, 
+            a: verticalSliderValue, 
+            b: number2 - verticalSliderValue, 
+            c: Math.floor(number2 / 10) * 10, 
+            d: number2 % 10
+          }));
+        } else if(narrations.Screen2Step0Message5.send && wrongAttempt.current === 2) {
+          sendAdminMessage(narrations.Screen2Step0Message5.role, formatMessage(narrations.Screen2Step0Message5.content, {}));
+          setHintAvailable(true);
+        }
       }
     }
   }
 
   return (
-    <div className="flex  h-auto w-auto relative">
+    <div className="flex h-auto w-auto relative">
+      
 
-      {/* Horizontal */}
+      {/* Horizontal hand animation */}
+      {showHorizontalHand && <div 
+        style={{
+          backgroundImage: `url(${hand.src})`, 
+          backgroundSize: '100% 100%', 
+          width: '8vh', 
+          height: '8vh',
+          animation: 'handAnimationHorizontal 2s infinite ease-in-out'
+        }} 
+        className='top-0 left-0 translate-x-[6vh] -translate-y-[4vh] absolute z-20'
+      ></div>}
+      
+      
+      
       <div className={`absolute mx-[1.5vh] w-fit px-[1.5vh] bg-white border-[1.5vh] border-[#006379] rounded-[3vh] h-[20vh]  flex flex-col items-start justify-center transition-all duration-500 ${horizontalStep ? 'opacity-100 -translate-y-[12vh]' : 'opacity-0 translate-x-[1vh]'}`}>
         <input
           type="range"
@@ -92,7 +180,8 @@ export default function MultiplyBox0({
           value={horizontalSliderValue}
           onChange={(e) => {
             setHorizontalSliderValue(Number(e.target.value));
-            setHint(false);
+            setShowHorizontalHand(false);
+            setIsDragging(true);
           }}
           className='absolute cursor-pointer z-20 opacity-0'
           style={{ width: `${(number1 * 1.8) + ((number1 - 1) * 0.5)}vh` }}
@@ -153,22 +242,6 @@ export default function MultiplyBox0({
             {verticalSliderValue}
           </div>
       </div>}
-      
-      
-      {/* Hints Lines */}
-      {hint && horizontalStep && <div className='absolute translate-x-[4vh] h-[80%] z-20 overflow-hidden'
-        style={{width: `${(number1 * 1.8) + ((number1 - 1) * 0.5) + 0.5}vh`}}>
-        <div className='absolute w-[0.5vh] top-[4.5vh] bg-white animate-ping '
-          style={{height: `${(number2 * 1.8) + ((number2 - 1) * 0.5)}vh`, left: `${((number1 % 10) / number1) * 100}%`}}>
-        </div>
-      </div>}
-
-      {hint && verticalStep  && <div className='absolute w-[100%] translate-y-[4vh] z-20 overflow-hidden'
-        style={{height: `${(number2 * 1.8) + ((number2 - 1) * 0.5) + 0.5}vh`}}>
-        <div className='absolute h-[0.5vh] left-[4.5vh]  bg-white animate-ping'
-          style={{width: `${(number1 * 1.8) + ((number1 - 1) * 0.5)}vh`, top: `${((number2 % 10) / number2) * 100}%`}}>
-        </div>
-      </div>}
 
 
       {/* Distinguishing Lines */}
@@ -189,6 +262,17 @@ export default function MultiplyBox0({
       
 
       {/* Vertical */}
+      {/* Vertical hand animation */}
+      {showVerticalHand && <div 
+        style={{
+          backgroundImage: `url(${hand.src})`, 
+          backgroundSize: '100% 100%', 
+          width: '8vh', 
+          height: '8vh',
+          animation: 'handAnimationVertical 2s infinite ease-in-out'
+        }} 
+        className='top-0 left-0 absolute z-20 -translate-x-[3.5vh] translate-y-[6vh]'
+      ></div>}
       <div className={`absolute mt-[1.5vh] bg-white  py-[1.5vh] border-[1.5vh] border-[#006379] rounded-[3vh] w-[20vh]  flex items-center justify-center transition-all duration-500 ${true && verticalStep ? 'opacity-100 -translate-x-[12vh]' : 'opacity-0 translate-x-[1vh]'}`}
         style={{
           height: `${(number2 * 1.8) + ((number2 - 1) * 0.5) + 6}vh`,
@@ -200,7 +284,7 @@ export default function MultiplyBox0({
           value={verticalSliderValue}
           onChange={(e) => {
             setVerticalSliderValue(Number(e.target.value));
-            setHint(false);
+            setShowVerticalHand(false);
           }}
           className='absolute cursor-pointer rotate-90 z-20 opacity-0'
           style={{
@@ -263,19 +347,50 @@ export default function MultiplyBox0({
         </div>
 
         <div className={`flex items-center justify-between w-full `}>
-          <button className={`bg-[#e24548] border-[0.2vh] rounded-[1vh] text-white text-[2.5vh] px-[1.5vh] py-[0.5vh] shadow-[0.2vh_0.2vh_0_0_#ffffff]`}
-            onClick={() => handleLock()}>
+          <button className={`border-[0.2vh] rounded-[1vh] text-white text-[2.5vh] py-[0.5vh] shadow-[0.2vh_0.2vh_0_0_#ffffff] w-[8vh] text-center transition-all duration-500 ${lockAvailable ? 'opacity-100 bg-[#e24548] ' : 'opacity-80 bg-[#8e8e8e] '}`}
+            onClick={() => lockAvailable ? handleLock() : undefined}>
             LOCK
           </button>
           <div className={`bg-[#ffffff] border-[#7f7f7f] border-[0.2vh] rounded-[1vh] text-[#003a43] leading-none text-[3vh] px-[2vh] py-[1vh] shadow-[0.2vh_0.2vh_0_0_#7f7f7f]`}>
             {number1} x {number2}
           </div>
-          <button className={`bg-[#8445e2] border-[0.2vh] rounded-[1vh] text-white text-[2.5vh] px-[1.5vh] py-[0.5vh] shadow-[0.2vh_0.2vh_0_0_#ffffff]`}
-            onClick={() => handleHint()}>
+          <button className={` border-[0.2vh] rounded-[1vh] text-white text-[2.5vh] py-[0.5vh] shadow-[0.2vh_0.2vh_0_0_#ffffff] w-[8vh] text-center transition-all duration-500 ${hintAvailable ? 'opacity-100 bg-[#8445e2]' : 'opacity-80 bg-[#8e8e8e]'}`}
+            onClick={() => hintAvailable ? setHintPopup(true) : undefined}>
             HINT
           </button>
         </div>
       </div>
+      <style jsx>{`
+        @keyframes handAnimationHorizontal {
+          0% {
+            transform: translate(6vh, -4vh);
+            opacity: 1;
+          }
+          50% {
+            transform: translate(10vh, -4vh);
+            opacity: 0.5;
+          }
+          100% {
+            transform: translate(6vh, -4vh);
+            opacity: 1;
+          }
+        }
+        
+        @keyframes handAnimationVertical {
+          0% {
+            transform: translate(-3.5vh, 6vh);
+            opacity: 1;
+          }
+          50% {
+            transform: translate(-3.5vh, 10vh);
+            opacity: 0.5;
+          }
+          100% {
+            transform: translate(-3.5vh, 6vh);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 } 
