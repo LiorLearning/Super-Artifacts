@@ -1,4 +1,5 @@
 const BASE_URL = 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/multiplying-2-digits-by-1-digit-with-partial-products';
+const BASE_URL_2 = 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/multiplying-2-digits-numbers';
 
 export const images = {
   grass: `${BASE_URL}/grass.png`,
@@ -19,6 +20,20 @@ export const images = {
   slider: `${BASE_URL}/slider.png`,
   sumBox: `${BASE_URL}/sumbox.png`,
   tiloHappy: `${BASE_URL}/tilohappy.png`,
-  tiloSad: `${BASE_URL}/tilosad.png`
+  tiloSad: `${BASE_URL}/tilosad.png`,
+  blueboxH: `${BASE_URL_2}/blueboxH.png`,
+  blueboxV: `${BASE_URL_2}/blueboxV.png`,
+  blueinput: `${BASE_URL_2}/blueinput.png`,
+  grayinput: `${BASE_URL_2}/grayinput.png`,
+  greenboxH: `${BASE_URL_2}/greenboxH.png`,
+  greenboxV: `${BASE_URL_2}/greenboxV.png`,
+  greeninput: `${BASE_URL_2}/greeninput.png`,
+  hand: `${BASE_URL_2}/hand.png`,
+  orangeboxH: `${BASE_URL_2}/orangeboxH.png`,
+  orangeboxV: `${BASE_URL_2}/orangeboxV.png`,
+  orangeinput: `${BASE_URL_2}/orangeinput.png`,
+  yellowboxH: `${BASE_URL_2}/yellowboxH.png`,
+  yellowboxV: `${BASE_URL_2}/yellowboxV.png`,
+  yellowinput: `${BASE_URL_2}/yellowinput.png`
 } as const;
 

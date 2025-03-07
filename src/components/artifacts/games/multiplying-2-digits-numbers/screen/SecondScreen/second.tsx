@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import MultiplyBox from '../../components/multiplybox0';
 import { useGameState } from '../../state-utils';
 import { BaseProps } from '../../utils/types';
 import Screen2Step0 from './Step0';

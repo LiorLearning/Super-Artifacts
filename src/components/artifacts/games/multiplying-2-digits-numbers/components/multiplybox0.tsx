@@ -4,15 +4,6 @@ import { NewInput } from '@/components/ui/newinput';
 import { BaseProps } from '../utils/types';
 import { useGameState } from '../state-utils';
 import { sounds } from '../utils/sound';
-import blueboxV from '../assets/blueboxV.png';
-import blueboxH from '../assets/blueboxH.png';
-import orangeboxV from '../assets/orangeboxV.png';
-import orangeboxH from '../assets/orangeboxH.png';
-import yellowboxV from '../assets/yellowboxV.png';
-import yellowboxH from '../assets/yellowboxH.png';
-import greenboxV from '../assets/greenboxV.png';
-import greenboxH from '../assets/greenboxH.png';
-import hand from '../assets/hand.png';
 import { useNarrations } from '../state-utils';
 import { formatMessage } from './commonFunctions';
 
@@ -164,7 +155,7 @@ export default function MultiplyBox0({
       {/* Horizontal hand animation */}
       {showHorizontalHand && <div 
         style={{
-          backgroundImage: `url(${hand.src})`, 
+          backgroundImage: `url(${images.hand})`, 
           backgroundSize: '100% 100%', 
           width: '8vh', 
           height: '8vh',
@@ -223,25 +214,25 @@ export default function MultiplyBox0({
 
       {/* Sliders Values Boxes */}
       {horizontalSliderValue !== number1 && <div className={`absolute flex items-center justify-center -translate-x-[4vh] right-[1vh] transition-all duration-100 ${horizontalStep ? 'opacity-100 -translate-y-[6vh]' : isCorrectHorizontalLock ? 'opacity-100 -translate-y-[3vh]' : 'opacity-0'}`} style={{ width: `${(((number1 - horizontalSliderValue) / number1) * 100) * 0.9}%` }}>
-          <div style={{ backgroundImage: `url(${verticalSliderValue != 0 ? yellowboxV.src : blueboxV.src})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
+          <div style={{ backgroundImage: `url(${verticalSliderValue != 0 ? images.yellowboxV : images.blueboxV})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
             {number1 -horizontalSliderValue}
           </div>
       </div>}
 
       {horizontalSliderValue !== 0 && <div className={`absolute bg-black flex items-center justify-center left-[4.5vh] transition-all duration-100 ${horizontalStep ? 'opacity-100 -translate-y-[6vh]' : isCorrectHorizontalLock ? 'opacity-100 -translate-y-[3vh]' : 'opacity-0'}`} style={{ width: `${(((horizontalSliderValue) / number1) * 100) * 0.9}%` }}>
-          <div style={{ backgroundImage: `url(${verticalSliderValue != 0 ? greenboxV.src : orangeboxV.src})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
+          <div style={{ backgroundImage: `url(${verticalSliderValue != 0 ? images.greenboxV : images.orangeboxV})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
             {horizontalSliderValue}
           </div>
       </div>}
       
       {verticalSliderValue !== number2 && <div className={`absolute z-20 flex items-center bottom-[11.5vh] justify-center transition-all duration-100 ${verticalStep ? 'opacity-100 -translate-x-[6.3vh]' :   isCorrectVerticalLock ? 'opacity-100 -translate-x-[3vh]' : 'opacity-0'}`} style={{ height: `${(((number2 - verticalSliderValue) / number2) * 100) * 0.7}%` }}>
-          <div style={{ backgroundImage: `url(${horizontalSliderValue === 0 ? blueboxH.src : orangeboxH.src})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
+          <div style={{ backgroundImage: `url(${horizontalSliderValue === 0 ? images.blueboxH : images.orangeboxH})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
             {number2 - verticalSliderValue}
           </div>
       </div>}
 
       {verticalSliderValue !== 0 && <div className={`absolute z-20 flex items-center top-[4.5vh] justify-center transition-all duration-100 ${verticalStep ? 'opacity-100 -translate-x-[6.3vh]' : isCorrectVerticalLock ? 'opacity-100 -translate-x-[3vh]' : 'opacity-0'} `} style={{ height: `${(((verticalSliderValue) / number2) * 100) * 0.7}%` }}>
-          <div style={{ backgroundImage: `url(${greenboxH.src})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
+          <div style={{ backgroundImage: `url(${images.greenboxH})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
             {verticalSliderValue}
           </div>
       </div>}
@@ -268,7 +259,7 @@ export default function MultiplyBox0({
       {/* Vertical hand animation */}
       {showVerticalHand && <div 
         style={{
-          backgroundImage: `url(${hand.src})`, 
+          backgroundImage: `url(${images.hand})`, 
           backgroundSize: '100% 100%', 
           width: '8vh', 
           height: '8vh',

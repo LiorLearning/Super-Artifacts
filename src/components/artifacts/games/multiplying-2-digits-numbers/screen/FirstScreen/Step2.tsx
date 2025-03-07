@@ -5,8 +5,6 @@ import { useRef } from "react";
 import { goToScreen, goToStep } from "../../utils/helper";
 import { useGameState, useNarrations } from "../../state-utils";
 import { sounds } from "../../utils/sound";
-import blueboxV from "../../assets/blueboxV.png"
-import blueboxH from "../../assets/blueboxH.png"
 import { formatMessage } from "../../components/commonFunctions";
 
 export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
@@ -128,14 +126,14 @@ export default function Screen1Step2({ sendAdminMessage }: BaseProps) {
 
         <div className={`absolute w-[2vh] left-0 top-0 flex items-center justify-center translate-y-[2vh] -translate-x-[3vh] transition-all duration-200 ${showColumn ? 'opacity-100' : 'opacity-0'}`}
           style={{ height: `${(number2 * 1.8) + (number2 - 1) * 0.5 + 2.5}vh` }}>
-            <div style={{ backgroundImage: `url(${blueboxH.src})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
+            <div style={{ backgroundImage: `url(${images.blueboxH})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
             {number2}
           </div>
         </div>
 
         <div className={`absolute top-0 left-0 h-[2vh] translate-x-[1.5vh] -translate-y-[2.2vh] flex items-center justify-center transition-all duration-200 ${showRow ? 'opacity-100' : 'opacity-0'}`}
           style={{ width: `${(number1 * 1.8) + (number1 - 1) * 0.5 + 2.5}vh` }}>
-            <div style={{ backgroundImage: `url(${blueboxV.src})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
+            <div style={{ backgroundImage: `url(${images.blueboxV})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
             {number1}
           </div>
         </div>
