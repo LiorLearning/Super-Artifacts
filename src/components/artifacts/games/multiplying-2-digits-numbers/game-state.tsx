@@ -89,8 +89,8 @@ export const initialGameState: GameState = {
   screen: 'first',
   state1: {
     step: 0,
-    number1: 21,
-    number2: 15
+    number1: 25,
+    number2: 17
   },
   state2: {
     step: 0,
@@ -99,13 +99,13 @@ export const initialGameState: GameState = {
   },
   state3: {
     step: 0,
-    number1: 17,
-    number2: 6
+    number1: 23,
+    number2: 15
   },
   state4: {
     step: 0,
-    number1: 23,
-    number2: 4
+    number1: 24,
+    number2: 19
   },
   state5: {
     step: 0,

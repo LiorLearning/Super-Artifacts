@@ -7,18 +7,18 @@ import { useGameState } from "../../state-utils";
 import { narrations } from "../../narrations";  
 import MultiplyBox1 from "../../components/multiplybox1";
 
-interface Screen2Step1Props extends BaseProps {
+interface Screen3Step1Props extends BaseProps {
   horizontalSliderValue: number;
   setHorizontalSliderValue: (value: number) => void;
   verticalSliderValue: number;
   setVerticalSliderValue: (value: number) => void;
 }
 
-export default function Screen2Step1({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen2Step1Props) {
+export default function Screen3Step1({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen3Step1Props) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
-  const number1 = gameStateRef.current.state2.number1;
-  const number2 = gameStateRef.current.state2.number2;
+  const number1 = gameStateRef.current.state3.number1;
+  const number2 = gameStateRef.current.state3.number2;
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
@@ -28,7 +28,7 @@ export default function Screen2Step1({sendAdminMessage, horizontalSliderValue, s
 
   function onCorrect() {
     setTimeout(() => {
-      goToStep('second', setGameStateRef, 2);
+      goToStep('third', setGameStateRef, 2);
     }, 2000);
   }
 

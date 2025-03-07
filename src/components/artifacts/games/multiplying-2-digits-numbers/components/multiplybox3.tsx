@@ -25,6 +25,7 @@ interface MultiplyBoxProps3 extends BaseProps {
   setHorizontalSliderValue: (value: number) => void;
   verticalSliderValue: number;
   setVerticalSliderValue: (value: number) => void;
+  onCorrect: () => void;
 }
 
 export default function MultiplyBox3({
@@ -34,7 +35,9 @@ export default function MultiplyBox3({
   setHorizontalSliderValue,
   verticalSliderValue,
   setVerticalSliderValue,
-  sendAdminMessage }: MultiplyBoxProps3) {
+  sendAdminMessage,
+  onCorrect
+}: MultiplyBoxProps3) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const [value, setValue] = useState('');
@@ -208,10 +211,10 @@ export default function MultiplyBox3({
               correctValue={((number2 - (number2 % 10)) * (number1 % 10)).toString()}
               onCorrect={() => {
                 setIsCorrect(true);
-                sendAdminMessage('agent', 'correct');
+                onCorrect();
               }}
               onIncorrect={(attempt, correct) => {
-                sendAdminMessage('agent', 'incorrect');
+                sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${number2 - (number2 % 10)} x ${number1 % 10}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
               }}
             />
           </div>

@@ -8,18 +8,18 @@ import { narrations } from "../../narrations";
 import { formatMessage } from "../../components/commonFunctions";
 import MultiplyBox4 from "../../components/multiplybox4";
 
-interface Screen2Step4Props extends BaseProps {
+interface Screen3Step4Props extends BaseProps {
   horizontalSliderValue: number;
   setHorizontalSliderValue: (value: number) => void;
   verticalSliderValue: number;
   setVerticalSliderValue: (value: number) => void;
 }
 
-export default function Screen2Step4({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen2Step4Props) {
+export default function Screen3Step4({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen3Step4Props) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
-  const number1 = gameStateRef.current.state2.number1;
-  const number2 = gameStateRef.current.state2.number2;
+  const number1 = gameStateRef.current.state3.number1;
+  const number2 = gameStateRef.current.state3.number2;
 
   const [tiloHappy, setTiloHappy] = useState(false);
   const [correctSum, setCorrectSum] = useState(false);
@@ -36,12 +36,9 @@ export default function Screen2Step4({sendAdminMessage, horizontalSliderValue, s
       sendAdminMessage(narrations.Screen2Step4Message2.role, formatMessage(narrations.Screen2Step4Message2.content, {number1, number2, answer: number1 * number2}));
     }
 
-    setTimeout(() => {  
-      sendAdminMessage('agent', 'Ready to do some more problems using the tile board?');
-      setTimeout(() => {
-        goToScreen('third', setGameStateRef);
-      }, 4000);
-    }, 6000);
+    setTimeout(() => {
+      goToScreen('fourth', setGameStateRef);
+    }, 7000);
   }
 
 

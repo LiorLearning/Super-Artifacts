@@ -4,21 +4,20 @@ import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
-import { narrations } from "../../narrations";  
-import MultiplyBox1 from "../../components/multiplybox1";
+import MultiplyBox2 from "../../components/multiplybox2";
 
-interface Screen2Step1Props extends BaseProps {
+interface Screen4Step2Props extends BaseProps {
   horizontalSliderValue: number;
   setHorizontalSliderValue: (value: number) => void;
   verticalSliderValue: number;
   setVerticalSliderValue: (value: number) => void;
 }
 
-export default function Screen2Step1({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen2Step1Props) {
+  export default function Screen4Step2({sendAdminMessage, horizontalSliderValue, setHorizontalSliderValue, verticalSliderValue, setVerticalSliderValue}: Screen4Step2Props) {
   const { gameStateRef, setGameStateRef } = useGameState();
   const hasGameStartedRef = useRef(false);
-  const number1 = gameStateRef.current.state2.number1;
-  const number2 = gameStateRef.current.state2.number2;
+  const number1 = gameStateRef.current.state4.number1;
+  const number2 = gameStateRef.current.state4.number2;
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
@@ -28,7 +27,7 @@ export default function Screen2Step1({sendAdminMessage, horizontalSliderValue, s
 
   function onCorrect() {
     setTimeout(() => {
-      goToStep('second', setGameStateRef, 2);
+      goToStep('fourth', setGameStateRef, 3);
     }, 2000);
   }
 
@@ -37,7 +36,7 @@ export default function Screen2Step1({sendAdminMessage, horizontalSliderValue, s
     <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
       
       <div className="absolute -translate-y-[8vh] translate-x-[17vh] flex justify-center items-center z-30">
-        <MultiplyBox1 number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} horizontalSliderValue={horizontalSliderValue} setHorizontalSliderValue={setHorizontalSliderValue} verticalSliderValue={verticalSliderValue} setVerticalSliderValue={setVerticalSliderValue} onCorrect={onCorrect}/>
+        <MultiplyBox2 number1={number1} number2={number2} sendAdminMessage={sendAdminMessage} horizontalSliderValue={horizontalSliderValue} setHorizontalSliderValue={setHorizontalSliderValue} verticalSliderValue={verticalSliderValue} setVerticalSliderValue={setVerticalSliderValue} onCorrect={onCorrect}/>
       </div>
       
       <div style={{backgroundImage: `url(${images.boxShadow})`, backgroundSize: '100% 100%', width: `${(number1 * 2.2) + ((number1 - 1) * 0.5)}vh`, height: `10vh`}} className={`absolute z-20 translate-x-[7vw]`}></div>
@@ -47,7 +46,7 @@ export default function Screen2Step1({sendAdminMessage, horizontalSliderValue, s
           Let’s fill in the partial products now
         </div>
       </div>
-
+      
       <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
       </div>
