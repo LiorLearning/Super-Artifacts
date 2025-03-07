@@ -4,19 +4,6 @@ import { NewInput } from '@/components/ui/newinput';
 import { BaseProps } from '../utils/types';
 import { useGameState } from '../state-utils';
 import { sounds } from '../utils/sound';
-import blueboxV from '../assets/blueboxV.png';
-import blueboxH from '../assets/blueboxH.png';
-import orangeboxV from '../assets/orangeboxV.png';
-import orangeboxH from '../assets/orangeboxH.png';
-import yellowboxV from '../assets/yellowboxV.png';
-import yellowboxH from '../assets/yellowboxH.png';
-import greenboxV from '../assets/greenboxV.png';
-import greenboxH from '../assets/greenboxH.png';
-import greeniput from '../assets/greeninput.png';
-import yellowinput from '../assets/yellowinput.png';
-import blueinput from '../assets/blueinput.png';
-import orangeinput from '../assets/orangeinput.png';
-import grayinput from '../assets/grayinput.png';
 
 interface MultiplyBoxProps1 extends BaseProps {
   number1: number;  // 23 (horizontal)
@@ -82,7 +69,7 @@ export default function MultiplyBox1({
         <div className='text-[4vh] leading-none text-[#003a43] ml-[1.5vh]'>=</div>
         
         <div className='flex flex-col items-center justify-center'>
-          <div style={{ backgroundImage: `url(${isGreen ? greeniput.src : isYellow ? yellowinput.src : isOrange ? orangeinput.src : isBlue ? blueinput.src : grayinput.src})`, backgroundSize: '100% 100%' }} className={`w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh] transition-all duration-500 ${isCorrect ? 'opacity-100 translate-y-[0vh]' : 'opacity-0 translate-y-[10vh]'}`}>
+          <div style={{ backgroundImage: `url(${isGreen ? images.greeninput : isYellow ? images.yellowinput : isOrange ? images.orangeinput : isBlue ? images.blueinput : images.grayinput})`, backgroundSize: '100% 100%' }} className={`w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh] transition-all duration-500 ${isCorrect ? 'opacity-100 translate-y-[0vh]' : 'opacity-0 translate-y-[10vh]'}`}>
             <div className='text-[3vh] leading-none text-[#003a43] bg-white/0 placeholder:text-[#003a43] mt-[0.5vh] ml-[1.3vh] w-[8.5vh] outline-none text-center'>
               {((number1 % 10) * (number2 % 10)).toString()}
             </div>
@@ -93,7 +80,7 @@ export default function MultiplyBox1({
         <div className='text-[4vh] leading-none text-[#003a43]'>+</div>
 
         <div className='flex flex-col items-center justify-center'>
-          <div style={{ backgroundImage: `url(${isGreen ? greeniput.src : isYellow ? yellowinput.src : isOrange ? orangeinput.src : isBlue ? blueinput.src : grayinput.src})`, backgroundSize: '100% 100%' }} className={`opacity-0 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
+          <div style={{ backgroundImage: `url(${isGreen ? images.greeninput : isYellow ? images.yellowinput : isOrange ? images.orangeinput : isBlue ? images.blueinput : images.grayinput})`, backgroundSize: '100% 100%' }} className={`opacity-0 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
             <div className='text-[3vh] leading-none text-[#003a43] bg-white/0 placeholder:text-[#003a43] mt-[0.5vh] ml-[1.3vh] w-[8.5vh] outline-none text-center'>
               {((number1 % 10) * (number2 % 10)).toString()}
             </div>
@@ -104,7 +91,7 @@ export default function MultiplyBox1({
         <div className='text-[4vh] leading-none text-[#003a43]'>+</div>
 
         <div className='flex flex-col items-center justify-center'>
-          <div style={{ backgroundImage: `url(${isGreen ? greeniput.src : isYellow ? yellowinput.src : isOrange ? orangeinput.src : isBlue ? blueinput.src : grayinput.src})`, backgroundSize: '100% 100%' }} className={`opacity-0 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
+          <div style={{ backgroundImage: `url(${isGreen ? images.greeninput : isYellow ? images.yellowinput : isOrange ? images.orangeinput : isBlue ? images.blueinput : images.grayinput})`, backgroundSize: '100% 100%' }} className={`opacity-0 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
             <div className='text-[3vh] leading-none text-[#003a43] bg-white/0 placeholder:text-[#003a43] mt-[0.5vh] ml-[1.3vh] w-[8.5vh] outline-none text-center'>
               {((number1 % 10) * (number2 % 10)).toString()}
             </div>
@@ -115,7 +102,7 @@ export default function MultiplyBox1({
         <div className='text-[4vh] leading-none text-[#003a43]'>+</div>
 
         <div className='flex flex-col items-center justify-center'>
-          <div style={{ backgroundImage: `url(${isGreen ? greeniput.src : isYellow ? yellowinput.src : isOrange ? orangeinput.src : isBlue ? blueinput.src : grayinput.src})`, backgroundSize: '100% 100%' }} className={`opacity-0 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
+          <div style={{ backgroundImage: `url(${isGreen ? images.greeninput : isYellow ? images.yellowinput : isOrange ? images.orangeinput : isBlue ? images.blueinput : images.grayinput})`, backgroundSize: '100% 100%' }} className={`opacity-0 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
             <div className='text-[3vh] leading-none text-[#003a43] bg-white/0 placeholder:text-[#003a43] mt-[0.5vh] ml-[1.3vh] w-[8.5vh] outline-none text-center'>
               {((number1 % 10) * (number2 % 10)).toString()}
             </div>
@@ -128,25 +115,25 @@ export default function MultiplyBox1({
 
       {/* Sliders Values Boxes */}
       {(isYellow || isBlue) && <div className={`absolute flex items-center justify-center -translate-x-[4vh] right-[1vh] transition-all duration-100 opacity-100 -translate-y-[3vh]`} style={{ width: `${(((number1 - horizontalSliderValue) / number1) * 100) * 0.9}%` }}>
-        <div style={{ backgroundImage: `url(${isYellow ? yellowboxV.src : blueboxV.src})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
+        <div style={{ backgroundImage: `url(${isYellow ? images.yellowboxV : images.blueboxV})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
           {number1 - horizontalSliderValue}
         </div>
       </div>}
 
       {(isGreen || isOrange) && <div className={`absolute bg-black flex items-center justify-center left-[4.5vh] transition-all duration-100 opacity-100 -translate-y-[3vh]`} style={{ width: `${(((horizontalSliderValue) / number1) * 100) * 0.9}%` }}>
-        <div style={{ backgroundImage: `url(${isGreen ? greenboxV.src : isYellow ? yellowboxV.src : isOrange ? orangeboxV.src : blueboxV.src})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
+        <div style={{ backgroundImage: `url(${isGreen ? images.greenboxV : isYellow ? images.yellowboxV : isOrange ? images.orangeboxV : images.blueboxV})`, backgroundSize: '100% 100%' }} className='absolute w-[5vh] h-[6vh] flex items-center justify-center text-[3vh] px-[2.1vh] pb-[1.4vh]'>
           {horizontalSliderValue}
         </div>
       </div>}
 
       {(isOrange || isBlue) && <div className={`absolute z-20 flex items-center bottom-[11.5vh] justify-center transition-all duration-100 opacity-100 -translate-x-[3vh]`} style={{ height: `${(((number2 - verticalSliderValue) / number2) * 100) * 0.7}%` }}>
-        <div style={{ backgroundImage: `url(${isOrange ? orangeboxH.src : blueboxH.src})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
+        <div style={{ backgroundImage: `url(${isOrange ? images.orangeboxH : images.blueboxH})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
           {number2 - verticalSliderValue}
         </div>
       </div>}
 
       {(isGreen || isYellow) && <div className={`absolute z-20 flex items-center top-[4.5vh] justify-center transition-all duration-100 opacity-100 -translate-x-[3vh]`} style={{ height: `${(((verticalSliderValue) / number2) * 100) * 0.7}%` }}>
-        <div style={{ backgroundImage: `url(${isGreen ? greenboxH.src : isYellow ? yellowboxH.src : blueboxH.src})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
+        <div style={{ backgroundImage: `url(${isGreen ? images.greenboxH : isYellow ? images.yellowboxH : images.blueboxH})`, backgroundSize: '100% 100%' }} className='absolute w-[6vh] h-[5vh] flex items-center justify-center text-[3vh] px-[2.1vh] pr-[4.4vh]'>
           {verticalSliderValue}
         </div>
       </div>}
@@ -201,7 +188,7 @@ export default function MultiplyBox1({
           </div>
           <div className='text-[4vh] leading-none text-white ml-[2vh]'>=</div>
 
-          <div style={{ backgroundImage: `url(${isGreen ? greeniput.src : isYellow ? yellowinput.src : isOrange ? orangeinput.src : isBlue ? blueinput.src : grayinput.src})`, backgroundSize: '100% 100%' }} className={`w-[10vh] h-[8vh] m-0 flex items-center justify-center ${bounce ? 'animate-bounce' : ''}`}>
+          <div style={{ backgroundImage: `url(${isGreen ? images.greeninput : isYellow ? images.yellowinput : isOrange ? images.orangeinput : isBlue ? images.blueinput : images.grayinput})`, backgroundSize: '100% 100%' }} className={`w-[10vh] h-[8vh] m-0 flex items-center justify-center ${bounce ? 'animate-bounce' : ''}`}>
             <NewInput
               value={value}
               onValueChange={(value) => { setValue(value); setBounce(false) }}
@@ -209,10 +196,12 @@ export default function MultiplyBox1({
               placeholder='?'
               correctValue={((number1 % 10) * (number2 % 10)).toString()}
               onCorrect={() => {
+                sounds.right();
                 setIsCorrect(true);
                 onCorrect();
               }}
               onIncorrect={(attempt, correct) => {
+                sounds.wronginput();
                 sendAdminMessage('admin', `User has entered ${attempt} which is wrong for ${number1 % 10} x ${number2 % 10}, the answer is ${correct}, the question is ${number1} x ${number2} partial product, diagnose socratically with respect to user's current game state`);
               }}
             />
