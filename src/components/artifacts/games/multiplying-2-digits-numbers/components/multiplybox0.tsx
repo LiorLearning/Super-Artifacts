@@ -21,6 +21,7 @@ interface MultiplyBoxProps0 extends BaseProps {
   hintPopup: boolean;
   setHintPopup: (value: boolean) => void;
   onCorrect: () => void;
+  lockBounce: boolean;
 }
 
 export default function MultiplyBox0({
@@ -37,7 +38,8 @@ export default function MultiplyBox0({
   hintPopup,
   setHintPopup,
   sendAdminMessage,
-  onCorrect
+  onCorrect,
+  lockBounce
 }: MultiplyBoxProps0) {
 
   
@@ -47,6 +49,7 @@ export default function MultiplyBox0({
   const [showVerticalHand, setShowVerticalHand] = useState(false);
   const [isCorrectHorizontalLock, setIsCorrectHorizontalLock] = useState(false);
   const [isCorrectVerticalLock, setIsCorrectVerticalLock] = useState(false);
+  const [hintBounce, setHintBounce] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [lockAvailable, setLockAvailable] = useState(false);
   const [hintAvailable, setHintAvailable] = useState(false);    
@@ -110,6 +113,10 @@ export default function MultiplyBox0({
         } else if(narrations.Screen2Step0Message5.send && wrongAttempt.current === 2) {
           sendAdminMessage(narrations.Screen2Step0Message5.role, formatMessage(narrations.Screen2Step0Message5.content, {}));
           setHintAvailable(true);
+          setHintBounce(true);
+          setTimeout(() => {
+            setHintBounce(false);
+          }, 3000);
         }
         
       }
@@ -341,14 +348,14 @@ export default function MultiplyBox0({
         </div>
 
         <div className={`flex items-center justify-between w-full `}>
-          <button className={`border-[0.2vh] rounded-[1vh] text-white text-[2.5vh] py-[0.5vh] shadow-[0.2vh_0.2vh_0_0_#ffffff] w-[8vh] text-center transition-all duration-500 ${lockAvailable ? 'opacity-100 bg-[#e24548] ' : 'opacity-80 bg-[#8e8e8e] '}`}
+          <button className={`border-[0.2vh] rounded-[1vh] text-white text-[2.5vh] py-[0.5vh] shadow-[0.2vh_0.2vh_0_0_#ffffff] w-[8vh] text-center transition-all duration-500 ${lockAvailable ? 'opacity-100 bg-[#e24548] ' + (lockBounce ? 'animate-[bounce_0.5s_ease-in-out_infinite]' : '') : 'opacity-80 bg-[#8e8e8e] '}`}
             onClick={() => lockAvailable ? handleLock() : undefined}>
             LOCK
           </button>
           <div className={`bg-[#ffffff] border-[#7f7f7f] border-[0.2vh] rounded-[1vh] text-[#003a43] leading-none text-[3vh] px-[2vh] py-[1vh] shadow-[0.2vh_0.2vh_0_0_#7f7f7f]`}>
             {number1} x {number2}
           </div>
-          <button className={` border-[0.2vh] rounded-[1vh] text-white text-[2.5vh] py-[0.5vh] shadow-[0.2vh_0.2vh_0_0_#ffffff] w-[8vh] text-center transition-all duration-500 ${hintAvailable ? 'opacity-100 bg-[#8445e2]' : 'opacity-80 bg-[#8e8e8e]'}`}
+          <button className={` border-[0.2vh] rounded-[1vh] text-white text-[2.5vh] py-[0.5vh] shadow-[0.2vh_0.2vh_0_0_#ffffff] w-[8vh] text-center transition-all duration-500 ${hintAvailable ? 'opacity-100 bg-[#8445e2] ' + (hintBounce ? 'animate-[bounce_0.5s_ease-in-out_infinite]' : '') : 'opacity-80 bg-[#8e8e8e]'}`}
             onClick={() => hintAvailable ? setHintPopup(true) : undefined}>
             HINT
           </button>
