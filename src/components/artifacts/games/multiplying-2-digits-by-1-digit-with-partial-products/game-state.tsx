@@ -1,5 +1,7 @@
 export type GameScreen = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth' | 'seventh';
 
+export type Theme = 'jungle' | 'ocean' | 'desert' | 'space' | 'default';  
+
 interface Description {
   title: GameScreen;
   oneliner: string;
@@ -88,6 +90,8 @@ interface State7 {
 
 export interface GameState {
   screen: GameScreen;
+  theme: Theme;
+  availableThemes: Theme[];
   state1: State1;  
   state2: State2;
   state3: State3;
@@ -99,6 +103,8 @@ export interface GameState {
 
 export const initialGameState: GameState = {
   screen: 'first',
+  theme: 'default',
+  availableThemes: ['default', 'jungle'],
   state1: {
     step: 0,
     number1: 17,

@@ -4,12 +4,14 @@ import { useGameState } from "../../state-utils";
 import { useRef, useEffect, useState } from "react";
 import { goToStep } from "../../utils/helper";
 import { sounds } from "../../utils/sound";
+import { getThemeImages } from "../../utils/theme";
 
 export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
 
   const { gameStateRef, setGameStateRef } = useGameState();
   const [transition, setTransition] = useState(false);
   const [nextSentence, setNextSentence] = useState(false);
+  const themeImages = getThemeImages(gameStateRef.current);
   const hasGameStartedRef = useRef(false);
   
 
@@ -41,13 +43,12 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
   const number2 = gameStateRef.current.state1.number2;  
 
   return (
-    <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
+    <div className={`realtive ${gameStateRef.current.theme === 'jungle' ? `` : 'bg-[#B9F7FF]'} min-h-screen overflow-hidden flex justify-center items-end`}
+      style={gameStateRef.current.theme === 'jungle' ? { backgroundImage: `url(${themeImages.background})`, backgroundSize: '100% 100%' } : undefined}>
 
-
-      
-      <div className="absolute w-full h-[25vh] z-10"
+      {gameStateRef.current.theme === 'default' && <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
-      </div>
+      </div>}
 
       <div className={`absolute ml-[10vw] max-w-[15vw] text-[1.6vw] -translate-y-[24vw] left-0 bg-white p-[1vw] border-[0.1vw] border-black z-20 drop-shadow-lg transition-all duration-500 ${transition ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0 '}`}>
         <div className={`transition-opacity duration-500 ${nextSentence ? 'opacity-0' : 'opacity-100'}`}>
@@ -59,12 +60,12 @@ export default function Screen1Step1({ sendAdminMessage }: BaseProps) {
       </div>
 
       <div className={`absolute left-0 -translate-y-[10vh] w-[14vw] h-[15vw] z-30 transition-all duration-500 ${transition ? 'translate-x-[8vw] opacity-100' : '-translate-x-full opacity-0'}`}
-        style={{ backgroundImage: `url(${nextSentence ? images.tiloHappy : images.tilo})`, backgroundSize: '100% 100%' }}>
+        style={{ backgroundImage: `url(${nextSentence ? themeImages.characterHappy : themeImages.character})`, backgroundSize: '100% 100%' }}>
       </div>
 
-      <div className={`absolute left-0 w-[15vw] h-[12vh] z-20 transition-all duration-500 ${transition ? 'translate-x-[6vw] opacity-100' : '-translate-x-full opacity-0'}`}
+      {gameStateRef.current.theme === 'default' && <div className={`absolute left-0 w-[15vw] h-[12vh] z-20 transition-all duration-500 ${transition ? 'translate-x-[6vw] opacity-100' : '-translate-x-full opacity-0'}`}
         style={{ backgroundImage: `url(${images.tiloShadow})`, backgroundSize: '100% 100%' }}>
-      </div>
+      </div>}
 
     </div>
   )
