@@ -32,22 +32,20 @@ const GameComponent = ({ currentGame, sendAdminMessage }: GameComponentProps) =>
   );
 }
 
-
-interface MathGamesContainerProps {
+interface GameStateProviderWrapperProps {
   setComponentRef: (componentRef: React.RefObject<HTMLDivElement>) => void;
 }
 
-const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
-  const componentRef = useRef<HTMLDivElement>(null);
+export const GameStateProviderWrapper = ({ setComponentRef }: GameStateProviderWrapperProps) => {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
   const gameParam = searchParams.get('game') as GameKey;
   const [currentGame, setCurrentGame] = useState<GameKey>(gameParam || 'template-game');
-  const [loading, setLoading] = useState(false);
-  const { sendLog, addToChat, isConnected, reconnectWebSocket } = useWebSocketLogger()
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [isNarrationEditorOpen, setIsNarrationEditorOpen] = useState(false);
+  const gameKey = gameInfo[currentGame] ? currentGame : 'template-game';
+  const Provider = gameInfo[gameKey].provider
+
+  const { reconnectWebSocket } = useWebSocketLogger()
+  
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -57,7 +55,29 @@ const MathGamesContainer = ({ setComponentRef }: MathGamesContainerProps) => {
     }
   }, [gameParam]);
 
-  const { gameStateRef, getDescription } = gameInfo[currentGame]?.useState || {};
+  return (
+    <Provider>
+      <MathGamesContainer currentGame={currentGame} setCurrentGame={setCurrentGame} setComponentRef={setComponentRef} isClient={isClient} />
+    </Provider>
+  );
+};
+
+interface MathGamesContainerProps {
+  currentGame: GameKey;
+  setCurrentGame: (game: GameKey) => void;
+  isClient: boolean;
+  setComponentRef: (componentRef: React.RefObject<HTMLDivElement>) => void;
+}
+
+const MathGamesContainer = ({ currentGame, setCurrentGame, setComponentRef, isClient }: MathGamesContainerProps) => {
+  const componentRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  
+  const [loading, setLoading] = useState(false);
+  const { sendLog, addToChat, isConnected } = useWebSocketLogger()
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isNarrationEditorOpen, setIsNarrationEditorOpen] = useState(false);
+  const { gameStateRef, getDescription } = gameInfo[currentGame]?.useState() || {};
 
   const sendAdminMessage = async (role: string, content: string, onComplete?: () => void): Promise<string> => {
     if (!isClient) return '';
