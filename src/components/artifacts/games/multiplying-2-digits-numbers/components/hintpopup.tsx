@@ -14,6 +14,8 @@ export default function HintPopup({ number, setHintPopup, sendAdminMessage }: Hi
   const [onesInput, setOnesInput] = useState("");
   const [showOnesQuestion, setShowOnesQuestion] = useState(false);
   const [showContinueButton, setShowContinueButton] = useState(false);
+  const [tensBounce, setTensBounce] = useState(false);
+  const [onesBounce, setOnesBounce] = useState(false);
   const onesRef = useRef<HTMLInputElement>(null);
 
   const hasGameStartedRef = useRef(false);
@@ -24,6 +26,7 @@ export default function HintPopup({ number, setHintPopup, sendAdminMessage }: Hi
       if(narrations.Screen2Step0Message6.send) {
         sendAdminMessage(narrations.Screen2Step0Message6.role, formatMessage(narrations.Screen2Step0Message6.content, { number }));
       }
+      setTensBounce(true);
     }
   }, []);
 
@@ -41,10 +44,15 @@ export default function HintPopup({ number, setHintPopup, sendAdminMessage }: Hi
     onesRef.current?.focus();
     if(narrations.Screen2Step0Message7.send) {
       sendAdminMessage(narrations.Screen2Step0Message7.role, formatMessage(narrations.Screen2Step0Message7.content, {}));
+      setTimeout(() => {
+        setOnesBounce(true);
+      }, 1000);
     }
   };
   
   const handleOnesCorrect = () => {
+    setTensBounce(false);
+    setOnesBounce(false);
     if(tensInput === tensValue) {
       setShowContinueButton(true);
     }
@@ -65,11 +73,14 @@ export default function HintPopup({ number, setHintPopup, sendAdminMessage }: Hi
                   <span key={i} className="bg-[#ffa500] rounded-[1vh] w-full h-[4vh] shadow-[0.2vh_0.2vh_0_0_#393f3f] flex items-center justify-center text-[3vh] leading-none text-white">10</span>
                 ))}
               </div>
-              <div className="flex items-center justify-center text-[3vh]">
+              <div className={`flex items-center justify-center text-[3vh]`}>
                 <NewInput
-                  className="border-2 border-black rounded-[1vh] w-[5vh] h-[5vh] flex items-center justify-center mr-[1vh] text-center"
+                  className={`border-2 border-black rounded-[1vh] w-[5vh] h-[5vh] flex items-center justify-center mr-[1vh] text-center ${tensBounce ? 'animate-[bounce_0.5s_ease-in-out_infinite]' : ''}`}
                   value={tensInput}
-                  onValueChange={setTensInput}
+                  onValueChange={(value) => {
+                    setTensInput(value);
+                    setTensBounce(false);
+                  }}
                   correctValue={tensValue}
                   onCorrect={handleTensCorrect}
                   useColor={true}
@@ -84,9 +95,9 @@ export default function HintPopup({ number, setHintPopup, sendAdminMessage }: Hi
                   <span key={i} className="bg-[#5cdbec] rounded-[1vh] w-[4vh] h-[4vh] shadow-[0.2vh_0.2vh_0_0_#393f3f] flex items-center justify-center text-[2.6vh] leading-none text-white">1 </span>
                 ))}
               </div>
-              <div className="flex items-center justify-center text-[3vh]">
+              <div className={`flex items-center justify-center text-[3vh]`}>
                 <NewInput
-                  className="border-2 border-black rounded-[1vh] w-[5vh] h-[5vh] flex items-center justify-center mr-[1vh] text-center"
+                  className={`border-2 border-black rounded-[1vh] w-[5vh] h-[5vh] flex items-center justify-center mr-[1vh] text-center ${onesBounce ? 'animate-[bounce_0.5s_ease-in-out_infinite]' : ''}`}
                   value={onesInput}
                   onValueChange={setOnesInput}
                   correctValue={onesValue}

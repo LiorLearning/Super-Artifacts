@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { goToStep } from "../../utils/helper";
 import { useGameState } from "../../state-utils";
 import { narrations } from "../../narrations";  
-
+import { getThemeImages } from "../../utils/theme";
 
 export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   const { gameStateRef, setGameStateRef } = useGameState();
@@ -13,6 +13,8 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   const [isMovingUp, setIsMovingUp] = useState(false);
   const number1 = gameStateRef.current.state1.number1;
   const number2 = gameStateRef.current.state1.number2;
+
+  const themeImages = getThemeImages(gameStateRef.current);
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
@@ -29,11 +31,12 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
   };
 
   return (
-    <div className="realtive bg-[#B9F7FF] min-h-screen overflow-hidden flex justify-center items-end">
+    <div className={`realtive ${gameStateRef.current.theme === 'jungle' ? `` : 'bg-[#B9F7FF]'} min-h-screen overflow-hidden flex justify-center items-end`}
+      style={gameStateRef.current.theme === 'jungle' ? { backgroundImage: `url(${themeImages.background})`, backgroundSize: '100% 100%' } : undefined}>
 
-      <div className="absolute w-full h-[25vh] z-10"
+      {gameStateRef.current.theme === 'default' && <div className="absolute w-full h-[25vh] z-10"
         style={{ backgroundImage: `url(${images.grass})`, backgroundSize: '100% 100%' }}>
-      </div>
+      </div>}
 
       <div className={`flex flex-col items-center justify-center gap-[4vh] z-20 my-auto pb-[10vh] transition-all duration-500 ${isMovingUp ? 'transform -translate-y-[20vh] opacity-0' : ''}`}>
         <div className="flex items-center justify-center text-center gap-[2vh]">
@@ -43,7 +46,7 @@ export default function Screen1Step0({sendAdminMessage}: BaseProps) {
         </div>
 
         <button 
-          className={`w-[22vw] text-[6vh] leading-none py-[1vh] rounded-[6vh] bg-[#007179] border-[1vh] border-white text-white shadow-xl drop-shadow-lg hover:drop-shadow-2xl`}
+          className={`w-[22vw] text-[6vh] leading-none py-[1vh] rounded-[6vh] ${gameStateRef.current.theme === 'jungle' ? 'bg-[#793000]' : 'bg-[#007179]'} border-[1vh] border-white text-white shadow-xl drop-shadow-lg hover:drop-shadow-2xl`}
           onClick={handleClick}
         >
           {'START >>'}

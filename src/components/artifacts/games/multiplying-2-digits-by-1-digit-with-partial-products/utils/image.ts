@@ -1,5 +1,6 @@
 const BASE_URL = 'https://mathtutor-images.s3.us-east-1.amazonaws.com/games/image/multiplying-2-digits-by-1-digit-with-partial-products';
 
+
 export const images = {
   grass: `${BASE_URL}/grass.png`,
   tilo: `${BASE_URL}/tilo.png`,
@@ -19,6 +20,9 @@ export const images = {
   slider: `${BASE_URL}/slider.png`,
   sumBox: `${BASE_URL}/sumbox.png`,
   tiloHappy: `${BASE_URL}/tilohappy.png`,
-  tiloSad: `${BASE_URL}/tilosad.png`
+  tiloSad: `${BASE_URL}/tilosad.png`,
+  kidHappy: `${BASE_URL}/kidhappy.png`,
+  kidSad: `${BASE_URL}/kidsad.png`,
+  jungle: `${BASE_URL}/jungle.png`,
 } as const;
 
