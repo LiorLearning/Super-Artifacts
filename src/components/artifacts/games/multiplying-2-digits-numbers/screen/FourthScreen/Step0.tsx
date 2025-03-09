@@ -25,6 +25,7 @@ export default function Screen4Step0({sendAdminMessage, horizontalSliderValue, s
   const [correctSplit, setCorrectSplit] = useState(false);
   const [lockPopup, setLockPopup] = useState(false);
   const [hintPopup, setHintPopup] = useState(false);
+  const [lockBounce, setLockBounce] = useState(false);
 
   useEffect(() => {
     if (!hasGameStartedRef.current) {
@@ -54,7 +55,13 @@ export default function Screen4Step0({sendAdminMessage, horizontalSliderValue, s
           </div>
 
           <button className="bg-[#007179] text-white mt-[3vh] text-[2.5vh] py-[1vh] px-[3vh] rounded-[6vh] shadow-[0.2vh_0.2vh_0_0_#393f3f]"
-            onClick={() => setLockPopup(false)}>
+            onClick={() => {
+              setLockPopup(false)
+              setLockBounce(true);
+              setTimeout(() => {
+                setLockBounce(false);
+              }, 2000);
+            }}>
             {'CONTINUE >>'}
           </button>
         </div>
@@ -78,6 +85,7 @@ export default function Screen4Step0({sendAdminMessage, horizontalSliderValue, s
         setHintPopup={setHintPopup}
         hintPopup={hintPopup}
         onCorrect={onCorrect}
+        lockBounce={lockBounce}
         />
       </div>
 

@@ -70,7 +70,7 @@ export default function MultiplyBox2({
         <div className='text-[4vh] leading-none text-[#003a43] ml-[1.5vh]'>=</div>
         
         <div className='flex flex-col items-center justify-center'>
-          <div style={{ backgroundImage: `url(${isGreen ? images.greeninput : isYellow ? images.yellowinput : isOrange ? images.orangeinput : isBlue ? images.blueinput : images.grayinput})`, backgroundSize: '100% 100%' }} className={`opacity-100 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
+          <div style={{ backgroundImage: `url(${isGreen ? images.yellowinput : isYellow ? images.greeninput : isOrange ? images.blueinput : isBlue ? images.orangeinput : images.grayinput})`, backgroundSize: '100% 100%' }} className={`opacity-100 w-[10vh] h-[8vh] m-0 flex items-center justify-center mr-[1vh]`}>
             <div className='text-[3vh] leading-none text-[#003a43] bg-white/0 placeholder:text-[#003a43] mt-[0.5vh] ml-[1.3vh] w-[8.5vh] outline-none text-center'>
               {((number1 % 10) * (number2 % 10)).toString()}
             </div>

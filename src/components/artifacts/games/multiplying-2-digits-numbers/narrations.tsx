@@ -39,12 +39,12 @@ export const narrations: { [key: string]: Message } = {
   },
   Screen2Step0Message1: {
     role: 'agent',
-    content: 'Let’s break the bigger number into two parts first',
+    content: 'Let’s break the bigger number into two parts using the slider',
     send: true
   },
   Screen2Step0Message2: {
     role: 'agent',
-    content: 'Now let’s try to split the smaller number',
+    content: 'Now let’s try to split the smaller number in the same way',
     send: true
   },
   Screen2Step0Message3: {
@@ -64,10 +64,19 @@ export const narrations: { [key: string]: Message } = {
   },
   Screen2Step0Message6: {
     role: 'agent',
+    content: 'Orange blocks represent tens, and blue represent the ones. Can you tell how many tens does ${number} have?',
+    send: true
+  },
+  Screen2Step0Message7: {
+    role: 'agent',
+    content: 'The blue blocks are remaining ones, how many can you count?',
+    send: true
+  },
+  Screen2Step0Message8: {
+    role: 'agent',
     content: 'Now let\'s use the same logic to split ${number}',
     send: true
   },
-  
   Screen2Step4Message1: {
     role: 'agent',
     content: 'You made Tilo super happy. Let\'s add the partial products now',

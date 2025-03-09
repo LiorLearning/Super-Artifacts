@@ -278,7 +278,7 @@ export default function MultiplyBox4({
           </div>
           <div className='text-[4vh] leading-none text-white ml-[2vh]'>=</div>
 
-          <div style={{ backgroundImage: `url(${images.grayinput})`, backgroundSize: '100% 100%' }} className={`w-[10vh] h-[8vh] m-0 flex items-center justify-center ${bounce ? 'animate-bounce' : ''}`}>
+          <div style={{ backgroundImage: `url(${isGreen ? images.greeninput : isYellow ? images.yellowinput : isOrange ? images.orangeinput : isBlue ? images.blueinput : images.grayinput})`, backgroundSize: '100% 100%' }} className={`w-[10vh] h-[8vh] m-0 flex items-center justify-center ${bounce ? 'animate-bounce' : ''}`}>
             <NewInput
               value={value}
               onValueChange={(value) => { setValue(value); setBounce(false) }}

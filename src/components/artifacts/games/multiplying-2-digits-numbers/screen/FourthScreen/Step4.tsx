@@ -55,7 +55,7 @@ export default function Screen4Step4({ sendAdminMessage, horizontalSliderValue, 
 
     setTimeout(() => {
       setShowPopUp(true);
-    }, 1000);
+    }, 6000);
   }
 
   function playAgain() {
